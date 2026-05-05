@@ -1,0 +1,11 @@
+Andishi is a Nairobi-based digital product studio that designs, builds, and ships
+web applications, e-commerce systems, and custom digital solutions for businesses
+in Kenya and across Africa. Clients include founders, SMEs, and growth-stage
+companies who need a technical partner, not just a vendor. Andishi scopes projects
+in days, ships working products in weeks, and measures success by client outcomes,
+not deliverables.
+
+Key pages: /, /#services, /#process, /#comparison, /#contact.
+
+Services: Web Applications (3-8 weeks), E-Commerce (2-5 weeks), Conversion
+Websites (1-3 weeks), Digital Systems & Integrations (2-6 weeks).
