@@ -10,7 +10,6 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 import { motion, useInView } from "framer-motion";
-import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRef } from "react";
 import { partners } from "@/content/landing";
@@ -64,8 +63,6 @@ function PanelTexture() {
 export function HeroSection() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
-  const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
 
   return (
     <section
@@ -126,10 +123,7 @@ export function HeroSection() {
           <motion.div variants={fadeUp} className="flex flex-wrap gap-3 pt-1">
             <Link
               href="/work"
-              className="inline-flex min-h-[2.4rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--secondary)_34%,transparent)] px-6 py-2.5 text-[0.98rem] font-medium text-white no-underline shadow-[var(--cta-shadow)] transition-all duration-300 hover:-translate-y-px hover:shadow-[0_22px_56px_color-mix(in_srgb,var(--secondary)_30%,transparent),0_10px_22px_color-mix(in_srgb,var(--primary)_20%,transparent)] max-[899px]:flex-1 max-[899px]:basis-48 max-[560px]:min-h-[2.3rem] max-[560px]:text-[0.95rem]"
-              style={{
-                background: "var(--gradient-brand)",
-              }}
+              className="inline-flex min-h-[2.4rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--bg)] no-underline shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-300 hover:-translate-y-px hover:shadow-[0_22px_52px_color-mix(in_srgb,var(--bg-deep)_48%,transparent)] max-[899px]:flex-1 max-[899px]:basis-48 max-[560px]:min-h-[2.3rem] max-[560px]:text-[0.95rem]"
             >
               See Our Work
               <IconArrowRight size={15} stroke={2.2} />
@@ -149,7 +143,7 @@ export function HeroSection() {
           animate={inView ? "visible" : "hidden"}
           className="min-w-0"
         >
-          <div className="relative flex flex-col items-end pb-6 max-[560px]:pb-0">
+          <div className="relative hidden md:flex flex-col items-end pb-6 max-[560px]:pb-0">
             <div
               className={`${panelClass} relative z-[1] w-[min(100%,38.5rem)] max-[899px]:w-full max-[560px]:rounded-[1.15rem] max-[560px]:p-3`}
             >
@@ -198,6 +192,7 @@ export function HeroSection() {
                   aria-label="Weekly growth chart"
                   className="block h-40 w-full max-[560px]:h-28"
                   preserveAspectRatio="none"
+                  style={{ color: "var(--primary-fixed-dim)" }}
                 >
                   <defs>
                     <linearGradient
@@ -209,16 +204,16 @@ export function HeroSection() {
                     >
                       <stop
                         offset="0%"
-                        stopColor={isDark ? "#8c6cd9" : "#6f4baa"}
+                        stopColor="currentColor"
                         stopOpacity="0.34"
                       />
-                      <stop offset="100%" stopColor="#00C6FB" stopOpacity="0" />
+                      <stop offset="100%" stopColor="var(--secondary)" stopOpacity="0" />
                     </linearGradient>
                   </defs>
                   <path
                     d="M8 150 C54 150 60 120 104 120 S158 138 196 105 260 78 306 96 352 52 412 62 470 100 512 36"
                     fill="none"
-                    stroke={isDark ? "#8c6cd9" : "#6f4baa"}
+                    stroke="currentColor"
                     strokeLinecap="round"
                     strokeWidth="5"
                   />

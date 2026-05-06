@@ -21,9 +21,9 @@ type LinkButtonProps = SharedProps &
 
 const variants = {
   primary:
-    "border-[color-mix(in_srgb,var(--secondary)_34%,transparent)] text-white shadow-[var(--cta-shadow)] [background-image:var(--gradient-brand)] hover:shadow-[0_22px_56px_color-mix(in_srgb,var(--secondary)_30%,transparent),0_10px_22px_color-mix(in_srgb,var(--primary)_20%,transparent)]",
+    "border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] hover:shadow-[0_22px_52px_color-mix(in_srgb,var(--bg-deep)_48%,transparent)]",
   glass:
-    "border-[color-mix(in_srgb,var(--secondary)_28%,transparent)] bg-[var(--glass-bg)] text-[var(--on-surface)] hover:border-[color-mix(in_srgb,var(--secondary)_56%,transparent)] hover:bg-[color-mix(in_srgb,var(--surface-high)_42%,transparent)]",
+    "border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] text-[var(--on-surface)] hover:border-[color-mix(in_srgb,var(--on-surface)_34%,transparent)] hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)]",
   ghost:
     "border-transparent bg-transparent text-[var(--on-surface-dim)] hover:border-[var(--glass-border)] hover:text-[var(--on-surface)]",
 };
@@ -34,7 +34,7 @@ const sizes = {
 };
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-full border backdrop-blur-xl transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)] disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 rounded-full border backdrop-blur-xl transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)] disabled:pointer-events-none disabled:opacity-50";
 
 export function Button({ className, variant = "glass", size = "md", ...props }: ButtonProps) {
   return <button className={cn(base, variants[variant], sizes[size], className)} {...props} />;

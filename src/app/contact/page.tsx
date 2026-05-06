@@ -1,5 +1,3 @@
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
 import { GlassCard } from "@/components/ui/glass-card";
 import { IconBrandLinkedin, IconBrandTwitter, IconMail, IconClock, IconCheck } from "@tabler/icons-react";
 
@@ -11,7 +9,6 @@ export const metadata = {
 export default function ContactPage() {
   return (
     <>
-      <Navbar />
       <main className="relative overflow-hidden">
         <section className="relative mx-auto max-w-6xl px-6 pb-24 pt-40 sm:px-8">
           <div className="relative grid gap-16 md:grid-cols-[1fr_1.15fr] md:items-start">
@@ -28,16 +25,7 @@ export default function ContactPage() {
                 }}
               >
                 Let&apos;s scope<br />
-                <span
-                  style={{
-                    backgroundImage: "var(--gradient-brand)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
-                  your project.
-                </span>
+                your project.
               </h1>
               <p className="body-lg mt-5 max-w-md" style={{ color: "var(--on-surface-dim)" }}>
                 The first call is 30 minutes and costs nothing. You will leave with a clear
@@ -173,9 +161,8 @@ export default function ContactPage() {
 
                 <button
                   type="submit"
-                  className="mt-1 min-h-[3.35rem] w-full rounded-full px-6 py-3.5 text-[0.98rem] font-medium text-white
-                             shadow-[var(--cta-shadow)] transition-all duration-200 hover:-translate-y-px active:scale-[0.99]"
-                  style={{ background: "var(--gradient-brand)" }}
+                  className="mt-1 min-h-[3.35rem] w-full rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-6 py-3.5 text-[0.98rem] font-medium text-[var(--bg)]
+                             shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-200 hover:-translate-y-px active:scale-[0.99]"
                 >
                   Send message
                 </button>
@@ -184,7 +171,6 @@ export default function ContactPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 }

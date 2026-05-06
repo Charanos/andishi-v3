@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Outfit } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { Footer } from "@/components/layout/footer";
+import { Navbar } from "@/components/layout/navbar";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
 
@@ -70,7 +72,9 @@ export default function RootLayout({
     >
       <body className="min-h-full">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+          <Navbar />
           {children}
+          <Footer />
         </ThemeProvider>
         <script
           type="application/ld+json"

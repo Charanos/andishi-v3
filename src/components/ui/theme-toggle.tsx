@@ -15,7 +15,9 @@ export function ThemeToggle() {
   }, []);
 
   if (!mounted) {
-    return <div className="h-9 w-9 rounded-xl border border-[var(--outline-variant)] bg-[var(--color-bg-elevated)]" />;
+    return (
+      <div className="h-9 w-9 rounded-xl border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_72%,transparent)]" />
+    );
   }
 
   const isDark = resolvedTheme === "dark";
@@ -25,7 +27,7 @@ export function ThemeToggle() {
     <button
       onClick={toggleTheme}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--outline-variant)] bg-[var(--color-bg-elevated)] transition-colors duration-300 hover:border-[var(--primary)]/40 hover:bg-[var(--primary)]/10 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/50"
+      className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_72%,transparent)] text-[var(--on-surface)] transition-colors duration-300 hover:border-[color-mix(in_srgb,var(--on-surface)_34%,transparent)] hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] focus:outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
     >
       <AnimatePresence mode="wait" initial={false}>
         {isDark ? (
@@ -37,7 +39,7 @@ export function ThemeToggle() {
             transition={cosmicSpring}
             className="absolute"
           >
-            <IconSun size={17} stroke={1.5} className="text-[var(--color-text-muted)]" />
+            <IconSun size={17} stroke={1.5} />
           </motion.span>
         ) : (
           <motion.span
@@ -48,7 +50,7 @@ export function ThemeToggle() {
             transition={cosmicSpring}
             className="absolute"
           >
-            <IconMoon size={17} stroke={1.5} className="text-[var(--color-text-muted)]" />
+            <IconMoon size={17} stroke={1.5} />
           </motion.span>
         )}
       </AnimatePresence>

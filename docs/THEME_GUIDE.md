@@ -13,6 +13,10 @@ This guide captures the technical and aesthetic protocols required to maintain t
 - Never use sparkle/star decorative icons. Tabler icons are the only icon family for UI.
 - Numerals, stats, currency, percentages, timelines, and IDs use JetBrains Mono via `font-mono` or the `.mono-*` utilities.
 - Avoid over-reliance on purple. Purple/violet is the text and depth language; cyan is the signal/CTA/data accent; green is success/status only.
+- Navbar and footer are shared from `src/app/layout.tsx`. Public pages must not mount duplicate nav/footer instances.
+- The active source/deployment remote is GitHub: `https://github.com/Charanos/andishi-v3.git`.
+- Homepage section quality now includes the interactive project showcase, process artifacts, full-width visual interlude, Why Andishi decision cockpit, and editorial founder section.
+- Work page quality now includes the sticky desktop filter rail, project-card grid, case-study drawer, and patterned bottom CTA.
 
 ---
 
@@ -84,14 +88,41 @@ Primary text is intentionally violet-tinted rather than neutral black/white.
 
 ## 4.2 CTA Treatment
 
-Primary CTAs use the shared `--gradient-brand` and `--cta-shadow` tokens:
+Primary CTAs now use a sleeker neutral treatment aligned with the navbar:
 
-- Light mode gradient: deep violet to royal violet to cyan.
-- Dark mode gradient: luminous violet to refined violet to cyan.
-- Minimum height: about `3.35rem` to `3.4rem`.
-- Vertical padding: `py-3.5` for hero and page CTAs.
-- Text size: about `0.98rem`; nav CTA can be smaller but must remain at least `min-h-10`.
+- Dark mode: white/on-surface fill with dark text for maximum contrast.
+- Light mode: dark/on-surface fill with light background text contrast via `text-[var(--bg)]`.
+- Minimum height should stay compact but touch-safe; use shared button variants where possible.
 - Hover: lift by `-translate-y-px`, preserve elegance with shadow changes instead of opacity-only feedback.
+- Avoid purple CTA fills unless the component explicitly needs a brand-gradient moment.
+
+---
+
+## 4.3 Artifact Windows
+
+The current homepage process and trust sections use realistic interface artifacts. Preserve this pattern for future high-impact sections:
+
+- Use mini browser/window chrome with three traffic-light dots.
+- Use `font-mono` for terminal commands, route IDs, progress values, percentages, and compact status labels.
+- Process artifacts should feel like real work output:
+  - chat transcript for discovery,
+  - problem/insight/direction brief,
+  - sprint/progress window,
+  - design board/canvas,
+  - terminal deploy/handoff.
+- Keep artifacts theme-aware with tokenized surfaces; terminal panels can use a stable dark surface for command-line authenticity.
+- Add subtle hover lift or progress-change affordances only when they clarify interactivity.
+
+---
+
+## 4.4 Pattern Direction
+
+Use texture to break monotony instead of color blobs:
+
+- Preferred: plus/dot textures, subtle hairlines, offset outline shapes, faint etched panels.
+- Avoid regular grid patterns.
+- Avoid large radial color blobs except for extremely subtle depth where no pattern will work.
+- Full-width visual sections may use theme-swapped imagery through explicit light/dark layers or CSS tokens.
 
 ---
 

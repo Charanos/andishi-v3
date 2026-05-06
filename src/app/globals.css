@@ -46,6 +46,8 @@
   --hero-overlay-src: url('/hero-light.svg');
   --hero-overlay-opacity: 0.82;
   --hero-overlay-blend: normal;
+  --blob-break-src: url('/light-blob.svg');
+  --blob-break-position: center top;
 
   /* Aliases */
   --color-bg-elevated: var(--surface-high);
@@ -104,6 +106,8 @@
   --hero-overlay-src: url('/hero-dark.svg');
   --hero-overlay-opacity: 0.76;
   --hero-overlay-blend: normal;
+  --blob-break-src: url('/dark-blob.svg');
+  --blob-break-position: center top;
 
   /* Aliases */
   --color-bg-elevated: var(--surface-high);
@@ -141,6 +145,29 @@ body {
   font-family: var(--font-outfit), "Outfit", ui-sans-serif, system-ui, sans-serif;
   font-weight: 500;
   letter-spacing: 0;
+}
+
+.blob-break-asset {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transform: scale(1.035);
+}
+
+.blob-break-asset--dark {
+  display: none;
+}
+
+.dark .blob-break-asset--light {
+  display: none;
+}
+
+.dark .blob-break-asset--dark {
+  display: block;
 }
 
 ::selection {

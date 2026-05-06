@@ -8,7 +8,7 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface-low)_60%,transparent)] px-6 py-12 backdrop-blur-2xl sm:px-8">
+    <footer className="border-t border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_94%,transparent)] px-6 py-12 backdrop-blur-2xl sm:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[1.3fr_2fr]">
         <div>
           <Logo className="mb-4" />
@@ -19,7 +19,7 @@ export function Footer() {
         <div className="grid gap-8 sm:grid-cols-3">
           {columns.map(([title, ...items]) => (
             <div key={title}>
-              <p className="label-caps mb-4 text-[var(--primary)]">{title}</p>
+              <p className="label-caps mb-4 text-[var(--on-surface)]">{title}</p>
               <div className="space-y-3">
                 {items.map((item) => (
                   <a key={item} href="#" className="block text-sm text-[var(--on-surface-dim)] transition-all duration-300 hover:text-[var(--on-surface)]">
@@ -31,7 +31,7 @@ export function Footer() {
           ))}
         </div>
       </div>
-      <div className="mx-auto mt-10 flex max-w-7xl flex-col gap-3 border-t border-[var(--glass-border)] pt-6 text-xs text-[var(--outline)] sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto mt-10 flex max-w-7xl flex-col gap-3 border-t border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] pt-6 text-xs text-[color-mix(in_srgb,var(--on-surface-dim)_72%,transparent)] sm:flex-row sm:items-center sm:justify-between">
         <p>(c) 2026 Andishi. Registered in Kenya.</p>
         <p>Last updated: April 29, 2026</p>
       </div>

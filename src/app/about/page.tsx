@@ -1,5 +1,3 @@
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
 import { GlassCard } from "@/components/ui/glass-card";
 import { IconArrowRight, IconBrandLinkedin, IconBrandTwitter, IconMail } from "@tabler/icons-react";
 import Link from "next/link";
@@ -31,7 +29,6 @@ const values = [
 export default function AboutPage() {
   return (
     <>
-      <Navbar />
       <main className="relative overflow-hidden">
         {/* Page hero */}
         <section className="relative mx-auto max-w-7xl px-6 pb-16 pt-40 sm:px-8">
@@ -47,16 +44,7 @@ export default function AboutPage() {
               }}
             >
               Built in Nairobi.<br />
-              <span
-                style={{
-                  backgroundImage: "var(--gradient-brand)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                Thinking about what comes next.
-              </span>
+              Thinking about what comes next.
             </h1>
             <p className="body-lg mt-5 max-w-lg" style={{ color: "var(--on-surface-dim)" }}>
               Andishi exists for businesses with real ambition who need digital partners that
@@ -190,15 +178,13 @@ export default function AboutPage() {
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
               href="/contact"
-              className="inline-flex min-h-[3.35rem] items-center gap-2 rounded-full px-6 py-3.5 text-[0.98rem] font-medium text-white shadow-[var(--cta-shadow)] transition-all duration-200 hover:-translate-y-px"
-              style={{ background: "var(--gradient-brand)" }}
+              className="inline-flex min-h-[3.35rem] items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-6 py-3.5 text-[0.98rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-200 hover:-translate-y-px"
             >
               Book a scoping call <IconArrowRight size={15} stroke={2} />
             </Link>
           </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 }

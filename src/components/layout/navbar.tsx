@@ -21,10 +21,6 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
-
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
     return pathname.startsWith(href.replace("/#", "/"));
@@ -41,13 +37,13 @@ export function Navbar() {
           transition={{ duration: 0.35, ease: "easeOut" }}
           style={{
             backgroundColor: scrolled
-              ? "color-mix(in srgb, var(--surface) 80%, transparent)"
+              ? "color-mix(in srgb, var(--bg-deep) 90%, transparent)"
               : "transparent",
             border: scrolled
-              ? "1px solid var(--glass-border)"
+              ? "1px solid color-mix(in srgb, var(--on-surface) 12%, transparent)"
               : "1px solid transparent",
             boxShadow: scrolled
-              ? "0 8px 32px rgba(0,0,0,0.14), 0 1px 0 rgba(255,255,255,0.04) inset"
+              ? "0 16px 48px color-mix(in srgb, var(--bg-deep) 62%, transparent), 0 1px 0 color-mix(in srgb, var(--on-surface) 7%, transparent) inset"
               : "none",
             transition:
               "background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease",
@@ -56,7 +52,7 @@ export function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--primary)/50"
+            className="flex items-center gap-2 rounded-lg focus-visible:outline-none"
           >
             <Logo />
           </Link>
@@ -80,7 +76,7 @@ export function Navbar() {
                     className="absolute inset-0 rounded-lg"
                     style={{
                       backgroundColor: scrolled
-                        ? "var(--glass-highlight)"
+                        ? "color-mix(in srgb, var(--on-surface) 10%, transparent)"
                         : "rgba(255,255,255,0.08)",
                     }}
                     transition={{ type: "spring", damping: 28, stiffness: 280 }}
@@ -100,10 +96,11 @@ export function Navbar() {
                          text-[0.84rem] font-medium text-white transition-all duration-300
                          hover:-translate-y-px active:scale-[0.98] sm:inline-flex"
               style={{
-                background: "var(--gradient-brand)",
+                background: "var(--on-surface)",
                 boxShadow: scrolled
-                  ? "var(--cta-shadow)"
-                  : "0 10px 24px color-mix(in srgb, var(--secondary) 18%, transparent)",
+                  ? "0 16px 36px color-mix(in srgb, var(--bg-deep) 42%, transparent)"
+                  : "0 10px 24px color-mix(in srgb, var(--bg-deep) 28%, transparent)",
+                color: "var(--bg)",
               }}
             >
               Start a project
@@ -118,10 +115,10 @@ export function Navbar() {
                          transition-colors duration-200"
               style={{
                 backgroundColor: scrolled
-                  ? "var(--glass-bg)"
+                  ? "color-mix(in srgb, var(--bg-deep) 72%, transparent)"
                   : "rgba(255,255,255,0.06)",
                 borderColor: scrolled
-                  ? "var(--glass-border)"
+                  ? "color-mix(in srgb, var(--on-surface) 14%, transparent)"
                   : "rgba(255,255,255,0.10)",
                 color: "var(--on-surface)",
               }}
@@ -148,8 +145,9 @@ export function Navbar() {
             className="fixed left-4 right-4 top-24 z-40 rounded-2xl p-5 shadow-2xl"
             style={{
               backgroundColor:
-                "color-mix(in srgb, var(--surface) 92%, transparent)",
-              border: "1px solid var(--glass-border)",
+                "color-mix(in srgb, var(--bg-deep) 94%, transparent)",
+              border:
+                "1px solid color-mix(in srgb, var(--on-surface) 12%, transparent)",
               backdropFilter: "blur(32px)",
             }}
           >
@@ -158,22 +156,20 @@ export function Navbar() {
                 <Link
                   key={href}
                   href={href}
+                  onClick={() => setMobileOpen(false)}
                   className="flex items-center justify-between px-4 py-3 rounded-xl label-caps transition-all duration-200"
                   style={{
                     color: isActive(href)
-                      ? "var(--primary)"
+                      ? "var(--on-surface)"
                       : "var(--on-surface-dim)",
                     backgroundColor: isActive(href)
-                      ? "var(--primary-container)"
+                      ? "color-mix(in srgb, var(--on-surface) 10%, transparent)"
                       : "transparent",
                   }}
                 >
                   {label}
                   {isActive(href) && (
-                    <span
-                      className="w-1.5 h-1.5 rounded-full"
-                      style={{ backgroundColor: "var(--primary)" }}
-                    />
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--on-surface)]" />
                   )}
                 </Link>
               ))}
@@ -184,9 +180,10 @@ export function Navbar() {
               >
                 <Link
                   href="/contact"
+                  onClick={() => setMobileOpen(false)}
                   className="flex min-h-[3.4rem] w-full items-center justify-center gap-2 rounded-xl px-5 py-4
-                             text-[0.98rem] font-medium text-white shadow-[var(--cta-shadow)] transition-all duration-200 hover:-translate-y-px"
-                  style={{ background: "var(--gradient-brand)" }}
+                             text-[0.98rem] font-medium transition-all duration-200 hover:-translate-y-px"
+                  style={{ background: "var(--on-surface)", color: "var(--bg)" }}
                 >
                   Start a project
                   <IconArrowRight size={18} stroke={2} />
