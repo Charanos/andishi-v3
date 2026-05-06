@@ -28,9 +28,9 @@ export function Navbar() {
 
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-50 px-4 pt-4 sm:px-6">
+      <header className="fixed left-0 right-0 top-0 z-50 px-2 pt-4 sm:px-6">
         <motion.nav
-          className="mx-auto flex h-16 sm:max-w-[90%] max-w-full items-center justify-between rounded-2xl px-5 lg:px-4"
+          className="mx-auto flex h-16 sm:max-w-[93%] max-w-full items-center justify-between rounded-2xl px-3 lg:px-4"
           animate={{
             backdropFilter: scrolled ? "blur(28px)" : "blur(0px)",
           }}
@@ -183,7 +183,10 @@ export function Navbar() {
                   onClick={() => setMobileOpen(false)}
                   className="flex min-h-[3.4rem] w-full items-center justify-center gap-2 rounded-xl px-5 py-4
                              text-[0.98rem] font-medium transition-all duration-200 hover:-translate-y-px"
-                  style={{ background: "var(--on-surface)", color: "var(--bg)" }}
+                  style={{
+                    background: "var(--on-surface)",
+                    color: "var(--bg)",
+                  }}
                 >
                   Start a project
                   <IconArrowRight size={18} stroke={2} />

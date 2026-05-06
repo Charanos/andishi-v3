@@ -202,15 +202,40 @@ export function ProjectShowcase() {
             alt=""
             fill
             priority={activeIndex === 0}
-            sizes="100vw"
-            className="object-cover"
+            sizes="(max-width: 767px) 100vw, 96vw"
+            className="scale-110 object-cover opacity-45 blur-2xl saturate-[0.85]"
+          />
+          <div className="absolute inset-y-[9%] right-[4%] left-[45%] hidden overflow-hidden rounded-[2rem] border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[color-mix(in_srgb,var(--surface)_22%,transparent)] shadow-[0_36px_120px_color-mix(in_srgb,var(--bg-deep)_58%,transparent)] backdrop-blur-xl md:block">
+            <Image
+              src={activeProject.image}
+              alt=""
+              fill
+              priority={activeIndex === 0}
+              sizes="55vw"
+              className="object-contain p-6 saturate-[1.04]"
+            />
+          </div>
+          <div className="absolute inset-x-5 top-28 h-[28rem] overflow-hidden rounded-[1.5rem] border border-[color-mix(in_srgb,var(--on-surface)_9%,transparent)] bg-[color-mix(in_srgb,var(--surface)_26%,transparent)] shadow-[0_30px_100px_color-mix(in_srgb,var(--bg-deep)_45%,transparent)] md:hidden">
+            <Image
+              src={activeProject.image}
+              alt=""
+              fill
+              priority={activeIndex === 0}
+              sizes="(max-width: 767px) calc(100vw - 2.5rem), 55vw"
+              className="object-contain p-4 opacity-78 saturate-[1.04]"
+            />
+            <span className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_46%,color-mix(in_srgb,var(--bg)_72%,transparent)_100%)]" />
+          </div>
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-[radial-gradient(circle_at_72%_42%,color-mix(in_srgb,var(--secondary)_6%,transparent),transparent_28rem)]"
           />
         </motion.div>
       </AnimatePresence>
 
       <div
         aria-hidden="true"
-        className="absolute inset-0 z-[1] bg-[linear-gradient(180deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_80%,transparent)_18%,color-mix(in_srgb,var(--bg)_50%,transparent)_58%,var(--bg)_100%),linear-gradient(105deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_96%,transparent)_34%,color-mix(in_srgb,var(--bg)_48%,transparent)_62%,color-mix(in_srgb,var(--bg)_30%,transparent)_100%)] md:bg-[linear-gradient(105deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_96%,transparent)_34%,color-mix(in_srgb,var(--bg)_46%,transparent)_62%,color-mix(in_srgb,var(--bg)_24%,transparent)_100%),linear-gradient(to_top,var(--bg)_0%,transparent_42%),linear-gradient(to_bottom,var(--bg)_0%,transparent_22%)]"
+        className="absolute inset-0 z-[1] bg-[linear-gradient(180deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_70%,transparent)_18%,color-mix(in_srgb,var(--bg)_38%,transparent)_58%,var(--bg)_100%),linear-gradient(105deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_92%,transparent)_34%,color-mix(in_srgb,var(--bg)_36%,transparent)_62%,color-mix(in_srgb,var(--bg)_18%,transparent)_100%)] md:bg-[linear-gradient(105deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_94%,transparent)_34%,color-mix(in_srgb,var(--bg)_34%,transparent)_62%,color-mix(in_srgb,var(--bg)_14%,transparent)_100%),linear-gradient(to_top,var(--bg)_0%,transparent_48%),linear-gradient(to_bottom,var(--bg)_0%,transparent_18%)]"
       />
       <motion.div
         aria-hidden="true"
@@ -225,7 +250,7 @@ export function ProjectShowcase() {
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 z-[3] bg-[radial-gradient(circle_at_16%_22%,color-mix(in_srgb,var(--secondary)_12%,transparent),transparent_20rem),radial-gradient(circle_at_46%_78%,color-mix(in_srgb,var(--primary)_12%,transparent),transparent_24rem)]"
+        className="absolute inset-0 z-[3] bg-[radial-gradient(circle_at_16%_22%,color-mix(in_srgb,var(--secondary)_7%,transparent),transparent_20rem),radial-gradient(circle_at_46%_78%,color-mix(in_srgb,var(--primary)_6%,transparent),transparent_24rem)]"
       />
 
       {!prefersReducedMotion && (
@@ -418,8 +443,17 @@ export function ProjectShowcase() {
                         alt=""
                         fill
                         sizes="33vw"
-                        className="object-cover opacity-30"
+                        className="scale-110 object-cover opacity-20 blur-sm saturate-[0.7]"
                       />
+                      <span className="absolute inset-2 overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] bg-[color-mix(in_srgb,var(--surface)_20%,transparent)]">
+                        <Image
+                          src={project.image}
+                          alt=""
+                          fill
+                          sizes="33vw"
+                          className="object-contain p-2 opacity-62 saturate-[1.04]"
+                        />
+                      </span>
                       <span className="absolute inset-0 bg-[linear-gradient(to_top,var(--bg),color-mix(in_srgb,var(--bg)_42%,transparent))]" />
                       <span className="relative z-[1] block font-mono text-[0.68rem] text-[var(--secondary)]">
                         {padProjectNumber(index)}
@@ -461,9 +495,18 @@ export function ProjectShowcase() {
                   alt=""
                   fill
                   sizes="224px"
-                  className="object-cover brightness-[0.44] saturate-[0.68] transition-transform duration-700 group-hover/sliver:scale-105"
+                  className="scale-110 object-cover brightness-[0.34] blur-sm saturate-[0.6] transition-transform duration-700 group-hover/sliver:scale-125"
                 />
-                <span className="absolute inset-0 z-[1] bg-[linear-gradient(to_right,var(--bg)_0%,transparent_46%),linear-gradient(to_top,color-mix(in_srgb,var(--bg)_88%,transparent)_0%,transparent_56%)]" />
+                <span className="absolute inset-3 z-[1] overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--on-surface)_9%,transparent)] bg-[color-mix(in_srgb,var(--surface)_18%,transparent)] opacity-60 transition-opacity duration-500 group-hover/sliver:opacity-80">
+                  <Image
+                    src={project.image}
+                    alt=""
+                    fill
+                    sizes="224px"
+                  className="object-contain p-2 saturate-[0.92]"
+                  />
+                </span>
+                <span className="absolute inset-0 z-[1] bg-[linear-gradient(to_right,var(--bg)_0%,transparent_52%),linear-gradient(to_top,color-mix(in_srgb,var(--bg)_76%,transparent)_0%,transparent_62%)]" />
                 <span
                   className="absolute bottom-6 left-1/2 z-[3] block origin-center translate-x-[-50%] rotate-90 whitespace-nowrap text-[0.62rem] font-medium uppercase tracking-[0.14em] text-[color-mix(in_srgb,var(--on-surface-dim)_54%,transparent)] transition-opacity duration-300"
                   style={{ opacity: isActive ? 0 : 1 }}

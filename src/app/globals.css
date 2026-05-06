@@ -149,13 +149,13 @@ body {
 
 .blob-break-asset {
   position: absolute;
-  inset: 0;
+  left: 61%;
+  top: 5rem;
   display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  transform: scale(1.035);
+  width: clamp(980px, 76vw, 1080px);
+  height: auto;
+  max-width: none;
+  transform: translateX(-50%);
 }
 
 .blob-break-asset--dark {
@@ -168,6 +168,31 @@ body {
 
 .dark .blob-break-asset--dark {
   display: block;
+}
+
+.blog-ticker-track {
+  animation: blog-ticker-scroll 32s linear infinite;
+}
+
+.blog-ticker-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes blog-ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 899px) {
+  .blob-break-asset {
+    left: 58%;
+    top: 7rem;
+    width: 145vw;
+  }
 }
 
 ::selection {

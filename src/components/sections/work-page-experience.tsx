@@ -11,6 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { workFilters, workProjects, type WorkProject } from "@/content/work";
+import { CustomCursorRegion } from "@/components/ui/custom-cursor-region";
 import { cosmicSpring } from "@/lib/motion";
 
 type FilterValue = (typeof workFilters)[number]["value"];
@@ -97,15 +98,16 @@ export function WorkPageExperience() {
 
   return (
     <>
-      <main className="relative isolate overflow-hidden bg-[var(--bg)]">
-        <PatternTexture className="z-0" opacity={0.1} />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--surface-high)_8%,transparent),transparent_22rem),linear-gradient(90deg,color-mix(in_srgb,var(--bg)_88%,transparent),transparent_38%,color-mix(in_srgb,var(--bg)_72%,transparent))]"
-        />
+      <main className="relative isolate overflow-visible bg-[var(--bg)]">
+        <CustomCursorRegion className="relative isolate">
+          <PatternTexture className="z-0" opacity={0.1} />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--surface-high)_8%,transparent),transparent_22rem),linear-gradient(90deg,color-mix(in_srgb,var(--bg)_88%,transparent),transparent_38%,color-mix(in_srgb,var(--bg)_72%,transparent))]"
+          />
 
-        <div className="relative z-[1] mx-auto flex w-full max-w-[96rem] gap-0 px-5 pb-24 pt-32 sm:px-8 lg:px-10 lg:pt-36">
-          <aside className="sticky top-24 hidden h-[calc(100svh-7rem)] w-56 shrink-0 flex-col justify-between self-start border-r border-[var(--glass-border)] pr-5 xl:flex">
+          <div className="relative z-[1] mx-auto flex w-full max-w-[96rem] items-start gap-0 px-5 pb-24 pt-32 sm:px-8 lg:px-10 lg:pt-36">
+          <aside className="sticky top-28 hidden max-h-[calc(100svh-8rem)] w-56 shrink-0 flex-col justify-between self-start overflow-y-auto border-r border-[var(--glass-border)] pr-5 xl:flex">
             <div>
               <p className="label-caps mb-4 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
                 Filter by sector
@@ -286,7 +288,8 @@ export function WorkPageExperience() {
               </div>
             </section>
           </div>
-        </div>
+          </div>
+        </CustomCursorRegion>
       </main>
 
       <CaseStudyDrawer

@@ -1,4 +1,8 @@
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
+import type {
+  AnchorHTMLAttributes,
+  ButtonHTMLAttributes,
+  ReactNode,
+} from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -29,15 +33,25 @@ const variants = {
 };
 
 const sizes = {
-  sm: "min-h-11 px-5 py-2.5 text-[0.92rem]",
-  md: "min-h-[3.35rem] px-6 py-3.5 text-[0.98rem]",
+  sm: "min-h-11 px-5 py-1.5 text-[0.92rem]",
+  md: "min-h-[2.35rem] px-6 py-2.5 text-[0.98rem]",
 };
 
 const base =
   "inline-flex items-center justify-center gap-2 rounded-full border backdrop-blur-xl transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)] disabled:pointer-events-none disabled:opacity-50";
 
-export function Button({ className, variant = "glass", size = "md", ...props }: ButtonProps) {
-  return <button className={cn(base, variants[variant], sizes[size], className)} {...props} />;
+export function Button({
+  className,
+  variant = "glass",
+  size = "md",
+  ...props
+}: ButtonProps) {
+  return (
+    <button
+      className={cn(base, variants[variant], sizes[size], className)}
+      {...props}
+    />
+  );
 }
 
 export function LinkButton({
@@ -49,7 +63,11 @@ export function LinkButton({
   ...props
 }: LinkButtonProps) {
   return (
-    <Link href={href} className={cn(base, variants[variant], sizes[size], className)} {...props}>
+    <Link
+      href={href}
+      className={cn(base, variants[variant], sizes[size], className)}
+      {...props}
+    >
       {children}
     </Link>
   );

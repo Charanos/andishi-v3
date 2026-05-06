@@ -12,11 +12,13 @@
 > **Codebase reality:** v2 audit (V3_CURRENT_STATE_AUDIT.md) is the ground truth for
 > what exists, what to preserve, and what to surgically replace.
 
-> **Current implementation status, May 5, 2026:** the v3 visual foundation is now
-> established in code. The homepage hero, brand/client divider, and "The real
-> situation" content have been consolidated into one seamless section in
-> `src/components/sections/hero-section.tsx`. This section is the current quality
-> bar for the remaining homepage sections and supporting landing pages.
+> **Current implementation status, May 7, 2026:** foundation building is complete.
+> The homepage now includes the premium hero, project showcase, artifact-led
+> process section, full-width visual interlude, Why Andishi decision cockpit,
+> editorial founder section, blog/FAQ/newsletter block, and masked final CTA.
+> The work page has also been rebuilt with filters, sticky desktop sidebar,
+> project grid, and case-study drawer. These shipped sections are the quality bar
+> for the remaining public pages and product surfaces.
 
 ---
 

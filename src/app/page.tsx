@@ -8,10 +8,12 @@ import {
 } from "@tabler/icons-react";
 import Image from "next/image";
 import { comparisonRows, processSteps } from "@/content/landing";
-import { FAQSection } from "@/components/sections/faq";
 import { LinkButton } from "@/components/ui/button";
+import { CustomCursorRegion } from "@/components/ui/custom-cursor-region";
+import { BlogAndFaqNewsletter } from "@/components/sections/blog-faq-newsletter";
 import { HeroSection } from "@/components/sections/hero-section";
 import { ProjectShowcase } from "@/components/sections/project-showcase";
+import { WhyAndishiSection } from "@/components/sections/why-andishi-section";
 
 const faqSchema = {
   "@context": "https://schema.org",
@@ -51,9 +53,9 @@ export default function Home() {
         <ProjectShowcase />
         <Process />
         <IllustrationBreak />
-        <Comparison />
+        <WhyAndishiSection />
         <Founder />
-        <FAQSection />
+        <BlogAndFaqNewsletter />
         <FinalCTA />
         <script
           type="application/ld+json"
@@ -742,18 +744,18 @@ function Founder() {
 
             <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-[color-mix(in_srgb,var(--on-surface)_13%,transparent)] bg-[color-mix(in_srgb,var(--surface)_34%,transparent)] shadow-[0_28px_90px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)]">
               <Image
-                src="/images/dev1.jpg"
+                src="/images/ian.jpg"
                 alt="Andishi founder"
                 fill
                 sizes="(min-width: 1024px) 28rem, 88vw"
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_46%,color-mix(in_srgb,var(--bg-deep)_84%,transparent)_100%)]" />
-              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
-                <p className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-white/70">
-                  Founder / Product lead
+              <div className="absolute inset-x-0 bottom-8 p-5 sm:p-6">
+                <p className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-[var(--on-surface-dim)]">
+                  CEO / Founder
                 </p>
-                <p className="mt-2 text-[1.3rem] font-medium leading-tight text-white">
+                <p className="mt-2 text-[1.3rem] font-medium leading-tight text-[var(--on-surface)]">
                   Built close to the brief, the business, and the launch.
                 </p>
               </div>
@@ -777,20 +779,20 @@ function Founder() {
         </div>
 
         <div className="order-1 lg:order-2">
-          <p className="label-caps mb-5 flex items-center gap-3 text-[var(--tertiary)]">
-            <span className="h-px w-7 bg-[var(--tertiary)]" />
+          <p className="label-caps mb-5 flex items-center gap-3 text-(--tertiary)">
+            <span className="h-px w-7 bg-(--tertiary)" />
             Founder
           </p>
-          <h2 className="max-w-[13ch] text-[clamp(2.45rem,7vw,5.2rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
+          <h2 className="max-w-[13ch] text-[clamp(2.45rem,7vw,5.2rem)] font-normal leading-[0.94] tracking-normal text-foreground">
             Built in Nairobi. Accountable from scope to launch.
           </h2>
-          <p className="body-md mt-6 max-w-2xl text-[var(--on-surface-dim)]">
+          <p className="body-md mt-6 max-w-2xl text-(--on-surface-dim)">
             Andishi exists for businesses with real ambition who need digital
             partners that understand the market, the deadline, and the stakes of
             shipping well.
           </p>
 
-          <blockquote className="mt-8 border-l border-[color-mix(in_srgb,var(--secondary)_38%,transparent)] pl-5 text-[clamp(1.15rem,2.2vw,1.55rem)] font-normal leading-snug text-[var(--on-surface)]">
+          <blockquote className="mt-8 border-l border-[color-mix(in_srgb,var(--secondary)_38%,transparent)] pl-5 text-[clamp(1.15rem,2.2vw,1.55rem)] font-normal leading-snug text-foreground">
             “The job is not to make software feel expensive. The job is to make
             the business move with less friction.”
           </blockquote>
@@ -820,15 +822,52 @@ function FinalCTA() {
   return (
     <section
       id="contact"
-      className="relative px-6 py-24 text-center sm:px-8 lg:py-36"
+      className="relative isolate overflow-hidden bg-[var(--bg-deep)] px-6 py-20 text-center sm:px-8 lg:py-36"
     >
-      <div className="relative mx-auto max-w-xl">
+      <CustomCursorRegion className="-mx-6 -my-20 px-6 py-20 sm:-mx-8 sm:px-8 lg:-my-36 lg:py-36">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 opacity-80"
+      >
+        <img
+          src="/final-cta.svg"
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="absolute left-1/2 top-1/2 h-auto w-[min(1580px,150vw)] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.56] dark:opacity-[0.5]"
+          style={{
+            maskImage:
+              "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
+          }}
+        />
+      </div>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_68%,transparent)_22%,color-mix(in_srgb,var(--bg)_66%,transparent)_78%,var(--bg)_100%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 left-0 z-0 w-[28%] bg-[linear-gradient(to_right,var(--bg)_0%,transparent_100%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 right-0 z-0 w-[28%] bg-[linear-gradient(to_left,var(--bg)_0%,transparent_100%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 opacity-[0.06]"
+        style={processTextureStyle}
+      />
+      <div className="relative z-[1] mx-auto max-w-7xl">
+        <div className="mx-auto max-w-3xl rounded-[1.75rem] border border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] bg-[color-mix(in_srgb,var(--surface)_58%,transparent)] px-5 py-10 shadow-[0_30px_110px_color-mix(in_srgb,var(--bg-deep)_38%,transparent)] backdrop-blur-2xl sm:px-10 sm:py-12 lg:px-14 lg:py-14">
         <p className="label-caps mb-4" style={{ color: "var(--secondary)" }}>
           Start here
         </p>
         <h2
           style={{
-            fontSize: "clamp(2rem, 4.5vw, 3.5rem)",
+            fontSize: "clamp(2rem, 3.5vw, 3.5rem)",
             fontWeight: 300,
             lineHeight: 1.1,
             letterSpacing: "-0.03em",
@@ -857,9 +896,11 @@ function FinalCTA() {
           className="label-caps mt-6"
           style={{ color: "var(--on-surface-dim)", opacity: 0.5 }}
         >
-          No pitch · No retainer required · Response within 24 hours
+          No pitch / No retainer required / Response within 24 hours
         </p>
+        </div>
       </div>
+      </CustomCursorRegion>
     </section>
   );
 }

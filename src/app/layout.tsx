@@ -67,6 +67,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={`${outfit.variable} ${jetBrains.variable} h-full antialiased`}
     >

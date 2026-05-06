@@ -1,6 +1,6 @@
 # Andishi v3: Design & Theme Standards
 
-This guide captures the technical and aesthetic protocols required to maintain the current Andishi v3 visual system. The foundation pass has established the hero, brand divider, and first adjacent content block as the quality bar for the rest of the site.
+This guide captures the technical and aesthetic protocols required to maintain the current Andishi v3 visual system. The foundation pass has established the homepage landing experience and work page as the quality bar for the rest of the site.
 
 ---
 
@@ -17,6 +17,9 @@ This guide captures the technical and aesthetic protocols required to maintain t
 - The active source/deployment remote is GitHub: `https://github.com/Charanos/andishi-v3.git`.
 - Homepage section quality now includes the interactive project showcase, process artifacts, full-width visual interlude, Why Andishi decision cockpit, and editorial founder section.
 - Work page quality now includes the sticky desktop filter rail, project-card grid, case-study drawer, and patterned bottom CTA.
+- The bottom landing experience now uses a reading-first blog grid, indexed FAQ accordion, terminal newsletter signup, and masked final CTA artwork.
+- The project-showcase custom cursor pattern is reusable via `src/components/ui/custom-cursor-region.tsx` and should be reserved for immersive showcase/decision/CTA surfaces.
+- Foundation building is complete as of May 7, 2026. Future section work should extend these patterns instead of creating a new visual language.
 
 ---
 
@@ -123,6 +126,16 @@ Use texture to break monotony instead of color blobs:
 - Avoid regular grid patterns.
 - Avoid large radial color blobs except for extremely subtle depth where no pattern will work.
 - Full-width visual sections may use theme-swapped imagery through explicit light/dark layers or CSS tokens.
+
+## 4.5 Reading Sections
+
+Editorial and FAQ sections should prioritize legibility over visual density:
+
+- Body copy should generally sit around `0.92rem` to `0.98rem` with `1.75`+ line-height.
+- Article cards may use stronger imagery, but supporting text must not be cramped.
+- FAQ answers should have enough open height for full copy after typography changes.
+- Newsletter or terminal panels can use a stable dark command surface in both themes when it clarifies the metaphor.
+- On mobile, inputs and action rows should stack rather than squeeze text.
 
 ---
 
