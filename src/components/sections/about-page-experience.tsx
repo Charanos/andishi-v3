@@ -44,6 +44,7 @@ const contactLinks = [
 
 const storySections = [
   { id: "origin", label: "Origin" },
+  { id: "founder", label: "Founder" },
   { id: "timeline", label: "Timeline" },
   { id: "values", label: "Values" },
   { id: "status", label: "Status" },
@@ -336,6 +337,7 @@ export function AboutPageExperience() {
           </div>
 
           <Story />
+          <FounderContext />
           <Timeline />
           <Values />
           <StudioStatus />
@@ -531,6 +533,92 @@ function Story() {
           </p>
         </div>
       </motion.div>
+    </section>
+  );
+}
+
+function FounderContext() {
+  return (
+    <section
+      id="founder"
+      className="scroll-mt-32 border-b border-[var(--glass-border)] py-16"
+    >
+      <div className="grid gap-8 lg:grid-cols-[0.38fr_1fr] lg:items-start">
+        <div className="lg:sticky lg:top-28 lg:self-start">
+          <p className="label-caps mb-4 text-[var(--secondary)]">
+            Founder context
+          </p>
+          <h2 className="max-w-[12ch] text-[clamp(2rem,6vw,3.6rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)]">
+            Leadership without bottlenecking the work.
+          </h2>
+        </div>
+
+        <motion.article
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-70px" }}
+          transition={cosmicSpring}
+          className="relative overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-5 backdrop-blur-2xl sm:p-6"
+        >
+          <PlusTexture opacity={0.08} />
+          <div className="relative grid gap-6 md:grid-cols-[13rem_1fr] md:items-center">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[1.2rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_42%,transparent)]">
+              <Image
+                src="/images/ian.jpg"
+                alt="Ian Mwangi, founder of Andishi"
+                fill
+                sizes="(min-width: 1024px) 13rem, 70vw"
+                className="object-cover brightness-[0.86] saturate-[0.92]"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_42%,color-mix(in_srgb,var(--bg-deep)_78%,transparent)_100%)]" />
+            </div>
+
+            <div>
+              <p className="label-caps mb-4 text-[var(--primary)]">
+                Ian Mwangi / Founder
+              </p>
+              <div className="space-y-4 text-[0.94rem] leading-[1.8] text-[var(--on-surface-dim)]">
+                <p>
+                  Ian started Andishi to close the gap between businesses that
+                  need dependable software and the fragmented developer market
+                  they usually have to navigate alone.
+                </p>
+                <p>
+                  His role is to protect the standard: scope discipline,
+                  technical judgment, client communication, and choosing the
+                  right mix of in-house and contract talent for each build.
+                </p>
+                <p>
+                  Andishi is intentionally not designed around one person doing
+                  every task. The founder sets direction and quality control;
+                  the delivery system brings in the people best suited to ship
+                  the work.
+                </p>
+              </div>
+
+              <div className="mt-6 grid gap-2 sm:grid-cols-3">
+                {[
+                  ["Direction", "Scope and product judgment"],
+                  ["Quality", "Engineering review"],
+                  ["Delivery", "Team assembly and cadence"],
+                ].map(([label, detail]) => (
+                  <div
+                    key={label}
+                    className="rounded-xl border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_38%,transparent)] px-4 py-3"
+                  >
+                    <p className="text-[0.82rem] font-medium text-[var(--on-surface)]">
+                      {label}
+                    </p>
+                    <p className="mt-1 text-[0.72rem] leading-snug text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)]">
+                      {detail}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.article>
+      </div>
     </section>
   );
 }
