@@ -178,7 +178,24 @@ body {
   animation-play-state: paused;
 }
 
+.services-ticker-track {
+  animation: services-ticker-scroll 36s linear infinite;
+}
+
+.services-ticker-track:hover {
+  animation-play-state: paused;
+}
+
 @keyframes blog-ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes services-ticker-scroll {
   from {
     transform: translateX(0);
   }

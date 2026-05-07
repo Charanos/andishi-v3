@@ -4,6 +4,7 @@ import {
   IconArrowRight,
   IconCheck,
   IconExternalLink,
+  IconPlus,
   IconSend,
 } from "@tabler/icons-react";
 import Image from "next/image";
@@ -344,22 +345,21 @@ function FaqNewsletterSection() {
                       {item.q}
                     </span>
                     <span
-                      className="relative h-6 w-6 shrink-0 rounded-full border border-[var(--glass-border)]"
+                      className="grid h-9 w-9 shrink-0 place-items-center rounded-full border transition-all duration-300"
                       style={{
+                        borderColor: isOpen
+                          ? "color-mix(in srgb, var(--secondary) 28%, transparent)"
+                          : "var(--glass-border)",
                         backgroundColor: isOpen
                           ? "color-mix(in srgb, var(--secondary) 10%, transparent)"
                           : "var(--glass-bg)",
+                        color: isOpen
+                          ? "var(--secondary)"
+                          : "color-mix(in srgb, var(--on-surface-dim) 62%, transparent)",
+                        transform: isOpen ? "rotate(45deg)" : "rotate(0deg)",
                       }}
                     >
-                      <span className="absolute left-1/2 top-1/2 h-px w-2.5 -translate-x-1/2 -translate-y-1/2 bg-current text-[var(--on-surface-dim)]" />
-                      <span
-                        className="absolute left-1/2 top-1/2 h-2.5 w-px -translate-x-1/2 -translate-y-1/2 bg-current text-[var(--on-surface-dim)] transition-transform duration-300"
-                        style={{
-                          transform: isOpen
-                            ? "translate(-50%, -50%) scaleY(0)"
-                            : "translate(-50%, -50%) scaleY(1)",
-                        }}
-                      />
+                      <IconPlus size={15} stroke={1.7} />
                     </span>
                   </button>
                   <div
