@@ -13,12 +13,14 @@ This guide captures the technical and aesthetic protocols required to maintain t
 - Never use sparkle/star decorative icons. Tabler icons are the only icon family for UI.
 - Numerals, stats, currency, percentages, timelines, and IDs use JetBrains Mono via `font-mono` or the `.mono-*` utilities.
 - Avoid over-reliance on purple. Purple/violet is the text and depth language; cyan is the signal/CTA/data accent; green is success/status only.
-- Navbar and footer are shared from `src/app/layout.tsx`. Public pages must not mount duplicate nav/footer instances.
+- Navbar and footer are shared through `src/components/layout/site-chrome.tsx`. Public pages must not mount duplicate nav/footer instances. Full-flow utility pages such as `/start-project` and `/login` hide the footer to keep the task surface focused.
 - The active source/deployment remote is GitHub: `https://github.com/Charanos/andishi-v3.git`.
 - Homepage section quality now includes the interactive project showcase, process artifacts, full-width visual interlude, Why Andishi decision cockpit, and editorial founder section.
 - Work page quality now includes the sticky desktop filter rail, project-card grid, case-study drawer, and patterned bottom CTA.
 - Services page quality now includes the wide sticky rail, animated capability ticker, editorial service rows, detail artifacts, pricing band, and the shared bottom CTA artwork treatment.
 - About page quality now positions Andishi as a Nairobi-led software delivery company, not a single-founder portfolio. Copy should emphasize in-house and contract developer capacity, one accountable delivery system, and local plus international client reach.
+- Contact page quality now uses a split project-brief experience with validated client-side steps, direct contact cards, Nairobi-led studio context, plus-sign texture, and no regular grid-pattern background.
+- Start Project page quality now uses the landing IllustrationBreak artwork (`/light-blob.svg` and `/dark-blob.svg`) as internal background art for the onboarding brief flow. The main nav "Start a project" CTA should route to `/start-project`; general contact and scoping CTAs may still route to `/contact`.
 - The bottom landing experience now uses a reading-first blog grid, indexed FAQ accordion, terminal newsletter signup, and masked final CTA artwork.
 - Inner-page bottom CTAs should reuse `src/components/ui/final-cta-artwork.tsx` so work, services, and about pages visually connect to the landing final CTA while keeping the artwork inside the card.
 - The project-showcase custom cursor pattern is reusable via `src/components/ui/custom-cursor-region.tsx` and should be reserved for immersive showcase/decision/CTA surfaces.
