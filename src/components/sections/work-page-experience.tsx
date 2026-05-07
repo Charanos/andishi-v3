@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { workFilters, workProjects, type WorkProject } from "@/content/work";
 import { CustomCursorRegion } from "@/components/ui/custom-cursor-region";
+import { FinalCtaArtwork } from "@/components/ui/final-cta-artwork";
 import { cosmicSpring } from "@/lib/motion";
 
 type FilterValue = (typeof workFilters)[number]["value"];
@@ -245,8 +246,9 @@ export function WorkPageExperience() {
               ))}
             </motion.div>
 
-            <section className="relative mt-20 overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] px-6 py-12 text-center backdrop-blur-2xl sm:px-10 lg:mt-24 lg:px-16 lg:py-16">
-              <PatternTexture opacity={0.18} />
+            <section className="relative mt-20 overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_42%,transparent)] px-6 py-12 text-center shadow-[0_24px_80px_color-mix(in_srgb,var(--bg-deep)_24%,transparent)] backdrop-blur-2xl sm:px-10 lg:mt-24 lg:px-16 lg:py-16">
+              <FinalCtaArtwork />
+              <PatternTexture opacity={0.12} />
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(to_right,transparent,color-mix(in_srgb,var(--on-surface)_22%,transparent),transparent)]"
@@ -259,7 +261,7 @@ export function WorkPageExperience() {
                 aria-hidden="true"
                 className="pointer-events-none absolute -right-10 top-8 h-32 w-52 rotate-[8deg] rounded-[2rem] border border-[color-mix(in_srgb,var(--secondary)_16%,transparent)] opacity-35"
               />
-              <div className="relative mx-auto max-w-2xl">
+              <div className="relative z-[1] mx-auto max-w-2xl">
                 <p className="label-caps mb-4 text-[var(--secondary)]">
                   Ready to build?
                 </p>

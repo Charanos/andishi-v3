@@ -17,7 +17,10 @@ This guide captures the technical and aesthetic protocols required to maintain t
 - The active source/deployment remote is GitHub: `https://github.com/Charanos/andishi-v3.git`.
 - Homepage section quality now includes the interactive project showcase, process artifacts, full-width visual interlude, Why Andishi decision cockpit, and editorial founder section.
 - Work page quality now includes the sticky desktop filter rail, project-card grid, case-study drawer, and patterned bottom CTA.
+- Services page quality now includes the wide sticky rail, animated capability ticker, editorial service rows, detail artifacts, pricing band, and the shared bottom CTA artwork treatment.
+- About page quality now positions Andishi as a Nairobi-led software delivery company, not a single-founder portfolio. Copy should emphasize in-house and contract developer capacity, one accountable delivery system, and local plus international client reach.
 - The bottom landing experience now uses a reading-first blog grid, indexed FAQ accordion, terminal newsletter signup, and masked final CTA artwork.
+- Inner-page bottom CTAs should reuse `src/components/ui/final-cta-artwork.tsx` so work, services, and about pages visually connect to the landing final CTA while keeping the artwork inside the card.
 - The project-showcase custom cursor pattern is reusable via `src/components/ui/custom-cursor-region.tsx` and should be reserved for immersive showcase/decision/CTA surfaces.
 - Foundation building is complete as of May 7, 2026. Future section work should extend these patterns instead of creating a new visual language.
 
@@ -98,6 +101,8 @@ Primary CTAs now use a sleeker neutral treatment aligned with the navbar:
 - Minimum height should stay compact but touch-safe; use shared button variants where possible.
 - Hover: lift by `-translate-y-px`, preserve elegance with shadow changes instead of opacity-only feedback.
 - Avoid purple CTA fills unless the component explicitly needs a brand-gradient moment.
+- Public inner-page final CTA cards should include `FinalCtaArtwork` as an internal decorative layer, then veil/texture/content above it. The image should support the card composition, not become a full-page background.
+- Keep CTA card copy short and action-oriented. Use one primary action plus one restrained secondary action when needed.
 
 ---
 
@@ -126,6 +131,7 @@ Use texture to break monotony instead of color blobs:
 - Avoid regular grid patterns.
 - Avoid large radial color blobs except for extremely subtle depth where no pattern will work.
 - Full-width visual sections may use theme-swapped imagery through explicit light/dark layers or CSS tokens.
+- About page backgrounds should use plus-sign texture, not regular line grids.
 
 ## 4.5 Reading Sections
 
