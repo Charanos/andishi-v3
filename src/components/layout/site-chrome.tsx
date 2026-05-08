@@ -6,11 +6,15 @@ import { Navbar } from "@/components/layout/navbar";
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const hideFooter = pathname === "/start-project" || pathname === "/login";
+  const isAppRoute =
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/dev");
+  const hideFooter = pathname === "/start-project" || pathname === "/login" || isAppRoute;
 
   return (
     <>
-      <Navbar />
+      {!isAppRoute && <Navbar />}
       {children}
       {!hideFooter && <Footer />}
     </>

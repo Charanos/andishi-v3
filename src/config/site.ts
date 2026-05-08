@@ -5,10 +5,10 @@ export const siteConfig = {
   description:
     "Andishi places vetted senior African software engineers with global startups that need to extend their teams fast.",
   nav: [
-    { label: "Engineers",   href: "/services"   },
-    { label: "Case Studies", href: "/work"       },
-    { label: "About",       href: "/about"       },
-    { label: "Contact",     href: "/contact"     },
-    { label: "Login",       href: "/login"       },
+    { label: "Engineers", href: "/engineers" },
+    { label: "How to Hire", href: "/hire" },
+    { label: "Skills", href: "/skills" },
+    { label: "Case Studies", href: "/work" },
+    { label: "Login", href: "/login" },
   ],
 };

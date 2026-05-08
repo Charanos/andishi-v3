@@ -8,7 +8,7 @@ import {
 } from "@tabler/icons-react";
 import Image from "next/image";
 import Script from "next/script";
-import { comparisonRows, processSteps } from "@/content/landing";
+import { processSteps } from "@/content/landing";
 import { LinkButton } from "@/components/ui/button";
 import { CustomCursorRegion } from "@/components/ui/custom-cursor-region";
 import { BlogAndFaqNewsletter } from "@/components/sections/blog-faq-newsletter";
@@ -418,214 +418,6 @@ function Process() {
   );
 }
 
-function Comparison() {
-  const decisionSignals = [
-    ["01", "Scope", "One call"],
-    ["02", "Lead", "Founder-direct"],
-    ["03", "Launch", "5 business days"],
-  ];
-
-  const decisionPanels = [
-    ["Velocity", "48h", "Scope clarity"],
-    ["Context", "NBO", "Built for this market"],
-    ["Support", "30d", "Included after launch"],
-  ];
-
-  return (
-    <section
-      id="comparison"
-      className="relative isolate overflow-hidden bg-[color-mix(in_srgb,var(--bg-deep)_46%,var(--bg))] px-5 py-24 sm:px-8 lg:py-32"
-    >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 opacity-[0.1]"
-        style={processTextureStyle}
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-px bg-[linear-gradient(to_right,transparent,color-mix(in_srgb,var(--on-surface)_16%,transparent),transparent)]"
-      />
-
-      <div className="relative z-[1] mx-auto max-w-7xl">
-        <div className="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-end">
-          <div className="order-2 lg:order-1">
-            <div className="relative overflow-hidden rounded-[1.6rem] border border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] bg-[color-mix(in_srgb,var(--surface)_40%,transparent)] shadow-[0_30px_100px_color-mix(in_srgb,var(--bg-deep)_34%,transparent)] backdrop-blur-2xl">
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 opacity-[0.09]"
-                style={processTextureStyle}
-              />
-              <div className="relative flex h-10 items-center gap-2 border-b border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[color-mix(in_srgb,var(--surface-high)_48%,transparent)] px-4">
-                <span className="h-2 w-2 rounded-full bg-[#ff6b57]" />
-                <span className="h-2 w-2 rounded-full bg-[#ffbd2e]" />
-                <span className="h-2 w-2 rounded-full bg-[#27c93f]" />
-                <span className="ml-auto font-mono text-[0.62rem] text-[color-mix(in_srgb,var(--on-surface)_42%,transparent)]">
-                  decision.os
-                </span>
-              </div>
-
-              <div className="relative grid gap-4 p-4 sm:p-5">
-                <div className="grid gap-3 sm:grid-cols-3">
-                  {decisionSignals.map(([num, label, value]) => (
-                    <div
-                      key={label}
-                      className="rounded-[1.1rem] border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_30%,transparent)] p-4"
-                    >
-                      <p className="font-mono text-[0.68rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface)_46%,transparent)]">
-                        {num}
-                      </p>
-                      <p className="label-caps mt-5 text-[var(--secondary)]">
-                        {label}
-                      </p>
-                      <p className="mt-2 text-[0.95rem] leading-snug text-[var(--on-surface)]">
-                        {value}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="grid gap-3 lg:grid-cols-[0.9fr_1.1fr]">
-                  <div className="rounded-[1.1rem] border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_28%,transparent)] p-4">
-                    <p className="label-caps text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)]">
-                      Operating bias
-                    </p>
-                    <div className="mt-4 space-y-3">
-                      {decisionPanels.map(([label, value, caption]) => (
-                        <div
-                          key={label}
-                          className="flex items-center justify-between gap-4 border-b border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] pb-3 last:border-b-0 last:pb-0"
-                        >
-                          <div>
-                            <p className="text-[0.82rem] text-[var(--on-surface)]">
-                              {label}
-                            </p>
-                            <p className="mt-1 text-[0.68rem] text-[var(--on-surface-dim)]">
-                              {caption}
-                            </p>
-                          </div>
-                          <p className="font-mono text-[1.2rem] tracking-tight text-[var(--secondary)]">
-                            {value}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="overflow-hidden rounded-[1.1rem] border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[#171223]">
-                    <div className="flex h-8 items-center gap-2 border-b border-white/8 bg-[#211832] px-3">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#ff6b57]" />
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#ffbd2e]" />
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#27c93f]" />
-                      <span className="ml-auto font-mono text-[0.56rem] text-white/42">
-                        route.check
-                      </span>
-                    </div>
-                    <div className="space-y-2.5 p-4 font-mono text-[0.7rem] leading-relaxed text-white/58">
-                      <p>
-                        <span className="text-[var(--secondary)]">→</span>{" "}
-                        compare marketplace agency andishi
-                      </p>
-                      <p className="text-white/32">Scanning delivery risk...</p>
-                      <p className="text-[var(--tertiary)]">
-                        ✓ fastest path: vetted senior engineer
-                      </p>
-                      <p className="text-[var(--tertiary)]">
-                        ✓ retained context: Africa-sourced senior talent
-                      </p>
-                      <p className="text-[var(--secondary)]">
-                        result: ship with Andishi
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="order-1 text-left lg:order-2 lg:text-right">
-            <p className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)] lg:justify-end">
-              <span className="h-px w-7 bg-[var(--secondary)]" />
-              Why Andishi
-            </p>
-            <h2 className="ml-auto max-w-[13ch] text-[clamp(2.6rem,7vw,5.2rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
-              Built like a senior engineering partner.
-            </h2>
-            <p className="body-md ml-auto mt-6 max-w-xl text-[var(--on-surface-dim)]">
-              Startups do not need more hiring theatre. They need vetted senior
-              engineers, clear ownership, and someone accountable after the
-              placement starts.
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-10 grid gap-4 lg:mt-12 lg:grid-cols-2 xl:grid-cols-3">
-          {comparisonRows.map(
-            ([criteria, freelancer, agency, andishi], index) => (
-              <article
-                key={criteria}
-                className="group relative overflow-hidden rounded-[1.35rem] border border-[color-mix(in_srgb,var(--on-surface)_11%,transparent)] bg-[color-mix(in_srgb,var(--surface)_30%,transparent)] transition-all duration-300 hover:-translate-y-1 hover:border-[color-mix(in_srgb,var(--secondary)_28%,transparent)] hover:bg-[color-mix(in_srgb,var(--surface-high)_36%,transparent)]"
-              >
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -right-10 -top-8 h-24 w-36 rotate-12 rounded-[1.6rem] border border-[color-mix(in_srgb,var(--secondary)_14%,transparent)] opacity-0 transition-opacity duration-300 group-hover:opacity-70"
-                />
-                <div className="relative flex h-8 items-center gap-1.5 border-b border-[color-mix(in_srgb,var(--on-surface)_9%,transparent)] bg-[color-mix(in_srgb,var(--surface-high)_46%,transparent)] px-4">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#ff6b57]" />
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#ffbd2e]" />
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#27c93f]" />
-                  <span className="ml-auto font-mono text-[0.56rem] text-[color-mix(in_srgb,var(--on-surface)_38%,transparent)]">
-                    route-{String(index + 1).padStart(2, "0")}
-                  </span>
-                </div>
-                <div className="relative p-5 sm:p-6">
-                  <div className="mb-5 flex items-start justify-between gap-4">
-                    <div>
-                      <p className="font-mono text-[0.68rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface)_48%,transparent)]">
-                        {String(index + 1).padStart(2, "0")}
-                      </p>
-                      <h3 className="mt-2 text-[1.05rem] font-medium leading-tight text-[var(--on-surface)]">
-                        {criteria}
-                      </h3>
-                    </div>
-                    <span className="grid h-9 w-9 place-items-center rounded-full border border-[color-mix(in_srgb,var(--tertiary)_26%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_10%,transparent)] text-[var(--tertiary)]">
-                      <IconCircleCheck size={16} stroke={1.8} />
-                    </span>
-                  </div>
-
-                  <div className="grid gap-2">
-                    <div className="rounded-2xl border border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_24%,transparent)] px-4 py-3">
-                      <p className="label-caps text-[color-mix(in_srgb,var(--on-surface-dim)_64%,transparent)]">
-                        Common route
-                      </p>
-                      <p className="mt-2 text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">
-                        Freelance platform: {freelancer}. Outsourcing agency:{" "}
-                        {agency}.
-                      </p>
-                    </div>
-                    <div className="rounded-2xl border border-[color-mix(in_srgb,var(--secondary)_24%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_8%,transparent)] px-4 py-3">
-                      <p className="label-caps text-[var(--secondary)]">
-                        Andishi route
-                      </p>
-                      <p className="mt-2 flex items-center gap-2 text-[0.95rem] font-medium leading-snug text-[var(--on-surface)]">
-                        {andishi}
-                        <IconArrowRight
-                          size={15}
-                          stroke={1.8}
-                          className="shrink-0 text-[var(--secondary)]"
-                        />
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            ),
-          )}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function IllustrationBreak() {
   return (
     <section
@@ -633,21 +425,23 @@ function IllustrationBreak() {
       className="relative left-1/2 min-h-screen w-screen -translate-x-1/2 overflow-clip bg-[var(--bg-deep)]"
     >
       <div className="sticky top-0 min-h-screen overflow-hidden">
-        <img
+        <Image
           aria-hidden="true"
           src="/light-blob.svg"
           alt=""
+          width={1080}
+          height={900}
           className="blob-break-asset blob-break-asset--light"
           loading="lazy"
-          decoding="async"
         />
-        <img
+        <Image
           aria-hidden="true"
           src="/dark-blob.svg"
           alt=""
+          width={1080}
+          height={900}
           className="blob-break-asset blob-break-asset--dark"
           loading="lazy"
-          decoding="async"
         />
 
         <div
@@ -835,11 +629,12 @@ function FinalCTA() {
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-0 opacity-80"
         >
-          <img
+          <Image
             src="/final-cta.svg"
             alt=""
+            width={1580}
+            height={900}
             loading="lazy"
-            decoding="async"
             className="absolute left-1/2 top-1/2 h-auto w-[min(1580px,150vw)] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.56] dark:opacity-[0.5]"
             style={{
               maskImage:
@@ -893,7 +688,7 @@ function FinalCTA() {
               engineer for it, and surface profiles if we do.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <LinkButton href="/contact" variant="primary">
+              <LinkButton href="/hire" variant="primary">
                 Start a conversation
                 <IconArrowRight size={16} stroke={1.8} />
               </LinkButton>

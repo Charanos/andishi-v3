@@ -224,7 +224,7 @@ function ArticleCard({
 
 function BlogSection() {
   return (
-    <section className="relative isolate overflow-hidden bg-[var(--bg)] pb-12 sm:pb-14 lg:pb-18">
+    <section className="relative isolate overflow-hidden bg-[var(--bg)] pb-12 sm:pb-14 lg:p-18">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-[0.08]"

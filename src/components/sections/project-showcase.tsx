@@ -408,10 +408,10 @@ export function ProjectShowcase() {
                   <IconArrowRight size={15} stroke={2} />
                 </Link>
                 <Link
-                  href="/contact"
+                  href="/start-project"
                   className="inline-flex min-h-[2.35rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--on-surface)_34%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
                 >
-                  Scope similar
+                  Scope similar talent
                 </Link>
               </motion.div>
 

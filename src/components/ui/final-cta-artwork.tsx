@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 type FinalCtaArtworkProps = {
@@ -19,11 +20,12 @@ export function FinalCtaArtwork({
         className,
       )}
     >
-      <img
+      <Image
         src="/final-cta.svg"
         alt=""
+        width={980}
+        height={620}
         loading="lazy"
-        decoding="async"
         className={cn(
           "absolute left-1/2 top-1/2 h-auto w-[min(980px,138%)] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.2] dark:opacity-[0.28]",
           imageClassName,

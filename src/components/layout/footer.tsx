@@ -1,9 +1,34 @@
+import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
 
 const columns = [
-  ["Talent", "Engineers", "How to Hire", "Skill Coverage"],
-  ["Proof", "Case Studies", "Studio", "Founder"],
-  ["Contact", "hire@andishi.dev", "LinkedIn", "Twitter/X"],
+  {
+    title: "Talent",
+    items: [
+      ["Engineers", "/engineers"],
+      ["How to Hire", "/hire"],
+      ["Skill Coverage", "/skills"],
+      ["Hiring FAQ", "/hire/faq"],
+    ],
+  },
+  {
+    title: "Proof",
+    items: [
+      ["Case Studies", "/work"],
+      ["Studio", "/studio"],
+      ["Blog", "/blog"],
+      ["Founder", "/about"],
+    ],
+  },
+  {
+    title: "Contact",
+    items: [
+      ["hire@andishi.dev", "mailto:hire@andishi.dev"],
+      ["Start a Brief", "/start-project"],
+      ["Privacy", "/legal/privacy"],
+      ["Terms", "/legal/terms"],
+    ],
+  },
 ];
 
 export function Footer() {
@@ -17,14 +42,20 @@ export function Footer() {
           </p>
         </div>
         <div className="grid gap-8 sm:grid-cols-3">
-          {columns.map(([title, ...items]) => (
-            <div key={title}>
-              <p className="label-caps mb-4 text-[var(--on-surface)]">{title}</p>
+          {columns.map((column) => (
+            <div key={column.title}>
+              <p className="label-caps mb-4 text-[var(--on-surface)]">{column.title}</p>
               <div className="space-y-3">
-                {items.map((item) => (
-                  <a key={item} href="#" className="block text-sm text-[var(--on-surface-dim)] transition-all duration-300 hover:text-[var(--on-surface)]">
-                    {item}
-                  </a>
+                {column.items.map(([item, href]) => (
+                  href.startsWith("mailto:") ? (
+                    <a key={item} href={href} className="block text-sm text-[var(--on-surface-dim)] transition-all duration-300 hover:text-[var(--on-surface)]">
+                      {item}
+                    </a>
+                  ) : (
+                    <Link key={item} href={href} className="block text-sm text-[var(--on-surface-dim)] transition-all duration-300 hover:text-[var(--on-surface)]">
+                      {item}
+                    </Link>
+                  )
                 ))}
               </div>
             </div>

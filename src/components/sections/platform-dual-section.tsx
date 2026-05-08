@@ -667,7 +667,7 @@ export function PlatformDualSection() {
         </div>
 
         <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
-          <LinkButton href="/start-project" variant="primary">
+          <LinkButton href="/hire" variant="primary">
             Start matching
             <IconRocket size={16} stroke={1.8} />
           </LinkButton>

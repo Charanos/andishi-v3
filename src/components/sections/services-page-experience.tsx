@@ -574,7 +574,7 @@ export function ServicesPageExperience() {
                   </div>
 
                   <LinkButton
-                    href="/contact"
+                    href="/hire"
                     variant="primary"
                     className="w-full"
                   >
@@ -689,12 +689,15 @@ export function ServicesPageExperience() {
                 profiles if we do.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
-                <LinkButton href="/contact" variant="primary">
+                <LinkButton href="/hire" variant="primary">
                   Start a conversation
                   <IconArrowRight size={16} stroke={1.8} />
                 </LinkButton>
                 <LinkButton href="mailto:hire@andishi.dev" variant="glass">
                   hire@andishi.dev
+                </LinkButton>
+                <LinkButton href="/studio" variant="ghost">
+                  Looking for our studio work?
                 </LinkButton>
               </div>
             </div>
