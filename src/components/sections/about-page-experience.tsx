@@ -97,43 +97,37 @@ const values = [
   {
     icon: IconBolt,
     title: "Production signal beats polish",
-    body:
-      "We care about shipped systems, reference checks, judgment under constraints, and whether an engineer can own real product consequences.",
+    body: "We care about shipped systems, reference checks, judgment under constraints, and whether an engineer can own real product consequences.",
     tone: "var(--primary)",
   },
   {
     icon: IconUsers,
     title: "Africa is the source",
-    body:
-      "African engineers are not a compromise. Timezone overlap, English fluency, global stacks, and production depth are the point.",
+    body: "African engineers are not a compromise. Timezone overlap, English fluency, global stacks, and production depth are the point.",
     tone: "var(--secondary)",
   },
   {
     icon: IconCheck,
     title: "Senior means autonomous",
-    body:
-      "We place engineers who can be given a problem and own it, not engineers who need your team to manage every next step.",
+    body: "We place engineers who can be given a problem and own it, not engineers who need your team to manage every next step.",
     tone: "var(--tertiary)",
   },
   {
     icon: IconCalendarTime,
     title: "No placement silence",
-    body:
-      "We stay involved after the start date through onboarding support, check-ins, and a 30-day replacement guarantee.",
+    body: "We stay involved after the start date through onboarding support, check-ins, and a 30-day replacement guarantee.",
     tone: "var(--secondary)",
   },
   {
     icon: IconRocket,
     title: "Fit over volume",
-    body:
-      "The goal is not a pile of CVs. The goal is two or three engineers who match the stack, seniority, timezone, and ownership need.",
+    body: "The goal is not a pile of CVs. The goal is two or three engineers who match the stack, seniority, timezone, and ownership need.",
     tone: "var(--primary)",
   },
   {
     icon: IconWorld,
     title: "Studio work proves talent",
-    body:
-      "The studio arm still builds products, but every project also becomes evidence of what our engineers can do.",
+    body: "The studio arm still builds products, but every project also becomes evidence of what our engineers can do.",
     tone: "var(--secondary)",
   },
 ];
@@ -294,7 +288,7 @@ export function AboutPageExperience() {
                   key={label}
                   className="border-l border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] pl-3"
                 >
-                  <p className="font-mono text-[1.1rem] leading-none tracking-normal text-[var(--on-surface)]">
+                  <p className="font-mono text-[1.1rem] leading-none tracking-tight text-[var(--on-surface)]">
                     {value}
                   </p>
                   <p className="mt-2 text-[0.82rem] leading-snug text-[var(--on-surface-dim)]">
@@ -326,7 +320,9 @@ export function AboutPageExperience() {
                     borderColor: isActive
                       ? "color-mix(in srgb, var(--primary) 34%, transparent)"
                       : "var(--glass-border)",
-                    color: isActive ? "var(--primary)" : "var(--on-surface-dim)",
+                    color: isActive
+                      ? "var(--primary)"
+                      : "var(--on-surface-dim)",
                   }}
                 >
                   {section.label}
@@ -398,7 +394,10 @@ function Hero() {
             <PortraitChip icon={IconCode} label="Senior vetted engineers" />
           </div>
           <div className="absolute inset-x-4 bottom-4 flex flex-wrap items-end justify-between gap-2">
-            <PortraitChip icon={IconCalendarTime} label="Operating since 2024" />
+            <PortraitChip
+              icon={IconCalendarTime}
+              label="Operating since 2024"
+            />
             <span className="inline-flex items-center gap-2 rounded-xl border border-[color-mix(in_srgb,var(--tertiary)_28%,transparent)] bg-[color-mix(in_srgb,var(--bg)_54%,transparent)] px-3 py-2 text-[0.72rem] font-medium text-[var(--tertiary)] backdrop-blur-xl">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--tertiary)]" />
               Talent matching open
@@ -406,7 +405,7 @@ function Hero() {
           </div>
         </div>
 
-        <h2 className="text-[clamp(2rem,5vw,2.7rem)] font-normal leading-none tracking-normal text-[var(--on-surface)]">
+        <h2 className="text-[clamp(2rem,5vw,2.7rem)] font-normal leading-none tracking-tight text-[var(--on-surface)]">
           Andishi Talent
         </h2>
         <p className="mt-2 text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">
@@ -436,7 +435,7 @@ function Hero() {
       >
         <div>
           <p className="label-caps mb-4 text-[var(--primary)]">Talent note</p>
-          <h1 className="max-w-[12ch] text-[clamp(3rem,9vw,5.8rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
+          <h1 className="max-w-[12ch] text-[clamp(3rem,9vw,5.8rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
             Senior engineers for serious startups.
           </h1>
           <div className="mt-7 max-w-2xl space-y-5">
@@ -468,7 +467,7 @@ function Hero() {
               key={label}
               className="border-b border-[var(--glass-border)] px-4 py-4 sm:border-b-0 sm:border-r sm:last:border-r-0"
             >
-              <p className="font-mono text-[1.45rem] leading-none tracking-normal text-[var(--on-surface)]">
+              <p className="font-mono text-[1.45rem] leading-none tracking-tight text-[var(--on-surface)]">
                 {value}
               </p>
               <p className="label-caps mt-2 text-[0.58rem] leading-tight text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
@@ -499,7 +498,10 @@ function PortraitChip({
 
 function Story() {
   return (
-    <section id="origin" className="scroll-mt-32 border-b border-[var(--glass-border)] pb-16">
+    <section
+      id="origin"
+      className="scroll-mt-32 border-b border-[var(--glass-border)] pb-16"
+    >
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -511,7 +513,7 @@ function Story() {
           <span className="h-px w-7 bg-[var(--secondary)]" />
           Origin
         </p>
-        <h2 className="max-w-[13ch] text-[clamp(2rem,6vw,4.3rem)] font-normal leading-[0.96] tracking-normal text-[var(--on-surface)]">
+        <h2 className="max-w-[13ch] text-[clamp(2rem,6vw,4.3rem)] font-normal leading-[0.96] tracking-tight text-[var(--on-surface)]">
           Why Andishi exists.
         </h2>
         <div className="mt-7 max-w-3xl space-y-5">
@@ -545,7 +547,7 @@ function FounderContext() {
           <p className="label-caps mb-4 text-[var(--secondary)]">
             Founder context
           </p>
-          <h2 className="max-w-[12ch] text-[clamp(2rem,6vw,3.6rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)]">
+          <h2 className="max-w-[12ch] text-[clamp(2rem,6vw,3.6rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
             Built from Africa, not from a Western hiring hub.
           </h2>
         </div>
@@ -622,11 +624,14 @@ function FounderContext() {
 
 function Timeline() {
   return (
-    <section id="timeline" className="scroll-mt-32 border-b border-[var(--glass-border)] py-16">
+    <section
+      id="timeline"
+      className="scroll-mt-32 border-b border-[var(--glass-border)] py-16"
+    >
       <div className="grid gap-10 lg:grid-cols-[0.42fr_1fr]">
         <div className="lg:sticky lg:top-28 lg:self-start">
           <p className="label-caps mb-4 text-[var(--secondary)]">Timeline</p>
-          <h2 className="max-w-[11ch] text-[clamp(2rem,6vw,3.6rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)]">
+          <h2 className="max-w-[11ch] text-[clamp(2rem,6vw,3.6rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
             The journey so far.
           </h2>
         </div>
@@ -638,7 +643,10 @@ function Timeline() {
               initial={{ opacity: 0, x: -16 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{ ...cosmicSpring, delay: Math.min(index * 0.05, 0.24) }}
+              transition={{
+                ...cosmicSpring,
+                delay: Math.min(index * 0.05, 0.24),
+              }}
               className="relative pb-8 last:pb-0"
             >
               <span
@@ -649,7 +657,7 @@ function Timeline() {
                     : "border-[color-mix(in_srgb,var(--on-surface)_22%,transparent)]",
                 )}
               />
-              <p className="font-mono text-[0.72rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface-dim)_64%,transparent)]">
+              <p className="font-mono text-[0.72rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface-dim)_64%,transparent)]">
                 {item.year}
               </p>
               <h3 className="mt-2 text-[1rem] font-medium leading-snug text-[var(--on-surface)]">
@@ -680,10 +688,13 @@ function Timeline() {
 
 function Values() {
   return (
-    <section id="values" className="scroll-mt-32 border-b border-[var(--glass-border)] py-16">
+    <section
+      id="values"
+      className="scroll-mt-32 border-b border-[var(--glass-border)] py-16"
+    >
       <div className="mb-9 max-w-3xl">
         <p className="label-caps mb-4 text-[var(--secondary)]">Values</p>
-        <h2 className="max-w-[13ch] text-[clamp(2rem,6vw,3.8rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)]">
+        <h2 className="max-w-[13ch] text-[clamp(2rem,6vw,3.8rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
           What we actually believe.
         </h2>
       </div>
@@ -697,7 +708,10 @@ function Values() {
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{ ...cosmicSpring, delay: Math.min(index * 0.04, 0.2) }}
+              transition={{
+                ...cosmicSpring,
+                delay: Math.min(index * 0.04, 0.2),
+              }}
               className="group relative overflow-hidden rounded-[1.25rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[color-mix(in_srgb,var(--secondary)_24%,transparent)] sm:p-6"
             >
               <PlusTexture opacity={0.08} />
@@ -729,7 +743,10 @@ function Values() {
 
 function StudioStatus() {
   return (
-    <section id="status" className="scroll-mt-32 border-b border-[var(--glass-border)] py-16">
+    <section
+      id="status"
+      className="scroll-mt-32 border-b border-[var(--glass-border)] py-16"
+    >
       <div className="mb-9">
         <p className="label-caps mb-4 text-[var(--secondary)]">
           Live talent status
@@ -738,7 +755,7 @@ function StudioStatus() {
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--tertiary)]" />
           Updated May 2026
         </span>
-        <h2 className="max-w-[13ch] text-[clamp(2rem,6vw,3.8rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)]">
+        <h2 className="max-w-[13ch] text-[clamp(2rem,6vw,3.8rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
           What is happening right now.
         </h2>
       </div>
@@ -758,7 +775,10 @@ function StudioStatus() {
                   className="inline-flex shrink-0 items-center gap-2 text-[0.72rem] font-medium"
                   style={{ color }}
                 >
-                  <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} />
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{ backgroundColor: color }}
+                  />
                   {status}
                 </span>
               </div>
@@ -769,7 +789,11 @@ function StudioStatus() {
               Start matching
               <IconArrowRight size={15} stroke={1.8} />
             </LinkButton>
-            <LinkButton href="mailto:hire@andishi.dev" variant="glass" className="flex-1">
+            <LinkButton
+              href="mailto:hire@andishi.dev"
+              variant="glass"
+              className="flex-1"
+            >
               hire@andishi.dev
             </LinkButton>
           </div>
@@ -805,7 +829,7 @@ function StudioStatus() {
                       className="h-full rounded-full bg-[var(--secondary)]"
                     />
                   </div>
-                  <p className="mt-1 text-right font-mono text-[0.62rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
+                  <p className="mt-1 text-right font-mono text-[0.62rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
                     {progress}
                   </p>
                 </div>
@@ -826,7 +850,7 @@ function StudioStatus() {
             key={label}
             className="border-b border-[var(--glass-border)] px-5 py-5 sm:border-b-0 sm:border-r sm:last:border-r-0"
           >
-            <p className="font-mono text-[1.45rem] leading-none tracking-normal text-[var(--on-surface)]">
+            <p className="font-mono text-[1.45rem] leading-none tracking-tight text-[var(--on-surface)]">
               {value}
             </p>
             <p className="label-caps mt-2 text-[0.58rem] leading-tight text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
@@ -854,7 +878,7 @@ function StatusPanel({
         <p className="text-[0.86rem] font-medium text-[var(--on-surface)]">
           {title}
         </p>
-        <p className="font-mono text-[0.66rem] tracking-normal text-[var(--secondary)]">
+        <p className="font-mono text-[0.66rem] tracking-tight text-[var(--secondary)]">
           {aside}
         </p>
       </div>
@@ -865,11 +889,16 @@ function StatusPanel({
 
 function Capabilities() {
   return (
-    <section id="capabilities" className="scroll-mt-32 border-b border-[var(--glass-border)] py-16">
+    <section
+      id="capabilities"
+      className="scroll-mt-32 border-b border-[var(--glass-border)] py-16"
+    >
       <div className="grid gap-10 lg:grid-cols-[0.36fr_1fr]">
         <div className="lg:sticky lg:top-28 lg:self-start">
-          <p className="label-caps mb-4 text-[var(--secondary)]">Capabilities</p>
-          <h2 className="max-w-[12ch] text-[clamp(2rem,6vw,3.6rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)]">
+          <p className="label-caps mb-4 text-[var(--secondary)]">
+            Capabilities
+          </p>
+          <h2 className="max-w-[12ch] text-[clamp(2rem,6vw,3.6rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
             The talent coverage.
           </h2>
           <p className="body-md mt-5 text-[var(--on-surface-dim)]">
@@ -888,7 +917,11 @@ function Capabilities() {
               </p>
               <div className="grid gap-3">
                 {group.skills.map(([name, value]) => (
-                  <SkillBar key={name} name={name as string} value={value as number} />
+                  <SkillBar
+                    key={name}
+                    name={name as string}
+                    value={value as number}
+                  />
                 ))}
               </div>
             </div>
@@ -912,7 +945,7 @@ function SkillBar({ name, value }: { name: string; value: number }) {
           className="h-full rounded-full bg-[var(--secondary)]"
         />
       </div>
-      <p className="font-mono text-[0.7rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)] sm:text-right">
+      <p className="font-mono text-[0.7rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)] sm:text-right">
         {value}%
       </p>
     </div>
@@ -943,10 +976,9 @@ function Signoff() {
                 signal, and matches against your exact technical need.
               </p>
               <p>
-                We match the role to the right engineer or team shape:
-                contract, fractional, embedded team extension, dedicated build
-                team, or permanent pathway. You get clear ownership, not a
-                mystery bench.
+                We match the role to the right engineer or team shape: contract,
+                fractional, embedded team extension, dedicated build team, or
+                permanent pathway. You get clear ownership, not a mystery bench.
               </p>
               <p>
                 The result is senior African engineering capacity with timezone
@@ -986,7 +1018,7 @@ function Signoff() {
             <p className="label-caps mb-4 text-[var(--secondary)]">
               Get in touch
             </p>
-            <h2 className="max-w-[12ch] text-[clamp(2rem,6vw,3.4rem)] font-normal leading-[1.02] tracking-normal text-[var(--on-surface)]">
+            <h2 className="max-w-[12ch] text-[clamp(2rem,6vw,3.4rem)] font-normal leading-[1.02] tracking-tight text-[var(--on-surface)]">
               Let us find the engineer who can build it.
             </h2>
             <p className="body-md mt-5 text-[var(--on-surface-dim)]">
@@ -1020,9 +1052,6 @@ function Signoff() {
                 Start matching
                 <IconArrowRight size={16} stroke={1.8} />
               </LinkButton>
-              <p className="label-caps mt-5 text-center text-[color-mix(in_srgb,var(--on-surface-dim)_52%,transparent)]">
-                No recruiter pitch / No retainer required / Response within 24 hours
-              </p>
             </div>
           </div>
         </motion.article>

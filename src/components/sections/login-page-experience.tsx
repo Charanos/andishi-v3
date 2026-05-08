@@ -71,7 +71,7 @@ export function LoginPageExperience() {
             <span className="h-px w-7 bg-[var(--secondary)]" />
             Hiring workspace
           </p>
-          <h1 className="max-w-[12ch] text-[clamp(3rem,9vw,5.8rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
+          <h1 className="max-w-[12ch] text-[clamp(3rem,9vw,5.8rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
             Welcome back to Andishi.
           </h1>
           <p className="body-md mt-7 max-w-xl text-[var(--on-surface-dim)]">
@@ -89,7 +89,7 @@ export function LoginPageExperience() {
                 key={label}
                 className={`rounded-xl border px-4 py-3 backdrop-blur-xl ${controlSurfaceClass}`}
               >
-                <p className="font-mono text-[0.78rem] tracking-normal text-[var(--on-surface)]">
+                <p className="font-mono text-[0.78rem] tracking-tight text-[var(--on-surface)]">
                   {label}
                 </p>
                 <p className="mt-1 text-[0.8rem] leading-snug text-[var(--on-surface-dim)]">
@@ -106,9 +106,11 @@ export function LoginPageExperience() {
           transition={{ ...cosmicSpring, delay: 0.08 }}
           className="mx-auto w-full max-w-xl rounded-[1.6rem] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] p-1 shadow-[0_30px_100px_color-mix(in_srgb,var(--bg-deep)_18%,transparent)] backdrop-blur-2xl dark:bg-[color-mix(in_srgb,var(--surface)_52%,transparent)] dark:shadow-[0_30px_100px_color-mix(in_srgb,var(--bg-deep)_44%,transparent)]"
         >
-          <div className={`overflow-hidden rounded-[1.6rem] border backdrop-blur-2xl ${panelSurfaceClass}`}>
+          <div
+            className={`overflow-hidden rounded-[1.6rem] border backdrop-blur-2xl ${panelSurfaceClass}`}
+          >
             <div className="px-6 pt-7 text-center sm:px-7">
-              <h2 className="mt-5 text-[1.55rem] font-normal leading-tight tracking-normal text-[var(--on-surface)]">
+              <h2 className="mt-5 text-[1.55rem] font-normal leading-tight tracking-tight text-[var(--on-surface)]">
                 Secure access.
               </h2>
               <p className="mt-2 text-[0.94rem] leading-relaxed text-[var(--on-surface-dim)]">
@@ -343,9 +345,7 @@ function FieldShell({
         className={cn(
           "flex min-h-12 items-center gap-3 rounded-xl border px-4 transition-all duration-300 focus-within:border-[color-mix(in_srgb,var(--primary)_58%,transparent)] focus-within:ring-2 focus-within:ring-[color-mix(in_srgb,var(--primary)_18%,transparent)] dark:focus-within:border-[color-mix(in_srgb,var(--secondary)_40%,transparent)] dark:focus-within:ring-[color-mix(in_srgb,var(--secondary)_18%,transparent)]",
           controlSurfaceClass,
-          error
-            ? "border-[color-mix(in_srgb,#ff6b6b_48%,transparent)]"
-            : "",
+          error ? "border-[color-mix(in_srgb,#ff6b6b_48%,transparent)]" : "",
         )}
       >
         <span className="text-[color-mix(in_srgb,var(--on-surface-dim)_84%,var(--on-surface))] dark:text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
@@ -370,7 +370,7 @@ function SentState({ email, onReset }: { email: string; onReset: () => void }) {
       <p className="mt-2 text-[0.94rem] leading-relaxed text-[var(--on-surface-dim)]">
         A sign-in link is ready for:
       </p>
-      <p className="mx-auto mt-3 w-fit rounded-lg border border-[color-mix(in_srgb,var(--secondary)_22%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] px-3 py-1.5 font-mono text-[0.74rem] tracking-normal text-[var(--secondary)]">
+      <p className="mx-auto mt-3 w-fit rounded-lg border border-[color-mix(in_srgb,var(--secondary)_22%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] px-3 py-1.5 font-mono text-[0.74rem] tracking-tight text-[var(--secondary)]">
         {email}
       </p>
       <button

@@ -38,7 +38,7 @@ Core proof:
 
 | Route | Status | Current role |
 |---|---|---|
-| `/` | Implemented | Talent-first landing page with hero, proof, process, comparison, FAQ, founder, newsletter, and final CTA. |
+| `/` | Implemented | Talent-first landing page with hero, proof, process, comparison, founder authority, dual client/developer platform visibility, FAQ/newsletter, and final CTA. |
 | `/services` | Implemented | Talent capability and engagement-model page. Copy now represents engineer skill lines rather than classic studio services. |
 | `/work` | Implemented | Case-study and proof page framed as work shipped by Andishi engineers. |
 | `/about` | Implemented | Origin, mission, founder, operating principles, and talent network positioning. |
@@ -57,12 +57,13 @@ Completed as part of the v3.1 content pass:
 - `public/llms.txt` now exposes the talent-first summary and key pages for AI systems.
 - Navbar language now prioritizes engineers, case studies, services, about, contact, login, and a hiring CTA.
 - Footer tagline, column labels, legal line, and CTA language now support the talent outsourcing narrative.
-- Homepage hero, proof strip, process, problem framing, case studies, comparison rows, FAQ, founder preview, newsletter, and final CTA now speak to hiring senior engineers.
+- Homepage hero, proof strip, process, problem framing, case studies, comparison rows, founder preview, client/developer platform visibility, newsletter, and final CTA now speak to hiring senior engineers.
 - Services page now presents six talent lines: full-stack, AI, cloud/AWS, Web3, backend/API systems, and mobile.
 - Start hiring/onboarding page copy now asks about role needs, team gaps, engagement model, and timing.
 - Contact page copy now supports hiring briefs rather than project-studio inquiries.
 - Login page copy now frames the workspace around profiles, interviews, onboarding, and placement progress.
 - Work and About pages now use studio output as proof of engineer capability rather than the primary product.
+- Utility flows such as `/start-project` and `/login` now keep the experience focused by hiding the footer and using proportional hero artwork without grid-pattern backgrounds.
 
 ## 5. Typography and Legibility Improvements
 

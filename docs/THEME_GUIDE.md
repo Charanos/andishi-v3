@@ -16,7 +16,7 @@ This guide documents the current visual, typography, and copy rules for the Andi
 
 ## 2. Current Page Quality Bar
 
-- Homepage: talent-first hero, concrete proof, hiring pain, process, skill/service proof, case-study evidence, FAQ, founder authority, newsletter, and final CTA.
+- Homepage: talent-first hero, concrete proof, hiring pain, process, skill/service proof, case-study evidence, founder authority, dual client/developer platform visibility, FAQ/newsletter, and final CTA.
 - Services page: capability and engagement-model page for full-stack, AI, cloud/AWS, Web3, backend/API, and mobile engineering talent.
 - Work page: case studies framed as proof of what Andishi engineers can ship.
 - About page: founder, mission, operating principles, and Africa-wide talent network story.
@@ -136,6 +136,7 @@ Process and proof sections can use realistic interface artifacts:
 - Mini browser/window chrome.
 - Terminal-like panels for technical handoff or status.
 - Profile, shortlist, sprint, and onboarding surfaces.
+- Dual client/developer workspace previews for showing both sides of a match.
 - `font-mono` for command text, durations, role IDs, percentages, and status values.
 
 Artifacts should feel like actual outputs from a hiring or engineering workflow, not generic dashboard decoration.

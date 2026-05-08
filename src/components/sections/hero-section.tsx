@@ -54,7 +54,7 @@ const talentStripItems = [
   { label: "Mobile", meta: "iOS / Android", icon: IconDeviceMobile },
 ];
 
-const numberClass = "font-mono font-normal tabular-nums tracking-normal";
+const numberClass = "font-mono font-normal tabular-nums tracking-tight";
 
 const panelClass =
   "relative overflow-hidden rounded-[1.45rem] border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--surface)_74%,transparent),color-mix(in_srgb,var(--surface-high)_42%,transparent))] p-4 shadow-[0_24px_90px_color-mix(in_srgb,var(--bg-deep)_64%,transparent)] backdrop-blur-[28px]";
@@ -89,7 +89,7 @@ export function HeroSection() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-0 bottom-0 z-[1] w-[max(112vw,1600px)] -translate-x-1/2 bg-no-repeat opacity-[var(--hero-overlay-opacity)] [background-image:var(--hero-overlay-src)] [background-position:center_top] [background-size:100%_auto] [mix-blend-mode:var(--hero-overlay-blend)] max-[899px]:w-[210vw] max-[899px]:[background-position:center_5rem]"
+        className="pointer-events-none absolute left-1/2 top-0 bottom-0 z-[1] w-[max(112vw,1600px)] -translate-x-1/2 bg-no-repeat opacity-[var(--hero-overlay-opacity)] [background-image:var(--hero-overlay-src)] [background-position:center_top] [background-size:100%_auto] [mix-blend-mode:var(--hero-overlay-blend)] max-[899px]:w-[210vw] max-[899px]:opacity-[0.36] max-[899px]:[background-position:center_5rem]"
       />
       <div
         aria-hidden="true"
@@ -120,7 +120,7 @@ export function HeroSection() {
 
           <motion.h1
             variants={fadeUp}
-            className="m-0 max-w-[12ch] text-[clamp(2.85rem,7vw,4.85rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)] max-[899px]:max-w-[12ch] max-[899px]:text-[clamp(2.7rem,12vw,3.9rem)] max-[560px]:text-[clamp(2.35rem,12vw,3.1rem)]"
+            className="m-0 max-w-[12ch] text-[clamp(2.85rem,7vw,4.85rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)] max-[899px]:max-w-[12ch] max-[899px]:text-[clamp(2.7rem,12vw,3.9rem)] max-[560px]:text-[clamp(2.35rem,12vw,3.1rem)]"
           >
             Africa&apos;s senior engineers. Your startup&apos;s next hire.
           </motion.h1>
@@ -130,8 +130,8 @@ export function HeroSection() {
             className="m-0 max-w-[43rem] text-[clamp(1.04rem,3.6vw,1.16rem)] leading-[1.65] text-[color-mix(in_srgb,var(--on-surface-dim)_92%,var(--on-surface))] max-[560px]:text-base"
           >
             Andishi places vetted, senior software engineers from across Africa
-            with global startups that need to ship faster without the
-            six-month recruiting cycle or junior-heavy agency model.
+            with global startups that need to ship faster without the six-month
+            recruiting cycle or junior-heavy agency model.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-wrap gap-3 pt-1">
@@ -221,7 +221,11 @@ export function HeroSection() {
                         stopColor="currentColor"
                         stopOpacity="0.34"
                       />
-                      <stop offset="100%" stopColor="var(--secondary)" stopOpacity="0" />
+                      <stop
+                        offset="100%"
+                        stopColor="var(--secondary)"
+                        stopOpacity="0"
+                      />
                     </linearGradient>
                   </defs>
                   <path
@@ -327,7 +331,7 @@ export function HeroSection() {
                 stroke={1.7}
                 className="text-[var(--primary)]"
               />
-              <strong className="text-[0.86rem] font-medium leading-tight tracking-normal text-[var(--on-surface)] max-[560px]:text-[0.8rem]">
+              <strong className="text-[0.86rem] font-medium leading-tight tracking-tight text-[var(--on-surface)] max-[560px]:text-[0.8rem]">
                 {label}
               </strong>
               <small className="font-mono text-[0.68rem] leading-none text-[color-mix(in_srgb,var(--on-surface-dim)_78%,transparent)] max-[560px]:text-[0.64rem]">

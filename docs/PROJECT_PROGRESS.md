@@ -14,10 +14,12 @@ Current workstream: documentation sync, TypeScript verification, commit, and Git
 - Updated metadata, Open Graph, Twitter metadata, Organization schema, and `public/llms.txt`.
 - Updated navbar, footer, CTAs, and shared site labels to point toward hiring engineers.
 - Reworked homepage copy across hero, proof, problem framing, process, case studies, comparison, FAQ, founder preview, newsletter, and final CTA.
+- Added a homepage platform visibility section below the founder block, with client/developer workspace previews, custom cursor support, and no grid-pattern background.
 - Reworked services page into a talent capability and engagement-model page.
 - Reworked work page language so case studies act as proof of engineer capability.
 - Reworked about page to explain the talent mission while preserving the studio as proof-of-work.
 - Reworked contact, start hiring, and login pages around hiring briefs, shortlists, interviews, onboarding, and placement progress.
+- Updated the login and start-project utility routes to hide the footer and use fixed, proportional hero artwork rather than stretched or gridded background treatments.
 - Increased supporting text sizes where task-critical copy was too small.
 - Strengthened text contrast and glass borders through global CSS tokens.
 - Preserved the existing visual direction: glass surfaces, patterned artwork, Tabler icons, mono numerals, and restrained violet/cyan brand energy.
@@ -26,7 +28,7 @@ Current workstream: documentation sync, TypeScript verification, commit, and Git
 
 | Route | Current status |
 |---|---|
-| `/` | Talent-first landing page complete. |
+| `/` | Talent-first landing page complete, including dual client/developer platform preview. |
 | `/services` | Talent services/capabilities page updated. |
 | `/work` | Case-study proof page updated. |
 | `/about` | Talent mission and founder story updated. |
@@ -39,7 +41,8 @@ Current workstream: documentation sync, TypeScript verification, commit, and Git
 - `docs/V3_CURRENT_STATE_AUDIT.md`
 - `docs/PROJECT_PROGRESS.md`
 - `docs/THEME_GUIDE.md`
-- `docs/andishi-v3-content-system.md` remains the content strategy source of truth.
+- `docs/andishi-v3-content-system.md`
+- `public/llms.txt`
 
 ## Next Milestones
 

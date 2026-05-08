@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Outfit } from "next/font/google";
+import Script from "next/script";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SiteChrome } from "@/components/layout/site-chrome";
 import { siteConfig } from "@/config/site";
@@ -75,7 +76,8 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <SiteChrome>{children}</SiteChrome>
         </ThemeProvider>
-        <script
+        <Script
+          id="organization-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />

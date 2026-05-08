@@ -13,8 +13,12 @@ need to extend engineering teams quickly, launch MVPs, or scale existing
 products. Andishi handles sourcing, vetting, onboarding, and ongoing performance
 management.
 
-Key pages: /, /services, /work, /about, /contact.
+Key pages: /, /services, /work, /about, /contact, /start-project, /login.
 
 Services: Contract and fractional engineers, team extension, dedicated build
 teams, full-stack engineering, AI integration, Cloud/AWS infrastructure, Web3 and
 blockchain, Data Engineers, backend API systems, and mobile engineering.
+
+Homepage product experience: Andishi presents both client and developer
+workspaces, showing hiring visibility for clients and delivery/earnings clarity
+for engineers in the network.

@@ -7,11 +7,13 @@ import {
   IconRocket,
 } from "@tabler/icons-react";
 import Image from "next/image";
+import Script from "next/script";
 import { comparisonRows, processSteps } from "@/content/landing";
 import { LinkButton } from "@/components/ui/button";
 import { CustomCursorRegion } from "@/components/ui/custom-cursor-region";
 import { BlogAndFaqNewsletter } from "@/components/sections/blog-faq-newsletter";
 import { HeroSection } from "@/components/sections/hero-section";
+import { PlatformDualSection } from "@/components/sections/platform-dual-section";
 import { ProjectShowcase } from "@/components/sections/project-showcase";
 import { WhyAndishiSection } from "@/components/sections/why-andishi-section";
 
@@ -55,13 +57,15 @@ export default function Home() {
         <IllustrationBreak />
         <WhyAndishiSection />
         <Founder />
+        <PlatformDualSection />
         <BlogAndFaqNewsletter />
         <FinalCTA />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
       </main>
+      <Script
+        id="faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
     </>
   );
 }
@@ -256,8 +260,8 @@ function Process() {
             <span className="h-px w-7 bg-[var(--secondary)]" />
             Our process
           </p>
-          <h2 className="mx-auto max-w-[15ch] text-[clamp(2.4rem,7vw,4.9rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
-          Serious about fit. Obsessive about seniority.
+          <h2 className="mx-auto max-w-[15ch] text-[clamp(2.4rem,7vw,4.9rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
+            Serious about fit. Obsessive about seniority.
           </h2>
           <p className="body-md mx-auto mt-6 max-w-2xl text-[var(--on-surface-dim)]">
             No recruiter theatre. No pile of unvetted CVs. Each stage creates a
@@ -278,7 +282,7 @@ function Process() {
                 key={label}
                 className="rounded-[1.1rem] border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_34%,transparent)] p-4"
               >
-                <p className="font-mono text-[0.68rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface)_46%,transparent)]">
+                <p className="font-mono text-[0.68rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface)_46%,transparent)]">
                   {num}
                 </p>
                 <p className="label-caps mt-5 text-[var(--secondary)]">
@@ -313,7 +317,7 @@ function Process() {
                 <div className="relative">
                   <div className="mb-5 flex items-start justify-between gap-4">
                     <div>
-                      <p className="font-mono text-[0.68rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface)_48%,transparent)]">
+                      <p className="font-mono text-[0.68rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface)_48%,transparent)]">
                         {item.step}
                       </p>
                       <h3 className="mt-2 text-[1.05rem] font-medium leading-tight text-[var(--on-surface)]">
@@ -340,7 +344,7 @@ function Process() {
           <article className="relative overflow-hidden rounded-[1.35rem] border border-[color-mix(in_srgb,var(--on-surface)_11%,transparent)] bg-[color-mix(in_srgb,var(--surface)_30%,transparent)] p-5 sm:p-6">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
-                <p className="font-mono text-[0.68rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface)_48%,transparent)]">
+                <p className="font-mono text-[0.68rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface)_48%,transparent)]">
                   05
                 </p>
                 <h3 className="mt-2 text-[1.05rem] font-medium leading-tight text-[var(--on-surface)]">
@@ -467,7 +471,7 @@ function Comparison() {
                       key={label}
                       className="rounded-[1.1rem] border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_30%,transparent)] p-4"
                     >
-                      <p className="font-mono text-[0.68rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface)_46%,transparent)]">
+                      <p className="font-mono text-[0.68rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface)_46%,transparent)]">
                         {num}
                       </p>
                       <p className="label-caps mt-5 text-[var(--secondary)]">
@@ -499,7 +503,7 @@ function Comparison() {
                               {caption}
                             </p>
                           </div>
-                          <p className="font-mono text-[1.2rem] tracking-normal text-[var(--secondary)]">
+                          <p className="font-mono text-[1.2rem] tracking-tight text-[var(--secondary)]">
                             {value}
                           </p>
                         </div>
@@ -541,9 +545,9 @@ function Comparison() {
           <div className="order-1 text-left lg:order-2 lg:text-right">
             <p className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)] lg:justify-end">
               <span className="h-px w-7 bg-[var(--secondary)]" />
-          Why Andishi
+              Why Andishi
             </p>
-            <h2 className="ml-auto max-w-[13ch] text-[clamp(2.6rem,7vw,5.2rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
+            <h2 className="ml-auto max-w-[13ch] text-[clamp(2.6rem,7vw,5.2rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
               Built like a senior engineering partner.
             </h2>
             <p className="body-md ml-auto mt-6 max-w-xl text-[var(--on-surface-dim)]">
@@ -576,7 +580,7 @@ function Comparison() {
                 <div className="relative p-5 sm:p-6">
                   <div className="mb-5 flex items-start justify-between gap-4">
                     <div>
-                      <p className="font-mono text-[0.68rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface)_48%,transparent)]">
+                      <p className="font-mono text-[0.68rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface)_48%,transparent)]">
                         {String(index + 1).padStart(2, "0")}
                       </p>
                       <h3 className="mt-2 text-[1.05rem] font-medium leading-tight text-[var(--on-surface)]">
@@ -594,7 +598,8 @@ function Comparison() {
                         Common route
                       </p>
                       <p className="mt-2 text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">
-                        Freelance platform: {freelancer}. Outsourcing agency: {agency}.
+                        Freelance platform: {freelancer}. Outsourcing agency:{" "}
+                        {agency}.
                       </p>
                     </div>
                     <div className="rounded-2xl border border-[color-mix(in_srgb,var(--secondary)_24%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_8%,transparent)] px-4 py-3">
@@ -683,7 +688,7 @@ function IllustrationBreak() {
                   <span className="h-px w-7 bg-[var(--secondary)]" />
                   Talent, not CV piles
                 </p>
-                <h2 className="max-w-[11ch] text-[clamp(2.45rem,12vw,5.8rem)] font-normal leading-[0.92] tracking-normal text-[var(--on-surface)]">
+                <h2 className="max-w-[11ch] text-[clamp(2.45rem,12vw,5.8rem)] font-normal leading-[0.92] tracking-tight text-[var(--on-surface)]">
                   Every hire needs proof, context, and support.
                 </h2>
                 <div className="mt-7 grid gap-3 border-t border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] pt-5 sm:grid-cols-[0.72fr_1fr] sm:items-start">
@@ -766,7 +771,7 @@ function Founder() {
               <div className="grid grid-cols-3 gap-2">
                 {founderStats.map(([value, label]) => (
                   <div key={label}>
-                    <p className="font-mono text-[0.78rem] leading-tight tracking-normal text-[var(--on-surface)]">
+                    <p className="font-mono text-[0.78rem] leading-tight tracking-tight text-[var(--on-surface)]">
                       {value}
                     </p>
                     <p className="mt-1 text-[0.64rem] leading-snug text-[var(--on-surface-dim)]">
@@ -784,7 +789,7 @@ function Founder() {
             <span className="h-px w-7 bg-(--tertiary)" />
             Founder
           </p>
-          <h2 className="max-w-[13ch] text-[clamp(2.45rem,7vw,5.2rem)] font-normal leading-[0.94] tracking-normal text-foreground">
+          <h2 className="max-w-[13ch] text-[clamp(2.45rem,7vw,5.2rem)] font-normal leading-[0.94] tracking-tight text-foreground">
             Built from Africa. Accountable after placement.
           </h2>
           <p className="body-md mt-6 max-w-2xl text-(--on-surface-dim)">
@@ -794,8 +799,8 @@ function Founder() {
           </p>
 
           <blockquote className="mt-8 border-l border-[color-mix(in_srgb,var(--secondary)_38%,transparent)] pl-5 text-[clamp(1.15rem,2.2vw,1.55rem)] font-normal leading-snug text-foreground">
-            “The talent was always here. The work is finding it, vetting it,
-            and making the engagement low-friction.”
+            “The talent was always here. The work is finding it, vetting it, and
+            making the engagement low-friction.”
           </blockquote>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
@@ -804,7 +809,7 @@ function Founder() {
                 key={rule}
                 className="relative overflow-hidden rounded-[1.2rem] border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[color-mix(in_srgb,var(--surface)_34%,transparent)] p-4"
               >
-                <p className="font-mono text-[0.68rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface)_48%,transparent)]">
+                <p className="font-mono text-[0.68rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface)_48%,transparent)]">
                   {String(index + 1).padStart(2, "0")}
                 </p>
                 <p className="mt-5 text-[0.92rem] leading-snug text-[var(--on-surface)]">
@@ -826,81 +831,78 @@ function FinalCTA() {
       className="relative isolate overflow-hidden bg-[var(--bg-deep)] px-6 py-20 text-center sm:px-8 lg:py-36"
     >
       <CustomCursorRegion className="-mx-6 -my-20 px-6 py-20 sm:-mx-8 sm:px-8 lg:-my-36 lg:py-36">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 opacity-80"
-      >
-        <img
-          src="/final-cta.svg"
-          alt=""
-          loading="lazy"
-          decoding="async"
-          className="absolute left-1/2 top-1/2 h-auto w-[min(1580px,150vw)] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.56] dark:opacity-[0.5]"
-          style={{
-            maskImage:
-              "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
-            WebkitMaskImage:
-              "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
-          }}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 opacity-80"
+        >
+          <img
+            src="/final-cta.svg"
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="absolute left-1/2 top-1/2 h-auto w-[min(1580px,150vw)] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.56] dark:opacity-[0.5]"
+            style={{
+              maskImage:
+                "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
+            }}
+          />
+        </div>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_68%,transparent)_22%,color-mix(in_srgb,var(--bg)_66%,transparent)_78%,var(--bg)_100%)]"
         />
-      </div>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_68%,transparent)_22%,color-mix(in_srgb,var(--bg)_66%,transparent)_78%,var(--bg)_100%)]"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-0 z-0 w-[28%] bg-[linear-gradient(to_right,var(--bg)_0%,transparent_100%)]"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 right-0 z-0 w-[28%] bg-[linear-gradient(to_left,var(--bg)_0%,transparent_100%)]"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 opacity-[0.06]"
-        style={processTextureStyle}
-      />
-      <div className="relative z-[1] mx-auto max-w-7xl">
-        <div className="mx-auto max-w-3xl rounded-[1.75rem] border border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] bg-[color-mix(in_srgb,var(--surface)_58%,transparent)] px-5 py-10 shadow-[0_30px_110px_color-mix(in_srgb,var(--bg-deep)_38%,transparent)] backdrop-blur-2xl sm:px-10 sm:py-12 lg:px-14 lg:py-14">
-        <p className="label-caps mb-4" style={{ color: "var(--secondary)" }}>
-          Start here
-        </p>
-        <h2
-          style={{
-            fontSize: "clamp(2rem, 3.5vw, 3.5rem)",
-            fontWeight: 300,
-            lineHeight: 1.1,
-            letterSpacing: "-0.03em",
-            color: "var(--on-surface)",
-          }}
-        >
-          Tell us what you are building.
-        </h2>
-        <p
-          className="body-md mx-auto mt-5 max-w-md"
-          style={{ color: "var(--on-surface-dim)" }}
-        >
-          We will tell you within 48 hours whether we have the right engineer
-          for it, and surface profiles if we do.
-        </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <LinkButton href="/contact" variant="primary">
-            Start a conversation
-            <IconArrowRight size={16} stroke={1.8} />
-          </LinkButton>
-          <LinkButton href="mailto:hire@andishi.dev" variant="glass">
-            hire@andishi.dev
-          </LinkButton>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 left-0 z-0 w-[28%] bg-[linear-gradient(to_right,var(--bg)_0%,transparent_100%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 right-0 z-0 w-[28%] bg-[linear-gradient(to_left,var(--bg)_0%,transparent_100%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 opacity-[0.06]"
+          style={processTextureStyle}
+        />
+        <div className="relative z-[1] mx-auto max-w-7xl">
+          <div className="mx-auto max-w-3xl rounded-[1.75rem] border border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] bg-[color-mix(in_srgb,var(--surface)_58%,transparent)] px-5 py-10 shadow-[0_30px_110px_color-mix(in_srgb,var(--bg-deep)_38%,transparent)] backdrop-blur-2xl sm:px-10 sm:py-12 lg:px-14 lg:py-14">
+            <p
+              className="label-caps mb-4"
+              style={{ color: "var(--secondary)" }}
+            >
+              Start here
+            </p>
+            <h2
+              style={{
+                fontSize: "clamp(2rem, 3.5vw, 3.5rem)",
+                fontWeight: 300,
+                lineHeight: 1.1,
+                letterSpacing: "-0.03em",
+                color: "var(--on-surface)",
+              }}
+            >
+              Tell us what you are building.
+            </h2>
+            <p
+              className="body-md mx-auto mt-5 max-w-md"
+              style={{ color: "var(--on-surface-dim)" }}
+            >
+              We will tell you within 48 hours whether we have the right
+              engineer for it, and surface profiles if we do.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <LinkButton href="/contact" variant="primary">
+                Start a conversation
+                <IconArrowRight size={16} stroke={1.8} />
+              </LinkButton>
+              <LinkButton href="mailto:hire@andishi.dev" variant="glass">
+                hire@andishi.dev
+              </LinkButton>
+            </div>
+          </div>
         </div>
-        <p
-          className="label-caps mt-6"
-          style={{ color: "var(--on-surface-dim)", opacity: 0.5 }}
-        >
-          No retainer required / No recruiter pitch / Response within 24 hours
-        </p>
-        </div>
-      </div>
       </CustomCursorRegion>
     </section>
   );

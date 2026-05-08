@@ -72,7 +72,8 @@ const controlFocusClass =
 
 const fieldLabelClass = "text-[0.9rem] font-medium text-[var(--on-surface)]";
 
-const helperTextClass = "text-[0.88rem] leading-relaxed text-[var(--on-surface-dim)]";
+const helperTextClass =
+  "text-[0.88rem] leading-relaxed text-[var(--on-surface-dim)]";
 
 function PlusTexture({ opacity = 0.1 }: { opacity?: number }) {
   return (
@@ -113,11 +114,21 @@ export function StartProjectExperience() {
 
   const canContinue = useMemo(() => {
     if (step === 0) return form.name.trim().length > 1 && isEmail(form.email);
-    if (step === 1) return services.length > 0 && form.description.trim().length > 19;
+    if (step === 1)
+      return services.length > 0 && form.description.trim().length > 19;
     if (step === 2) return timeline && budget;
     if (step === 4) return agreed;
     return true;
-  }, [agreed, budget, form.description, form.email, form.name, services.length, step, timeline]);
+  }, [
+    agreed,
+    budget,
+    form.description,
+    form.email,
+    form.name,
+    services.length,
+    step,
+    timeline,
+  ]);
 
   const update = (field: keyof typeof form, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -181,35 +192,29 @@ export function StartProjectExperience() {
       <ArtworkLayer />
       <div className="relative z-[1] mx-auto grid min-h-[calc(100svh-6rem)] w-full max-w-[96rem] px-5 pb-12 sm:px-8 lg:grid-cols-[20rem_1fr] lg:px-10">
         <aside className="hidden border-r border-[var(--glass-border)] py-8 pr-6 lg:flex lg:flex-col">
-          <Link
-            href="/"
-            className="mb-8 inline-flex items-center gap-2 rounded-xl text-[0.92rem] font-medium text-[var(--on-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--secondary)_35%,transparent)]"
-          >
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-[var(--gradient-brand)] font-mono text-[0.78rem] text-[var(--bg)]">
-              A
-            </span>
-            Andishi
-          </Link>
-
           <div className="space-y-1">
             {steps.map((item, index) => {
               const isActive = index === step;
               const isDone = index < step;
 
               return (
-                <div key={item.title} className="relative flex gap-4 pb-6 last:pb-0">
+                <div
+                  key={item.title}
+                  className="relative flex gap-4 pb-6 last:pb-0"
+                >
                   {index < steps.length - 1 && (
                     <span
                       aria-hidden="true"
                       className={cn(
                         "absolute left-[0.94rem] top-8 h-[calc(100%-2rem)] w-px bg-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] dark:bg-[var(--glass-border)]",
-                        isDone && "bg-[color-mix(in_srgb,var(--tertiary)_38%,transparent)]",
+                        isDone &&
+                          "bg-[color-mix(in_srgb,var(--tertiary)_38%,transparent)]",
                       )}
                     />
                   )}
                   <span
                     className={cn(
-                      "relative z-[1] grid h-8 w-8 shrink-0 place-items-center rounded-full border bg-[color-mix(in_srgb,var(--surface)_92%,var(--bg)_8%)] font-mono text-[0.74rem] tracking-normal dark:bg-[var(--bg)]",
+                      "relative z-[1] grid h-8 w-8 shrink-0 place-items-center rounded-full border bg-[color-mix(in_srgb,var(--surface)_92%,var(--bg)_8%)] font-mono text-[0.74rem] tracking-tight dark:bg-[var(--bg)]",
                       isDone &&
                         "border-[color-mix(in_srgb,var(--tertiary)_30%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_12%,transparent)] text-[var(--tertiary)]",
                       isActive &&
@@ -276,7 +281,7 @@ export function StartProjectExperience() {
                 <span className="text-[0.86rem] text-[var(--on-surface-dim)]">
                   Brief completion
                 </span>
-                <span className="font-mono text-[0.86rem] tracking-normal text-[var(--secondary)]">
+                <span className="font-mono text-[0.86rem] tracking-tight text-[var(--secondary)]">
                   {progress}%
                 </span>
               </div>
@@ -296,7 +301,7 @@ export function StartProjectExperience() {
           className="flex min-h-[calc(100svh-6rem)] flex-col py-8 lg:pl-10"
         >
           <div className="mb-6 flex items-center justify-between gap-4 border-b border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] pb-5 dark:border-[var(--glass-border)]">
-            <p className="font-mono text-[0.86rem] tracking-normal text-[var(--on-surface-dim)]">
+            <p className="font-mono text-[0.86rem] tracking-tight text-[var(--on-surface-dim)]">
               Step {step + 1} of {steps.length} / {steps[step].title}
             </p>
             <Link
@@ -452,7 +457,7 @@ export function StartProjectExperience() {
                             budget === item && "bg-current",
                           )}
                         />
-                        <span className="font-mono text-[0.8rem] tracking-normal">
+                        <span className="font-mono text-[0.8rem] tracking-tight">
                           {item}
                         </span>
                       </button>
@@ -599,7 +604,10 @@ export function StartProjectExperience() {
 
 function ArtworkLayer() {
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+    >
       <img
         src="/light-blob.svg"
         alt=""
@@ -633,7 +641,7 @@ function StepShell({
         <span className="h-px w-7 bg-[var(--secondary)]" />
         {eyebrow}
       </p>
-      <h1 className="max-w-[13ch] text-[clamp(2.5rem,8vw,5rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
+      <h1 className="max-w-[13ch] text-[clamp(2.5rem,8vw,5rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
         {title}
       </h1>
       <p className="body-md mt-6 max-w-2xl text-[var(--on-surface-dim)]">
@@ -678,9 +686,7 @@ function Field({
         placeholder={placeholder}
         className={`h-12 rounded-xl border px-4 text-[1rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_76%,transparent)] ${controlSurfaceClass} ${controlFocusClass}`}
       />
-      {help && (
-        <span className={helperTextClass}>{help}</span>
-      )}
+      {help && <span className={helperTextClass}>{help}</span>}
     </label>
   );
 }
@@ -713,9 +719,7 @@ function TextArea({
         placeholder={placeholder}
         className={`min-h-32 resize-none rounded-xl border px-4 py-3 text-[1rem] leading-relaxed text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_76%,transparent)] ${controlSurfaceClass} ${controlFocusClass}`}
       />
-      {help && (
-        <span className={helperTextClass}>{help}</span>
-      )}
+      {help && <span className={helperTextClass}>{help}</span>}
     </label>
   );
 }
@@ -733,9 +737,7 @@ function SelectField({
 }) {
   return (
     <label className="grid gap-2">
-      <span className={fieldLabelClass}>
-        {label}
-      </span>
+      <span className={fieldLabelClass}>{label}</span>
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
@@ -780,7 +782,7 @@ function PickerGroup({
                 : `${controlSurfaceClass} hover:border-[color-mix(in_srgb,var(--primary)_34%,transparent)]`,
             )}
           >
-            <span className="font-mono text-[0.84rem] tracking-normal text-[var(--on-surface)]">
+            <span className="font-mono text-[0.84rem] tracking-tight text-[var(--on-surface)]">
               {value}
             </span>
             <span className="mt-1 text-[0.8rem] text-[var(--on-surface-dim)]">
@@ -802,16 +804,17 @@ function SuccessScreen({ refCode }: { refCode: string }) {
         <span className="grid h-20 w-20 place-items-center rounded-full border border-[color-mix(in_srgb,var(--tertiary)_30%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_12%,transparent)] text-[var(--tertiary)]">
           <IconCheck size={34} stroke={2} />
         </span>
-        <p className="label-caps mt-8 text-[var(--tertiary)]">Hiring brief prepared</p>
-        <h1 className="mt-4 text-[clamp(2.3rem,7vw,4.4rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)]">
+        <p className="label-caps mt-8 text-[var(--tertiary)]">
+          Hiring brief prepared
+        </p>
+        <h1 className="mt-4 text-[clamp(2.3rem,7vw,4.4rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
           Hiring brief ready to transmit.
         </h1>
         <p className="body-md mt-5 max-w-lg text-[var(--on-surface-dim)]">
-          Your email client should open with the full hiring brief. Send it
-          from there, and Andishi will respond with the next step within 24
-          hours.
+          Your email client should open with the full hiring brief. Send it from
+          there, and Andishi will respond with the next step within 24 hours.
         </p>
-        <p className="mt-6 rounded-xl border border-[color-mix(in_srgb,var(--secondary)_22%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] px-5 py-2.5 font-mono text-[0.78rem] tracking-normal text-[var(--secondary)]">
+        <p className="mt-6 rounded-xl border border-[color-mix(in_srgb,var(--secondary)_22%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] px-5 py-2.5 font-mono text-[0.78rem] tracking-tight text-[var(--secondary)]">
           ref: {refCode}
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">

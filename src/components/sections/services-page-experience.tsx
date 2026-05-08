@@ -67,7 +67,14 @@ const services = [
       "Contract, part-time, team extension, or permanent pathways",
       "30-day placement guarantee and onboarding support",
     ],
-    stack: ["React", "Next.js", "Node.js", "Python", "TypeScript", "PostgreSQL"],
+    stack: [
+      "React",
+      "Next.js",
+      "Node.js",
+      "Python",
+      "TypeScript",
+      "PostgreSQL",
+    ],
   },
   {
     id: "ai",
@@ -182,7 +189,14 @@ const services = [
       "Native or cross-platform engineering depth",
       "Contract or full placement options",
     ],
-    stack: ["React Native", "Swift", "Kotlin", "Firebase", "APIs", "Offline sync"],
+    stack: [
+      "React Native",
+      "Swift",
+      "Kotlin",
+      "Firebase",
+      "APIs",
+      "Offline sync",
+    ],
   },
 ];
 
@@ -190,7 +204,8 @@ const pricing = [
   {
     tier: "Contract / Fractional",
     range: "1-6 mo",
-    label: "Hire one senior engineer for a defined scope, backlog, or 90-day build without a long-term commitment.",
+    label:
+      "Hire one senior engineer for a defined scope, backlog, or 90-day build without a long-term commitment.",
     examples: [
       "MVP implementation",
       "Critical backlog support",
@@ -200,7 +215,8 @@ const pricing = [
   {
     tier: "Team Extension",
     range: "6-24 mo",
-    label: "Add one to five Andishi engineers to your existing team. They work inside your tools, standups, and sprint cadence.",
+    label:
+      "Add one to five Andishi engineers to your existing team. They work inside your tools, standups, and sprint cadence.",
     examples: [
       "Embedded senior engineers",
       "Timezone-compatible delivery",
@@ -211,7 +227,8 @@ const pricing = [
   {
     tier: "Dedicated Build Team",
     range: "3-12 mo",
-    label: "A complete engineering squad assembled around a product track: tech lead, engineers, and optional QA.",
+    label:
+      "A complete engineering squad assembled around a product track: tech lead, engineers, and optional QA.",
     examples: [
       "MVP or product track ownership",
       "Senior technical lead included",
@@ -290,7 +307,7 @@ export function ServicesPageExperience() {
                           >
                             {service.shortTitle}
                           </span>
-                          <span className="font-mono text-[0.76rem] tracking-normal text-[var(--on-surface-dim)]">
+                          <span className="font-mono text-[0.76rem] tracking-tight text-[var(--on-surface-dim)]">
                             {service.number}
                           </span>
                         </span>
@@ -305,10 +322,10 @@ export function ServicesPageExperience() {
                           {service.sector}
                         </span>
                         <span className="mt-2 flex items-center justify-between gap-3">
-                          <span className="font-mono text-[0.76rem] tracking-normal text-[var(--on-surface-dim)]">
+                          <span className="font-mono text-[0.76rem] tracking-tight text-[var(--on-surface-dim)]">
                             {service.timeline}
                           </span>
-                          <span className="font-mono text-[0.76rem] tracking-normal text-[var(--on-surface-dim)]">
+                          <span className="font-mono text-[0.76rem] tracking-tight text-[var(--on-surface-dim)]">
                             {service.price}
                           </span>
                         </span>
@@ -337,7 +354,7 @@ export function ServicesPageExperience() {
                 <span className="h-px w-7 bg-[var(--secondary)]" />
                 The engineers we place
               </p>
-              <h1 className="m-0 text-[clamp(3rem,11vw,6.2rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
+              <h1 className="m-0 text-[clamp(3rem,11vw,6.2rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
                 Senior talent, ready to embed.
               </h1>
             </motion.div>
@@ -354,7 +371,7 @@ export function ServicesPageExperience() {
               }}
               className="mt-6 max-w-md md:mt-0 md:text-right"
             >
-              <p className="font-mono text-[clamp(3rem,7vw,5rem)] leading-none tracking-normal text-[color-mix(in_srgb,var(--on-surface)_28%,transparent)] dark:text-[color-mix(in_srgb,var(--on-surface)_14%,transparent)]">
+              <p className="font-mono text-[clamp(3rem,7vw,5rem)] leading-none tracking-tight text-[color-mix(in_srgb,var(--on-surface)_28%,transparent)] dark:text-[color-mix(in_srgb,var(--on-surface)_14%,transparent)]">
                 06
               </p>
               <p className="body-md mt-3 text-[var(--on-surface-dim)]">
@@ -437,12 +454,12 @@ export function ServicesPageExperience() {
                 <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                   <div className="max-w-2xl">
                     <p className="label-caps mb-4 flex items-center gap-3 text-[var(--secondary)]">
-                      <span className="font-mono tracking-normal">
+                      <span className="font-mono tracking-tight">
                         {active.number}
                       </span>
                       {active.sector}
                     </p>
-                    <h2 className="text-[clamp(2rem,6vw,3.8rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)]">
+                    <h2 className="text-[clamp(2rem,6vw,3.8rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
                       {active.title}
                     </h2>
                     <p className="body-md mt-5 max-w-2xl text-[var(--on-surface-dim)]">
@@ -515,7 +532,7 @@ export function ServicesPageExperience() {
                   <div>
                     <div className="border-b border-[var(--glass-border)] pb-4">
                       <p className="label-caps text-[var(--secondary)]">
-                      Talent snapshot
+                        Talent snapshot
                       </p>
                       <p className="mt-2 text-[0.94rem] leading-snug text-[var(--on-surface)]">
                         {active.shortTitle}
@@ -532,7 +549,7 @@ export function ServicesPageExperience() {
                           className="border-r border-[var(--glass-border)] py-4 pr-3 last:border-r-0"
                         >
                           <p
-                            className="font-mono text-[0.86rem] leading-tight tracking-normal sm:text-[1rem]"
+                            className="font-mono text-[0.86rem] leading-tight tracking-tight sm:text-[1rem]"
                             style={{ color }}
                           >
                             {value}
@@ -574,12 +591,12 @@ export function ServicesPageExperience() {
               <p className="label-caps mb-4 text-[var(--secondary)]">
                 Engagement models
               </p>
-              <h2 className="max-w-[13ch] text-[clamp(2rem,7vw,4.4rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
+              <h2 className="max-w-[13ch] text-[clamp(2rem,7vw,4.4rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
                 Work with Andishi engineers in the shape your team needs.
               </h2>
               <p className="body-md mt-5 text-[var(--on-surface-dim)]">
-                Start with one senior engineer, extend your current team, or
-                ask Andishi to assemble a dedicated build squad for a complete
+                Start with one senior engineer, extend your current team, or ask
+                Andishi to assemble a dedicated build squad for a complete
                 product track.
               </p>
             </div>
@@ -604,7 +621,7 @@ export function ServicesPageExperience() {
                     <p className="label-caps text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)]">
                       {item.tier}
                     </p>
-                    <p className="mt-4 font-mono text-[1.6rem] leading-none tracking-normal text-[var(--on-surface)]">
+                    <p className="mt-4 font-mono text-[1.6rem] leading-none tracking-tight text-[var(--on-surface)]">
                       {item.range}
                     </p>
                     <p className="mt-4 text-[0.98rem] leading-relaxed text-[var(--on-surface-dim)]">
@@ -663,7 +680,7 @@ export function ServicesPageExperience() {
               <p className="label-caps mb-4 text-[var(--secondary)]">
                 Start here
               </p>
-              <h2 className="text-[clamp(2rem,6vw,3.6rem)] font-normal leading-[1.04] tracking-normal text-[var(--on-surface)]">
+              <h2 className="text-[clamp(2rem,6vw,3.6rem)] font-normal leading-[1.04] tracking-tight text-[var(--on-surface)]">
                 Ready to meet your next engineer?
               </h2>
               <p className="body-md mx-auto mt-5 max-w-lg text-[var(--on-surface-dim)]">
@@ -680,9 +697,6 @@ export function ServicesPageExperience() {
                   hire@andishi.dev
                 </LinkButton>
               </div>
-              <p className="label-caps mt-6 text-[color-mix(in_srgb,var(--on-surface-dim)_52%,transparent)]">
-                No recruiter pitch / No retainer required / Response within 24 hours
-              </p>
             </div>
           </section>
         </div>
@@ -698,7 +712,7 @@ function Artifact({ type }: { type: string }) {
         <span className="h-1.5 w-1.5 rounded-full bg-[#ff6b57]" />
         <span className="h-1.5 w-1.5 rounded-full bg-[#ffbd2e]" />
         <span className="h-1.5 w-1.5 rounded-full bg-[#27c93f]" />
-        <span className="ml-auto font-mono text-[0.56rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface)_38%,transparent)]">
+        <span className="ml-auto font-mono text-[0.56rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface)_38%,transparent)]">
           {artifactRoute(type)}
         </span>
       </div>
@@ -781,16 +795,16 @@ function KanbanArtifact() {
 
 function TerminalArtifact() {
   return (
-    <div className="rounded-xl bg-[#171223] p-4 font-mono text-[0.68rem] leading-relaxed tracking-normal text-white/58">
+    <div className="rounded-xl bg-[#171223] p-4 font-mono text-[0.68rem] leading-relaxed tracking-tight text-white/58">
       <p>
         <span className="text-[var(--secondary)]">$</span> andishi match
         --role=ai-engineer
       </p>
       <p className="text-white/52">Checking active senior profiles...</p>
+      <p className="text-[var(--tertiary)]">profile found / 7 yrs production</p>
       <p className="text-[var(--tertiary)]">
-        profile found / 7 yrs production
+        references verified / timezone fit
       </p>
-      <p className="text-[var(--tertiary)]">references verified / timezone fit</p>
       <p className="mt-3">
         <span className="text-[var(--secondary)]">$</span> shortlist --limit=3
       </p>
@@ -816,10 +830,10 @@ function SchemaArtifact() {
           key={key}
           className="flex min-w-0 items-center gap-2 rounded-lg border border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_18%,transparent)] px-3 py-2 text-[0.68rem] text-[var(--on-surface-dim)]"
         >
-          <span className="rounded-md bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] px-2 py-0.5 font-mono text-[0.58rem] tracking-normal text-[var(--secondary)]">
+          <span className="rounded-md bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] px-2 py-0.5 font-mono text-[0.58rem] tracking-tight text-[var(--secondary)]">
             {type}
           </span>
-          <span className="font-mono text-[0.62rem] tracking-normal text-[var(--primary)]">
+          <span className="font-mono text-[0.62rem] tracking-tight text-[var(--primary)]">
             {key}
           </span>
           <IconArrowRight
@@ -875,7 +889,7 @@ function ChartArtifact() {
       </div>
       <div className="mt-3 grid grid-cols-2 gap-2">
         <div className="rounded-xl border border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_18%,transparent)] p-3">
-          <p className="font-mono text-[0.9rem] tracking-normal text-[var(--tertiary)]">
+          <p className="font-mono text-[0.9rem] tracking-tight text-[var(--tertiary)]">
             48h
           </p>
           <p className="label-caps mt-1 text-[0.52rem] text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
@@ -883,7 +897,7 @@ function ChartArtifact() {
           </p>
         </div>
         <div className="rounded-xl border border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_18%,transparent)] p-3">
-          <p className="font-mono text-[0.9rem] tracking-normal text-[var(--secondary)]">
+          <p className="font-mono text-[0.9rem] tracking-tight text-[var(--secondary)]">
             +34%
           </p>
           <p className="label-caps mt-1 text-[0.52rem] text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
@@ -906,9 +920,11 @@ function MapArtifact() {
         <MapNode label="Engineer" />
       </div>
       <div className="flex flex-wrap justify-center gap-2">
-        {["Contract", "Team extension", "Dedicated team", "Permanent"].map((label) => (
-          <MapNode key={label} label={label} />
-        ))}
+        {["Contract", "Team extension", "Dedicated team", "Permanent"].map(
+          (label) => (
+            <MapNode key={label} label={label} />
+          ),
+        )}
       </div>
     </div>
   );

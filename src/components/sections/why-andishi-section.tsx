@@ -96,7 +96,7 @@ function WindowChrome({ label }: { label: string }) {
       <span className="h-2 w-2 rounded-full bg-[#ff6b57]" />
       <span className="h-2 w-2 rounded-full bg-[#ffbd2e]" />
       <span className="h-2 w-2 rounded-full bg-[#27c93f]" />
-      <span className="ml-auto font-mono text-[0.62rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface)_42%,transparent)]">
+      <span className="ml-auto font-mono text-[0.62rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface)_42%,transparent)]">
         {label}
       </span>
     </div>
@@ -135,7 +135,7 @@ function SpeedGauge() {
             strokeLinecap="round"
           />
         </svg>
-        <p className="relative z-[1] font-mono text-[2.4rem] leading-none tracking-normal text-[var(--on-surface)]">
+        <p className="relative z-[1] font-mono text-[2.4rem] leading-none tracking-tight text-[var(--on-surface)]">
           11<span className="text-[1rem] text-[var(--secondary)]">d</span>
         </p>
       </div>
@@ -152,7 +152,7 @@ function SpeedGauge() {
               {label}
             </p>
             <p
-              className="font-mono text-[1.05rem] tracking-normal"
+              className="font-mono text-[1.05rem] tracking-tight"
               style={{ color }}
             >
               {value}
@@ -173,7 +173,12 @@ function ScopeBars({ active }: { active: boolean }) {
       <div className="space-y-5">
         {[
           ["Job board", "22%", "var(--tertiary)", "22%"],
-          ["Marketplace", "45%", "color-mix(in srgb, var(--tertiary) 58%, transparent)", "45%"],
+          [
+            "Marketplace",
+            "45%",
+            "color-mix(in srgb, var(--tertiary) 58%, transparent)",
+            "45%",
+          ],
           ["Andishi", "96%", "var(--secondary)", "96%"],
         ].map(([label, value, color, width]) => (
           <div key={label}>
@@ -181,7 +186,10 @@ function ScopeBars({ active }: { active: boolean }) {
               <p className="text-[0.78rem] text-[var(--on-surface-dim)]">
                 {label}
               </p>
-              <p className="font-mono text-[0.72rem] tracking-normal" style={{ color }}>
+              <p
+                className="font-mono text-[0.72rem] tracking-tight"
+                style={{ color }}
+              >
                 {value}
               </p>
             </div>
@@ -221,7 +229,10 @@ function MetricLifts() {
         >
           <p className="text-[0.82rem] text-[var(--on-surface-dim)]">{name}</p>
           <div className="text-right">
-            <p className="font-mono text-[1.12rem] tracking-normal" style={{ color }}>
+            <p
+              className="font-mono text-[1.12rem] tracking-tight"
+              style={{ color }}
+            >
               {value}
             </p>
             <p className="mt-1 text-[0.66rem] text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
@@ -238,8 +249,16 @@ function CommunicationThread() {
   return (
     <div className="flex min-h-[18rem] flex-col justify-center gap-4 p-6">
       {[
-        ["C", "Need: senior backend engineer, Python, AWS, payments experience.", "Day 0 / 10:32"],
-        ["A", "Two matched profiles ready. Both have shipped production payment systems.", "Day 2 / 15:14"],
+        [
+          "C",
+          "Need: senior backend engineer, Python, AWS, payments experience.",
+          "Day 0 / 10:32",
+        ],
+        [
+          "A",
+          "Two matched profiles ready. Both have shipped production payment systems.",
+          "Day 2 / 15:14",
+        ],
       ].map(([initial, message, time], index) => (
         <div key={time} className="flex gap-3">
           <span
@@ -257,7 +276,7 @@ function CommunicationThread() {
             <p className="rounded-2xl border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_28%,transparent)] px-4 py-3 text-[0.78rem] leading-relaxed text-[var(--on-surface-dim)]">
               {message}
             </p>
-            <p className="mt-2 font-mono text-[0.58rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface-dim)_48%,transparent)]">
+            <p className="mt-2 font-mono text-[0.58rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface-dim)_48%,transparent)]">
               {time}
             </p>
           </div>
@@ -285,7 +304,10 @@ function StackMap() {
     <div className="flex min-h-[18rem] flex-col justify-center gap-4 p-6">
       {[
         ["Talent hubs", ["Lagos", "Nairobi", "Accra", "Cape Town"]],
-        ["Engagements", ["Contract", "Team Extension", "Dedicated Team", "Permanent"]],
+        [
+          "Engagements",
+          ["Contract", "Team Extension", "Dedicated Team", "Permanent"],
+        ],
         ["Core stacks", ["Next.js", "Python", "AWS", "Solidity"]],
       ].map(([label, chips]) => (
         <div key={label as string}>
@@ -379,7 +401,7 @@ export function WhyAndishiSection() {
             <span className="h-px w-7 bg-[var(--secondary)]" />
             Why Andishi
           </p>
-          <h2 className="max-w-[13ch] text-[clamp(2.5rem,7vw,4.8rem)] font-normal leading-[0.96] tracking-normal text-[var(--on-surface)] lg:ml-auto lg:text-right">
+          <h2 className="max-w-[13ch] text-[clamp(2.5rem,7vw,4.8rem)] font-normal leading-[0.96] tracking-tight text-[var(--on-surface)] lg:ml-auto lg:text-right">
             Not another generic outsourcing story.
           </h2>
           <p className="body-md mt-6 max-w-xl text-[var(--on-surface-dim)] lg:ml-auto lg:text-right">
@@ -418,14 +440,15 @@ export function WhyAndishiSection() {
                     className="group flex w-full items-center gap-4 py-6 text-left transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--secondary)_44%,transparent)] sm:gap-6"
                     aria-expanded={isOpen}
                   >
-                    <span className="font-mono text-[0.72rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface)_42%,transparent)]">
+                    <span className="font-mono text-[0.72rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface)_42%,transparent)]">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span
                         className="label-caps mb-2 block overflow-hidden transition-all duration-300"
                         style={{
-                          color: "color-mix(in srgb, var(--on-surface-dim) 58%, transparent)",
+                          color:
+                            "color-mix(in srgb, var(--on-surface-dim) 58%, transparent)",
                           maxHeight: isOpen ? 20 : 0,
                           opacity: isOpen ? 1 : 0,
                         }}

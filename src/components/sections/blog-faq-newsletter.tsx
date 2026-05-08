@@ -153,7 +153,7 @@ function ArticleCard({
           >
             {article.tag}
           </span>
-          <span className="font-mono text-[0.66rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
+          <span className="font-mono text-[0.66rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
             {article.date}
           </span>
           <span className="ml-auto text-[0.68rem] text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
@@ -194,7 +194,7 @@ function ArticleCard({
                 ["03", "Timezone fit"],
               ].map(([num, item]) => (
                 <div key={item}>
-                  <p className="font-mono text-[0.66rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface-dim)_54%,transparent)]">
+                  <p className="font-mono text-[0.66rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface-dim)_54%,transparent)]">
                     {num}
                   </p>
                   <p className="mt-1 text-[0.82rem] font-medium leading-snug text-[var(--on-surface)]">
@@ -224,7 +224,7 @@ function ArticleCard({
 
 function BlogSection() {
   return (
-    <section className="relative isolate overflow-hidden bg-[var(--bg)] py-12 sm:py-14 lg:py-18">
+    <section className="relative isolate overflow-hidden bg-[var(--bg)] pb-12 sm:pb-14 lg:pb-18">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-[0.08]"
@@ -239,7 +239,7 @@ function BlogSection() {
               <span className="h-px w-7 bg-[var(--secondary)]" />
               From the talent desk
             </p>
-            <h2 className="max-w-[12ch] text-[clamp(2.35rem,6vw,4.5rem)] font-normal leading-[0.96] tracking-normal text-[var(--on-surface)]">
+            <h2 className="max-w-[12ch] text-[clamp(2.35rem,6vw,4.5rem)] font-normal leading-[0.96] tracking-tight text-[var(--on-surface)]">
               Hiring notes. Talent proof. Startup context.
             </h2>
           </div>
@@ -304,7 +304,7 @@ function FaqNewsletterSection() {
             <span className="h-px w-7 bg-[var(--secondary)]" />
             Common questions
           </p>
-          <h2 className="max-w-[12ch] text-[clamp(2.2rem,5vw,3.7rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)]">
+          <h2 className="max-w-[12ch] text-[clamp(2.2rem,5vw,3.7rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
             Everything you want to ask.
           </h2>
           <p className="body-md mt-5 max-w-xl text-[0.98rem] leading-[1.75] text-[var(--on-surface-dim)]">
@@ -324,7 +324,7 @@ function FaqNewsletterSection() {
                     aria-expanded={isOpen}
                   >
                     <span
-                      className="font-mono text-[0.72rem] tracking-normal"
+                      className="font-mono text-[0.72rem] tracking-tight"
                       style={{
                         color: isOpen
                           ? "var(--secondary)"
@@ -383,7 +383,7 @@ function FaqNewsletterSection() {
             <span className="h-px w-7 bg-[var(--secondary)]" />
             Stay in the loop
           </p>
-          <h2 className="max-w-[13ch] text-[clamp(2.2rem,5vw,3.7rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)]">
+          <h2 className="max-w-[13ch] text-[clamp(2.2rem,5vw,3.7rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
             The African engineering talent dispatch.
           </h2>
           <p className="body-md mt-5 max-w-xl text-[0.98rem] leading-[1.75] text-[var(--on-surface-dim)]">
@@ -405,7 +405,7 @@ function FaqNewsletterSection() {
                     : ""
                 }
               >
-                <p className="font-mono text-[1.35rem] leading-none tracking-normal text-[var(--on-surface)]">
+                <p className="font-mono text-[1.35rem] leading-none tracking-tight text-[var(--on-surface)]">
                   {value}
                 </p>
                 <p className="mt-2 text-[0.68rem] font-medium uppercase tracking-[0.09em] text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
@@ -434,7 +434,7 @@ function FaqNewsletterSection() {
                   <span className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-[color-mix(in_srgb,var(--tertiary)_24%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_12%,transparent)] text-[var(--tertiary)]">
                     <IconCheck size={22} stroke={2} />
                   </span>
-                  <p className="mt-4 font-mono text-[0.9rem] tracking-normal text-[var(--tertiary)]">
+                  <p className="mt-4 font-mono text-[0.9rem] tracking-tight text-[var(--tertiary)]">
                     Subscribed.
                   </p>
                   <p className="mt-3 text-[0.92rem] leading-[1.75] text-white/62">

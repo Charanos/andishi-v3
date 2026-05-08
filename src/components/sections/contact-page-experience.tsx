@@ -116,9 +116,18 @@ export function ContactPageExperience() {
 
   const canContinue = useMemo(() => {
     if (step === 0) return form.name.trim() && form.email.trim();
-    if (step === 1) return selectedServices.length > 0 && form.description.trim();
+    if (step === 1)
+      return selectedServices.length > 0 && form.description.trim();
     return timeline && budget;
-  }, [budget, form.description, form.email, form.name, selectedServices.length, step, timeline]);
+  }, [
+    budget,
+    form.description,
+    form.email,
+    form.name,
+    selectedServices.length,
+    step,
+    timeline,
+  ]);
 
   const updateField = (field: keyof typeof form, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -178,7 +187,7 @@ export function ContactPageExperience() {
             <span className="h-px w-7 bg-[var(--secondary)]" />
             Start hiring
           </p>
-          <h1 className="max-w-[11ch] text-[clamp(3rem,9vw,5.8rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
+          <h1 className="max-w-[11ch] text-[clamp(3rem,9vw,5.8rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
             Tell us what engineer you need.
           </h1>
           <p className="body-md mt-7 max-w-xl text-[var(--on-surface-dim)]">
@@ -187,7 +196,10 @@ export function ContactPageExperience() {
             shape.
           </p>
 
-          <form onSubmit={submitBrief} className="mt-9 flex min-h-[36rem] flex-col">
+          <form
+            onSubmit={submitBrief}
+            className="mt-9 flex min-h-[36rem] flex-col"
+          >
             <StepIndicator step={step} />
 
             <div className="flex-1">
@@ -259,7 +271,9 @@ export function ContactPageExperience() {
                         </span>
                         <textarea
                           value={form.description}
-                          onChange={(event) => updateField("description", event.target.value)}
+                          onChange={(event) =>
+                            updateField("description", event.target.value)
+                          }
                           placeholder="Tell us what the engineer should own, your current stack, and the bottleneck you need solved."
                           className={`min-h-36 resize-none rounded-xl border px-4 py-3 text-[1rem] leading-relaxed text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_76%,transparent)] ${controlSurfaceClass} ${controlFocusClass}`}
                           required
@@ -296,7 +310,9 @@ export function ContactPageExperience() {
                         </span>
                         <select
                           value={form.source}
-                          onChange={(event) => updateField("source", event.target.value)}
+                          onChange={(event) =>
+                            updateField("source", event.target.value)
+                          }
                           className={`h-12 rounded-xl border px-4 text-[1rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 ${controlSurfaceClass} ${controlFocusClass}`}
                         >
                           <option value="">Select...</option>
@@ -319,7 +335,9 @@ export function ContactPageExperience() {
                 {step > 0 ? (
                   <button
                     type="button"
-                    onClick={() => setStep((current) => Math.max(current - 1, 0))}
+                    onClick={() =>
+                      setStep((current) => Math.max(current - 1, 0))
+                    }
                     className="inline-flex items-center gap-2 text-[0.92rem] text-[var(--on-surface-dim)] transition-colors duration-300 hover:text-[var(--on-surface)]"
                   >
                     <IconArrowLeft size={15} stroke={1.6} />
@@ -334,13 +352,19 @@ export function ContactPageExperience() {
                     type="button"
                     variant="primary"
                     disabled={!canContinue}
-                    onClick={() => setStep((current) => Math.min(current + 1, 2))}
+                    onClick={() =>
+                      setStep((current) => Math.min(current + 1, 2))
+                    }
                   >
                     {step === 0 ? "Talent need" : "Timing and model"}
                     <IconArrowRight size={16} stroke={1.8} />
                   </Button>
                 ) : (
-                  <Button type="submit" variant="primary" disabled={!canContinue}>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    disabled={!canContinue}
+                  >
                     Prepare hiring brief
                     <IconSend size={16} stroke={1.8} />
                   </Button>
@@ -366,8 +390,14 @@ export function ContactPageExperience() {
                   <a
                     key={method.label}
                     href={method.href}
-                    target={method.href.startsWith("http") ? "_blank" : undefined}
-                    rel={method.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                    target={
+                      method.href.startsWith("http") ? "_blank" : undefined
+                    }
+                    rel={
+                      method.href.startsWith("http")
+                        ? "noopener noreferrer"
+                        : undefined
+                    }
                     className={`group flex items-center gap-4 rounded-[1rem] border p-4 backdrop-blur-xl transition-all duration-300 hover:translate-x-1 hover:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] hover:bg-[color-mix(in_srgb,var(--primary)_7%,var(--surface)_93%)] dark:hover:bg-[color-mix(in_srgb,var(--primary)_8%,transparent)] ${controlSurfaceClass}`}
                   >
                     <span
@@ -401,14 +431,14 @@ export function ContactPageExperience() {
               })}
             </div>
 
-            <div className={`mt-5 rounded-[1rem] border p-5 backdrop-blur-xl ${controlSurfaceClass}`}>
+            <div
+              className={`mt-5 rounded-[1rem] border p-5 backdrop-blur-xl ${controlSurfaceClass}`}
+            >
               <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--tertiary)_26%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_10%,transparent)] px-3 py-1.5 text-[0.84rem] font-medium text-[var(--tertiary)]">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--tertiary)]" />
                 Typically responds within 4 hours
               </div>
-              <p className={cn(fieldLabelClass, "mb-4")}>
-                Office hours / EAT
-              </p>
+              <p className={cn(fieldLabelClass, "mb-4")}>Office hours / EAT</p>
               <div className="grid gap-3">
                 {[
                   ["Monday - Friday", "8:00 AM - 6:00 PM", true],
@@ -424,7 +454,7 @@ export function ContactPageExperience() {
                     </span>
                     <span
                       className={cn(
-                        "font-mono text-[0.74rem] tracking-normal",
+                        "font-mono text-[0.74rem] tracking-tight",
                         open
                           ? "text-[var(--tertiary)]"
                           : "text-[color-mix(in_srgb,var(--on-surface-dim)_52%,transparent)]",
@@ -438,16 +468,18 @@ export function ContactPageExperience() {
             </div>
 
             <div className="mt-5 flex flex-wrap justify-center gap-x-3 gap-y-1 text-center">
-              {["No pitch", "No retainer required", "Response within 24hrs"].map(
-                (item) => (
-                  <span
-                    key={item}
-                    className="label-caps text-[0.74rem] text-[var(--on-surface-dim)]"
-                  >
-                    {item}
-                  </span>
-                ),
-              )}
+              {[
+                "No pitch",
+                "No retainer required",
+                "Response within 24hrs",
+              ].map((item) => (
+                <span
+                  key={item}
+                  className="label-caps text-[0.74rem] text-[var(--on-surface-dim)]"
+                >
+                  {item}
+                </span>
+              ))}
             </div>
 
             <div className="mt-6 flex justify-center gap-2">
@@ -482,7 +514,7 @@ function StepIndicator({ step }: { step: number }) {
           <div key={index} className="flex flex-1 items-center last:flex-none">
             <span
               className={cn(
-                "grid h-7 w-7 shrink-0 place-items-center rounded-full border font-mono text-[0.66rem] font-medium tracking-normal transition-all duration-300",
+                "grid h-7 w-7 shrink-0 place-items-center rounded-full border font-mono text-[0.66rem] font-medium tracking-tight transition-all duration-300",
                 isDone &&
                   "border-[color-mix(in_srgb,var(--tertiary)_28%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_12%,transparent)] text-[var(--tertiary)]",
                 isActive &&
@@ -498,7 +530,8 @@ function StepIndicator({ step }: { step: number }) {
               <span
                 className={cn(
                   "h-px flex-1 bg-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] transition-colors duration-300 dark:bg-[var(--glass-border)]",
-                  isDone && "bg-[color-mix(in_srgb,var(--tertiary)_38%,transparent)]",
+                  isDone &&
+                    "bg-[color-mix(in_srgb,var(--tertiary)_38%,transparent)]",
                 )}
               />
             )}
@@ -528,9 +561,7 @@ function Field({
 }) {
   return (
     <label className="grid gap-2">
-      <span className={fieldLabelClass}>
-        {label}
-      </span>
+      <span className={fieldLabelClass}>{label}</span>
       <input
         autoComplete={autoComplete}
         required={required}
@@ -559,9 +590,7 @@ function ChoiceGroup({
 }) {
   return (
     <div className="grid gap-3">
-      <p className={fieldLabelClass}>
-        {label}
-      </p>
+      <p className={fieldLabelClass}>{label}</p>
       <div className="grid gap-2 sm:grid-cols-2">
         {options.map((option) => {
           const isSelected = selected.includes(option);
@@ -587,7 +616,11 @@ function ChoiceGroup({
               />
               <span>{option}</span>
               {single && isSelected && (
-                <IconCheck size={14} stroke={1.8} className="ml-auto shrink-0" />
+                <IconCheck
+                  size={14}
+                  stroke={1.8}
+                  className="ml-auto shrink-0"
+                />
               )}
             </button>
           );
@@ -608,14 +641,14 @@ function SuccessState({ refCode }: { refCode: string }) {
       <span className="grid h-16 w-16 place-items-center rounded-full border border-[color-mix(in_srgb,var(--tertiary)_28%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_12%,transparent)] text-[var(--tertiary)]">
         <IconCheck size={28} stroke={2} />
       </span>
-      <h2 className="mt-6 text-[clamp(1.7rem,4vw,2.4rem)] font-normal leading-tight tracking-normal text-[var(--on-surface)]">
+      <h2 className="mt-6 text-[clamp(1.7rem,4vw,2.4rem)] font-normal leading-tight tracking-tight text-[var(--on-surface)]">
         Hiring brief prepared.
       </h2>
       <p className="body-md mt-4 max-w-md text-[var(--on-surface-dim)]">
         Your email client should open with the full hiring brief. Send it from
         there and the Andishi team will respond within 24 hours.
       </p>
-      <p className="mt-5 rounded-lg border border-[color-mix(in_srgb,var(--secondary)_20%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] px-4 py-2 font-mono text-[0.74rem] tracking-normal text-[var(--secondary)]">
+      <p className="mt-5 rounded-lg border border-[color-mix(in_srgb,var(--secondary)_20%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] px-4 py-2 font-mono text-[0.74rem] tracking-tight text-[var(--secondary)]">
         ref: {refCode}
       </p>
     </motion.div>
@@ -664,11 +697,11 @@ function NairobiPanel() {
             Andishi Talent
           </span>
         </div>
-        <div className="absolute bottom-4 left-4 flex items-center gap-2 font-mono text-[0.74rem] tracking-normal text-[var(--on-surface-dim)]">
+        <div className="absolute bottom-4 left-4 flex items-center gap-2 font-mono text-[0.74rem] tracking-tight text-[var(--on-surface-dim)]">
           <IconMapPin size={13} stroke={1.7} />
           Africa / UTC+0 to UTC+3
         </div>
-        <p className="absolute bottom-4 right-4 font-mono text-[0.74rem] tracking-normal text-[var(--on-surface-dim)]">
+        <p className="absolute bottom-4 right-4 font-mono text-[0.74rem] tracking-tight text-[var(--on-surface-dim)]">
           UTC+3
         </p>
       </div>
@@ -688,7 +721,7 @@ function NairobiPanel() {
               stroke={1.6}
               className="mb-3 text-[var(--secondary)]"
             />
-            <p className="font-mono text-[1.05rem] leading-none tracking-normal text-[var(--on-surface)]">
+            <p className="font-mono text-[1.05rem] leading-none tracking-tight text-[var(--on-surface)]">
               {value as string}
             </p>
             <p className="label-caps mt-2 text-[0.68rem] leading-tight text-[var(--on-surface-dim)]">

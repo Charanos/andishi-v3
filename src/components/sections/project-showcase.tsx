@@ -280,7 +280,7 @@ export function ProjectShowcase() {
         <p className="label-caps mb-2 text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)]">
           {activeProject.statLabel}
         </p>
-        <p className="font-mono text-[1.75rem] leading-none tracking-normal text-[var(--tertiary)]">
+        <p className="font-mono text-[1.75rem] leading-none tracking-tight text-[var(--tertiary)]">
           {activeProject.statValue}
         </p>
         <p className="mt-2 flex items-center gap-2 text-[0.72rem] text-[var(--on-surface-dim)]">
@@ -293,7 +293,7 @@ export function ProjectShowcase() {
         <div className="hidden flex-col items-center gap-4 px-4 py-24 md:flex">
           <motion.p
             key={activeIndex}
-            className="font-mono text-[1.65rem] leading-none tracking-normal text-[var(--on-surface)] [writing-mode:vertical-rl] [text-orientation:mixed] rotate-180"
+            className="font-mono text-[1.65rem] leading-none tracking-tight text-[var(--on-surface)] [writing-mode:vertical-rl] [text-orientation:mixed] rotate-180"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={cosmicSpring}
@@ -301,7 +301,7 @@ export function ProjectShowcase() {
             {padProjectNumber(activeIndex)}
           </motion.p>
           <div className="w-px flex-1 bg-[linear-gradient(to_bottom,transparent,color-mix(in_srgb,var(--primary)_35%,transparent),transparent)]" />
-          <p className="font-mono text-[0.72rem] leading-none tracking-normal text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)] [writing-mode:vertical-rl] [text-orientation:mixed] rotate-180">
+          <p className="font-mono text-[0.72rem] leading-none tracking-tight text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)] [writing-mode:vertical-rl] [text-orientation:mixed] rotate-180">
             {padProjectNumber(total)}
           </p>
         </div>
@@ -325,7 +325,7 @@ export function ProjectShowcase() {
               </motion.p>
               <motion.h2
                 variants={textItem}
-                className="m-0 text-[clamp(2.25rem,12vw,4.35rem)] font-normal leading-[1.02] tracking-normal text-[var(--on-surface)] md:text-[clamp(3rem,6vw,4.35rem)]"
+                className="m-0 text-[clamp(2.25rem,12vw,4.35rem)] font-normal leading-[1.02] tracking-tight text-[var(--on-surface)] md:text-[clamp(3rem,6vw,4.35rem)]"
               >
                 {activeProject.title}
                 <span className="block text-[var(--on-surface)]">
@@ -356,7 +356,7 @@ export function ProjectShowcase() {
                       {label}
                     </p>
                     <p
-                      className="font-mono text-[0.94rem] tracking-normal"
+                      className="font-mono text-[0.94rem] tracking-tight"
                       style={{
                         color:
                           index === 2 ? "var(--tertiary)" : "var(--on-surface)",
@@ -503,7 +503,7 @@ export function ProjectShowcase() {
                     alt=""
                     fill
                     sizes="224px"
-                  className="object-contain p-2 saturate-[0.92]"
+                    className="object-contain p-2 saturate-[0.92]"
                   />
                 </span>
                 <span className="absolute inset-0 z-[1] bg-[linear-gradient(to_right,var(--bg)_0%,transparent_52%),linear-gradient(to_top,color-mix(in_srgb,var(--bg)_76%,transparent)_0%,transparent_62%)]" />
@@ -517,7 +517,7 @@ export function ProjectShowcase() {
                   className="absolute inset-x-0 bottom-0 z-[3] block p-5 transition-opacity duration-300"
                   style={{ opacity: isActive ? 1 : 0 }}
                 >
-                  <span className="font-mono text-[0.68rem] tracking-normal text-[var(--secondary)]">
+                  <span className="font-mono text-[0.68rem] tracking-tight text-[var(--secondary)]">
                     {padProjectNumber(index)} / {padProjectNumber(total)}
                   </span>
                   <span className="mt-3 block text-[0.88rem] font-medium leading-snug text-[var(--on-surface)]">

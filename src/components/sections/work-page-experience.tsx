@@ -108,189 +108,190 @@ export function WorkPageExperience() {
           />
 
           <div className="relative z-[1] mx-auto flex w-full max-w-[96rem] items-start gap-0 px-5 pb-24 pt-32 sm:px-8 lg:px-10 lg:pt-36">
-          <aside className="sticky top-28 hidden max-h-[calc(100svh-8rem)] w-56 shrink-0 flex-col justify-between self-start overflow-y-auto border-r border-[var(--glass-border)] pr-5 xl:flex">
-            <div>
-              <p className="label-caps mb-4 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
-                Filter by sector
-              </p>
-              <div className="space-y-1">
-                {workFilters.map((filter) => {
-                  const isActive = activeFilter === filter.value;
+            <aside className="sticky top-28 hidden max-h-[calc(100svh-8rem)] w-56 shrink-0 flex-col justify-between self-start overflow-y-auto border-r border-[var(--glass-border)] pr-5 xl:flex">
+              <div>
+                <p className="label-caps mb-4 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
+                  Filter by sector
+                </p>
+                <div className="space-y-1">
+                  {workFilters.map((filter) => {
+                    const isActive = activeFilter === filter.value;
 
-                  return (
-                    <button
-                      key={filter.value}
-                      type="button"
-                      onClick={() => setActiveFilter(filter.value)}
-                      className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-[0.88rem] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]"
-                      style={{
-                        backgroundColor: isActive
-                          ? "color-mix(in srgb, var(--primary) 10%, transparent)"
-                          : "transparent",
-                        color: isActive
-                          ? "var(--primary)"
-                          : "var(--on-surface-dim)",
-                      }}
-                    >
-                      {filter.label}
-                      <span className="font-mono text-[0.68rem] tracking-normal text-[color-mix(in_srgb,currentColor_66%,transparent)]">
-                        {countForFilter(filter.value)}
-                      </span>
-                    </button>
-                  );
-                })}
+                    return (
+                      <button
+                        key={filter.value}
+                        type="button"
+                        onClick={() => setActiveFilter(filter.value)}
+                        className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-[0.88rem] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]"
+                        style={{
+                          backgroundColor: isActive
+                            ? "color-mix(in srgb, var(--primary) 10%, transparent)"
+                            : "transparent",
+                          color: isActive
+                            ? "var(--primary)"
+                            : "var(--on-surface-dim)",
+                        }}
+                      >
+                        {filter.label}
+                        <span className="font-mono text-[0.68rem] tracking-tight text-[color-mix(in_srgb,currentColor_66%,transparent)]">
+                          {countForFilter(filter.value)}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-3">
-              {[
-                ["50+", "engineers placed globally"],
-                ["48h", "to first matched profiles"],
-                ["30d", "post-launch support"],
-              ].map(([value, label]) => (
-                <div
-                  key={label}
-                  className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-4 backdrop-blur-xl"
+              <div className="space-y-3">
+                {[
+                  ["50+", "engineers placed globally"],
+                  ["48h", "to first matched profiles"],
+                  ["30d", "post-launch support"],
+                ].map(([value, label]) => (
+                  <div
+                    key={label}
+                    className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-4 backdrop-blur-xl"
+                  >
+                    <p className="font-mono text-[1.45rem] leading-none tracking-tight text-[var(--on-surface)]">
+                      {value}
+                    </p>
+                    <p className="mt-2 text-[0.72rem] leading-snug text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)]">
+                      {label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </aside>
+
+            <div className="min-w-0 flex-1 xl:pl-10">
+              <header className="mb-10 border-b border-[var(--glass-border)] pb-8 md:mb-12 md:grid md:grid-cols-[1fr_auto] md:items-end md:gap-10">
+                <motion.div
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={cosmicSpring}
                 >
-                  <p className="font-mono text-[1.45rem] leading-none tracking-normal text-[var(--on-surface)]">
-                    {value}
+                  <p className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)]">
+                    <span className="h-px w-7 bg-[var(--secondary)]" />
+                    Selected work / 2023-2026
                   </p>
-                  <p className="mt-2 text-[0.72rem] leading-snug text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)]">
-                    {label}
+                  <h1 className="m-0 text-[clamp(3rem,11vw,6.2rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
+                    Our Work.
+                  </h1>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ ...cosmicSpring, delay: 0.08 }}
+                  className="mt-6 max-w-md md:mt-0 md:text-right"
+                >
+                  <p className="font-mono text-[clamp(3rem,7vw,5rem)] leading-none tracking-tight text-[color-mix(in_srgb,var(--on-surface)_28%,transparent)] dark:text-[color-mix(in_srgb,var(--on-surface)_14%,transparent)]">
+                    {formatIndex(workProjects.length - 1)}
                   </p>
+                  <p className="body-md mt-3 text-[var(--on-surface-dim)]">
+                    Proof of what Andishi engineers have shipped across fintech,
+                    education, logistics, analytics, APIs, and operational
+                    products.
+                  </p>
+                </motion.div>
+              </header>
+
+              <div className="mb-8 flex flex-col gap-4 lg:mb-10 lg:flex-row lg:items-center">
+                <div className="flex items-center gap-2 text-[0.76rem] font-medium uppercase tracking-[0.12em] text-[var(--on-surface-dim)] xl:hidden">
+                  <IconFilter size={15} stroke={1.6} />
+                  Filter
                 </div>
-              ))}
-            </div>
-          </aside>
+                <div className="flex gap-2 overflow-x-auto pb-1">
+                  {workFilters.map((filter) => {
+                    const isActive = activeFilter === filter.value;
 
-          <div className="min-w-0 flex-1 xl:pl-10">
-            <header className="mb-10 border-b border-[var(--glass-border)] pb-8 md:mb-12 md:grid md:grid-cols-[1fr_auto] md:items-end md:gap-10">
+                    return (
+                      <button
+                        key={filter.value}
+                        type="button"
+                        onClick={() => setActiveFilter(filter.value)}
+                        className="shrink-0 rounded-full border px-4 py-2 text-[0.78rem] font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]"
+                        style={{
+                          backgroundColor: isActive
+                            ? "color-mix(in srgb, var(--primary) 10%, transparent)"
+                            : "var(--glass-bg)",
+                          borderColor: isActive
+                            ? "color-mix(in srgb, var(--primary) 34%, transparent)"
+                            : "var(--glass-border)",
+                          color: isActive
+                            ? "var(--primary)"
+                            : "var(--on-surface-dim)",
+                        }}
+                      >
+                        {filter.label.replace(" projects", "")}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={cosmicSpring}
+                key={activeFilter}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.25 }}
+                className="columns-1 gap-5 lg:columns-2"
               >
-                <p className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)]">
-                  <span className="h-px w-7 bg-[var(--secondary)]" />
-                  Selected work / 2023-2026
-                </p>
-                <h1 className="m-0 text-[clamp(3rem,11vw,6.2rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
-                  Our Work.
-                </h1>
+                {filteredProjects.map((project, index) => (
+                  <ProjectCard
+                    key={project.id}
+                    index={index}
+                    project={project}
+                    onOpen={() => setSelectedProject(project)}
+                  />
+                ))}
               </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ ...cosmicSpring, delay: 0.08 }}
-                className="mt-6 max-w-md md:mt-0 md:text-right"
-              >
-                <p className="font-mono text-[clamp(3rem,7vw,5rem)] leading-none tracking-normal text-[color-mix(in_srgb,var(--on-surface)_28%,transparent)] dark:text-[color-mix(in_srgb,var(--on-surface)_14%,transparent)]">
-                  {formatIndex(workProjects.length - 1)}
-                </p>
-                <p className="body-md mt-3 text-[var(--on-surface-dim)]">
-                  Proof of what Andishi engineers have shipped across fintech,
-                  education, logistics, analytics, APIs, and operational
-                  products.
-                </p>
-              </motion.div>
-            </header>
-
-            <div className="mb-8 flex flex-col gap-4 lg:mb-10 lg:flex-row lg:items-center">
-              <div className="flex items-center gap-2 text-[0.76rem] font-medium uppercase tracking-[0.12em] text-[var(--on-surface-dim)] xl:hidden">
-                <IconFilter size={15} stroke={1.6} />
-                Filter
-              </div>
-              <div className="flex gap-2 overflow-x-auto pb-1">
-                {workFilters.map((filter) => {
-                  const isActive = activeFilter === filter.value;
-
-                  return (
-                    <button
-                      key={filter.value}
-                      type="button"
-                      onClick={() => setActiveFilter(filter.value)}
-                      className="shrink-0 rounded-full border px-4 py-2 text-[0.78rem] font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]"
-                      style={{
-                        backgroundColor: isActive
-                          ? "color-mix(in srgb, var(--primary) 10%, transparent)"
-                          : "var(--glass-bg)",
-                        borderColor: isActive
-                          ? "color-mix(in srgb, var(--primary) 34%, transparent)"
-                          : "var(--glass-border)",
-                        color: isActive
-                          ? "var(--primary)"
-                          : "var(--on-surface-dim)",
-                      }}
-                    >
-                      {filter.label.replace(" projects", "")}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <motion.div
-              key={activeFilter}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.25 }}
-              className="columns-1 gap-5 lg:columns-2"
-            >
-              {filteredProjects.map((project, index) => (
-                <ProjectCard
-                  key={project.id}
-                  index={index}
-                  project={project}
-                  onOpen={() => setSelectedProject(project)}
+              <section className="relative mt-20 overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_42%,transparent)] px-6 py-12 text-center shadow-[0_24px_80px_color-mix(in_srgb,var(--bg-deep)_24%,transparent)] backdrop-blur-2xl sm:px-10 lg:mt-24 lg:px-16 lg:py-16">
+                <FinalCtaArtwork />
+                <PatternTexture opacity={0.12} />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(to_right,transparent,color-mix(in_srgb,var(--on-surface)_22%,transparent),transparent)]"
                 />
-              ))}
-            </motion.div>
-
-            <section className="relative mt-20 overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_42%,transparent)] px-6 py-12 text-center shadow-[0_24px_80px_color-mix(in_srgb,var(--bg-deep)_24%,transparent)] backdrop-blur-2xl sm:px-10 lg:mt-24 lg:px-16 lg:py-16">
-              <FinalCtaArtwork />
-              <PatternTexture opacity={0.12} />
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(to_right,transparent,color-mix(in_srgb,var(--on-surface)_22%,transparent),transparent)]"
-              />
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -bottom-10 left-8 h-28 w-44 rotate-[-8deg] rounded-[2rem] border border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] opacity-40"
-              />
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -right-10 top-8 h-32 w-52 rotate-[8deg] rounded-[2rem] border border-[color-mix(in_srgb,var(--secondary)_16%,transparent)] opacity-35"
-              />
-              <div className="relative z-[1] mx-auto max-w-2xl">
-                <p className="label-caps mb-4 text-[var(--secondary)]">
-                  Ready to meet the engineer behind your next build?
-                </p>
-                <h2 className="text-[clamp(2rem,6vw,3.6rem)] font-normal leading-[1.04] tracking-normal text-[var(--on-surface)]">
-                  Your startup can be next in the match queue.
-                </h2>
-                <p className="body-md mx-auto mt-5 max-w-lg text-[var(--on-surface-dim)]">
-                  Tell us your stack, bottleneck, and timeline. We will surface
-                  matched senior African engineers if the right fit is active.
-                </p>
-                <div className="mt-8 flex flex-wrap justify-center gap-3">
-                  <Link
-                    href="/contact"
-                    className="inline-flex min-h-[2.35rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
-                  >
-                    Start matching
-                    <IconArrowRight size={15} stroke={2} />
-                  </Link>
-                  <Link
-                    href="/services"
-                    className="inline-flex min-h-[2.35rem] items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--on-surface)_34%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
-                  >
-                    See our services
-                  </Link>
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -bottom-10 left-8 h-28 w-44 rotate-[-8deg] rounded-[2rem] border border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] opacity-40"
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -right-10 top-8 h-32 w-52 rotate-[8deg] rounded-[2rem] border border-[color-mix(in_srgb,var(--secondary)_16%,transparent)] opacity-35"
+                />
+                <div className="relative z-[1] mx-auto max-w-2xl">
+                  <p className="label-caps mb-4 text-[var(--secondary)]">
+                    Ready to meet the engineer behind your next build?
+                  </p>
+                  <h2 className="text-[clamp(2rem,6vw,3.6rem)] font-normal leading-[1.04] tracking-tight text-[var(--on-surface)]">
+                    Your startup can be next in the match queue.
+                  </h2>
+                  <p className="body-md mx-auto mt-5 max-w-lg text-[var(--on-surface-dim)]">
+                    Tell us your stack, bottleneck, and timeline. We will
+                    surface matched senior African engineers if the right fit is
+                    active.
+                  </p>
+                  <div className="mt-8 flex flex-wrap justify-center gap-3">
+                    <Link
+                      href="/contact"
+                      className="inline-flex min-h-[2.35rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
+                    >
+                      Start matching
+                      <IconArrowRight size={15} stroke={2} />
+                    </Link>
+                    <Link
+                      href="/services"
+                      className="inline-flex min-h-[2.35rem] items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--on-surface)_34%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
+                    >
+                      See our services
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </section>
-          </div>
+              </section>
+            </div>
           </div>
         </CustomCursorRegion>
       </main>
@@ -352,7 +353,7 @@ function ProjectCard({
             className="object-cover brightness-[0.78] saturate-[0.78] transition duration-700 group-hover/card:scale-105 group-hover/card:brightness-[0.92] group-hover/card:saturate-100"
           />
           <div className="absolute inset-0 bg-[linear-gradient(to_top,color-mix(in_srgb,var(--bg)_82%,transparent),transparent_52%)]" />
-          <span className="absolute left-4 top-4 rounded-lg bg-[color-mix(in_srgb,var(--bg)_48%,transparent)] px-2.5 py-1 font-mono text-[0.68rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface)_68%,transparent)] backdrop-blur-xl">
+          <span className="absolute left-4 top-4 rounded-lg bg-[color-mix(in_srgb,var(--bg)_48%,transparent)] px-2.5 py-1 font-mono text-[0.68rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface)_68%,transparent)] backdrop-blur-xl">
             {formatIndex(index)}
           </span>
           <span
@@ -367,7 +368,7 @@ function ProjectCard({
             {project.sectorLabel}
           </p>
           <h2
-            className={`font-medium leading-tight tracking-normal text-[var(--on-surface)] ${
+            className={`font-medium leading-tight tracking-tight text-[var(--on-surface)] ${
               isFeatured ? "text-[clamp(1.5rem,3vw,2rem)]" : "text-[1.15rem]"
             }`}
           >
@@ -385,7 +386,7 @@ function ProjectCard({
                   className="border-r border-[var(--glass-border)] px-4 py-3 last:border-r-0"
                 >
                   <p
-                    className="font-mono text-[1rem] tracking-normal"
+                    className="font-mono text-[1rem] tracking-tight"
                     style={{ color: getMetricColor(metric.tone) }}
                   >
                     {metric.value}
@@ -425,7 +426,7 @@ function ProjectCard({
 
           <div className="mt-6 flex items-center justify-between border-t border-[var(--glass-border)] pt-5">
             <div>
-              <p className="font-mono text-[1rem] tracking-normal text-[var(--on-surface)]">
+              <p className="font-mono text-[1rem] tracking-tight text-[var(--on-surface)]">
                 {project.metric}
               </p>
               <p className="mt-1 text-[0.64rem] font-medium uppercase tracking-[0.08em] text-[color-mix(in_srgb,var(--on-surface-dim)_56%,transparent)]">
@@ -501,7 +502,7 @@ function CaseStudyDrawer({
               </p>
               <h2
                 id="case-study-title"
-                className="max-w-2xl text-[clamp(2rem,6vw,3rem)] font-normal leading-[1.06] tracking-normal text-[var(--on-surface)]"
+                className="max-w-2xl text-[clamp(2rem,6vw,3rem)] font-normal leading-[1.06] tracking-tight text-[var(--on-surface)]"
               >
                 {project.title}
               </h2>
@@ -516,7 +517,7 @@ function CaseStudyDrawer({
                     className="border-b border-[var(--glass-border)] px-4 py-4 sm:border-b-0 sm:border-r last:border-b-0 sm:last:border-r-0"
                   >
                     <p
-                      className="font-mono text-[1.25rem] tracking-normal"
+                      className="font-mono text-[1.25rem] tracking-tight"
                       style={{ color: getMetricColor(metric.tone) }}
                     >
                       {metric.value}

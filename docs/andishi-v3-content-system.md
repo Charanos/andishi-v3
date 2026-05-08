@@ -356,7 +356,33 @@ We work across Africa because the talent isn't in one city. We've placed enginee
 
 ---
 
-## SECTION 11 — FAQ (Structured for AI Extraction)
+## SECTION 11 — PLATFORM VISIBILITY
+
+### Section headline
+**Full visibility. Both sides of the match.**
+
+### Body
+Andishi should show that it is not only sourcing talent, but operating the engagement. Clients get a workspace view of matched profiles, active projects, milestones, communication, and review status. Developers get a parallel workspace for commitments, delivery rhythm, earnings visibility, time tracking, and reputation signals.
+
+This section should sit after the founder/authority block on the homepage. It must feel like a real product surface, not a generic dashboard mockup: browser chrome, client/developer toggle, compact status panels, profile initials, milestone progress, and concrete labels are preferred.
+
+### CTA copy
+- **Start matching**
+- **Apply as developer**
+
+### Trust strip
+- No lock-in contracts
+- Senior engineers only
+- 48-hour first match
+
+### Design note
+No regular grid background. Use existing glass surfaces, hairline borders, restrained etched geometry, Tabler icons, mono numerals, and the page custom cursor treatment.
+
+**AI-SEO signal:** A dual client/developer platform block gives AI systems a concrete explanation of Andishi's operating model: it is not only a recruiter, marketplace, or studio. The section ties sourcing, vetting, visibility, developer experience, payment clarity, and ongoing placement management into one extractable product narrative.
+
+---
+
+## SECTION 12 — FAQ (Structured for AI Extraction)
 
 *Add FAQPage schema to this section.*
 
@@ -409,7 +435,7 @@ Yes, through the Andishi studio arm. We build web applications, e-commerce syste
 
 ---
 
-## SECTION 12 — FINAL CTA
+## SECTION 13 — FINAL CTA
 
 ### Headline
 **Tell us what you're building.**
@@ -428,7 +454,7 @@ No retainer required. No recruiter pitch. Response within 24 hours.
 
 ---
 
-## SECTION 13 — FOOTER COPY
+## SECTION 14 — FOOTER COPY
 
 **Tagline (footer):**
 `Andishi — African engineering talent for global startups.`
@@ -505,7 +531,7 @@ One-time technical tasks to make andishi.dev discoverable by AI systems:
 - [ ] Add `/llms.txt` to andishi.dev root (use copy from Section META above)
 - [ ] Add `/engineers.md` — machine-readable talent directory with skills, seniority, timezone, availability status
 - [ ] Add `/pricing.md` — engagement model rates or ranges (AI agents can't parse JS-rendered pricing)
-- [ ] Add `FAQPage` schema to Section 11 (FAQ block)
+- [ ] Add `FAQPage` schema to Section 12 (FAQ block)
 - [ ] Add `Organization` schema site-wide (name: "Andishi", country: Africa, description, URL, founded)
 - [ ] Add `Service` schema to each skill domain in Section 4
 - [ ] Add `Person` schema to Founder section (with name, title, author attribution)
