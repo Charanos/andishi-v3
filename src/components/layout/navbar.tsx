@@ -103,7 +103,7 @@ export function Navbar() {
                 color: "var(--bg)",
               }}
             >
-              Start a project
+              Hire engineers
               <IconArrowRight size={14} stroke={2.2} />
             </Link>
 
@@ -188,7 +188,7 @@ export function Navbar() {
                     color: "var(--bg)",
                   }}
                 >
-                  Start a project
+                  Hire engineers
                   <IconArrowRight size={18} stroke={2} />
                 </Link>
               </div>

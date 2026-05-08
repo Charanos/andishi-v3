@@ -19,24 +19,25 @@ const jetBrains = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
-  title: "Andishi - Digital Products Built and Shipped in Nairobi",
-  description: `${siteConfig.description} We scope fast, ship clean, and measure results.`,
+  title: "Andishi - Senior African Engineers for Global Startups",
+  description:
+    "Hire vetted senior engineers from Africa. Full-stack, AI, Web3, AWS, blockchain, backend, and mobile talent that ships.",
   applicationName: siteConfig.name,
   icons: {
     icon: "/logo.svg",
     apple: "/logo.svg",
   },
   openGraph: {
-    title: "Andishi - Digital Products Built and Shipped in Nairobi",
+    title: "Andishi - Senior African Engineers for Global Startups",
     description:
-      "A Nairobi digital product studio building web applications, e-commerce systems, and conversion websites for African businesses.",
+      "The engineering partner global startups use to hire vetted senior African software engineers without a long recruiting cycle.",
     url: siteConfig.url,
     siteName: siteConfig.name,
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Andishi - Digital Products Built and Shipped in Nairobi",
+    title: "Andishi - Senior African Engineers for Global Startups",
     description: siteConfig.description,
   },
 };
@@ -46,15 +47,15 @@ const organizationSchema = {
   "@type": "Organization",
   name: siteConfig.name,
   url: siteConfig.url,
-  foundingLocation: "Nairobi, Kenya",
+  foundingLocation: "Africa",
   description:
-    "Digital product studio building web applications, e-commerce platforms, and digital systems for Kenyan and African businesses.",
-  areaServed: ["Kenya", "East Africa"],
+    "African engineering talent company placing senior, vetted software engineers with global startups and technology companies.",
+  areaServed: ["United States", "United Kingdom", "European Union", "GCC", "Africa"],
   serviceType: [
-    "Web Application Development",
-    "E-Commerce Development",
-    "Website Design",
-    "Systems Integration",
+    "Engineering Talent Placement",
+    "Team Extension",
+    "Contract Software Engineers",
+    "Dedicated Build Teams",
   ],
 };
 

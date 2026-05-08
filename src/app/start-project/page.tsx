@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { StartProjectExperience } from "@/components/sections/start-project-experience";
 
 export const metadata: Metadata = {
-  title: "Start a Project - Andishi",
+  title: "Start Hiring - Andishi",
   description:
-    "Start an Andishi project brief. Share your goals, timeline, and budget so the team can scope the right software delivery path.",
+    "Share your stack, timeline, and engineering needs so Andishi can match you with vetted senior African engineers.",
 };
 
 export default function StartProjectPage() {

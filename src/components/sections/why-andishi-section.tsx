@@ -29,63 +29,63 @@ const textureStyle = {
 
 const reasons = [
   {
-    pretitle: "The speed problem",
-    title: "We ship in days, not quarters.",
-    body: "The average agency delivery loop drifts into months. We keep the team small, the brief sharp, and the path to launch visible from day one.",
-    label: "delivery.metric",
+    pretitle: "The sourcing problem",
+    title: "The right engineer is rarely in your inbound pile.",
+    body: "Most hiring channels optimize for volume. Andishi does the sourcing work first, then surfaces only senior engineers who fit your stack, timezone, and ownership need.",
+    label: "matching.metric",
     accent: "var(--secondary)",
     proofs: [
-      ["Avg 11 day delivery", IconBolt],
-      ["One scoping call", IconCircleCheck],
-      ["Launch-ready handoff", IconRocket],
+      ["Profiles in 48 hours", IconBolt],
+      ["Technical intake", IconCircleCheck],
+      ["Ready to onboard", IconRocket],
     ],
   },
   {
-    pretitle: "The scope problem",
-    title: "Scope creep ends at the brief.",
-    body: "Features, integrations, edge cases, timeline, and cost are resolved before build. What we quote is what the project is designed to deliver.",
-    label: "scope.clarity",
+    pretitle: "The vetting problem",
+    title: "We verify production signal, not interview polish.",
+    body: "Every engineer passes a technical assessment, portfolio review, production track record check, and reference check before they enter a client conversation.",
+    label: "vetting.depth",
     accent: "var(--primary)",
     proofs: [
-      ["Fixed-scope contracts", IconLock],
-      ["Shared decisions", IconMessageCircle],
-      ["No surprise invoices", IconShieldCheck],
+      ["Senior-only network", IconLock],
+      ["Reference checks", IconMessageCircle],
+      ["Portfolio review", IconShieldCheck],
     ],
   },
   {
-    pretitle: "The ROI problem",
-    title: "We measure success by what changes.",
-    body: "The point is not another pretty interface. Every engagement is tied to movement: more qualified leads, fewer failed payments, and less manual work.",
+    pretitle: "The seniority problem",
+    title: "No juniors billed as senior talent.",
+    body: "The Andishi network is built around engineers with five-plus years of production experience who can own a problem without turning your tech lead into a full-time babysitter.",
     label: "roi.metrics",
     accent: "var(--tertiary)",
     proofs: [
-      ["Lead quality lift", IconChartLine],
-      ["Payment reliability", IconCreditCard],
-      ["Less manual ops", IconClock],
+      ["5+ years minimum", IconChartLine],
+      ["Production systems", IconCreditCard],
+      ["Ownership-ready", IconClock],
     ],
   },
   {
-    pretitle: "The communication problem",
-    title: "You always know exactly where things stand.",
-    body: "Daily async updates, a shared project board, and staging links mean there is no chasing, no mystery, and no waiting for a reveal.",
+    pretitle: "The support problem",
+    title: "We stay involved after the start date.",
+    body: "Placement is not a handoff into silence. We support onboarding, run 30-day and 90-day check-ins, and replace the engineer inside the guarantee window if needed.",
     label: "communication.log",
     accent: "var(--secondary)",
     proofs: [
-      ["Daily updates", IconMessageCircle],
-      ["Staging links", IconLink],
-      ["30-day support", IconShieldCheck],
+      ["Onboarding support", IconMessageCircle],
+      ["30/90-day check-ins", IconLink],
+      ["30-day guarantee", IconShieldCheck],
     ],
   },
   {
-    pretitle: "The context problem",
-    title: "We build for Africa, not just the internet.",
-    body: "M-Pesa Daraja, USDT rails, NEMIS IDs, low-bandwidth mobile patterns, and East African workflows are already part of the design conversation.",
+    pretitle: "The Africa advantage",
+    title: "Africa is the talent source, not the compromise.",
+    body: "Engineers across Lagos, Nairobi, Accra, Cape Town, Kigali, and Kampala bring strong English fluency, EU-friendly timezone overlap, and real production depth.",
     label: "ea.stack",
     accent: "var(--primary)",
     proofs: [
-      ["East Africa context", IconWorld],
-      ["M-Pesa native", IconCreditCard],
-      ["Mobile-first", IconDeviceMobile],
+      ["UTC+0 to UTC+3", IconWorld],
+      ["English-fluent", IconCreditCard],
+      ["Global stacks", IconDeviceMobile],
     ],
   },
 ];
@@ -107,7 +107,7 @@ function SpeedGauge() {
   return (
     <div className="flex min-h-[18rem] flex-col justify-center p-6">
       <p className="label-caps mb-5 text-center text-[color-mix(in_srgb,var(--on-surface-dim)_66%,transparent)]">
-        Avg time / brief to live product
+        Avg time / intake to first profiles
       </p>
       <div className="relative mx-auto flex h-28 w-48 items-end justify-center">
         <svg
@@ -141,8 +141,8 @@ function SpeedGauge() {
       </div>
       <div className="mt-7 grid gap-3 sm:grid-cols-2">
         {[
-          ["Andishi", "11 days", "var(--secondary)"],
-          ["Typical route", "60-90 days", "var(--tertiary)"],
+          ["Andishi", "48 hours", "var(--secondary)"],
+          ["Typical search", "2-4 weeks", "var(--tertiary)"],
         ].map(([label, value, color]) => (
           <div
             key={label}
@@ -168,12 +168,12 @@ function ScopeBars({ active }: { active: boolean }) {
   return (
     <div className="flex min-h-[18rem] flex-col justify-center p-6">
       <p className="label-caps mb-6 text-[color-mix(in_srgb,var(--on-surface-dim)_66%,transparent)]">
-        Scope clarity / first call to delivery
+        Vetting depth / before introduction
       </p>
       <div className="space-y-5">
         {[
-          ["Typical agency", "28%", "var(--tertiary)", "28%"],
-          ["Freelancer", "45%", "color-mix(in srgb, var(--tertiary) 58%, transparent)", "45%"],
+          ["Job board", "22%", "var(--tertiary)", "22%"],
+          ["Marketplace", "45%", "color-mix(in srgb, var(--tertiary) 58%, transparent)", "45%"],
           ["Andishi", "96%", "var(--secondary)", "96%"],
         ].map(([label, value, color, width]) => (
           <div key={label}>
@@ -198,7 +198,7 @@ function ScopeBars({ active }: { active: boolean }) {
         ))}
       </div>
       <p className="mt-6 text-center text-[0.76rem] text-[color-mix(in_srgb,var(--on-surface-dim)_66%,transparent)]">
-        Scope creep is designed out before build starts.
+        Skills, references, and shipped work are checked before matching.
       </p>
     </div>
   );
@@ -208,12 +208,12 @@ function MetricLifts() {
   return (
     <div className="flex min-h-[18rem] flex-col justify-center gap-3 p-6">
       <p className="label-caps mb-2 text-[color-mix(in_srgb,var(--on-surface-dim)_66%,transparent)]">
-        What changes after launch
+        Placement confidence
       </p>
       {[
-        ["Qualified leads", "+85%", "avg lift", "var(--tertiary)"],
-        ["Payment success rate", "+34%", "avg lift", "var(--tertiary)"],
-        ["Manual ops time", "-62%", "avg reduction", "var(--secondary)"],
+        ["Seniority floor", "5+ yrs", "minimum", "var(--tertiary)"],
+        ["First profiles", "48h", "target", "var(--tertiary)"],
+        ["Guarantee", "30d", "standard", "var(--secondary)"],
       ].map(([name, value, delta, color]) => (
         <div
           key={name}
@@ -238,8 +238,8 @@ function CommunicationThread() {
   return (
     <div className="flex min-h-[18rem] flex-col justify-center gap-4 p-6">
       {[
-        ["C", "Scoping call done. Brief locked, timeline confirmed: 14 days to launch.", "Day 0 / 10:32"],
-        ["A", "Staging is up. Review the flow and send feedback before Friday.", "Day 7 / 15:14"],
+        ["C", "Need: senior backend engineer, Python, AWS, payments experience.", "Day 0 / 10:32"],
+        ["A", "Two matched profiles ready. Both have shipped production payment systems.", "Day 2 / 15:14"],
       ].map(([initial, message, time], index) => (
         <div key={time} className="flex gap-3">
           <span
@@ -266,14 +266,14 @@ function CommunicationThread() {
       <div className="flex items-center gap-3">
         <span className="h-px flex-1 bg-[color-mix(in_srgb,var(--on-surface)_10%,transparent)]" />
         <span className="font-mono text-[0.58rem] uppercase tracking-[0.12em] text-[color-mix(in_srgb,var(--on-surface-dim)_52%,transparent)]">
-          Day 14
+          Day 8
         </span>
         <span className="h-px flex-1 bg-[color-mix(in_srgb,var(--on-surface)_10%,transparent)]" />
       </div>
       <div className="flex justify-center">
         <span className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--tertiary)_24%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_10%,transparent)] px-4 py-2 text-[0.78rem] font-medium text-[var(--tertiary)]">
           <span className="h-1.5 w-1.5 rounded-full bg-current" />
-          Live / lipa.andishi.co.ke
+          Engineer onboarded / 30-day guarantee active
         </span>
       </div>
     </div>
@@ -284,9 +284,9 @@ function StackMap() {
   return (
     <div className="flex min-h-[18rem] flex-col justify-center gap-4 p-6">
       {[
-        ["Payments", ["M-Pesa Daraja", "USDT Rails", "Equity", "Airtel Money"]],
-        ["Compliance and IDs", ["NEMIS", "KRA PIN", "NHIF/NSSF", "Safaricom BizConnect"]],
-        ["Core tech", ["Next.js", "NestJS", "AWS", "Vercel"]],
+        ["Talent hubs", ["Lagos", "Nairobi", "Accra", "Cape Town"]],
+        ["Engagements", ["Contract", "Team Extension", "Dedicated Team", "Permanent"]],
+        ["Core stacks", ["Next.js", "Python", "AWS", "Solidity"]],
       ].map(([label, chips]) => (
         <div key={label as string}>
           <p className="label-caps mb-2 text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
@@ -380,12 +380,12 @@ export function WhyAndishiSection() {
             Why Andishi
           </p>
           <h2 className="max-w-[13ch] text-[clamp(2.5rem,7vw,4.8rem)] font-normal leading-[0.96] tracking-normal text-[var(--on-surface)] lg:ml-auto lg:text-right">
-            Not just another agency story.
+            Not another generic outsourcing story.
           </h2>
           <p className="body-md mt-6 max-w-xl text-[var(--on-surface-dim)] lg:ml-auto lg:text-right">
-            We built Andishi because Kenyan and East African teams deserve a
-            partner that understands the deadline, the market, and the cost of
-            vague delivery.
+            We built Andishi because global startups need senior engineers, and
+            African engineers with real production experience deserve a better
+            path into those teams.
           </p>
 
           <div
@@ -493,23 +493,23 @@ export function WhyAndishiSection() {
 
           <div className="pt-8">
             <p className="body-md max-w-xl text-[color-mix(in_srgb,var(--on-surface-dim)_72%,transparent)]">
-              Still weighing your options? One call is enough to scope the
-              project, name the constraints, and decide whether Andishi is the
-              right fit.
+              Still weighing your options? One call is enough to explain the
+              role, name the constraints, and decide whether Andishi has the
+              right engineer in the network.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 href="/contact"
                 className="inline-flex min-h-[2.35rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
               >
-                Book a scoping call
+                Start matching
                 <IconArrowRight size={15} stroke={2} />
               </Link>
               <Link
                 href="#process"
                 className="inline-flex min-h-[2.35rem] items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--on-surface)_34%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
               >
-                See our process
+                See how it works
               </Link>
             </div>
           </div>

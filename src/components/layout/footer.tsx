@@ -1,9 +1,9 @@
 import { Logo } from "@/components/brand/logo";
 
 const columns = [
-  ["Work", "Case Studies", "Portfolio", "Process"],
-  ["Company", "About", "Founder", "Careers"],
-  ["Contact", "hello@andishi.dev", "LinkedIn", "Twitter/X"],
+  ["Talent", "Engineers", "How to Hire", "Skill Coverage"],
+  ["Proof", "Case Studies", "Studio", "Founder"],
+  ["Contact", "hire@andishi.dev", "LinkedIn", "Twitter/X"],
 ];
 
 export function Footer() {
@@ -13,7 +13,7 @@ export function Footer() {
         <div>
           <Logo className="mb-4" />
           <p className="body-md max-w-sm text-[var(--on-surface-dim)]">
-            Building what comes next, from Nairobi.
+            African engineering talent for global startups.
           </p>
         </div>
         <div className="grid gap-8 sm:grid-cols-3">
@@ -32,8 +32,8 @@ export function Footer() {
         </div>
       </div>
       <div className="mx-auto mt-10 flex max-w-7xl flex-col gap-3 border-t border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] pt-6 text-xs text-[color-mix(in_srgb,var(--on-surface-dim)_72%,transparent)] sm:flex-row sm:items-center sm:justify-between">
-        <p>(c) 2026 Andishi. Registered in Kenya.</p>
-        <p>Last updated: April 29, 2026</p>
+        <p>(c) 2026 Andishi. Operating across Africa.</p>
+        <p>Last updated: May 8, 2026</p>
       </div>
     </footer>
   );

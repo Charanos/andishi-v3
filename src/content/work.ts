@@ -49,7 +49,7 @@ export const workProjects: WorkProject[] = [
     tags: ["M-Pesa", "Next.js", "Node.js", "PostgreSQL"],
     metrics: [
       { value: "98.3%", label: "match rate", tone: "success" },
-      { value: "5w", label: "brief to live", tone: "cyan" },
+      { value: "5w", label: "engineer-led build", tone: "cyan" },
       { value: "3", label: "payment rails" },
       { value: "24/7", label: "ops visibility", tone: "primary" },
     ],
@@ -76,7 +76,7 @@ export const workProjects: WorkProject[] = [
     tags: ["Multi-tenant", "Next.js", "MongoDB", "M-Pesa"],
     metrics: [
       { value: "12+", label: "schools", tone: "cyan" },
-      { value: "18d", label: "delivery" },
+      { value: "18d", label: "engineer-led build" },
       { value: "4", label: "user roles" },
       { value: "30d", label: "support", tone: "success" },
     ],
@@ -105,7 +105,7 @@ export const workProjects: WorkProject[] = [
       { value: "240+", label: "vehicles", tone: "cyan" },
       { value: "3", label: "cities" },
       { value: "99.1%", label: "uptime", tone: "success" },
-      { value: "7w", label: "delivery" },
+      { value: "7w", label: "engineer-led build" },
     ],
   },
   {
@@ -130,7 +130,7 @@ export const workProjects: WorkProject[] = [
     tags: ["Commerce", "M-Pesa", "Inventory", "Analytics"],
     metrics: [
       { value: "+62%", label: "conversion", tone: "success" },
-      { value: "14d", label: "delivery", tone: "cyan" },
+      { value: "14d", label: "engineer-led build", tone: "cyan" },
       { value: "2", label: "sales channels" },
       { value: "1", label: "admin view" },
     ],
@@ -157,7 +157,7 @@ export const workProjects: WorkProject[] = [
     tags: ["Analytics", "Charts", "Reporting", "API"],
     metrics: [
       { value: "340+", label: "accounts", tone: "cyan" },
-      { value: "21d", label: "delivery" },
+      { value: "21d", label: "engineer-led build" },
       { value: "8", label: "dashboards" },
       { value: "+41%", label: "decision speed", tone: "success" },
     ],
@@ -213,7 +213,7 @@ export const workProjects: WorkProject[] = [
       { value: "1.2k+", label: "sessions", tone: "cyan" },
       { value: "180+", label: "tutors" },
       { value: "4.8", label: "avg rating", tone: "success" },
-      { value: "16d", label: "delivery" },
+      { value: "16d", label: "engineer-led build" },
     ],
   },
   {
@@ -239,7 +239,7 @@ export const workProjects: WorkProject[] = [
     metrics: [
       { value: "+91%", label: "visibility", tone: "success" },
       { value: "50+", label: "teams" },
-      { value: "19d", label: "delivery", tone: "cyan" },
+      { value: "19d", label: "engineer-led build", tone: "cyan" },
       { value: "Weekly", label: "reports" },
     ],
   },

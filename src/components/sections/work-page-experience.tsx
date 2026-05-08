@@ -144,8 +144,8 @@ export function WorkPageExperience() {
 
             <div className="space-y-3">
               {[
-                ["14+", "Kenyan businesses shipped"],
-                ["11d", "fastest brief to launch"],
+                ["50+", "engineers placed globally"],
+                ["48h", "to first matched profiles"],
                 ["30d", "post-launch support"],
               ].map(([value, label]) => (
                 <div
@@ -189,8 +189,9 @@ export function WorkPageExperience() {
                   {formatIndex(workProjects.length - 1)}
                 </p>
                 <p className="body-md mt-3 text-[var(--on-surface-dim)]">
-                  Products built for Kenyan and East African teams, from first
-                  brief to a product people can actually use.
+                  Proof of what Andishi engineers have shipped across fintech,
+                  education, logistics, analytics, APIs, and operational
+                  products.
                 </p>
               </motion.div>
             </header>
@@ -263,21 +264,21 @@ export function WorkPageExperience() {
               />
               <div className="relative z-[1] mx-auto max-w-2xl">
                 <p className="label-caps mb-4 text-[var(--secondary)]">
-                  Ready to build?
+                  Ready to meet the engineer behind your next build?
                 </p>
                 <h2 className="text-[clamp(2rem,6vw,3.6rem)] font-normal leading-[1.04] tracking-normal text-[var(--on-surface)]">
-                  Your product is next on this page.
+                  Your startup can be next in the match queue.
                 </h2>
                 <p className="body-md mx-auto mt-5 max-w-lg text-[var(--on-surface-dim)]">
-                  We scope in one call, ship in weeks, and measure success by
-                  what changes for your business.
+                  Tell us your stack, bottleneck, and timeline. We will surface
+                  matched senior African engineers if the right fit is active.
                 </p>
                 <div className="mt-8 flex flex-wrap justify-center gap-3">
                   <Link
                     href="/contact"
                     className="inline-flex min-h-[2.35rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
                   >
-                    Book a scoping call
+                    Start matching
                     <IconArrowRight size={15} stroke={2} />
                   </Link>
                   <Link
@@ -576,7 +577,7 @@ function CaseStudyDrawer({
                   href="/contact"
                   className="inline-flex min-h-[3.35rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-6 py-3.5 text-[0.98rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
                 >
-                  Build something similar
+                  Hire talent like this
                   <IconExternalLink size={15} stroke={1.8} />
                 </Link>
                 <button

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { ContactPageExperience } from "@/components/sections/contact-page-experience";
 
 export const metadata: Metadata = {
-  title: "Contact Andishi - Start Your Project Brief",
+  title: "Contact Andishi - Hire Senior African Engineers",
   description:
-    "Send a project brief to Andishi. Nairobi-led software delivery for local and international teams, with clear scoping and response within 24 hours.",
+    "Tell Andishi what engineering talent you need. Get matched with vetted senior African engineers for contract, team extension, or dedicated build teams.",
 };
 
 export default function ContactPage() {

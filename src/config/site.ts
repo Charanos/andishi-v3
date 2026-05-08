@@ -1,12 +1,12 @@
 export const siteConfig = {
   name: "Andishi",
   url: "https://andishi.dev",
-  email: "hello@andishi.dev",
+  email: "hire@andishi.dev",
   description:
-    "Andishi builds web products, systems, and digital experiences for Kenyan and African businesses.",
+    "Andishi places vetted senior African software engineers with global startups that need to extend their teams fast.",
   nav: [
-    { label: "Services",    href: "/services"   },
-    { label: "Our Work",    href: "/work"        },
+    { label: "Engineers",   href: "/services"   },
+    { label: "Case Studies", href: "/work"       },
     { label: "About",       href: "/about"       },
     { label: "Contact",     href: "/contact"     },
     { label: "Login",       href: "/login"       },

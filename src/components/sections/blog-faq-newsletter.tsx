@@ -20,45 +20,45 @@ const textureStyle = {
 };
 
 const tickerItems = [
-  "Product Strategy",
-  "M-Pesa Integration",
-  "East Africa Tech",
-  "NestJS Deep Dives",
-  "Startup Playbooks",
-  "Design Systems",
-  "Fintech Builders",
-  "Shipping Fast",
-  "Client Stories",
-  "EdTech Africa",
-  "API Design",
-  "Logistics Tech",
+  "African Tech Talent",
+  "Senior Engineers",
+  "AI Integration",
+  "AWS Engineers",
+  "Web3 Talent",
+  "Startup Hiring",
+  "Team Extension",
+  "Vetting Notes",
+  "Engineer Spotlights",
+  "Backend Systems",
+  "Remote Engineering",
+  "Production Proof",
 ];
 
 const articles = [
   {
-    title: "The complete guide to M-Pesa Daraja integration",
+    title: "How to vet senior African engineers for startup teams",
     excerpt:
-      "STK push, C2B, B2C, callbacks, sandbox gotchas, and the production checklist teams usually learn the hard way.",
-    tag: "Fintech",
+      "What to check beyond the CV: production ownership, references, code depth, communication habits, and timezone fit.",
+    tag: "Hiring",
     date: "May 2026",
     read: "8 min",
     image: "/images/blog-image-1.jpg",
     hero: true,
   },
   {
-    title: "How we scope and ship in weeks without cutting corners",
+    title: "Why African engineers are underpriced in global hiring",
     excerpt:
-      "The brief template, staging cadence, review loops, and handover checklist behind our fastest launches.",
-    tag: "Strategy",
+      "The arbitrage global startups miss: senior production talent, English fluency, and strong Europe overlap.",
+    tag: "Point of View",
     date: "Apr 2026",
     read: "5 min",
     image: "/images/blog-image-2.jpg",
   },
   {
-    title: "Building multi-tenant SaaS for Kenyan schools",
+    title: "What a strong AI integration engineer actually does",
     excerpt:
-      "CBC and 8-4-4 data models, NEMIS identifiers, parent portals, and why payments shape the architecture.",
-    tag: "EdTech",
+      "LLM APIs are the easy part. Retrieval, evaluation, cost control, security, and product fit are where seniority shows.",
+    tag: "AI Talent",
     date: "Mar 2026",
     read: "6 min",
     image: "/images/blog-image-6.jpeg",
@@ -66,13 +66,13 @@ const articles = [
 ];
 
 const topics = [
-  "M-Pesa Daraja",
-  "Product Strategy",
-  "Shipping Fast",
-  "East Africa Tech",
-  "Design Systems",
-  "Client Stories",
-  "Fintech Builds",
+  "Senior Engineers",
+  "AI Integration",
+  "AWS Talent",
+  "Web3 Engineers",
+  "Team Extension",
+  "Vetting",
+  "African Tech Talent",
 ];
 
 function BlogTicker() {
@@ -177,22 +177,21 @@ function ArticleCard({
         {article.hero && (
           <div className="mt-6 max-w-[64ch] space-y-4 text-[0.94rem] leading-[1.85] text-[var(--on-surface-dim)]">
             <p>
-              We unpack the real production path: creating secure STK push
-              requests, reconciling callback payloads, handling duplicate
-              receipts, and protecting checkout flows when Safaricom delays a
-              response.
+              We unpack the real assessment path: how to read production
+              experience, separate tool familiarity from ownership, and spot
+              engineers who can work inside a fast-moving startup team.
             </p>
             <p>
-              The guide also covers the details that usually get missed in
-              launch week, from timeout states and webhook retries to C2B
-              confirmation URLs, B2C payout checks, sandbox mismatches, and the
-              exact handover checklist we use before a payment flow goes live.
+              The guide also covers the details that usually get missed before
+              hiring: reference questions, async communication patterns,
+              timezone overlap, and why a small technical screen beats a long
+              interview loop.
             </p>
             <div className="grid gap-3 border-t border-[color-mix(in_srgb,var(--on-surface)_9%,transparent)] pt-4 sm:grid-cols-3">
               {[
-                ["01", "STK push request flow"],
-                ["02", "Callback validation"],
-                ["03", "Production checklist"],
+                ["01", "Production ownership"],
+                ["02", "Reference checks"],
+                ["03", "Timezone fit"],
               ].map(([num, item]) => (
                 <div key={item}>
                   <p className="font-mono text-[0.66rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface-dim)_54%,transparent)]">
@@ -212,7 +211,7 @@ function ArticleCard({
             A
           </span>
           <span className="text-[0.82rem] font-medium text-[var(--on-surface-dim)]">
-            Andishi Studio
+            Andishi Talent
           </span>
           <span className="ml-auto grid h-8 w-8 place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] transition-transform duration-300 group-hover:rotate-45 group-hover:text-[var(--secondary)]">
             <IconExternalLink size={14} stroke={1.6} />
@@ -238,10 +237,10 @@ function BlogSection() {
           <div>
             <p className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)]">
               <span className="h-px w-7 bg-[var(--secondary)]" />
-              From the studio
+              From the talent desk
             </p>
             <h2 className="max-w-[12ch] text-[clamp(2.35rem,6vw,4.5rem)] font-normal leading-[0.96] tracking-normal text-[var(--on-surface)]">
-              Built in public. Shared for free.
+              Hiring notes. Talent proof. Startup context.
             </h2>
           </div>
           <Link
@@ -309,7 +308,7 @@ function FaqNewsletterSection() {
             Everything you want to ask.
           </h2>
           <p className="body-md mt-5 max-w-xl text-[0.98rem] leading-[1.75] text-[var(--on-surface-dim)]">
-            Honest answers before we ever talk scope.
+            Honest answers before we ever match profiles.
           </p>
 
           <div className="mt-10 divide-y divide-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] border-y border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)]">
@@ -385,11 +384,11 @@ function FaqNewsletterSection() {
             Stay in the loop
           </p>
           <h2 className="max-w-[13ch] text-[clamp(2.2rem,5vw,3.7rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)]">
-            The East Africa builder dispatch.
+            The African engineering talent dispatch.
           </h2>
           <p className="body-md mt-5 max-w-xl text-[0.98rem] leading-[1.75] text-[var(--on-surface-dim)]">
-            Bi-weekly. No fluff. Real product lessons, integration notes, and
-            what we are learning while shipping.
+            Bi-weekly. No fluff. Notes on hiring senior engineers, evaluating
+            production skill, and building with African technical talent.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-5">
@@ -452,10 +451,10 @@ function FaqNewsletterSection() {
                   </p>
                   <p>
                     <span className="text-[var(--secondary)]">→</span>{" "}
-                    Initialising East Africa Builder Dispatch...
+                    Initialising African Engineering Talent Dispatch...
                   </p>
                   <p className="text-white/36">
-                    Delivery: bi-weekly / Format: plain and useful
+                    Cadence: bi-weekly / Format: plain and useful
                   </p>
                   {typed && (
                     <p className="text-[var(--secondary)]">

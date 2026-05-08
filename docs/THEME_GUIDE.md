@@ -1,199 +1,185 @@
-# Andishi v3: Design & Theme Standards
+# Andishi v3 Theme Guide
 
-This guide captures the technical and aesthetic protocols required to maintain the current Andishi v3 visual system. The foundation pass has established the homepage landing experience and work page as the quality bar for the rest of the site.
+Last updated: May 8, 2026
 
----
+This guide documents the current visual, typography, and copy rules for the Andishi v3 public site. The site now positions Andishi as a senior African engineering talent company for global startups, with the studio arm kept as secondary proof-of-work.
 
-## 0. Current Foundation Decisions
+## 1. Positioning Rules
 
-- The homepage hero and "The real situation" block now live inside one seamless section so the Nairobi line-art background can bleed naturally across the transition.
-- The brand/client card is the divider between hero and adjacent content. It should feel suspended in the middle of the transition, not like a separate section header.
-- Hero illustration cards use a compact stacked composition on desktop and must collapse without overlapping copy or the brand divider on mobile.
-- Use Tailwind utilities for section/component styling where practical. Keep global CSS focused on tokens, typography utilities, and true shared primitives.
-- Never use sparkle/star decorative icons. Tabler icons are the only icon family for UI.
-- Numerals, stats, currency, percentages, timelines, and IDs use JetBrains Mono via `font-mono` or the `.mono-*` utilities.
-- Avoid over-reliance on purple. Purple/violet is the text and depth language; cyan is the signal/CTA/data accent; green is success/status only.
-- Navbar and footer are shared through `src/components/layout/site-chrome.tsx`. Public pages must not mount duplicate nav/footer instances. Full-flow utility pages such as `/start-project` and `/login` hide the footer to keep the task surface focused.
-- The active source/deployment remote is GitHub: `https://github.com/Charanos/andishi-v3.git`.
-- Homepage section quality now includes the interactive project showcase, process artifacts, full-width visual interlude, Why Andishi decision cockpit, and editorial founder section.
-- Work page quality now includes the sticky desktop filter rail, project-card grid, case-study drawer, and patterned bottom CTA.
-- Services page quality now includes the wide sticky rail, animated capability ticker, editorial service rows, detail artifacts, pricing band, and the shared bottom CTA artwork treatment.
-- About page quality now positions Andishi as a Nairobi-led software delivery company, not a single-founder portfolio. Copy should emphasize in-house and contract developer capacity, one accountable delivery system, and local plus international client reach.
-- Contact page quality now uses a split project-brief experience with validated client-side steps, direct contact cards, Nairobi-led studio context, plus-sign texture, and no regular grid-pattern background.
-- Start Project page quality now uses the landing IllustrationBreak artwork (`/light-blob.svg` and `/dark-blob.svg`) as internal background art for the onboarding brief flow. The main nav "Start a project" CTA should route to `/start-project`; general contact and scoping CTAs may still route to `/contact`.
-- The bottom landing experience now uses a reading-first blog grid, indexed FAQ accordion, terminal newsletter signup, and masked final CTA artwork.
-- Inner-page bottom CTAs should reuse `src/components/ui/final-cta-artwork.tsx` so work, services, and about pages visually connect to the landing final CTA while keeping the artwork inside the card.
-- The project-showcase custom cursor pattern is reusable via `src/components/ui/custom-cursor-region.tsx` and should be reserved for immersive showcase/decision/CTA surfaces.
-- Foundation building is complete as of May 7, 2026. Future section work should extend these patterns instead of creating a new visual language.
+- Primary offer: senior, vetted African engineers for global startups.
+- Secondary offer: product studio/build work, used as proof that Andishi knows what strong engineering output looks like.
+- Primary buyer: startup CTOs, founders, and engineering leads who need senior capacity quickly.
+- Primary email: `hire@andishi.dev`.
+- Preferred CTA language: "Hire engineers", "Start matching", "Start a conversation", "See our engineers".
+- Avoid using "project studio" as the lead description of Andishi.
+- When studio work appears, frame it as shipped proof by Andishi engineers or as a separate studio track.
 
----
+## 2. Current Page Quality Bar
 
-## 1. The Glassmorphism Recipe
+- Homepage: talent-first hero, concrete proof, hiring pain, process, skill/service proof, case-study evidence, FAQ, founder authority, newsletter, and final CTA.
+- Services page: capability and engagement-model page for full-stack, AI, cloud/AWS, Web3, backend/API, and mobile engineering talent.
+- Work page: case studies framed as proof of what Andishi engineers can ship.
+- About page: founder, mission, operating principles, and Africa-wide talent network story.
+- Contact page: hiring conversation and talent brief entry point.
+- Start Project page: legacy route name, but current UX is a hiring brief/onboarding flow.
+- Login page: client hiring workspace for profiles, interviews, onboarding, and placement progress.
 
-To create a standard **Glassmorphic Card**, use the following CSS/Tailwind cocktail:
+## 3. Color System
 
-- **Background**: `bg-white/5` (Dark Mode) or `bg-white/70` (Light Mode).
-- **Blur**: `backdrop-blur-xl` or `backdrop-blur-2xl`.
-- **Border**: `border border-white/10` (Dark) or `border border-black/5` (Light).
-- **Shadow**: `shadow-xl shadow-black/20`.
-- **Glass variant**: Perfect for semi-transparent actions on dark backgrounds.
-- **Shadows**: Uses `shadow-primary/20` for a soft glow.
-- **Bento Pattern**: Standard `p-6 relative overflow-hidden group` for high-end cards.
-- **Gradient Glows**: Use the `gradient` prop in `GlassCard` to apply subtle colored border glows (e.g., `yellow`, `blue`, `green`, `orange`).
+Use the global CSS tokens in `src/app/globals.css`. Avoid one-off color palettes unless a component has a specific reason.
 
----
+- Violet/purple: text depth, brand identity, atmospheric surfaces.
+- Cyan: CTA energy, data signal, active accents, technical highlights.
+- Green: success/status only.
+- Neutral surfaces: glass cards, panels, input surfaces, and page foundations.
 
-## 2. Metrics & Insights (The "Insights" Card Pattern)
+Current high-legibility text tokens:
 
-All statistical overview metrics must follow the "Insights" layout for consistency:
+- Light mode `--on-surface`: `#160B2F`
+- Light mode `--on-surface-dim`: `#3A2854`
+- Dark mode `--on-surface`: `#F4EEFF`
+- Dark mode `--on-surface-dim`: `#D8CEF5`
 
-1. **Top Row**: Label (uppercase, tracking-wider) and a stylized Icon in a `bg-primary/10` wrapper.
-2. **Value Row**: High-visibility metric in `font-mono`.
-3. **Trend Line**: Trending Up/Down icon + percentage + "vs last month" text.
-4. **Background Layer**: A muted, large icon overlay (opacity 0.03 to 0.05) that scales/rotates on hover (`group-hover:scale-110`).
+Rules:
 
----
-
-## 3. Data Visualization (Mini Sparklines)
-
-For high-density dashboards (like the revamped Schools page), use **Tiny Sparklines**:
-
-- Use pure SVG paths to avoid heavy charting dependencies.
-- **Layout**: 100x40px standard.
-- **Colors**: Use the theme's semantic colors (`primary`, `emerald`, `orange`).
-- **Gradient Fill**: Always include a downward-fading linear gradient fill for depth.
-
-- **Base Hex**: `#56309B` (Light primary) | `#D8C8FF` (Dark primary).
-- **Usage**: Buttons, active states, icons, and focus rings.
-
----
+- Do not use raw `text-white` unless the text sits inside a filled CTA or another surface where token text is less legible.
+- Keep supporting copy on `--on-surface-dim` rather than low-opacity text.
+- Glass borders should remain visible enough to define surfaces in both themes.
+- Avoid generic dark SaaS styling, heavy purple gradients, or decorative color blobs.
 
 ## 4. Typography Rules
 
-- **Font-Family**:
-  - **Outfit**: Global Default (Headings, UI labels).
-  - **JetBrains Mono**: Strictly for Numerics (Stats, Currency, IDs, Tables, Charts).
-- **Interactive Tooltips**:
-  - All high-level KPI cards must wrap values/trends in a `<Tooltip />` component.
-  - Bar charts must provide tooltips for every individual data point for interactive data exploration.
-- **Font-Weight**:
-  - **HARD RULE**: Do not use Tailwind `font-bold` or `font-semibold`.
-  - Use `font-normal` for large display text and body copy.
-  - Use `font-medium` sparingly for buttons, nav labels, chips, card titles, and compact UI labels.
+Font families:
 
----
+- Outfit: headings, body copy, labels, UI.
+- JetBrains Mono: stats, percentages, IDs, durations, code-like labels, and structured technical values.
 
-## 4.1 Text Contrast Tokens
+Weights:
 
-Primary text is intentionally violet-tinted rather than neutral black/white.
+- Do not use Tailwind `font-bold` or `font-semibold`.
+- Use `font-normal` for display and body copy.
+- Use `font-medium` for nav, buttons, chips, compact labels, and card titles.
 
-- Light mode: `--on-surface: #160B2F`, `--on-surface-dim: #46365F`.
-- Dark mode: `--on-surface: #F4EEFF`, `--on-surface-dim: #C5B8E8`.
-- Use `--primary` for labels, links, stat numbers, active states, and focused accents.
-- Do not use raw `text-white` except inside gradient-filled CTA buttons where `--on-primary` would reduce clarity.
+Global utility direction:
 
----
+- `.body-md` is slightly larger than the original foundation size for better paragraph legibility.
+- `.label-caps` is slightly larger so section labels and form metadata do not feel too small.
+- Small form helper text should generally sit at `text-sm` or above unless the surrounding UI is very compact.
 
-## 4.2 CTA Treatment
+Readable ranges:
 
-Primary CTAs now use a sleeker neutral treatment aligned with the navbar:
+- Long body copy: around `1rem` to `1.08rem`, with generous line height.
+- Card descriptions: avoid dropping below `0.92rem`.
+- Form helper text: prefer `0.9rem` to `0.98rem`.
+- Labels and eyebrow text: may be compact, but must remain legible on mobile.
 
-- Dark mode: white/on-surface fill with dark text for maximum contrast.
-- Light mode: dark/on-surface fill with light background text contrast via `text-[var(--bg)]`.
-- Minimum height should stay compact but touch-safe; use shared button variants where possible.
-- Hover: lift by `-translate-y-px`, preserve elegance with shadow changes instead of opacity-only feedback.
-- Avoid purple CTA fills unless the component explicitly needs a brand-gradient moment.
-- Public inner-page final CTA cards should include `FinalCtaArtwork` as an internal decorative layer, then veil/texture/content above it. The image should support the card composition, not become a full-page background.
-- Keep CTA card copy short and action-oriented. Use one primary action plus one restrained secondary action when needed.
+## 5. CTA Treatment
 
----
+- Primary CTAs should be short, concrete, and hiring-oriented.
+- Use one primary action plus one restrained secondary action where needed.
+- Primary filled CTAs should maintain strong contrast in both themes.
+- Hover states should use subtle lift, shadow, or border changes rather than opacity-only changes.
+- Final CTA surfaces should reuse `src/components/ui/final-cta-artwork.tsx` where appropriate.
 
-## 4.3 Artifact Windows
+## 6. Glass and Surface Recipe
 
-The current homepage process and trust sections use realistic interface artifacts. Preserve this pattern for future high-impact sections:
+Standard glass cards:
 
-- Use mini browser/window chrome with three traffic-light dots.
-- Use `font-mono` for terminal commands, route IDs, progress values, percentages, and compact status labels.
-- Process artifacts should feel like real work output:
-  - chat transcript for discovery,
-  - problem/insight/direction brief,
-  - sprint/progress window,
-  - design board/canvas,
-  - terminal deploy/handoff.
-- Keep artifacts theme-aware with tokenized surfaces; terminal panels can use a stable dark surface for command-line authenticity.
-- Add subtle hover lift or progress-change affordances only when they clarify interactivity.
+- Background: tokenized glass surface or `bg-white/5` in dark mode and translucent white in light mode.
+- Blur: `backdrop-blur-xl` or `backdrop-blur-2xl`.
+- Border: tokenized glass border from global CSS.
+- Shadow: restrained, soft, and tied to depth rather than glow.
 
----
+Use cards for:
 
-## 4.4 Pattern Direction
+- Repeated items.
+- Forms.
+- Modals and framed tool surfaces.
+- Case-study cards and profile cards.
 
-Use texture to break monotony instead of color blobs:
+Avoid cards for:
 
-- Preferred: plus/dot textures, subtle hairlines, offset outline shapes, faint etched panels.
-- Avoid regular grid patterns.
-- Avoid large radial color blobs except for extremely subtle depth where no pattern will work.
-- Full-width visual sections may use theme-swapped imagery through explicit light/dark layers or CSS tokens.
-- About page backgrounds should use plus-sign texture, not regular line grids.
+- Whole page sections.
+- Nested card stacks.
+- Decorative wrappers with no functional purpose.
 
-## 4.5 Reading Sections
+## 7. Pattern and Artwork Direction
 
-Editorial and FAQ sections should prioritize legibility over visual density:
+Preferred:
 
-- Body copy should generally sit around `0.92rem` to `0.98rem` with `1.75`+ line-height.
-- Article cards may use stronger imagery, but supporting text must not be cramped.
-- FAQ answers should have enough open height for full copy after typography changes.
-- Newsletter or terminal panels can use a stable dark command surface in both themes when it clarifies the metaphor.
-- On mobile, inputs and action rows should stack rather than squeeze text.
+- Plus/dot textures.
+- Etched panels and hairlines.
+- Theme-swapped image layers.
+- Realistic interface artifacts.
+- Final CTA artwork inside CTA cards.
 
----
+Avoid:
 
-## 5. Layering & Stacking (Z-Index)
+- Regular grid backgrounds.
+- Large radial color blobs.
+- Sparkle/star decorative icons.
+- Generic sci-fi effects.
+- SVG hero illustrations when a real or generated bitmap/image asset better communicates the subject.
 
-To maintain a predictable UI hierarchy, the following custom Z-Index tokens are used:
+## 8. Icons
 
-- `z-100`: The standard for high-level overlays (Tooltips, Dropdowns, Floaties). Defined in `globals.css` via Tailwind 4 theme.
-- `z-50`: Standard for non-floating navigation elements.
+- Use `@tabler/icons-react`.
+- Active or primary icons may use `stroke={2}`.
+- Secondary icons should generally use `stroke={1.5}`.
+- Standard UI icon size: 18px to 22px depending on the control.
+- Do not mix in Lucide, Font Awesome, or inline decorative icons for normal UI.
 
----
+## 9. Artifact Windows
 
-## 5. Sidebar & Navigation Logic
+Process and proof sections can use realistic interface artifacts:
 
-- **Single Open Accordion**: The sidebar navigation must only allow **one** dropdown group to be open at any given time.
-- **Persistence**: Navigation state is managed at the layout level to preserve the open group during route changes.
+- Mini browser/window chrome.
+- Terminal-like panels for technical handoff or status.
+- Profile, shortlist, sprint, and onboarding surfaces.
+- `font-mono` for command text, durations, role IDs, percentages, and status values.
 
----
+Artifacts should feel like actual outputs from a hiring or engineering workflow, not generic dashboard decoration.
 
-## 3. Layout Conventions
+## 10. Layout and Responsiveness
 
-### The Floating Sidebar Pattern
+- Public pages should use the shared navbar and footer.
+- Focused utility flows such as `/start-project` and `/login` may hide the footer.
+- Text must not overlap controls or artwork on mobile or wide desktop.
+- Fixed-format UI elements should have stable dimensions so hover states and labels do not shift layout.
+- Do not scale font sizes with viewport width.
+- Letter spacing should remain non-negative.
 
-Sidebars must be implemented as siblings to the main content in a flex container, NOT as absolute overlays on desktop. This prevents "occlusion" (hiding) of search bars and navigation.
+## 11. Accessibility and Legibility
 
-```tsx
-<div className="flex">
-  <Sidebar /> {/* Standard occupant of layout space */}
-  <div className="flex-1 overflow-hidden">
-    <TopNav />
-    <main>...</main>
-  </div>
-</div>
-```
+- Keep focus states visible.
+- Use descriptive labels for form inputs and CTAs.
+- Do not rely on low opacity for important copy.
+- Avoid text over busy image areas unless veiled by a controlled overlay.
+- Confirm mobile helper text is large enough to read without zooming.
 
----
+## 12. Verification Standard
 
-## 4. Animation & Interaction
+Current requested gate:
 
-- **Transistions**: Always use `transition-all duration-300` for hover effects.
-- **Micro-Animations**: Use `framer-motion` for page transitions.
-  - **Springs**: `type: "spring", damping: 25, stiffness: 200` is our standard "soft" feel.
-- **Focus States**: Every interactive element must have `focus:ring-2 focus:ring-primary/50`.
+- `npx tsc --noEmit`
 
----
+Other checks remain useful when requested:
 
-## 5. Iconography
+- `npm run lint`
+- `npm run build`
+- Mobile visual checks at 375px, 390px, and 768px.
+- Desktop visual checks at 1440px and wide screens.
 
-- **Library**: Strictly use `@tabler/icons-react`.
-- **Stroke Width**:
-  - **Active**: `stroke={2}`.
-  - **Inactive**: `stroke={1.5}`.
-- **Sizes**: Standard UI icons: `20px` | Navigation icons: `22px`.
+## 13. GitHub
+
+Active source remote:
+
+- `https://github.com/Charanos/andishi-v3.git`
+
+Docs and implementation should stay in sync before publishing. When the copy system changes, update:
+
+- `docs/andishi-v3-content-system.md`
+- `docs/V3_CURRENT_STATE_AUDIT.md`
+- `docs/PROJECT_PROGRESS.md`
+- `docs/THEME_GUIDE.md`
+- `public/llms.txt`

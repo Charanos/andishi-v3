@@ -1,32 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { IconMoon, IconSun } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cosmicSpring } from "@/lib/motion";
 
 export function ThemeToggle() {
-  const [mounted, setMounted] = useState(false);
   const { resolvedTheme, setTheme } = useTheme();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <div className="h-9 w-9 rounded-xl border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_72%,transparent)]" />
-    );
-  }
-
-  const isDark = resolvedTheme === "dark";
+  const isDark = (resolvedTheme ?? "dark") === "dark";
   const toggleTheme = () => setTheme(isDark ? "light" : "dark");
 
   return (
     <button
       onClick={toggleTheme}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      suppressHydrationWarning
       className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_72%,transparent)] text-[var(--on-surface)] transition-colors duration-300 hover:border-[color-mix(in_srgb,var(--on-surface)_34%,transparent)] hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] focus:outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
     >
       <AnimatePresence mode="wait" initial={false}>
