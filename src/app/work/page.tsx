@@ -1,9 +1,9 @@
 import { WorkPageExperience } from "@/components/sections/work-page-experience";
 
 export const metadata = {
-  title: "Our Work - Andishi",
+  title: "Engineer Case Studies - Andishi",
   description:
-    "Case studies and delivered projects from Andishi, a Nairobi product studio building digital products for Kenyan and East African businesses.",
+    "Proof of work from Andishi engineers: full-stack, fintech, SaaS, analytics, mobile, and API systems shipped by senior African talent.",
 };
 
 export default function WorkPage() {

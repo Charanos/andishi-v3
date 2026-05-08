@@ -21,18 +21,18 @@ const faqSchema = {
   mainEntity: [
     {
       "@type": "Question",
-      name: "How long does a typical project take?",
+      name: "How quickly can we see matched engineers?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Most web applications take 3-8 weeks from brief approval to launch. E-commerce builds take 2-5 weeks. Landing pages take 1-3 weeks.",
+        text: "Andishi typically surfaces two to three matched senior engineer profiles within 48 hours after the technical discovery call.",
       },
     },
     {
       "@type": "Question",
-      name: "Do you work with businesses outside Nairobi?",
+      name: "What seniority level are Andishi engineers?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes. Andishi delivers for clients across Kenya and East Africa through remote weekly calls, shared project boards, and documented feedback rounds.",
+        text: "Andishi focuses on senior engineers with a minimum of five years of production experience, vetted through technical assessment, portfolio review, and references.",
       },
     },
   ],
@@ -69,9 +69,9 @@ export default function Home() {
 function Process() {
   const processIcons = [IconCalendarTime, IconFileText, IconCode, IconRocket];
   const processSignals = [
-    ["01", "Scope", "Decision-ready brief"],
-    ["02", "Cadence", "Weekly working artifact"],
-    ["03", "Launch", "Tested handoff + support"],
+    ["01", "Signal", "Technical hiring brief"],
+    ["02", "Match", "Two to three profiles"],
+    ["03", "Start", "Onboarding + guarantee"],
   ];
   const processVisuals = [
     <div
@@ -83,7 +83,7 @@ function Process() {
         <span className="h-1.5 w-1.5 rounded-full bg-[#ffbd2e]" />
         <span className="h-1.5 w-1.5 rounded-full bg-[#27c93f]" />
         <span className="ml-auto font-mono text-[0.55rem] text-[color-mix(in_srgb,var(--on-surface)_38%,transparent)]">
-          scoping.chat
+          talent.chat
         </span>
       </div>
       <div className="space-y-2 p-3">
@@ -91,16 +91,16 @@ function Process() {
           <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[var(--secondary)] font-mono text-[0.55rem] text-[var(--bg)]">
             A
           </span>
-          What does success look like in 90 days?
+          What should this engineer own in 90 days?
         </div>
         <div className="ml-auto max-w-[82%] rounded-2xl border border-[color-mix(in_srgb,var(--on-surface)_9%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_18%,transparent)] px-3 py-2 text-[0.68rem] leading-snug text-[var(--on-surface-dim)]">
-          Payments working, 500 active users, first KES 100k.
+          AI workflow live, API stable, infra cost controlled.
         </div>
         <div className="flex max-w-[84%] items-start gap-2 rounded-2xl bg-[color-mix(in_srgb,var(--on-surface)_6%,transparent)] px-3 py-2 text-[0.68rem] leading-snug text-[var(--on-surface-dim)]">
           <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[color-mix(in_srgb,var(--on-surface)_14%,transparent)] font-mono text-[0.55rem] text-[var(--on-surface)]">
             C
           </span>
-          Good. Let&apos;s scope around that metric.
+          Good. Let&apos;s match for that ownership level.
         </div>
       </div>
     </div>,
@@ -113,14 +113,14 @@ function Process() {
         <span className="h-1.5 w-1.5 rounded-full bg-[#ffbd2e]" />
         <span className="h-1.5 w-1.5 rounded-full bg-[#27c93f]" />
         <span className="ml-auto font-mono text-[0.55rem] text-[color-mix(in_srgb,var(--on-surface)_38%,transparent)]">
-          brief.logic
+          match.logic
         </span>
       </div>
       <div className="space-y-2 p-3">
         {[
-          ["Problem", "12% payment failure rate", "var(--tertiary)"],
-          ["Insight", "3 disconnected providers", "var(--secondary)"],
-          ["Direction", "Unified webhook layer -> one API", "var(--primary)"],
+          ["Need", "Senior backend + AI integration", "var(--tertiary)"],
+          ["Stack", "Next.js, Python, AWS", "var(--secondary)"],
+          ["Match", "2 profiles ready within 48h", "var(--primary)"],
         ].map(([label, text, color]) => (
           <div
             key={label}
@@ -257,12 +257,12 @@ function Process() {
             Our process
           </p>
           <h2 className="mx-auto max-w-[15ch] text-[clamp(2.4rem,7vw,4.9rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
-            Serious about performance. Obsessive about delivery.
+          Serious about fit. Obsessive about seniority.
           </h2>
           <p className="body-md mx-auto mt-6 max-w-2xl text-[var(--on-surface-dim)]">
-            No theatre. No three-month blackout. Each stage creates a visible
-            artifact so everyone knows what is decided, what is changing, and
-            what ships next.
+            No recruiter theatre. No pile of unvetted CVs. Each stage creates a
+            clear decision point so you know who is matched, why they fit, and
+            how quickly they can start.
           </p>
         </div>
 
@@ -344,7 +344,7 @@ function Process() {
                   05
                 </p>
                 <h3 className="mt-2 text-[1.05rem] font-medium leading-tight text-[var(--on-surface)]">
-                  Delivery
+                  Onboarding
                 </h3>
               </div>
               <span className="rounded-full border border-[color-mix(in_srgb,var(--tertiary)_24%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_10%,transparent)] px-3 py-1 font-mono text-[0.68rem] text-[var(--tertiary)]">
@@ -352,15 +352,15 @@ function Process() {
               </span>
             </div>
             <p className="text-[0.86rem] leading-relaxed text-[var(--on-surface-dim)]">
-              Final delivery reflects the scope, the collaboration, and the
-              product outcomes we agreed to achieve.
+              The placement starts with context, access, expectations, and
+              check-ins already mapped so your engineer can contribute quickly.
             </p>
             <div className="mt-5 grid gap-2">
               {[
-                "Design QA passed",
-                "Functionality verified",
-                "Performance benchmarks met",
-                "Security audit complete",
+                "Profile reviewed",
+                "Technical fit confirmed",
+                "Timezone overlap agreed",
+                "30-day guarantee active",
               ].map((item) => (
                 <span
                   key={item}
@@ -519,14 +519,14 @@ function Comparison() {
                     <div className="space-y-2.5 p-4 font-mono text-[0.7rem] leading-relaxed text-white/58">
                       <p>
                         <span className="text-[var(--secondary)]">→</span>{" "}
-                        compare freelancer agency andishi
+                        compare marketplace agency andishi
                       </p>
                       <p className="text-white/32">Scanning delivery risk...</p>
                       <p className="text-[var(--tertiary)]">
-                        ✓ fastest path: founder-direct build partner
+                        ✓ fastest path: vetted senior engineer
                       </p>
                       <p className="text-[var(--tertiary)]">
-                        ✓ retained context: Nairobi + East Africa
+                        ✓ retained context: Africa-sourced senior talent
                       </p>
                       <p className="text-[var(--secondary)]">
                         result: ship with Andishi
@@ -541,15 +541,15 @@ function Comparison() {
           <div className="order-1 text-left lg:order-2 lg:text-right">
             <p className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)] lg:justify-end">
               <span className="h-px w-7 bg-[var(--secondary)]" />
-              Why Andishi
+          Why Andishi
             </p>
             <h2 className="ml-auto max-w-[13ch] text-[clamp(2.6rem,7vw,5.2rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
-              Built like a senior product team.
+              Built like a senior engineering partner.
             </h2>
             <p className="body-md ml-auto mt-6 max-w-xl text-[var(--on-surface-dim)]">
-              Founders do not need more process theatre. They need clear scope,
-              visible momentum, and someone accountable when the product meets
-              the market.
+              Startups do not need more hiring theatre. They need vetted senior
+              engineers, clear ownership, and someone accountable after the
+              placement starts.
             </p>
           </div>
         </div>
@@ -593,8 +593,8 @@ function Comparison() {
                       <p className="label-caps text-[color-mix(in_srgb,var(--on-surface-dim)_64%,transparent)]">
                         Common route
                       </p>
-                      <p className="mt-2 text-[0.82rem] leading-relaxed text-[var(--on-surface-dim)]">
-                        Freelancer: {freelancer}. Agency: {agency}.
+                      <p className="mt-2 text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">
+                        Freelance platform: {freelancer}. Outsourcing agency: {agency}.
                       </p>
                     </div>
                     <div className="rounded-2xl border border-[color-mix(in_srgb,var(--secondary)_24%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_8%,transparent)] px-4 py-3">
@@ -624,7 +624,7 @@ function Comparison() {
 function IllustrationBreak() {
   return (
     <section
-      aria-label="Andishi product systems illustration"
+      aria-label="Andishi engineering talent illustration"
       className="relative left-1/2 min-h-screen w-screen -translate-x-1/2 overflow-clip bg-[var(--bg-deep)]"
     >
       <div className="sticky top-0 min-h-screen overflow-hidden">
@@ -681,18 +681,19 @@ function IllustrationBreak() {
               <div className="max-w-2xl rounded-[1.75rem] border border-[color-mix(in_srgb,var(--on-surface)_13%,transparent)] bg-[color-mix(in_srgb,var(--surface)_60%,transparent)] p-5 shadow-[0_28px_90px_color-mix(in_srgb,var(--bg-deep)_34%,transparent)] backdrop-blur-2xl sm:p-7 lg:p-9">
                 <p className="label-caps mb-4 flex items-center gap-3 text-[var(--secondary)]">
                   <span className="h-px w-7 bg-[var(--secondary)]" />
-                  Systems, not screens
+                  Talent, not CV piles
                 </p>
                 <h2 className="max-w-[11ch] text-[clamp(2.45rem,12vw,5.8rem)] font-normal leading-[0.92] tracking-normal text-[var(--on-surface)]">
-                  Every interface sits inside an operating system.
+                  Every hire needs proof, context, and support.
                 </h2>
                 <div className="mt-7 grid gap-3 border-t border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] pt-5 sm:grid-cols-[0.72fr_1fr] sm:items-start">
                   <p className="font-mono text-[0.72rem] uppercase tracking-[0.12em] text-[color-mix(in_srgb,var(--on-surface)_58%,transparent)]">
                     Andishi layer
                   </p>
                   <p className="body-md text-[var(--on-surface-dim)]">
-                    Product thinking, market context, engineering discipline,
-                    and launch support designed to move together.
+                    Technical assessment, reference checks, production track
+                    record, and post-placement support designed to move
+                    together.
                   </p>
                 </div>
               </div>
@@ -707,15 +708,15 @@ function IllustrationBreak() {
 
 function Founder() {
   const founderStats = [
-    ["Nairobi", "Market context"],
+    ["Africa", "Talent network"],
     ["Founder-led", "Direct accountability"],
-    ["30 days", "Post-launch support"],
+    ["30 days", "Placement guarantee"],
   ];
 
   const operatingRules = [
-    "Scope the smallest valuable launch.",
-    "Prototype the risky parts first.",
-    "Keep clients close to the work.",
+    "Match for ownership, not keywords.",
+    "Vetting must look like production work.",
+    "Stay close after the start date.",
   ];
 
   return (
@@ -756,7 +757,7 @@ function Founder() {
                   CEO / Founder
                 </p>
                 <p className="mt-2 text-[1.3rem] font-medium leading-tight text-[var(--on-surface)]">
-                  Built close to the brief, the business, and the launch.
+                  Built close to the engineer, the client, and the work.
                 </p>
               </div>
             </div>
@@ -784,17 +785,17 @@ function Founder() {
             Founder
           </p>
           <h2 className="max-w-[13ch] text-[clamp(2.45rem,7vw,5.2rem)] font-normal leading-[0.94] tracking-normal text-foreground">
-            Built in Nairobi. Accountable from scope to launch.
+            Built from Africa. Accountable after placement.
           </h2>
           <p className="body-md mt-6 max-w-2xl text-(--on-surface-dim)">
-            Andishi exists for businesses with real ambition who need digital
-            partners that understand the market, the deadline, and the stakes of
-            shipping well.
+            Andishi exists because senior African engineers are too often
+            invisible to global startups, and global startups are tired of
+            hiring channels that cannot tell senior signal from polished CVs.
           </p>
 
           <blockquote className="mt-8 border-l border-[color-mix(in_srgb,var(--secondary)_38%,transparent)] pl-5 text-[clamp(1.15rem,2.2vw,1.55rem)] font-normal leading-snug text-foreground">
-            “The job is not to make software feel expensive. The job is to make
-            the business move with less friction.”
+            “The talent was always here. The work is finding it, vetting it,
+            and making the engagement low-friction.”
           </blockquote>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
@@ -874,29 +875,29 @@ function FinalCTA() {
             color: "var(--on-surface)",
           }}
         >
-          Ready to scope your project?
+          Tell us what you are building.
         </h2>
         <p
           className="body-md mx-auto mt-5 max-w-md"
           style={{ color: "var(--on-surface-dim)" }}
         >
-          The first call is 30 minutes and costs nothing. You will leave with a
-          clear picture of what is possible and what it takes.
+          We will tell you within 48 hours whether we have the right engineer
+          for it, and surface profiles if we do.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <LinkButton href="/contact" variant="primary">
-            Book a scoping call
+            Start a conversation
             <IconArrowRight size={16} stroke={1.8} />
           </LinkButton>
-          <LinkButton href="mailto:hello@andishi.dev" variant="glass">
-            hello@andishi.dev
+          <LinkButton href="mailto:hire@andishi.dev" variant="glass">
+            hire@andishi.dev
           </LinkButton>
         </div>
         <p
           className="label-caps mt-6"
           style={{ color: "var(--on-surface-dim)", opacity: 0.5 }}
         >
-          No pitch / No retainer required / Response within 24 hours
+          No retainer required / No recruiter pitch / Response within 24 hours
         </p>
         </div>
       </div>

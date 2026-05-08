@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import {
@@ -32,11 +31,11 @@ const socialLinks = [
 ] as const;
 
 const contactLinks = [
-  ["Email", "hello@andishi.dev", IconMail, "mailto:hello@andishi.dev"],
+  ["Email", "hire@andishi.dev", IconMail, "mailto:hire@andishi.dev"],
   ["Twitter/X", "@andishidev", IconBrandX, "https://twitter.com/andishidev"],
   [
     "LinkedIn",
-    "Andishi Studio",
+    "Andishi Talent",
     IconBrandLinkedin,
     "https://linkedin.com/company/andishi",
   ],
@@ -56,39 +55,39 @@ const timeline = [
     year: "2021-23",
     event: "Technical groundwork",
     detail:
-      "Early web, ICT support, AI data, and product delivery experience shaped the studio's bias for practical software over presentation-only work.",
+      "Early web, ICT support, AI data, and product delivery experience shaped Andishi's bias for practical engineers who can ship, not just interview well.",
   },
   {
     year: "2023",
-    event: "Delivery playbook formed",
+    event: "Vetting playbook formed",
     detail:
-      "The working model became clear: small senior-led squads, clear scope, real staging links, and specialists brought in only when the project needs them.",
+      "The working model became clear: understand the client need technically, verify production signal, and only introduce engineers who can own the work.",
   },
   {
     year: "Jan 2024",
-    event: "Andishi Studio founded",
+    event: "Andishi founded",
     detail:
-      "Andishi began as a software delivery company for businesses that needed web apps, payment systems, dashboards, and integrations built with local context.",
+      "Andishi began through software delivery work for businesses that needed web apps, payment systems, dashboards, and integrations built with real production discipline.",
     badge: "Milestone",
   },
   {
     year: "2024",
-    event: "Vetted developer bench",
+    event: "Vetted engineering network",
     detail:
-      "The studio expanded beyond one builder into a network of trusted in-house and contract developers, designers, and implementation specialists.",
+      "The bench expanded into a network of trusted senior engineers across full-stack, backend, AI, cloud, Web3, mobile, and implementation work.",
     badge: "Milestone",
   },
   {
     year: "2024-25",
-    event: "14+ products shipped",
+    event: "Proof-of-work portfolio",
     detail:
-      "Delivered education, commerce, logistics, analytics, and payment systems for clients across East Africa and teams serving international users.",
+      "Education, commerce, logistics, analytics, and payment systems became proof of what the Andishi engineer network can ship under real constraints.",
   },
   {
     year: "Now / 2026",
-    event: "Local and international delivery",
+    event: "Talent-first positioning",
     detail:
-      "Andishi now pairs Nairobi-led product direction with distributed specialists to deliver client work locally, regionally, and internationally.",
+      "Andishi now places senior African engineers with global startups while keeping the studio arm as a proof-of-work and direct-build track.",
     badge: "Live now",
     current: true,
   },
@@ -97,59 +96,59 @@ const timeline = [
 const values = [
   {
     icon: IconBolt,
-    title: "Ship first, refine always",
+    title: "Production signal beats polish",
     body:
-      "A working product in a client's hands teaches more in a week than three months of planning. We move fast and improve with real data.",
+      "We care about shipped systems, reference checks, judgment under constraints, and whether an engineer can own real product consequences.",
     tone: "var(--primary)",
   },
   {
     icon: IconUsers,
-    title: "Context is everything",
+    title: "Africa is the source",
     body:
-      "Building for Kenya means M-Pesa is non-negotiable, USSD still matters, and mobile-first is the default reality.",
+      "African engineers are not a compromise. Timezone overlap, English fluency, global stacks, and production depth are the point.",
     tone: "var(--secondary)",
   },
   {
     icon: IconCheck,
-    title: "Honest scoping, fixed pricing",
+    title: "Senior means autonomous",
     body:
-      "We would rather lose a project by quoting accurately than win it and be forced to cut corners later.",
+      "We place engineers who can be given a problem and own it, not engineers who need your team to manage every next step.",
     tone: "var(--tertiary)",
   },
   {
     icon: IconCalendarTime,
-    title: "No radio silence",
+    title: "No placement silence",
     body:
-      "Visible progress, staging links, and direct feedback loops. You should never need to chase your own project.",
+      "We stay involved after the start date through onboarding support, check-ins, and a 30-day replacement guarantee.",
     tone: "var(--secondary)",
   },
   {
     icon: IconRocket,
-    title: "Metrics over aesthetics",
+    title: "Fit over volume",
     body:
-      "Beautiful software that does not move a business metric is just expensive decoration. Outcomes come first.",
+      "The goal is not a pile of CVs. The goal is two or three engineers who match the stack, seniority, timezone, and ownership need.",
     tone: "var(--primary)",
   },
   {
     icon: IconWorld,
-    title: "Local context, global standards",
+    title: "Studio work proves talent",
     body:
-      "East Africa has its own stack and constraints, but the quality bar is global. We build with both realities in mind.",
+      "The studio arm still builds products, but every project also becomes evidence of what our engineers can do.",
     tone: "var(--secondary)",
   },
 ];
 
 const availability = [
-  ["Web application builds", "1 slot left", "var(--secondary)"],
-  ["Payment integrations", "Open", "var(--tertiary)"],
-  ["Conversion websites", "Open", "var(--tertiary)"],
-  ["Large-scale platforms", "Q3 2026", "var(--primary)"],
+  ["Full-stack engineers", "Open", "var(--tertiary)"],
+  ["AI integration engineers", "Open", "var(--tertiary)"],
+  ["Cloud / AWS engineers", "Limited", "var(--secondary)"],
+  ["Dedicated build teams", "Q3 2026", "var(--primary)"],
 ];
 
 const activeProjects = [
-  ["Ante Social", "Social prediction market / closed beta", "72%", "A"],
-  ["MySchool v2", "Multi-tenant EdTech / feature expansion", "88%", "M"],
-  ["Ripoti Analytics", "SME dashboard / new connectors", "55%", "R"],
+  ["Senior full-stack", "React / Node / fintech systems", "92%", "F"],
+  ["AI integration", "LLM workflow / RAG product work", "68%", "A"],
+  ["Cloud engineer", "AWS / deployment / reliability", "84%", "C"],
 ];
 
 const skillGroups = [
@@ -172,12 +171,12 @@ const skillGroups = [
     ],
   },
   {
-    label: "East Africa stack",
+    label: "Specialist depth",
     skills: [
-      ["M-Pesa Daraja 2.0", 96],
-      ["USDT / crypto rails", 80],
-      ["Africa's Talking SMS", 85],
-      ["NEMIS / KRA / CBC", 78],
+      ["AI / LLM integration", 86],
+      ["AWS infrastructure", 88],
+      ["Web3 / Solidity", 80],
+      ["Payments / integrations", 90],
     ],
   },
   {
@@ -264,7 +263,7 @@ export function AboutPageExperience() {
                     key={section.id}
                     type="button"
                     onClick={() => scrollToSection(section.id)}
-                    className="group flex w-full items-center gap-3 border-b border-[var(--glass-border)] py-3 text-left text-[0.78rem] font-medium uppercase tracking-[0.1em] text-[var(--on-surface-dim)] transition-all duration-300 last:border-b-0 hover:text-[var(--on-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]"
+                    className="group flex w-full items-center gap-3 border-b border-[var(--glass-border)] py-3.5 text-left text-[0.88rem] font-medium uppercase tracking-[0.08em] text-[var(--on-surface-dim)] transition-all duration-300 last:border-b-0 hover:text-[var(--on-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]"
                   >
                     <span
                       className={cn(
@@ -283,13 +282,13 @@ export function AboutPageExperience() {
 
           <div className="border-t border-[var(--glass-border)] pt-5">
             <p className="label-caps mb-4 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
-              Studio facts
+              Talent facts
             </p>
             <div className="grid gap-4">
               {[
-                ["Nairobi", "Studio base"],
-                ["Global", "Client reach"],
-                ["30d", "post-launch support"],
+                ["Africa", "Talent source"],
+                ["Global", "Startup reach"],
+                ["30d", "placement guarantee"],
               ].map(([value, label]) => (
                 <div
                   key={label}
@@ -298,7 +297,7 @@ export function AboutPageExperience() {
                   <p className="font-mono text-[1.1rem] leading-none tracking-normal text-[var(--on-surface)]">
                     {value}
                   </p>
-                  <p className="mt-2 text-[0.72rem] leading-snug text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)]">
+                  <p className="mt-2 text-[0.82rem] leading-snug text-[var(--on-surface-dim)]">
                     {label}
                   </p>
                 </div>
@@ -395,23 +394,23 @@ function Hero() {
           </div>
           <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_34%,color-mix(in_srgb,var(--bg-deep)_86%,transparent)_100%)]" />
           <div className="absolute left-4 right-4 top-4 flex flex-wrap gap-2">
-            <PortraitChip icon={IconMapPin} label="Nairobi-led" />
-            <PortraitChip icon={IconCode} label="In-house + contract devs" />
+            <PortraitChip icon={IconMapPin} label="Africa-sourced" />
+            <PortraitChip icon={IconCode} label="Senior vetted engineers" />
           </div>
           <div className="absolute inset-x-4 bottom-4 flex flex-wrap items-end justify-between gap-2">
             <PortraitChip icon={IconCalendarTime} label="Operating since 2024" />
             <span className="inline-flex items-center gap-2 rounded-xl border border-[color-mix(in_srgb,var(--tertiary)_28%,transparent)] bg-[color-mix(in_srgb,var(--bg)_54%,transparent)] px-3 py-2 text-[0.72rem] font-medium text-[var(--tertiary)] backdrop-blur-xl">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--tertiary)]" />
-              Delivery slots open
+              Talent matching open
             </span>
           </div>
         </div>
 
         <h2 className="text-[clamp(2rem,5vw,2.7rem)] font-normal leading-none tracking-normal text-[var(--on-surface)]">
-          Andishi Studio
+          Andishi Talent
         </h2>
         <p className="mt-2 text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">
-          Software delivery company / Nairobi-led, globally capable
+          Senior African engineers / placed with global startups
         </p>
         <div className="mt-5 flex flex-wrap gap-2">
           {socialLinks.map(([label, Icon, href]) => (
@@ -436,36 +435,34 @@ function Hero() {
         className="pt-10 lg:flex lg:flex-col lg:justify-between lg:pt-0"
       >
         <div>
-          <p className="label-caps mb-4 text-[var(--primary)]">Studio note</p>
+          <p className="label-caps mb-4 text-[var(--primary)]">Talent note</p>
           <h1 className="max-w-[12ch] text-[clamp(3rem,9vw,5.8rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
-            Software teams for serious launches.
+            Senior engineers for serious startups.
           </h1>
           <div className="mt-7 max-w-2xl space-y-5">
             <p className="body-md text-[var(--on-surface-dim)]">
-              Andishi is a Nairobi-led software company that assembles the right
-              developers, designers, and implementation specialists for each
-              build. Some work happens in-house, some through trusted contract
-              specialists, but every project runs through one accountable
-              delivery system.
+              Andishi is an African engineering talent company that sources,
+              vets, and places senior software engineers with global startups.
+              The work is not to flood your inbox with CVs. It is to understand
+              the technical need and surface engineers who can actually own it.
             </p>
             <blockquote className="border-l border-[color-mix(in_srgb,var(--secondary)_44%,transparent)] pl-5 text-[clamp(1.18rem,2.4vw,1.55rem)] font-normal leading-snug text-[var(--on-surface)]">
-              We bring the right team to the work, then keep one clear owner for
-              scope, quality, communication, and launch.
+              We only place engineers we would bet our reputation on.
             </blockquote>
             <p className="body-md text-[var(--on-surface-dim)]">
-              That model lets us serve Kenyan and East African businesses
-              without being limited to one person&apos;s bandwidth, while still
-              meeting the expectations of international clients who need clean
-              engineering, reliable timelines, and polished product execution.
+              The studio arm still exists, but it now sits downstream of the
+              talent proposition. Every product Andishi ships is proof of the
+              standards, judgment, and production capability in the engineer
+              network.
             </p>
           </div>
         </div>
 
         <div className="mt-8 grid overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] sm:grid-cols-3">
           {[
-            ["2024", "Studio founded"],
-            ["14+", "Products shipped"],
-            ["Global", "Delivery reach"],
+            ["2024", "Founded"],
+            ["50+", "Engineers placed"],
+            ["Global", "Startup reach"],
           ].map(([value, label]) => (
             <div
               key={label}
@@ -519,17 +516,17 @@ function Story() {
         </h2>
         <div className="mt-7 max-w-3xl space-y-5">
           <p className="body-md text-[var(--on-surface-dim)]">
-            Andishi exists for companies that need real software delivery, not a
-            loose chain of freelancers, templates, and unclear handoffs. The
-            studio was built around a simple operating principle: understand the
-            business, scope the work properly, then bring in the right technical
-            team to ship it.
+            Andishi exists because serious African engineers are still
+            under-discovered by global hiring teams, while startups keep burning
+            months in recruiting loops that do not reliably find senior talent.
+            The company was built around a simple operating principle: source
+            carefully, vet rigorously, and make the engagement easy to start.
           </p>
           <p className="body-md text-[var(--on-surface-dim)]">
             The name Andishi comes from Swahili. It means writer or author. The
-            idea is that we are not just writing code; we are authoring the
-            systems that let businesses operate, sell, report, collect payments,
-            and serve customers across local and international markets.
+            idea still matters: engineers author systems, but the bigger job is
+            helping the right authors find the teams where their work can move
+            fastest.
           </p>
         </div>
       </motion.div>
@@ -549,7 +546,7 @@ function FounderContext() {
             Founder context
           </p>
           <h2 className="max-w-[12ch] text-[clamp(2rem,6vw,3.6rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)]">
-            Leadership without bottlenecking the work.
+            Built from Africa, not from a Western hiring hub.
           </h2>
         </div>
 
@@ -579,28 +576,28 @@ function FounderContext() {
               </p>
               <div className="space-y-4 text-[0.94rem] leading-[1.8] text-[var(--on-surface-dim)]">
                 <p>
-                  Ian started Andishi to close the gap between businesses that
-                  need dependable software and the fragmented developer market
-                  they usually have to navigate alone.
+                  Ian started Andishi to close a gap that runs both ways:
+                  African engineers with serious production experience were
+                  invisible to global hiring managers, and startups were paying
+                  too much for channels that could not verify real seniority.
                 </p>
                 <p>
-                  His role is to protect the standard: scope discipline,
-                  technical judgment, client communication, and choosing the
-                  right mix of in-house and contract talent for each build.
+                  His role is to protect the standard: technical judgment,
+                  vetting depth, client communication, and the quality of every
+                  engineer introduced through the network.
                 </p>
                 <p>
-                  Andishi is intentionally not designed around one person doing
-                  every task. The founder sets direction and quality control;
-                  the delivery system brings in the people best suited to ship
-                  the work.
+                  Andishi is intentionally not a marketplace. The company does
+                  the sourcing, assessment, and relationship management itself,
+                  then stays involved once the engineer starts.
                 </p>
               </div>
 
               <div className="mt-6 grid gap-2 sm:grid-cols-3">
                 {[
-                  ["Direction", "Scope and product judgment"],
-                  ["Quality", "Engineering review"],
-                  ["Delivery", "Team assembly and cadence"],
+                  ["Sourcing", "Across African tech hubs"],
+                  ["Quality", "Assessment and references"],
+                  ["Support", "Onboarding and check-ins"],
                 ].map(([label, detail]) => (
                   <div
                     key={label}
@@ -735,7 +732,7 @@ function StudioStatus() {
     <section id="status" className="scroll-mt-32 border-b border-[var(--glass-border)] py-16">
       <div className="mb-9">
         <p className="label-caps mb-4 text-[var(--secondary)]">
-          Live studio status
+          Live talent status
         </p>
         <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--tertiary)_26%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_10%,transparent)] px-3 py-1.5 text-[0.72rem] font-medium text-[var(--tertiary)]">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--tertiary)]" />
@@ -747,7 +744,7 @@ function StudioStatus() {
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
-        <StatusPanel title="Project availability" aside="May 2026">
+        <StatusPanel title="Engineer availability" aside="May 2026">
           <div className="grid gap-2">
             {availability.map(([name, status, color]) => (
               <div
@@ -769,16 +766,16 @@ function StudioStatus() {
           </div>
           <div className="mt-4 flex flex-col gap-2 sm:flex-row">
             <LinkButton href="/contact" variant="primary" className="flex-1">
-              Book a scoping call
+              Start matching
               <IconArrowRight size={15} stroke={1.8} />
             </LinkButton>
-            <LinkButton href="mailto:hello@andishi.dev" variant="glass" className="flex-1">
-              hello@andishi.dev
+            <LinkButton href="mailto:hire@andishi.dev" variant="glass" className="flex-1">
+              hire@andishi.dev
             </LinkButton>
           </div>
         </StatusPanel>
 
-        <StatusPanel title="Currently building" aside="3 active">
+        <StatusPanel title="Currently matching" aside="3 active">
           <div className="grid gap-2">
             {activeProjects.map(([name, detail, progress, initial], index) => (
               <div
@@ -820,10 +817,10 @@ function StudioStatus() {
 
       <div className="mt-5 grid overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] sm:grid-cols-4">
         {[
-          ["14+", "Products shipped"],
-          ["11d", "Fastest brief to launch"],
-          ["Global", "Client reach"],
-          ["0", "Missed deadlines"],
+          ["50+", "Engineers placed"],
+          ["48h", "First profiles"],
+          ["Global", "Startup reach"],
+          ["30d", "Guarantee"],
         ].map(([value, label]) => (
           <div
             key={label}
@@ -873,12 +870,12 @@ function Capabilities() {
         <div className="lg:sticky lg:top-28 lg:self-start">
           <p className="label-caps mb-4 text-[var(--secondary)]">Capabilities</p>
           <h2 className="max-w-[12ch] text-[clamp(2rem,6vw,3.6rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)]">
-            The full delivery picture.
+            The talent coverage.
           </h2>
           <p className="body-md mt-5 text-[var(--on-surface-dim)]">
-            Full-stack delivery from database schema to deployed UI, with
-            specialist developers assigned around the work rather than a
-            one-size team assigned to every project.
+            The Andishi network covers core startup engineering needs across
+            full-stack web, backend APIs, AI integration, cloud infrastructure,
+            Web3, mobile, and production support.
           </p>
         </div>
 
@@ -936,28 +933,25 @@ function Signoff() {
           <PlusTexture opacity={0.08} />
           <div className="relative">
             <p className="label-caps mb-5 text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
-              How delivery works
+              How hiring works
             </p>
             <div className="space-y-5 text-[0.95rem] leading-[1.8] text-[var(--on-surface-dim)]">
               <p>
-                When you work with Andishi, you are not hiring a single
-                developer and hoping their schedule, skill set, and stamina can
-                carry the whole product. You are hiring a delivery company with
-                a clear owner, a vetted technical bench, and a process built for
-                client work.
+                When you hire through Andishi, you are not posting a role and
+                hoping the right engineer finds it. You are working with a
+                talent company that knows the network, vets for production
+                signal, and matches against your exact technical need.
               </p>
               <p>
-                We match the scope to the right mix of in-house and contract
-                specialists: frontend, backend, payments, analytics,
-                integrations, mobile, QA, or implementation support. You still
-                get one accountable project lead, one scope, and one delivery
-                rhythm.
+                We match the role to the right engineer or team shape:
+                contract, fractional, embedded team extension, dedicated build
+                team, or permanent pathway. You get clear ownership, not a
+                mystery bench.
               </p>
               <p>
-                The result is flexible capacity without agency bloat, local
-                context without local-only thinking, and enough structure to
-                serve teams building for Kenya, East Africa, and international
-                markets.
+                The result is senior African engineering capacity with timezone
+                overlap, strong communication, and enough post-placement support
+                to make the engagement low-friction.
               </p>
             </div>
             <div className="mt-8 flex items-center gap-3 border-t border-[var(--glass-border)] pt-5">
@@ -966,10 +960,10 @@ function Signoff() {
               </span>
               <div>
                 <p className="text-[0.95rem] font-medium text-[var(--on-surface)]">
-                  Andishi Studio
+                  Andishi Talent
                 </p>
                 <p className="text-[0.74rem] text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)]">
-                  Nairobi-led software delivery company
+                  African engineering talent company
                 </p>
               </div>
             </div>
@@ -993,12 +987,12 @@ function Signoff() {
               Get in touch
             </p>
             <h2 className="max-w-[12ch] text-[clamp(2rem,6vw,3.4rem)] font-normal leading-[1.02] tracking-normal text-[var(--on-surface)]">
-              Let us build something real.
+              Let us find the engineer who can build it.
             </h2>
             <p className="body-md mt-5 text-[var(--on-surface-dim)]">
-              One call. No pitch. Just an honest conversation about what you
-              want to build, what kind of team it needs, and whether we are the
-              right partner to deliver it.
+              One call. No recruiter pitch. Just an honest conversation about
+              what you are building, what stack you use, and whether we have the
+              right senior engineer for it.
             </p>
 
             <div className="mt-7 grid gap-2">
@@ -1023,11 +1017,11 @@ function Signoff() {
 
             <div className="mt-7">
               <LinkButton href="/contact" variant="primary" className="w-full">
-                Book a scoping call
+                Start matching
                 <IconArrowRight size={16} stroke={1.8} />
               </LinkButton>
               <p className="label-caps mt-5 text-center text-[color-mix(in_srgb,var(--on-surface-dim)_52%,transparent)]">
-                No pitch / No retainer required / Response within 24 hours
+                No recruiter pitch / No retainer required / Response within 24 hours
               </p>
             </div>
           </div>

@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import {
   IconArrowLeft,
   IconArrowRight,
-  IconBolt,
   IconCalendarTime,
   IconCheck,
   IconFileText,
@@ -25,16 +24,16 @@ const steps = [
     sub: "Your contact details and role.",
   },
   {
-    title: "Your project",
-    sub: "The product, service line, and problem.",
+    title: "Talent need",
+    sub: "The role, stack, and bottleneck.",
   },
   {
-    title: "Timeline & budget",
-    sub: "The constraints we should scope around.",
+    title: "Timeline & model",
+    sub: "Start date, duration, and engagement shape.",
   },
   {
     title: "Context",
-    sub: "Existing stack, team, and useful notes.",
+    sub: "Current team, product, and useful notes.",
   },
   {
     title: "Review & send",
@@ -43,22 +42,27 @@ const steps = [
 ];
 
 const serviceOptions = [
-  ["Web Application", "Custom portals, dashboards, SaaS"],
-  ["Payment Integration", "M-Pesa, USDT, multi-rail fintech"],
-  ["E-Commerce Store", "Mobile-first stores and checkout"],
-  ["Conversion Website", "Landing pages and product sites"],
-  ["Analytics Dashboard", "Reporting, metrics, and insights"],
-  ["API / Integrations", "Automations, backends, webhooks"],
+  ["Full-stack Engineer", "React, Next.js, Node.js, Python"],
+  ["AI Integration Engineer", "LLMs, RAG, agents, model APIs"],
+  ["Cloud / AWS Engineer", "Infrastructure, deployment, reliability"],
+  ["Backend API Engineer", "REST, GraphQL, databases, payments"],
+  ["Web3 Engineer", "Solidity, Ethereum, DeFi integrations"],
+  ["Mobile Engineer", "React Native, Swift, Kotlin"],
 ] as const;
 
 const timelines = [
-  ["ASAP", "1-2 weeks"],
-  ["1 month", "~4 weeks"],
-  ["2-3 mo", "steady pace"],
-  ["Flexible", "no rush"],
+  ["ASAP", "this week"],
+  ["2 weeks", "near-term"],
+  ["1 month", "planned start"],
+  ["Flexible", "open timing"],
 ] as const;
 
-const budgets = ["KES 30k - 60k", "KES 60k - 150k", "KES 150k - 300k", "KES 300k+"];
+const budgets = [
+  "Contract / fractional",
+  "Team extension",
+  "Dedicated build team",
+  "Permanent hire pathway",
+];
 
 function PlusTexture({ opacity = 0.1 }: { opacity?: number }) {
   return (
@@ -128,7 +132,7 @@ export function StartProjectExperience() {
 
     const ref = `AND-${Date.now().toString(36).toUpperCase().slice(-6)}`;
     const body = [
-      `Project brief reference: ${ref}`,
+      `Hiring brief reference: ${ref}`,
       "",
       `Name: ${form.name}`,
       `Role: ${form.role || "Not provided"}`,
@@ -136,15 +140,15 @@ export function StartProjectExperience() {
       `Phone / WhatsApp: ${form.phone || "Not provided"}`,
       `Company: ${form.company || "Not provided"}`,
       "",
-      `Services: ${services.join(", ")}`,
-      `Timeline: ${timeline}`,
-      `Budget: ${budget}`,
+      `Talent need: ${services.join(", ")}`,
+      `Start timing: ${timeline}`,
+      `Engagement model: ${budget}`,
       "",
-      "Project description:",
+      "Role / engineering need:",
       form.description,
       "",
-      `Existing product: ${form.existing || "Not provided"}`,
-      `Preferred stack: ${form.stack || "No preference"}`,
+      `Existing product or team: ${form.existing || "Not provided"}`,
+      `Current / preferred stack: ${form.stack || "No preference"}`,
       `Source: ${form.source || "Not provided"}`,
       "",
       "Extra context:",
@@ -152,8 +156,8 @@ export function StartProjectExperience() {
     ].join("\n");
 
     setSentRef(ref);
-    window.location.href = `mailto:hello@andishi.dev?subject=${encodeURIComponent(
-      `Start project brief ${ref}`,
+    window.location.href = `mailto:hire@andishi.dev?subject=${encodeURIComponent(
+      `Hiring brief ${ref}`,
     )}&body=${encodeURIComponent(body)}`;
   };
 
@@ -220,7 +224,7 @@ export function StartProjectExperience() {
                     </span>
                     <span
                       className={cn(
-                        "mt-1 block text-[0.74rem] leading-relaxed",
+                      "mt-1 block text-[0.84rem] leading-relaxed",
                         isActive
                           ? "text-[var(--on-surface-dim)]"
                           : "text-[color-mix(in_srgb,var(--on-surface-dim)_48%,transparent)]",
@@ -241,13 +245,13 @@ export function StartProjectExperience() {
             <div className="grid gap-3">
               {[
                 [IconMail, "Confirmation email"],
-                [IconCalendarTime, "Scoping call within 24 hours"],
-                [IconFileText, "Scope document within 48 hours"],
-                [IconRocket, "Build starts after approval"],
+                [IconCalendarTime, "Technical call within 24 hours"],
+                [IconFileText, "Matched profiles within 48 hours"],
+                [IconRocket, "Engineer onboarding after approval"],
               ].map(([Icon, label]) => (
                 <div
                   key={label as string}
-                  className="flex items-center gap-3 text-[0.78rem] text-[var(--on-surface-dim)]"
+                  className="flex items-center gap-3 text-[0.88rem] text-[var(--on-surface-dim)]"
                 >
                   <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-[color-mix(in_srgb,var(--primary)_10%,transparent)] text-[var(--primary)]">
                     <Icon size={14} stroke={1.6} />
@@ -280,12 +284,12 @@ export function StartProjectExperience() {
           className="flex min-h-[calc(100svh-6rem)] flex-col py-8 lg:pl-10"
         >
           <div className="mb-6 flex items-center justify-between gap-4 border-b border-[var(--glass-border)] pb-5">
-            <p className="font-mono text-[0.74rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
+            <p className="font-mono text-[0.84rem] tracking-normal text-[var(--on-surface-dim)]">
               Step {step + 1} of {steps.length} / {steps[step].title}
             </p>
             <Link
               href="/"
-              className="text-[0.8rem] text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)] transition-colors duration-300 hover:text-[var(--on-surface)]"
+              className="text-[0.9rem] text-[var(--on-surface-dim)] transition-colors duration-300 hover:text-[var(--on-surface)]"
             >
               Save & exit
             </Link>
@@ -344,8 +348,8 @@ export function StartProjectExperience() {
             {step === 1 && (
               <StepShell
                 eyebrow="Step 2 of 5"
-                title="What are you building?"
-                desc="Select every service that applies. We will shape the team around the work."
+                title="What kind of engineer do you need?"
+                desc="Select every role that applies. We will shape the shortlist around the actual work, not a generic job title."
               >
                 <div className="grid gap-3 sm:grid-cols-2">
                   {serviceOptions.map(([title, sub]) => (
@@ -375,7 +379,7 @@ export function StartProjectExperience() {
                         <span className="block text-[0.9rem] font-medium text-[var(--on-surface)]">
                           {title}
                         </span>
-                        <span className="mt-1 block text-[0.74rem] leading-relaxed text-[var(--on-surface-dim)]">
+                        <span className="mt-1 block text-[0.84rem] leading-relaxed text-[var(--on-surface-dim)]">
                           {sub}
                         </span>
                       </span>
@@ -390,11 +394,11 @@ export function StartProjectExperience() {
                   onChange={(value) => update("company", value)}
                 />
                 <TextArea
-                  label="Describe the project"
+                  label="Describe the engineering need"
                   value={form.description}
-                  placeholder="What are you building, who is it for, and what problem does it solve?"
+                  placeholder="What are you building, what stack are you using, and what should this engineer own?"
                   required
-                  help="Bullet points are fine. Aim for at least a few clear sentences."
+                  help="Bullet points are fine. Aim for a few clear sentences about ownership, stack, and urgency."
                   onChange={(value) => update("description", value)}
                 />
               </StepShell>
@@ -403,8 +407,8 @@ export function StartProjectExperience() {
             {step === 2 && (
               <StepShell
                 eyebrow="Step 3 of 5"
-                title="Timeline and investment."
-                desc="Honest constraints help us quote accurately and avoid scope theatre."
+                title="Timing and engagement model."
+                desc="Tell us when the engineer should start and how you want them embedded."
               >
                 <PickerGroup
                   label="When do you need it live?"
@@ -414,7 +418,7 @@ export function StartProjectExperience() {
                 />
                 <div>
                   <p className="label-caps mb-3 text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
-                    Budget range
+                    Engagement model
                   </p>
                   <div className="grid gap-2 sm:grid-cols-2">
                     {budgets.map((item) => (
@@ -450,24 +454,24 @@ export function StartProjectExperience() {
               <StepShell
                 eyebrow="Step 4 of 5"
                 title="Any extra context?"
-                desc="Optional, but useful if you already have a product, stack, or compliance constraints."
+                desc="Optional, but useful if you already have a product, stack, hiring process, or compliance constraints."
               >
                 <SelectField
-                  label="Existing product or codebase"
+                  label="Existing product or team"
                   value={form.existing}
                   onChange={(value) => update("existing", value)}
                   options={[
-                    "No - starting from scratch",
-                    "Yes - needs an upgrade or redesign",
-                    "Yes - needs new features",
-                    "Yes - needs an integration",
+                    "New team - first engineering hire",
+                    "Existing team - needs extension",
+                    "Existing product - needs new features",
+                    "Existing product - needs specialist support",
                   ]}
                 />
                 <Field
-                  label="Preferred tech stack"
+                  label="Current or preferred tech stack"
                   value={form.stack}
                   placeholder="Next.js, Supabase, React Native..."
-                  help="Leave blank if you want us to recommend the stack."
+                  help="Leave blank if you want us to recommend the matching profile by role instead."
                   onChange={(value) => update("stack", value)}
                 />
                 <SelectField
@@ -487,7 +491,7 @@ export function StartProjectExperience() {
                 <TextArea
                   label="Anything else we should know?"
                   value={form.extra}
-                  placeholder="Specific integrations, compliance, existing infrastructure, team context..."
+                  placeholder="Interview process, overlap needs, integrations, compliance, existing infrastructure, team context..."
                   onChange={(value) => update("extra", value)}
                 />
               </StepShell>
@@ -497,24 +501,24 @@ export function StartProjectExperience() {
               <StepShell
                 eyebrow="Step 5 of 5"
                 title="Review your brief."
-                desc="Everything looks right? Prepare the brief and send it from your email client."
+                desc="Everything looks right? Prepare the hiring brief and send it from your email client."
               >
                 <div className="grid gap-3">
                   {[
                     ["Name", form.name],
                     ["Email", form.email],
                     ["Phone", form.phone || "Not provided"],
-                    ["Services", services.join(", ")],
-                    ["Project", form.description],
-                    ["Timeline", timeline],
-                    ["Budget", budget],
+                    ["Talent need", services.join(", ")],
+                    ["Role brief", form.description],
+                    ["Start timing", timeline],
+                    ["Model", budget],
                     ["Stack", form.stack || "No preference"],
                   ].map(([label, value]) => (
                     <div
                       key={label}
                       className="grid gap-0 overflow-hidden rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] sm:grid-cols-[8rem_1fr]"
                     >
-                      <p className="border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface-high)_42%,transparent)] px-4 py-3 text-[0.68rem] font-medium uppercase tracking-[0.08em] text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)] sm:border-b-0 sm:border-r">
+                      <p className="border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface-high)_42%,transparent)] px-4 py-3 text-[0.78rem] font-medium uppercase tracking-[0.08em] text-[var(--on-surface-dim)] sm:border-b-0 sm:border-r">
                         {label}
                       </p>
                       <p className="px-4 py-3 text-[0.86rem] leading-relaxed text-[var(--on-surface-dim)]">
@@ -540,7 +544,7 @@ export function StartProjectExperience() {
                     <IconCheck size={12} stroke={2.4} />
                   </span>
                   <span className="text-[0.82rem] leading-relaxed text-[var(--on-surface-dim)]">
-                    I confirm this brief is accurate and understand the scoping
+                    I confirm this brief is accurate and understand the matching
                     call is free and non-binding.
                   </span>
                 </button>
@@ -570,7 +574,7 @@ export function StartProjectExperience() {
               </Button>
             ) : (
               <Button type="submit" variant="primary" disabled={!canContinue}>
-                Prepare brief
+                Prepare hiring brief
                 <IconSend size={16} stroke={1.8} />
               </Button>
             )}
@@ -649,7 +653,7 @@ function Field({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="text-[0.76rem] font-medium text-[var(--on-surface-dim)]">
+      <span className="text-[0.88rem] font-medium text-[var(--on-surface-dim)]">
         {label}
         {required && <span className="ml-1 text-[var(--secondary)]">*</span>}
       </span>
@@ -660,10 +664,10 @@ function Field({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="h-12 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 text-[0.9rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_42%,transparent)] focus:border-[color-mix(in_srgb,var(--secondary)_40%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--secondary)_18%,transparent)]"
+        className="h-12 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 text-[0.98rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)] focus:border-[color-mix(in_srgb,var(--secondary)_40%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--secondary)_18%,transparent)]"
       />
       {help && (
-        <span className="text-[0.74rem] leading-relaxed text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
+        <span className="text-[0.86rem] leading-relaxed text-[var(--on-surface-dim)]">
           {help}
         </span>
       )}
@@ -688,7 +692,7 @@ function TextArea({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="text-[0.76rem] font-medium text-[var(--on-surface-dim)]">
+      <span className="text-[0.88rem] font-medium text-[var(--on-surface-dim)]">
         {label}
         {required && <span className="ml-1 text-[var(--secondary)]">*</span>}
       </span>
@@ -697,10 +701,10 @@ function TextArea({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="min-h-32 resize-none rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-3 text-[0.9rem] leading-relaxed text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_42%,transparent)] focus:border-[color-mix(in_srgb,var(--secondary)_40%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--secondary)_18%,transparent)]"
+        className="min-h-32 resize-none rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-3 text-[0.98rem] leading-relaxed text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)] focus:border-[color-mix(in_srgb,var(--secondary)_40%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--secondary)_18%,transparent)]"
       />
       {help && (
-        <span className="text-[0.74rem] leading-relaxed text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
+        <span className="text-[0.86rem] leading-relaxed text-[var(--on-surface-dim)]">
           {help}
         </span>
       )}
@@ -721,13 +725,13 @@ function SelectField({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="text-[0.76rem] font-medium text-[var(--on-surface-dim)]">
+      <span className="text-[0.88rem] font-medium text-[var(--on-surface-dim)]">
         {label}
       </span>
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-12 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 text-[0.9rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 focus:border-[color-mix(in_srgb,var(--secondary)_40%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--secondary)_18%,transparent)]"
+        className="h-12 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 text-[0.98rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 focus:border-[color-mix(in_srgb,var(--secondary)_40%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--secondary)_18%,transparent)]"
       >
         <option value="">Select one...</option>
         {options.map((option) => (
@@ -771,7 +775,7 @@ function PickerGroup({
             <span className="font-mono text-[0.82rem] tracking-normal text-[var(--on-surface)]">
               {value}
             </span>
-            <span className="mt-1 text-[0.65rem] text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
+            <span className="mt-1 text-[0.78rem] text-[var(--on-surface-dim)]">
               {sub}
             </span>
           </button>
@@ -790,13 +794,14 @@ function SuccessScreen({ refCode }: { refCode: string }) {
         <span className="grid h-20 w-20 place-items-center rounded-full border border-[color-mix(in_srgb,var(--tertiary)_30%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_12%,transparent)] text-[var(--tertiary)]">
           <IconCheck size={34} stroke={2} />
         </span>
-        <p className="label-caps mt-8 text-[var(--tertiary)]">Brief prepared</p>
+        <p className="label-caps mt-8 text-[var(--tertiary)]">Hiring brief prepared</p>
         <h1 className="mt-4 text-[clamp(2.3rem,7vw,4.4rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)]">
-          Brief ready to transmit.
+          Hiring brief ready to transmit.
         </h1>
         <p className="body-md mt-5 max-w-lg text-[var(--on-surface-dim)]">
-          Your email client should open with the full brief. Send it from there,
-          and Andishi will respond with the next step within 24 hours.
+          Your email client should open with the full hiring brief. Send it
+          from there, and Andishi will respond with the next step within 24
+          hours.
         </p>
         <p className="mt-6 rounded-xl border border-[color-mix(in_srgb,var(--secondary)_22%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] px-5 py-2.5 font-mono text-[0.78rem] tracking-normal text-[var(--secondary)]">
           ref: {refCode}

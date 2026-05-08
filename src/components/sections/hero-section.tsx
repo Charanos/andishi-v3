@@ -16,28 +16,28 @@ import { partners } from "@/content/landing";
 import { fadeUp, stagger } from "@/lib/motion";
 
 const metricCards = [
-  { label: "Users", value: "24,780", change: "+12.5%" },
-  { label: "Sessions", value: "56,890", change: "+8.2%" },
-  { label: "Revenue", value: "$120k", change: "+9.1%" },
+  { label: "Profiles", value: "48h", change: "matched" },
+  { label: "Seniority", value: "5+ yrs", change: "minimum" },
+  { label: "Overlap", value: "UTC+0-3", change: "Africa" },
 ];
 
 const projectRows = [
-  { name: "Platform Redesign", progress: "72%", status: "On Track" },
-  { name: "Analytics Engine", progress: "58%", status: "On Track" },
-  { name: "Payments API", progress: "85%", status: "At Risk" },
+  { name: "Full-stack lead", progress: "92%", status: "Matched" },
+  { name: "AI integration", progress: "68%", status: "Vetting" },
+  { name: "AWS engineer", progress: "84%", status: "Ready" },
 ];
 
 const systemNodes = [
-  { label: "Web App", icon: IconGridDots },
-  { label: "API", icon: IconCode },
-  { label: "Data", icon: IconDatabase },
-  { label: "Secure", icon: IconShieldCheck },
+  { label: "React", icon: IconGridDots },
+  { label: "APIs", icon: IconCode },
+  { label: "Cloud", icon: IconDatabase },
+  { label: "Vetted", icon: IconShieldCheck },
 ];
 
 const proofStats = [
-  { value: "14+", label: "Kenyan businesses shipped" },
-  { value: "11", label: "days from brief to delivery" },
-  { value: "3", label: "markets across East Africa" },
+  { value: "50+", label: "engineers placed globally" },
+  { value: "8", label: "days average time to placement" },
+  { value: "12", label: "engineering domains covered" },
 ];
 
 const numberClass = "font-mono font-normal tabular-nums tracking-normal";
@@ -100,7 +100,7 @@ export function HeroSection() {
           <motion.div variants={fadeUp}>
             <span className="inline-flex w-fit max-w-full items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--primary)_20%,transparent)] bg-[color-mix(in_srgb,var(--surface)_54%,transparent)] px-3 py-2 text-[0.64rem] font-medium uppercase leading-none tracking-[0.18em] text-[color-mix(in_srgb,var(--primary)_78%,var(--on-surface))] backdrop-blur-xl max-[560px]:text-[0.66rem] max-[560px]:leading-tight">
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--secondary)] shadow-[0_0_18px_color-mix(in_srgb,var(--secondary)_70%,transparent)]" />
-              Nairobi&apos;s Premium Digital Studio
+              Senior African Engineers / Global Startups
             </span>
           </motion.div>
 
@@ -108,31 +108,31 @@ export function HeroSection() {
             variants={fadeUp}
             className="m-0 max-w-[12ch] text-[clamp(2.85rem,7vw,4.85rem)] font-normal leading-[0.98] tracking-normal text-[var(--on-surface)] max-[899px]:max-w-[12ch] max-[899px]:text-[clamp(2.7rem,12vw,3.9rem)] max-[560px]:text-[clamp(2.35rem,12vw,3.1rem)]"
           >
-            We build digital products that work.
+            Africa&apos;s senior engineers. Your startup&apos;s next hire.
           </motion.h1>
 
           <motion.p
             variants={fadeUp}
             className="m-0 max-w-[43rem] text-[clamp(1.04rem,3.6vw,1.16rem)] leading-[1.65] text-[color-mix(in_srgb,var(--on-surface-dim)_92%,var(--on-surface))] max-[560px]:text-base"
           >
-            For Kenyan and African businesses ready to move from idea to live
-            product without the missed deadlines, scope creep, or three-month
-            wait.
+            Andishi places vetted, senior software engineers from across Africa
+            with global startups that need to ship faster without the
+            six-month recruiting cycle or junior-heavy agency model.
           </motion.p>
 
           <motion.div variants={fadeUp} className="flex flex-wrap gap-3 pt-1">
             <Link
-              href="/work"
+              href="/services"
               className="inline-flex min-h-[2.4rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--bg)] no-underline shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-300 hover:-translate-y-px hover:shadow-[0_22px_52px_color-mix(in_srgb,var(--bg-deep)_48%,transparent)] max-[899px]:flex-1 max-[899px]:basis-48 max-[560px]:min-h-[2.3rem] max-[560px]:text-[0.95rem]"
             >
-              See Our Work
+              See Our Engineers
               <IconArrowRight size={15} stroke={2.2} />
             </Link>
             <Link
               href="/contact"
               className="inline-flex min-h-[2.4rem] items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_14%,transparent)] bg-[color-mix(in_srgb,var(--surface)_62%,transparent)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--on-surface)] no-underline shadow-[inset_0_1px_0_color-mix(in_srgb,white_20%,transparent),0_12px_30px_color-mix(in_srgb,var(--bg-deep)_22%,transparent)] backdrop-blur-lg transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--secondary)_28%,transparent)] max-[899px]:flex-1 max-[899px]:basis-48 max-[560px]:min-h-[2.3rem] max-[560px]:text-[0.95rem]"
             >
-              Book a scoping call
+              Talk to us about your need
             </Link>
           </motion.div>
         </motion.div>
@@ -154,7 +154,7 @@ export function HeroSection() {
                     Overview
                   </span>
                   <h2 className="mt-1 text-[1.05rem] font-medium text-[var(--on-surface)]">
-                    Growth cockpit
+                    Talent match cockpit
                   </h2>
                 </div>
                 <span className="grid h-9 w-9 place-items-center rounded-[0.9rem] bg-[color-mix(in_srgb,var(--primary)_14%,transparent)] text-[var(--primary)]">
@@ -258,7 +258,7 @@ export function HeroSection() {
             >
               <PanelTexture />
               <span className="relative z-[1] text-[0.8rem] font-medium tracking-[0.04em] text-[color-mix(in_srgb,var(--on-surface-dim)_72%,transparent)]">
-                System Architecture
+                Skill coverage
               </span>
               <div className="relative z-[1] mt-3 grid grid-cols-4 gap-2.5">
                 {systemNodes.map(({ label, icon: Icon }) => (
@@ -281,10 +281,10 @@ export function HeroSection() {
               />
               <div>
                 <strong className={`${numberClass} block text-[1.35rem]`}>
-                  +85%
+                  8d
                 </strong>
                 <span className="block text-[0.78rem] font-medium uppercase text-[var(--on-surface-dim)]">
-                  qualified leads
+                  avg placement
                 </span>
               </div>
             </div>
@@ -299,7 +299,7 @@ export function HeroSection() {
         className="relative z-30 mx-auto w-[min(calc(100%_-_3rem),64rem)] rounded-2xl border border-[color-mix(in_srgb,var(--on-surface)_14%,transparent)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--surface)_76%,transparent),color-mix(in_srgb,var(--surface-high)_46%,transparent))] p-4 shadow-[inset_0_1px_0_color-mix(in_srgb,white_18%,transparent),0_24px_70px_color-mix(in_srgb,var(--bg-deep)_54%,transparent),0_0_0_1px_color-mix(in_srgb,var(--secondary)_12%,transparent)] backdrop-blur-2xl max-[560px]:w-[min(calc(100%_-_1rem),64rem)] max-[560px]:rounded-[0.9rem] max-[560px]:p-3"
       >
         <p className="mb-3 text-[0.72rem] font-medium uppercase tracking-[0.16em] text-[color-mix(in_srgb,var(--on-surface-dim)_64%,transparent)] max-[560px]:text-[0.68rem]">
-          Brands we&apos;ve built for
+          Startups and teams that have hired through Andishi
         </p>
         <div className="grid grid-cols-6 items-center gap-2 max-[560px]:grid-cols-3">
           {partners.slice(0, 6).map((partner) => (
@@ -335,20 +335,21 @@ export function HeroSection() {
         className="relative z-20 mx-auto max-w-2xl px-6 pt-20 text-center sm:px-8 lg:pt-24"
       >
         <p className="label-caps mb-5 text-[var(--primary)]">
-          The real situation
+          The hiring reality
         </p>
         <h2 className="headline-lg text-[var(--on-surface)]">
-          Building a digital product in Kenya is harder than it should be.
+          Hiring good engineers is broken. Most of you already know this.
         </h2>
         <div className="body-md mt-6 space-y-4 text-[var(--on-surface-dim)]">
           <p>
-            You have briefed agencies, paid deposits, waited weeks, and still
-            received prototypes that missed the point.
+            You have posted on LinkedIn, paid recruiters, waited months,
+            interviewed endlessly, and still watched the best candidates
+            disappear before offer stage.
           </p>
           <p>
-            Andishi works differently. We scope in a single call, ship working
-            products in weeks, and measure success by what changes for your
-            business.
+            The talent is already here. Andishi finds senior African engineers,
+            vets them rigorously, handles the engagement, and helps them start
+            inside your stack, tools, and timezone.
           </p>
         </div>
       </motion.div>

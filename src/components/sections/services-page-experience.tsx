@@ -25,216 +25,197 @@ const textureStyle = {
 };
 
 const capabilities = [
+  "React",
   "Next.js",
-  "NestJS",
-  "M-Pesa Daraja",
-  "USDT rails",
+  "Node.js",
+  "Python",
   "TypeScript",
+  "OpenAI",
+  "Claude",
+  "RAG",
+  "AWS Lambda",
+  "ECS",
+  "RDS",
+  "Solidity",
+  "Ethereum",
+  "React Native",
   "PostgreSQL",
   "MongoDB",
-  "AWS Lambda",
-  "Vercel",
-  "WebSockets",
-  "Mapbox GL",
-  "React Native",
-  "Figma to code",
-  "Africa's Talking",
-  "WhatsApp Business API",
-  "Prisma ORM",
+  "Redis",
+  "GraphQL",
 ];
 
 const services = [
   {
-    id: "web-applications",
+    id: "full-stack",
     number: "01",
-    sector: "Web / Applications",
-    title: "Web Application Development",
-    shortTitle: "Web Applications",
-    timeline: "3-8 wks",
-    price: "KES 80k+",
-    signal: "14+",
-    signalLabel: "deployed",
+    sector: "Talent / Full-stack",
+    title: "Full-Stack Web Engineering",
+    shortTitle: "Full-stack",
+    timeline: "48h",
+    price: "Contract / full",
+    signal: "5+ yrs",
+    signalLabel: "seniority",
     icon: IconDeviceDesktop,
     artifact: "kanban",
     accent: "var(--secondary)",
     description:
-      "Custom web apps for teams that have outgrown spreadsheets, WhatsApp, and off-the-shelf tools. We build role-based, multi-tenant, production-ready systems around how your operation actually works.",
+      "React, Next.js, Node.js, Python, and TypeScript engineers who can own a product feature end-to-end. These are senior builders who understand APIs, databases, deployment, and the tradeoffs behind real production work.",
     deliverables: [
-      "Full-stack web app with a stable architecture",
-      "Role-based access and multi-tenant support",
-      "Database design, API contracts, and documentation",
-      "Production deployment with 30-day support",
+      "Two to three matched senior profiles within 48 hours",
+      "Technical assessment, portfolio review, and references",
+      "Contract, part-time, team extension, or permanent pathways",
+      "30-day placement guarantee and onboarding support",
     ],
-    stack: [
-      "Next.js",
-      "NestJS",
-      "TypeScript",
-      "PostgreSQL",
-      "MongoDB",
-      "Vercel",
-    ],
+    stack: ["React", "Next.js", "Node.js", "Python", "TypeScript", "PostgreSQL"],
   },
   {
-    id: "payments",
+    id: "ai",
     number: "02",
-    sector: "Fintech / Payments",
-    title: "Payment Systems & Fintech",
-    shortTitle: "Payment Systems",
-    timeline: "2-5 wks",
-    price: "KES 60k+",
-    signal: "98.3%",
-    signalLabel: "match rate",
+    sector: "Talent / AI",
+    title: "AI & Machine Learning Integration",
+    shortTitle: "AI Engineers",
+    timeline: "48h",
+    price: "Contract / full",
+    signal: "Prod",
+    signalLabel: "AI builds",
     icon: IconCreditCard,
     artifact: "terminal",
     accent: "var(--tertiary)",
     description:
-      "M-Pesa Daraja, Stripe, Airtel Money, USDT rails, callbacks, reconciliation, and transaction monitoring built with the kind of failure handling real money deserves.",
+      "Engineers who wire AI into production products: LLM integrations, RAG architectures, tool calling, fine-tuning pipelines, and AI-powered features. Not research theatre. Product engineering with model fluency.",
     deliverables: [
-      "M-Pesa STK Push, C2B, B2C, and callback flows",
-      "Real-time webhook and reconciliation system",
-      "Admin transaction monitor and audit trail",
-      "Payment failure states, retries, and support handoff",
+      "LLM API integration and workflow architecture",
+      "RAG systems, retrieval, and evaluation patterns",
+      "Secure deployment and cost-aware implementation",
+      "Senior engineers who can work inside your roadmap",
     ],
-    stack: [
-      "M-Pesa Daraja",
-      "USDT rails",
-      "Stripe",
-      "NestJS",
-      "PostgreSQL",
-      "Redis",
-    ],
+    stack: ["OpenAI", "Claude", "Gemini", "RAG", "Python", "TypeScript"],
   },
   {
-    id: "commerce",
+    id: "cloud",
     number: "03",
-    sector: "Retail / Commerce",
-    title: "E-Commerce & Retail Systems",
-    shortTitle: "E-Commerce",
-    timeline: "2-5 wks",
-    price: "KES 55k+",
-    signal: "+62%",
-    signalLabel: "conv. lift",
+    sector: "Talent / Cloud",
+    title: "Cloud & AWS Infrastructure",
+    shortTitle: "Cloud / AWS",
+    timeline: "48h",
+    price: "Fractional / full",
+    signal: "AWS",
+    signalLabel: "coverage",
     icon: IconShoppingCart,
     artifact: "schema",
     accent: "var(--secondary)",
     description:
-      "Online stores built for East African payments, mobile-first buying, inventory reality, order operations, and the back-office clarity your team needs after launch.",
+      "Engineers who build and manage the infrastructure that holds production together: AWS services, deployments, observability, scaling, and the operational discipline behind reliable systems.",
     deliverables: [
-      "Mobile-first storefront with M-Pesa checkout",
-      "Inventory management and order tracking",
-      "Referral, affiliate, or influencer tracking",
-      "Admin dashboard with sales and fulfilment analytics",
+      "Infrastructure ownership inside your existing cloud setup",
+      "Deployment, monitoring, and reliability improvements",
+      "Backend performance and database support",
+      "Fractional, contract, or embedded team extension",
     ],
-    stack: ["M-Pesa", "Next.js", "Prisma", "PostgreSQL", "Tailwind", "Vercel"],
+    stack: ["AWS", "Lambda", "RDS", "ECS", "CloudFormation", "PostgreSQL"],
   },
   {
-    id: "conversion",
+    id: "web3",
     number: "04",
-    sector: "Conversion / Marketing",
-    title: "Websites That Convert",
-    shortTitle: "Conversion Sites",
-    timeline: "1-3 wks",
-    price: "KES 30k+",
-    signal: "+85%",
-    signalLabel: "lead lift",
+    sector: "Talent / Web3",
+    title: "Web3 & Blockchain Engineering",
+    shortTitle: "Web3",
+    timeline: "48h",
+    price: "Contract / project",
+    signal: "Mainnet",
+    signalLabel: "experience",
     icon: IconWorldWww,
     artifact: "chat",
     accent: "var(--primary)",
     description:
-      "Landing pages and product sites designed around one job: turning visitors into inquiries. Clear positioning, confident proof, clean CTA flow, and measurable performance.",
+      "Solidity, Ethereum, Polygon, smart contract auditing, DeFi protocol integration, and NFT infrastructure. We prioritize engineers who have shipped beyond tutorial-level work.",
     deliverables: [
-      "Conversion-focused landing page or full website",
-      "SEO-ready structure and metadata",
-      "Form, calendar, email, or WhatsApp CTA flow",
-      "Analytics setup for events and inquiry quality",
+      "Smart contract and protocol engineering support",
+      "Wallet, token, and DeFi integration experience",
+      "Project-based contracts for specialized work",
+      "Reference-checked engineers with real shipped history",
     ],
-    stack: ["Next.js", "Tailwind", "Framer Motion", "Vercel", "GA4"],
+    stack: ["Solidity", "Ethereum", "Polygon", "DeFi", "Audits", "Node.js"],
   },
   {
-    id: "analytics",
+    id: "backend",
     number: "05",
-    sector: "Data / Intelligence",
-    title: "Analytics & Dashboards",
-    shortTitle: "Analytics",
-    timeline: "2-6 wks",
-    price: "KES 50k+",
-    signal: "340+",
-    signalLabel: "SMEs tracked",
+    sector: "Talent / Backend",
+    title: "Backend & API Systems",
+    shortTitle: "Backend APIs",
+    timeline: "48h",
+    price: "Contract / full",
+    signal: "APIs",
+    signalLabel: "systems",
     icon: IconChartBar,
     artifact: "chart",
     accent: "var(--tertiary)",
     description:
-      "Business intelligence for revenue, inventory, fleet movement, customer cohorts, and operational health. We connect your sources and surface the metrics your team can act on.",
+      "Backend engineers for REST, GraphQL, microservices, database design, auth, payments, and integrations. Good fit when your bottleneck lives below the UI.",
     deliverables: [
-      "Real-time analytics dashboard",
-      "Data pipeline connecting existing sources",
-      "Automated weekly or monthly reports",
-      "Alert system for thresholds and exceptions",
+      "API design and implementation capacity",
+      "Database modeling and integration work",
+      "Authentication, payments, and event workflows",
+      "Engineers who can operate inside existing services",
     ],
-    stack: ["React", "Node.js", "PostgreSQL", "AWS Lambda", "SVG charts"],
+    stack: ["REST", "GraphQL", "PostgreSQL", "MongoDB", "Redis", "Stripe"],
   },
   {
-    id: "integrations",
+    id: "mobile",
     number: "06",
-    sector: "Systems / Integration",
-    title: "APIs, Automations & Integrations",
-    shortTitle: "Integrations",
-    timeline: "2-6 wks",
-    price: "KES 45k+",
-    signal: "-62%",
-    signalLabel: "manual ops",
+    sector: "Talent / Mobile",
+    title: "Mobile Engineering",
+    shortTitle: "Mobile",
+    timeline: "48h",
+    price: "Contract / full",
+    signal: "iOS/Android",
+    signalLabel: "coverage",
     icon: IconPlugConnected,
     artifact: "map",
     accent: "var(--secondary)",
     description:
-      "Backend systems that connect your tools, automate manual processes, and save your team hours every week across payments, messaging, CRM, validation, and reporting layers.",
+      "React Native, Swift, and Kotlin engineers who understand app store shipping, push notifications, offline sync, and the constraints of real-world mobile usage.",
     deliverables: [
-      "REST or GraphQL API design and development",
-      "Third-party integrations for payments, SMS, and WhatsApp",
-      "Automated workflow pipelines and webhook handling",
-      "API documentation and operational runbooks",
+      "Mobile product engineering and release support",
+      "Offline-first and push notification experience",
+      "Native or cross-platform engineering depth",
+      "Contract or full placement options",
     ],
-    stack: [
-      "NestJS",
-      "M-Pesa",
-      "WhatsApp API",
-      "Africa's Talking",
-      "Redis",
-      "AWS",
-    ],
+    stack: ["React Native", "Swift", "Kotlin", "Firebase", "APIs", "Offline sync"],
   },
 ];
 
 const pricing = [
   {
-    tier: "Starter",
-    range: "KES 30-60k",
-    label: "Landing pages, simple integrations, and single-feature workflows.",
+    tier: "Contract / Fractional",
+    range: "1-6 mo",
+    label: "Hire one senior engineer for a defined scope, backlog, or 90-day build without a long-term commitment.",
     examples: [
-      "Conversion landing page",
-      "M-Pesa payment integration",
-      "Simple automation or webhook",
+      "MVP implementation",
+      "Critical backlog support",
+      "Specialized AI, cloud, or Web3 work",
     ],
   },
   {
-    tier: "Growth",
-    range: "KES 60-150k",
-    label: "Full platforms, multi-feature apps, and operational systems.",
+    tier: "Team Extension",
+    range: "6-24 mo",
+    label: "Add one to five Andishi engineers to your existing team. They work inside your tools, standups, and sprint cadence.",
     examples: [
-      "E-commerce platform",
-      "Analytics dashboard",
-      "Multi-tenant SaaS MVP",
+      "Embedded senior engineers",
+      "Timezone-compatible delivery",
+      "Ongoing performance check-ins",
     ],
     featured: true,
   },
   {
-    tier: "Scale",
-    range: "KES 150k+",
-    label: "Complex services, marketplaces, and enterprise integrations.",
+    tier: "Dedicated Build Team",
+    range: "3-12 mo",
+    label: "A complete engineering squad assembled around a product track: tech lead, engineers, and optional QA.",
     examples: [
-      "Microservice architecture",
-      "Two-sided marketplace",
-      "Multi-country deployment",
+      "MVP or product track ownership",
+      "Senior technical lead included",
+      "Studio delivery discipline",
     ],
   },
 ];
@@ -261,7 +242,7 @@ export function ServicesPageExperience() {
         <aside className="sticky top-28 hidden max-h-[calc(100svh-8rem)] w-72 shrink-0 flex-col justify-between self-start overflow-y-auto border-r border-[var(--glass-border)] pr-5 xl:flex">
           <div>
             <p className="label-caps mb-4 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
-              Service lines
+              Talent lines
             </p>
             <div className="border-y border-[var(--glass-border)]">
               {services.map((service, index) => {
@@ -309,25 +290,25 @@ export function ServicesPageExperience() {
                           >
                             {service.shortTitle}
                           </span>
-                          <span className="font-mono text-[0.66rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
+                          <span className="font-mono text-[0.76rem] tracking-normal text-[var(--on-surface-dim)]">
                             {service.number}
                           </span>
                         </span>
                         <span
                           className={cn(
-                            "label-caps mt-2 block text-[0.52rem] leading-tight",
+                            "label-caps mt-2 block text-[0.68rem] leading-tight",
                             selected
                               ? "text-[var(--secondary)]"
-                              : "text-[color-mix(in_srgb,var(--on-surface-dim)_54%,transparent)]",
+                              : "text-[var(--on-surface-dim)]",
                           )}
                         >
                           {service.sector}
                         </span>
                         <span className="mt-2 flex items-center justify-between gap-3">
-                          <span className="font-mono text-[0.66rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
+                          <span className="font-mono text-[0.76rem] tracking-normal text-[var(--on-surface-dim)]">
                             {service.timeline}
                           </span>
-                          <span className="font-mono text-[0.66rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
+                          <span className="font-mono text-[0.76rem] tracking-normal text-[var(--on-surface-dim)]">
                             {service.price}
                           </span>
                         </span>
@@ -354,10 +335,10 @@ export function ServicesPageExperience() {
             >
               <p className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)]">
                 <span className="h-px w-7 bg-[var(--secondary)]" />
-                What we build
+                The engineers we place
               </p>
               <h1 className="m-0 text-[clamp(3rem,11vw,6.2rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
-                Our Services.
+                Senior talent, ready to embed.
               </h1>
             </motion.div>
 
@@ -377,9 +358,9 @@ export function ServicesPageExperience() {
                 06
               </p>
               <p className="body-md mt-3 text-[var(--on-surface-dim)]">
-                Focused service lines for East African businesses that need real
-                software: scoped precisely, shipped cleanly, and supported after
-                launch.
+                We do not recruit generically. Each engineer has passed a
+                technical assessment, production track record review, and
+                reference check before we introduce them.
               </p>
             </motion.div>
           </header>
@@ -419,7 +400,7 @@ export function ServicesPageExperience() {
               {tickerItems.map((item, index) => (
                 <span
                   key={`${item}-${index}`}
-                  className="flex items-center gap-3 px-5 text-[0.72rem] font-medium uppercase tracking-[0.08em] text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)] transition-colors duration-300 hover:text-[var(--secondary)]"
+                  className="flex items-center gap-3 px-5 text-[0.82rem] font-medium uppercase tracking-[0.08em] text-[var(--on-surface-dim)] transition-colors duration-300 hover:text-[var(--secondary)]"
                 >
                   <span
                     className={cn(
@@ -534,7 +515,7 @@ export function ServicesPageExperience() {
                   <div>
                     <div className="border-b border-[var(--glass-border)] pb-4">
                       <p className="label-caps text-[var(--secondary)]">
-                        Scope snapshot
+                      Talent snapshot
                       </p>
                       <p className="mt-2 text-[0.94rem] leading-snug text-[var(--on-surface)]">
                         {active.shortTitle}
@@ -542,8 +523,8 @@ export function ServicesPageExperience() {
                     </div>
                     <div className="grid grid-cols-3 border-b border-[var(--glass-border)]">
                       {[
-                        [active.timeline, "Timeline", "var(--secondary)"],
-                        [active.price, "Starting from", "var(--on-surface)"],
+                        [active.timeline, "First profiles", "var(--secondary)"],
+                        [active.price, "Engagement", "var(--on-surface)"],
                         [active.signal, active.signalLabel, "var(--tertiary)"],
                       ].map(([value, label, color]) => (
                         <div
@@ -556,7 +537,7 @@ export function ServicesPageExperience() {
                           >
                             {value}
                           </p>
-                          <p className="label-caps mt-2 text-[0.54rem] leading-tight text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
+                          <p className="label-caps mt-2 text-[0.68rem] leading-tight text-[var(--on-surface-dim)]">
                             {label}
                           </p>
                         </div>
@@ -568,10 +549,10 @@ export function ServicesPageExperience() {
                     <p className="label-caps mb-3 text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)]">
                       Best first step
                     </p>
-                    <p className="text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">
-                      Bring the business problem, current workflow, target
-                      users, and one success metric. We will turn that into
-                      scope, timeline, and a fixed quote.
+                    <p className="text-[0.98rem] leading-relaxed text-[var(--on-surface-dim)]">
+                      Bring your stack, team structure, current bottleneck, and
+                      the kind of ownership you need. We will tell you quickly
+                      whether the right engineer is active in the network.
                     </p>
                   </div>
 
@@ -580,7 +561,7 @@ export function ServicesPageExperience() {
                     variant="primary"
                     className="w-full"
                   >
-                    Scope this service
+                    Start matching
                     <IconArrowRight size={16} stroke={1.8} />
                   </LinkButton>
                 </motion.div>
@@ -591,14 +572,15 @@ export function ServicesPageExperience() {
           <section className="mt-16 border-t border-[var(--glass-border)] pt-12 lg:mt-20 lg:pt-16">
             <div className="mb-8 max-w-2xl">
               <p className="label-caps mb-4 text-[var(--secondary)]">
-                Transparent pricing
+                Engagement models
               </p>
               <h2 className="max-w-[13ch] text-[clamp(2rem,7vw,4.4rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
-                Know what you are getting into.
+                Work with Andishi engineers in the shape your team needs.
               </h2>
               <p className="body-md mt-5 text-[var(--on-surface-dim)]">
-                Fixed-scope quotes only. What we scope is what you pay: no
-                surprise invoices, no mystery retainers, no vague handoff.
+                Start with one senior engineer, extend your current team, or
+                ask Andishi to assemble a dedicated build squad for a complete
+                product track.
               </p>
             </div>
 
@@ -625,14 +607,14 @@ export function ServicesPageExperience() {
                     <p className="mt-4 font-mono text-[1.6rem] leading-none tracking-normal text-[var(--on-surface)]">
                       {item.range}
                     </p>
-                    <p className="mt-4 text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">
+                    <p className="mt-4 text-[0.98rem] leading-relaxed text-[var(--on-surface-dim)]">
                       {item.label}
                     </p>
                     <div className="mt-6 grid gap-2">
                       {item.examples.map((example) => (
                         <p
                           key={example}
-                          className="flex items-center gap-2 text-[0.78rem] text-[var(--on-surface-dim)]"
+                          className="flex items-center gap-2 text-[0.88rem] text-[var(--on-surface-dim)]"
                         >
                           <span className="h-1.5 w-1.5 rounded-full bg-[color-mix(in_srgb,var(--on-surface)_18%,transparent)]" />
                           {example}
@@ -650,10 +632,10 @@ export function ServicesPageExperience() {
               </span>
               <p className="body-md text-[var(--on-surface-dim)]">
                 <span className="font-medium text-[var(--on-surface)]">
-                  Pricing philosophy:
+                  Hiring philosophy:
                 </span>{" "}
-                We quote accurately after a scoping call. If the fixed scope
-                misses something we should have caught, that is ours to resolve.
+                We only place engineers we would bet our reputation on. If a
+                placement is not working in the first 30 days, we replace it.
               </p>
             </div>
           </section>
@@ -682,23 +664,24 @@ export function ServicesPageExperience() {
                 Start here
               </p>
               <h2 className="text-[clamp(2rem,6vw,3.6rem)] font-normal leading-[1.04] tracking-normal text-[var(--on-surface)]">
-                Ready to scope your project?
+                Ready to meet your next engineer?
               </h2>
               <p className="body-md mx-auto mt-5 max-w-lg text-[var(--on-surface-dim)]">
-                The first call is 30 minutes and costs nothing. You will leave
-                with a clear picture of what is possible and what it takes.
+                The first call is 30 minutes and costs nothing. Within 48 hours,
+                we will tell you whether we have the right engineer and surface
+                profiles if we do.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <LinkButton href="/contact" variant="primary">
-                  Book a scoping call
+                  Start a conversation
                   <IconArrowRight size={16} stroke={1.8} />
                 </LinkButton>
-                <LinkButton href="mailto:hello@andishi.dev" variant="glass">
-                  hello@andishi.dev
+                <LinkButton href="mailto:hire@andishi.dev" variant="glass">
+                  hire@andishi.dev
                 </LinkButton>
               </div>
               <p className="label-caps mt-6 text-[color-mix(in_srgb,var(--on-surface-dim)_52%,transparent)]">
-                No pitch / No retainer required / Response within 24 hours
+                No recruiter pitch / No retainer required / Response within 24 hours
               </p>
             </div>
           </section>
@@ -733,12 +716,12 @@ function Artifact({ type }: { type: string }) {
 
 function artifactRoute(type: string) {
   const routes: Record<string, string> = {
-    kanban: "sprint-board / myschool",
-    terminal: "payments-api / reconcile",
-    schema: "schema / duka-commerce",
-    chat: "scoping-call / conversion",
-    chart: "analytics / ripoti",
-    map: "integration-map / crm",
+    kanban: "talent-board / fullstack",
+    terminal: "match-runner / ai-engineer",
+    schema: "profile-schema / cloud",
+    chat: "technical-intake / startup",
+    chart: "talent-fit / analytics",
+    map: "engagement-map / team-extension",
   };
 
   return routes[type] ?? "service-artifact";
@@ -749,22 +732,22 @@ function KanbanArtifact() {
     [
       "Backlog",
       [
-        ["Auth", "Role-based login"],
-        ["DB", "Multi-tenant schema"],
+        ["Stack", "Next.js + Node"],
+        ["Need", "Senior ownership"],
       ],
     ],
     [
       "In progress",
       [
-        ["UI", "Teacher portal"],
-        ["API", "Fee endpoint"],
+        ["Fit", "2 profiles"],
+        ["Refs", "Verified"],
       ],
     ],
     [
       "Done",
       [
-        ["QA", "CI pipeline"],
-        ["Tokens", "Theme system"],
+        ["Call", "Interview booked"],
+        ["Start", "Onboarding ready"],
       ],
     ],
   ] as const;
@@ -800,20 +783,19 @@ function TerminalArtifact() {
   return (
     <div className="rounded-xl bg-[#171223] p-4 font-mono text-[0.68rem] leading-relaxed tracking-normal text-white/58">
       <p>
-        <span className="text-[var(--secondary)]">$</span> mpesa stk-push
-        --env=prod
+        <span className="text-[var(--secondary)]">$</span> andishi match
+        --role=ai-engineer
       </p>
-      <p className="text-white/34">Initiating checkout to +254712...</p>
+      <p className="text-white/52">Checking active senior profiles...</p>
       <p className="text-[var(--tertiary)]">
-        callback received / ResultCode: 0
+        profile found / 7 yrs production
       </p>
-      <p className="text-[var(--tertiary)]">confirmed / KES 4,500.00</p>
+      <p className="text-[var(--tertiary)]">references verified / timezone fit</p>
       <p className="mt-3">
-        <span className="text-[var(--secondary)]">$</span> reconcile
-        --date=today
+        <span className="text-[var(--secondary)]">$</span> shortlist --limit=3
       </p>
       <p className="text-[var(--tertiary)]">
-        247 txns / 98.3% matched / KES 2.4M
+        3 profiles / interview-ready / 48h target
       </p>
     </div>
   );
@@ -821,10 +803,10 @@ function TerminalArtifact() {
 
 function SchemaArtifact() {
   const rows = [
-    ["model", "Product", "sku, price, inventory, images"],
-    ["model", "Order", "items, total, mpesa_ref, status"],
-    ["model", "Customer", "phone, referral_code, orders"],
-    ["model", "Influencer", "code, commission_rate, payouts"],
+    ["profile", "Engineer", "seniority, stack, timezone"],
+    ["signal", "Portfolio", "systems shipped, ownership"],
+    ["check", "Reference", "verified, client notes"],
+    ["match", "Engagement", "contract, team extension"],
   ];
 
   return (
@@ -859,16 +841,16 @@ function ChatArtifact() {
         <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[var(--secondary)] font-mono text-[0.55rem] text-[var(--bg)]">
           A
         </span>
-        Who is the decision-maker landing here?
+        What is the exact bottleneck?
       </div>
       <div className="ml-auto max-w-[86%] rounded-2xl border border-[color-mix(in_srgb,var(--on-surface)_9%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_18%,transparent)] px-3 py-2 text-[0.72rem] leading-snug text-[var(--on-surface-dim)]">
-        CFO at a Kenyan SME. We want demo bookings.
+        Backend and AI integration. We need senior ownership.
       </div>
       <div className="flex max-w-[92%] gap-2 rounded-2xl bg-[color-mix(in_srgb,var(--on-surface)_6%,transparent)] px-3 py-2 text-[0.72rem] leading-snug text-[var(--on-surface-dim)]">
         <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[color-mix(in_srgb,var(--on-surface)_14%,transparent)] font-mono text-[0.55rem] text-[var(--on-surface)]">
           C
         </span>
-        Single CTA, proof-heavy, no jargon.
+        Two matched profiles, references attached.
       </div>
     </div>
   );
@@ -880,7 +862,7 @@ function ChartArtifact() {
   return (
     <div>
       <p className="label-caps mb-3 text-[0.55rem] text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
-        Revenue / last 7 days
+        Fit score / active profiles
       </p>
       <div className="flex h-16 items-end gap-1.5">
         {heights.map((height, index) => (
@@ -894,10 +876,10 @@ function ChartArtifact() {
       <div className="mt-3 grid grid-cols-2 gap-2">
         <div className="rounded-xl border border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_18%,transparent)] p-3">
           <p className="font-mono text-[0.9rem] tracking-normal text-[var(--tertiary)]">
-            KES 84.2k
+            48h
           </p>
           <p className="label-caps mt-1 text-[0.52rem] text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
-            This week
+            first profiles
           </p>
         </div>
         <div className="rounded-xl border border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_18%,transparent)] p-3">
@@ -917,14 +899,14 @@ function MapArtifact() {
   return (
     <div className="grid gap-3">
       <div className="flex items-center">
-        <MapNode label="WhatsApp API" />
+        <MapNode label="Startup team" />
         <MapLine />
-        <MapNode label="Andishi Hub" active />
+        <MapNode label="Andishi Talent" active />
         <MapLine />
-        <MapNode label="CRM" />
+        <MapNode label="Engineer" />
       </div>
       <div className="flex flex-wrap justify-center gap-2">
-        {["M-Pesa", "SMS", "KRA PIN", "Reports"].map((label) => (
+        {["Contract", "Team extension", "Dedicated team", "Permanent"].map((label) => (
           <MapNode key={label} label={label} />
         ))}
       </div>

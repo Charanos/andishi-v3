@@ -1,101 +1,110 @@
 # Andishi v3 Progress Tracker
 
-Last updated: May 7, 2026
+Last updated: May 8, 2026
 
 ## Current Phase
 
-Foundation building complete. The landing page refurbishment and work-page foundation are now the baseline for the remaining public pages and product surfaces.
+Talent-first repositioning is implemented across the public site. The project has moved from a project-studio-first language system to a tech talent outsourcing narrative based on `docs/andishi-v3-content-system.md`.
 
-## Completed
+Current workstream: documentation sync, TypeScript verification, commit, and GitHub push.
 
-- Hero section rebuilt as a premium split layout with strong copy, compact glass dashboard illustrations, and mobile-aware stacking.
-- Hero and the adjacent "The real situation" content merged into one continuous section so the background illustration bleeds naturally.
-- Brand/client card positioned as the divider between hero promise and market pain content.
-- Purple overuse reduced at token level:
-  - Light mode uses deeper violet primary text for contrast.
-  - Dark mode uses lighter violet-white primary text for readability and atmosphere.
-  - Cyan is reserved for signal, CTA energy, chart accents, and data highlights.
-- CTA foundation upgraded:
-  - Shared `--gradient-brand` and `--cta-shadow` tokens.
-  - Larger vertical rhythm and touch targets.
-  - Larger CTA text.
-  - More refined violet-to-cyan gradients.
-- Hero card texture standardized to subtle plus/dot texture. Stripe patterns are out.
-- Numerals in hero metrics, stats, percentages, and proof points use `font-mono`.
-- Hero implementation is Tailwind-first; the old hero CSS module has been removed.
-- Sparkle/star icons remain forbidden.
-- Common `Navbar` and `Footer` now live in the app layout and are shared by public pages.
-- GitHub is the active deployment/source remote: `https://github.com/Charanos/andishi-v3.git`.
-- Homepage project showcase replaces the old product-studio block below the hero.
-- Process section now uses realistic mini app artifacts: chat window, brief/insight window, sprint progress window, design board, delivery checks, and terminal handoff.
-- Full-width visual interlude uses theme-swapped `light-blob.svg` and `dark-blob.svg`.
-- Why Andishi section has been rebuilt as a right-headed decision cockpit with mini-window comparison cards.
-- Founder preview has been rebuilt as an editorial profile section with portrait, stats, quote, and operating rules.
-- Work page now uses a dedicated `WorkPageExperience` with filters, sticky desktop sidebar, project cards, case-study drawer, and patterned CTA.
-- Login route added and Login moved into the central nav links.
-- Blog, FAQ, and newsletter sections replaced the old bottom FAQ with a reading-friendly editorial grid, FAQ accordion, and terminal-style newsletter signup.
-- Final CTA now uses `final-cta.svg` as a masked atmospheric backdrop while keeping the CTA copy centered and glass-readable.
-- Shared custom cursor behavior has been extracted and reused on Why Andishi, the final CTA, and the work page.
-- Smooth-scroll route transition warning addressed through `data-scroll-behavior="smooth"` on the root HTML element.
-- Project showcase image sizing was tuned to remove Next image performance warnings.
-- Landing page foundation pass has been type-checked with `tsc --noEmit --pretty false --incremental false`.
+## Completed in the Current Pass
+
+- Reframed the public site around senior African engineers for global startups.
+- Updated metadata, Open Graph, Twitter metadata, Organization schema, and `public/llms.txt`.
+- Updated navbar, footer, CTAs, and shared site labels to point toward hiring engineers.
+- Reworked homepage copy across hero, proof, problem framing, process, case studies, comparison, FAQ, founder preview, newsletter, and final CTA.
+- Reworked services page into a talent capability and engagement-model page.
+- Reworked work page language so case studies act as proof of engineer capability.
+- Reworked about page to explain the talent mission while preserving the studio as proof-of-work.
+- Reworked contact, start hiring, and login pages around hiring briefs, shortlists, interviews, onboarding, and placement progress.
+- Increased supporting text sizes where task-critical copy was too small.
+- Strengthened text contrast and glass borders through global CSS tokens.
+- Preserved the existing visual direction: glass surfaces, patterned artwork, Tabler icons, mono numerals, and restrained violet/cyan brand energy.
+
+## Implemented Public Routes
+
+| Route | Current status |
+|---|---|
+| `/` | Talent-first landing page complete. |
+| `/services` | Talent services/capabilities page updated. |
+| `/work` | Case-study proof page updated. |
+| `/about` | Talent mission and founder story updated. |
+| `/contact` | Hiring conversation page updated. |
+| `/start-project` | Legacy route name, now functioning as a hiring brief/onboarding flow. |
+| `/login` | Hiring workspace login page updated. |
 
 ## Documentation Updated
 
-- `docs/andishi-v3-complete-spec-v2.md`
-- `docs/THEME_GUIDE.md`
+- `docs/V3_CURRENT_STATE_AUDIT.md`
 - `docs/PROJECT_PROGRESS.md`
+- `docs/THEME_GUIDE.md`
+- `docs/andishi-v3-content-system.md` remains the content strategy source of truth.
 
 ## Next Milestones
 
-1. Supporting landing pages
-   - Services page refinement
-   - About page refinement
-   - Contact page refinement
-   - Login page integration
-   - Not found page
+1. Information architecture
+   - Add `/hire` as the canonical hiring process page.
+   - Add `/engineers` for talent directory/profile-led proof.
+   - Decide whether `/services` remains a talent-services hub or moves studio content to `/studio`.
 
-2. System cleanup
-   - Remove remaining stale hardcoded gradients where shared tokens should be used.
-   - Replace any lingering non-Tabler icon usage.
-   - Confirm zero decorative sparkle/star icons.
-   - Confirm all numerals use `font-mono`.
-   - Reduce one-off inline styles where Tailwind utilities or tokens are clearer.
+2. Skill landing pages
+   - `/skills/fullstack`
+   - `/skills/ai`
+   - `/skills/aws`
+   - `/skills/web3`
 
-3. Quality gates
-   - `npx tsc --noEmit --pretty false`
-   - `npm run build` when local hardware allows.
-   - Mobile visual checks at 375px, 390px, 768px.
-   - Desktop visual checks at 1440px and wide screens.
-   - Accessibility pass for focus states, CTA labels, and color contrast.
+3. AI-search and machine-readable content
+   - Add `/engineers.md`.
+   - Add `/pricing.md`.
+   - Add expanded `/hire/faq`.
+   - Add glossary or blog entries for African tech talent terms.
 
-4. GitHub publishing
-   - Remote: `https://github.com/Charanos/andishi-v3.git`
-   - Commit foundation-complete pass.
-   - Push `main` with upstream tracking.
+4. Structured data
+   - Expand FAQPage schema.
+   - Add Service schema for skill domains.
+   - Add Person schema for founder content.
+   - Enrich Organization schema as the public entity matures.
 
-## Previous Milestone Notes
+5. Cleanup
+   - Resolve the remaining unused `Comparison` lint warning in `src/app/page.tsx`.
+   - Replace remaining raw `<img>` usage where `next/image` is appropriate.
+   - Review legacy deleted assets/docs before final long-term cleanup.
 
-1. Homepage section uplift
-   - Project showcase
-   - Process
-   - Visual interlude
-   - Comparison/trust content
-   - Founder/about preview
-   - FAQ
-   - Final CTA
+## Verification
+
+Requested verification gate for this handoff:
+
+- `npx tsc --noEmit`
+
+Already completed earlier in the pass:
+
+- `npm run lint`: passed with warnings only.
+- `npm run build`: passed before the requested verification scope was narrowed.
+
+Visual/browser verification is intentionally left to the user for this pass.
+
+## GitHub
+
+Active source remote:
+
+- `https://github.com/Charanos/andishi-v3.git`
+
+Publishing goal for this pass:
+
+- Commit the talent-first copy, typography, and documentation updates.
+- Push the current branch to GitHub.
 
 ## Design Rules To Preserve
 
-- The hero, project showcase, process artifacts, Why Andishi cockpit, editorial blog/FAQ/newsletter, final CTA, and work page are the current quality bar.
-- The brand card is a transition device, not a standalone section.
-- Use Tailwind-first styling for section work.
-- Use CSS only for theme tokens, shared typography utilities, and reusable global primitives.
+- Talent is the primary product. Studio is secondary and should read as proof-of-work.
+- Use `hire@andishi.dev` for direct hiring inquiries.
+- Preferred CTA language: "Hire engineers", "Start matching", "Start a conversation", "See our engineers".
+- Avoid leading with "project studio", "digital product studio", or local SME delivery language unless the context is explicitly the studio arm.
+- Keep body copy factual, specific, and extraction-friendly for AI search.
+- Keep supporting copy readable; avoid tiny helper text on forms and onboarding flows.
 - No `font-bold` or `font-semibold`.
-- `font-medium` is allowed for compact UI labels, buttons, nav, and card titles.
-- No sparkle/star decorative icons.
-- No stripe patterns in hero/product card textures.
-- Prefer plus/dot and semi-pattern textures over radial color blobs.
-- Avoid ordinary grid patterns.
-- Avoid dual-tone/gradient headings unless there is a specific rendering-safe reason.
-- Avoid generic dark SaaS styling and cheap sci-fi effects.
+- `font-medium` is allowed for nav labels, buttons, compact UI, chips, and card titles.
+- Use Tabler icons only.
+- Use `font-mono` for stats, percentages, timelines, IDs, and structured technical values.
+- Avoid decorative sparkle/star icons and generic grid-pattern backgrounds.

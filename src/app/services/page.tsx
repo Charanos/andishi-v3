@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { ServicesPageExperience } from "@/components/sections/services-page-experience";
 
 export const metadata: Metadata = {
-  title: "Services - Andishi",
+  title: "Engineering Talent Services - Andishi",
   description:
-    "Web applications, payment systems, e-commerce, analytics, websites, and integrations built for Kenyan and East African businesses.",
+    "Hire vetted senior African engineers across full-stack web, AI integration, AWS, Web3, backend API systems, and mobile development.",
 };
 
 export default function ServicesPage() {

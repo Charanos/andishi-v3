@@ -21,23 +21,28 @@ import { cosmicSpring } from "@/lib/motion";
 import { motion } from "framer-motion";
 
 const services = [
-  "Web Application",
-  "Payment Integration",
-  "E-Commerce Store",
-  "Conversion Website",
-  "Analytics Dashboard",
-  "API / Integration",
+  "Full-stack Engineer",
+  "AI Integration Engineer",
+  "Cloud / AWS Engineer",
+  "Backend API Engineer",
+  "Web3 Engineer",
+  "Mobile Engineer",
 ];
 
-const timelines = ["ASAP / 1-2 weeks", "1 month", "2-3 months", "Flexible"];
-const budgets = ["KES 30k - 60k", "KES 60k - 150k", "KES 150k - 300k", "KES 300k+"];
+const timelines = ["ASAP / this week", "2 weeks", "1 month", "Flexible"];
+const budgets = [
+  "Contract / fractional",
+  "Team extension",
+  "Dedicated build team",
+  "Permanent hire pathway",
+];
 
 const directContacts = [
   {
-    href: "mailto:hello@andishi.dev",
+    href: "mailto:hire@andishi.dev",
     label: "Email",
-    value: "hello@andishi.dev",
-    sub: "Best for briefs and proposals",
+    value: "hire@andishi.dev",
+    sub: "Best for hiring briefs",
     icon: IconMail,
     tone: "var(--primary)",
   },
@@ -45,7 +50,7 @@ const directContacts = [
     href: "https://wa.me/254759912373",
     label: "WhatsApp",
     value: "+254 759 912 373",
-    sub: "Quick questions and urgent briefs",
+    sub: "Quick talent questions",
     icon: IconBrandWhatsapp,
     tone: "var(--tertiary)",
   },
@@ -123,25 +128,25 @@ export function ContactPageExperience() {
 
     const ref = `AND-${Date.now().toString(36).toUpperCase().slice(-6)}`;
     const body = [
-      `Brief reference: ${ref}`,
+      `Hiring brief reference: ${ref}`,
       "",
       `Name: ${form.name}`,
       `Role: ${form.role || "Not provided"}`,
       `Email: ${form.email}`,
       `Phone / WhatsApp: ${form.phone || "Not provided"}`,
       "",
-      `Services: ${selectedServices.join(", ")}`,
-      `Timeline: ${timeline}`,
-      `Budget: ${budget}`,
+      `Talent need: ${selectedServices.join(", ")}`,
+      `Start timing: ${timeline}`,
+      `Engagement model: ${budget}`,
       `Source: ${form.source || "Not provided"}`,
       "",
-      "Project description:",
+      "Role / engineering need:",
       form.description,
     ].join("\n");
 
     setSubmittedRef(ref);
-    window.location.href = `mailto:hello@andishi.dev?subject=${encodeURIComponent(
-      `Project brief ${ref}`,
+    window.location.href = `mailto:hire@andishi.dev?subject=${encodeURIComponent(
+      `Hiring brief ${ref}`,
     )}&body=${encodeURIComponent(body)}`;
   };
 
@@ -162,14 +167,14 @@ export function ContactPageExperience() {
         >
           <p className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)]">
             <span className="h-px w-7 bg-[var(--secondary)]" />
-            Send a brief
+            Start hiring
           </p>
           <h1 className="max-w-[11ch] text-[clamp(3rem,9vw,5.8rem)] font-normal leading-[0.94] tracking-normal text-[var(--on-surface)]">
-            Start your project brief.
+            Tell us what engineer you need.
           </h1>
           <p className="body-md mt-7 max-w-xl text-[var(--on-surface-dim)]">
-            Three steps. Two minutes. You will leave us with enough context to
-            respond clearly, usually with the right next call, scope, or team
+            Three steps. Two minutes. Give us your stack, bottleneck, and timing
+            so we can respond with the right next call, profile match, or team
             shape.
           </p>
 
@@ -227,27 +232,27 @@ export function ContactPageExperience() {
 
                   {step === 1 && (
                     <motion.div
-                      key="project"
+                      key="talent"
                       initial={{ opacity: 0, y: 14 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={cosmicSpring}
                       className="grid gap-5"
                     >
                       <ChoiceGroup
-                        label="What are you building?"
+                        label="What kind of engineer do you need?"
                         options={services}
                         selected={selectedServices}
                         onToggle={toggleService}
                       />
                       <label className="grid gap-2">
                         <span className="label-caps text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
-                          Describe the project
+                          Describe the engineering need
                         </span>
                         <textarea
                           value={form.description}
                           onChange={(event) => updateField("description", event.target.value)}
-                          placeholder="Tell us what you need built, who it is for, and what problem it solves."
-                          className="min-h-36 resize-none rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-3 text-[0.9rem] leading-relaxed text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_42%,transparent)] focus:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--primary)_14%,transparent)]"
+                          placeholder="Tell us what the engineer should own, your current stack, and the bottleneck you need solved."
+                          className="min-h-36 resize-none rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-3 text-[0.98rem] leading-relaxed text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)] focus:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--primary)_14%,transparent)]"
                           required
                         />
                       </label>
@@ -263,14 +268,14 @@ export function ContactPageExperience() {
                       className="grid gap-5"
                     >
                       <ChoiceGroup
-                        label="When do you need it live?"
+                        label="When should the engineer start?"
                         options={timelines}
                         selected={timeline ? [timeline] : []}
                         onToggle={setTimeline}
                         single
                       />
                       <ChoiceGroup
-                        label="Budget range"
+                        label="Engagement model"
                         options={budgets}
                         selected={budget ? [budget] : []}
                         onToggle={setBudget}
@@ -322,12 +327,12 @@ export function ContactPageExperience() {
                     disabled={!canContinue}
                     onClick={() => setStep((current) => Math.min(current + 1, 2))}
                   >
-                    {step === 0 ? "Project details" : "Timeline and budget"}
+                    {step === 0 ? "Talent need" : "Timing and model"}
                     <IconArrowRight size={16} stroke={1.8} />
                   </Button>
                 ) : (
                   <Button type="submit" variant="primary" disabled={!canContinue}>
-                    Prepare brief
+                    Prepare hiring brief
                     <IconSend size={16} stroke={1.8} />
                   </Button>
                 )}
@@ -373,7 +378,7 @@ export function ContactPageExperience() {
                       <span className="mt-1 block truncate text-[0.95rem] font-medium text-[var(--on-surface)]">
                         {method.value}
                       </span>
-                      <span className="mt-0.5 block text-[0.76rem] text-[var(--on-surface-dim)]">
+                      <span className="mt-0.5 block text-[0.86rem] text-[var(--on-surface-dim)]">
                         {method.sub}
                       </span>
                     </span>
@@ -388,7 +393,7 @@ export function ContactPageExperience() {
             </div>
 
             <div className="mt-5 rounded-[1rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-5 backdrop-blur-xl">
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--tertiary)_26%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_10%,transparent)] px-3 py-1.5 text-[0.72rem] font-medium text-[var(--tertiary)]">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--tertiary)_26%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_10%,transparent)] px-3 py-1.5 text-[0.84rem] font-medium text-[var(--tertiary)]">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--tertiary)]" />
                 Typically responds within 4 hours
               </div>
@@ -428,7 +433,7 @@ export function ContactPageExperience() {
                 (item) => (
                   <span
                     key={item}
-                    className="label-caps text-[0.62rem] text-[color-mix(in_srgb,var(--on-surface-dim)_50%,transparent)]"
+                    className="label-caps text-[0.74rem] text-[var(--on-surface-dim)]"
                   >
                     {item}
                   </span>
@@ -524,7 +529,7 @@ function Field({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="h-12 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 text-[0.9rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_42%,transparent)] focus:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--primary)_14%,transparent)]"
+        className="h-12 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 text-[0.98rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)] focus:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--primary)_14%,transparent)]"
       />
     </label>
   );
@@ -559,7 +564,7 @@ function ChoiceGroup({
               onClick={() => onToggle(option)}
               aria-pressed={isSelected}
               className={cn(
-                "flex min-h-12 items-center gap-3 rounded-xl border px-4 py-3 text-left text-[0.84rem] transition-all duration-300",
+                "flex min-h-12 items-center gap-3 rounded-xl border px-4 py-3 text-left text-[0.94rem] transition-all duration-300",
                 isSelected
                   ? "border-[color-mix(in_srgb,var(--primary)_30%,transparent)] bg-[color-mix(in_srgb,var(--primary)_10%,transparent)] text-[var(--primary)]"
                   : "border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] hover:border-[color-mix(in_srgb,var(--primary)_20%,transparent)] hover:bg-[color-mix(in_srgb,var(--primary)_7%,transparent)] hover:text-[var(--on-surface)]",
@@ -595,10 +600,10 @@ function SuccessState({ refCode }: { refCode: string }) {
         <IconCheck size={28} stroke={2} />
       </span>
       <h2 className="mt-6 text-[clamp(1.7rem,4vw,2.4rem)] font-normal leading-tight tracking-normal text-[var(--on-surface)]">
-        Brief prepared.
+        Hiring brief prepared.
       </h2>
       <p className="body-md mt-4 max-w-md text-[var(--on-surface-dim)]">
-        Your email client should open with the full project brief. Send it from
+        Your email client should open with the full hiring brief. Send it from
         there and the Andishi team will respond within 24 hours.
       </p>
       <p className="mt-5 rounded-lg border border-[color-mix(in_srgb,var(--secondary)_20%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] px-4 py-2 font-mono text-[0.74rem] tracking-normal text-[var(--secondary)]">
@@ -647,14 +652,14 @@ function NairobiPanel() {
         <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-[58%] flex-col items-center">
           <span className="h-4 w-4 rounded-full bg-[var(--primary)] shadow-[0_0_0_5px_color-mix(in_srgb,var(--primary)_24%,transparent),0_0_0_10px_color-mix(in_srgb,var(--primary)_10%,transparent)]" />
           <span className="mt-3 rounded-lg border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_58%,transparent)] px-3 py-1.5 text-[0.74rem] font-medium text-[var(--on-surface)] backdrop-blur-xl">
-            Andishi Studio
+            Andishi Talent
           </span>
         </div>
-        <div className="absolute bottom-4 left-4 flex items-center gap-2 font-mono text-[0.62rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
+        <div className="absolute bottom-4 left-4 flex items-center gap-2 font-mono text-[0.74rem] tracking-normal text-[var(--on-surface-dim)]">
           <IconMapPin size={13} stroke={1.7} />
-          Nairobi, Kenya
+          Africa / UTC+0 to UTC+3
         </div>
-        <p className="absolute bottom-4 right-4 font-mono text-[0.62rem] tracking-normal text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
+        <p className="absolute bottom-4 right-4 font-mono text-[0.74rem] tracking-normal text-[var(--on-surface-dim)]">
           UTC+3
         </p>
       </div>
@@ -662,8 +667,8 @@ function NairobiPanel() {
       <div className="relative mt-5 grid gap-3 sm:grid-cols-3">
         {[
           [IconClock, "24hrs", "response target"],
-          [IconCalendarTime, "30min", "scoping call"],
-          [IconCheck, "Fixed", "scope first"],
+          [IconCalendarTime, "30min", "technical call"],
+          [IconCheck, "48h", "profiles"],
         ].map(([Icon, value, label]) => (
           <div
             key={label as string}
@@ -677,7 +682,7 @@ function NairobiPanel() {
             <p className="font-mono text-[1.05rem] leading-none tracking-normal text-[var(--on-surface)]">
               {value as string}
             </p>
-            <p className="label-caps mt-2 text-[0.56rem] leading-tight text-[color-mix(in_srgb,var(--on-surface-dim)_56%,transparent)]">
+            <p className="label-caps mt-2 text-[0.68rem] leading-tight text-[var(--on-surface-dim)]">
               {label as string}
             </p>
           </div>

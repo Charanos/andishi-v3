@@ -1,258 +1,123 @@
-# Andishi v2 → v3: Current State Audit
+# Andishi v3 Current State Audit
 
-> This document captures the complete state of the existing Andishi MVP codebase.
-> Every route, component, API endpoint, data schema, and design pattern is catalogued here
-> to ensure nothing is lost during the v3 UI/UX revamp.
+Last updated: May 8, 2026
 
----
+This audit reflects the current public v3 site after the May 2026 positioning shift from a project-studio-first website to a tech talent outsourcing brand. The source of truth for content direction is `docs/andishi-v3-content-system.md`.
 
-## 1. Technology Stack (Current)
+## 1. Current Positioning
 
-| Layer | Technology | Version |
-|---|---|---|
-| Framework | Next.js (App Router) | 15.3.3 |
-| Language | TypeScript | ^5 |
-| Styling | Tailwind CSS v4 + tw-animate-css | ^4.1.8 |
-| Animation | Framer Motion | ^12.16.0 |
-| Database | MongoDB (via Prisma + native driver) | — |
-| ORM | Prisma Client | ^6.10.1 |
-| Auth | Custom JWT (jose) + next-auth | ^6.0.11 / ^4.24.11 |
-| Forms | React Hook Form + Zod | ^7.58.0 / ^3.25.64 |
-| Charts | Chart.js + Recharts | ^4.5.0 / ^3.0.2 |
-| Icons | react-icons (FA, SI) + lucide-react | ^5.5.0 / ^0.514.0 |
-| UI Primitives | Radix UI (Dialog, Select, Label, etc.) | Various |
-| Maps | Leaflet | ^1.9.4 |
-| Smooth Scroll | Lenis | ^1.3.4 |
-| Fonts | Nunito (body) + Montserrat (headings) | Google Fonts |
-| Analytics | Vercel Analytics + Google Analytics + Facebook Pixel | — |
+Andishi now leads with senior African engineering talent for global startups. The product studio still exists, but it is secondary: it functions as proof-of-work for the engineers Andishi places and as a separate build track for African businesses.
 
----
+Primary buyer:
+- Startup CTOs, founders, and engineering leads in the US, UK, EU, GCC, and similar global markets.
 
-## 2. Route Map (All Existing Routes)
+Primary promise:
+- Vetted senior African engineers matched to real startup engineering needs without the long recruiting cycle, junior-heavy agency model, or marketplace filtering burden.
 
-### 2.1 Public / Marketing Routes
+Core proof:
+- 50+ engineers placed globally.
+- Average time-to-placement framed around 8 days.
+- Skill coverage across full-stack, AI, cloud/AWS, Web3/blockchain, backend/API systems, and mobile.
+- Studio work retained as case-study evidence.
 
-| Route | File | Purpose | Size |
-|---|---|---|---|
-| `/` | `app/page.tsx` | Homepage (11 sections) | 3.7KB |
-| `/about-us` | `app/about-us/page.tsx` | About + Team | 30KB |
-| `/about-us` (team) | `app/about-us/our-team.tsx` | Team section component | 20KB |
-| `/contact-us` | `app/contact-us/` | Contact form + map | — |
-| `/our-portfolio` | `app/our-portfolio/` | Projects showcase | — |
-| `/tech-talent-pool` | `app/tech-talent-pool/page.tsx` | Developer profiles browser | 62KB |
-| `/start-project` | `app/start-project/page.tsx` | Client hiring brief form | 54KB |
-| `/join-talent-pool` | `app/join-talent-pool/` | Developer application form | — |
-| `/featured-blog` | `app/featured-blog/` | Blog listing | — |
-| `/blogs` | `app/blogs/` | Blog section (also used as homepage section) | — |
-| `/thank-you-start-project` | `app/thank-you-start-project/` | Post-submit confirmation (client) | — |
-| `/thank-you-join-talent-pool` | `app/thank-you-join-talent-pool/` | Post-submit confirmation (dev) | — |
-| `/thanks` | `app/thanks/` | Generic thank you | — |
+## 2. Technology Stack
 
-### 2.2 Auth Routes
-
-| Route | File | Purpose |
-|---|---|---|
-| `/login` | `app/login/page.tsx` | Login (email/password) — 754 lines, split layout with orbiting tech icons |
-| `/unauthorized` | `app/unauthorized/` | Access denied page |
-
-### 2.3 Dashboard Routes (Protected)
-
-| Route | File | Role | Size |
-|---|---|---|---|
-| `/admin-dashboard` | `app/admin-dashboard/page.tsx` | ADMIN | 117KB (3143 lines) |
-| `/client-dashboard` | `app/client-dashboard/page.tsx` | CLIENT | 78KB (2014 lines) |
-| `/developer-dashboard` | `app/developer-dashboard/page.tsx` | DEVELOPER | 17KB (455 lines) |
-
-### 2.4 API Routes
-
-| Endpoint | Directory | Methods |
-|---|---|---|
-| `/api/auth/*` | `app/api/auth/` | Login, verify |
-| `/api/users` | `app/api/users/` | GET (list), user management |
-| `/api/projects` | `app/api/projects/` | CRUD |
-| `/api/client-projects` | `app/api/client-projects/` | Client-scoped project CRUD |
-| `/api/start-project` | `app/api/start-project/` | Public project submission |
-| `/api/join-talent-pool` | `app/api/join-talent-pool/` | Public developer application |
-| `/api/developer-profiles` | `app/api/developer-profiles/` | Public dev profile listing |
-| `/api/developer-profile` | `app/api/developer-profile/` | Authenticated dev profile (single) |
-| `/api/project-assignments` | `app/api/project-assignments/` | Assignment management |
-| `/api/project-chat` | `app/api/project-chat/` | Chat messages per project |
-
----
-
-## 3. Database Schema (Prisma — MongoDB)
-
-### Models (DO NOT MODIFY)
-
-| Model | Key Fields | Relations |
-|---|---|---|
-| **User** | id, email, firstName, lastName, role, status, isActive, isOnline, lastSeen, accountCreated, passwordGenerated, projectCount, progress | → DeveloperProfile, ChatMessage, ChatParticipant, ProjectAdminAssignment |
-| **DeveloperProfile** | id, data (JSON), userId | → User, ProjectAssignment |
-| **Project** | id, title, description, status, priority, budget, timeline, techStack[], requiredSkills[], experienceLevel, maxTeamSize, clientId | → ProjectAssignment, ChatParticipant, ChatMessage, ProjectAdminAssignment |
-| **ProjectAssignment** | id, projectId, developerId, role, status | → Project, DeveloperProfile |
-| **ChatParticipant** | id, projectId, userId, role, joinedAt, isMuted, lastRead | → Project, User |
-| **ChatMessage** | id, projectId, senderId, content, messageType, isRead, isDeleted, timestamp | → Project, User |
-| **ProjectAdminAssignment** | id, projectId, adminId, assignedBy, assignedAt | → Project, User (x2) |
-
-### TypeScript Types (types/index.ts)
-
-- `UserInfo`, `ProjectDetails`, `ProjectStatus`, `Milestone`, `PricingOption`
-- `ProjectUpdate`, `ProjectFile`, `Payment`, `ProjectData`
-- `BaseProjectWithDetails`, `ProjectWithDetails`
-- `UserRole` (types/auth.ts): `ADMIN`, `CLIENT`, `DEVELOPER`
-
----
-
-## 4. Component Inventory
-
-### 4.1 Layout Components
-
-| Component | File | Purpose |
-|---|---|---|
-| `Navbar` | `app/layout/Navbar.tsx` | Main navigation — glassmorphic, sticky, auth-aware |
-| `Footer` | `app/layout/Footer.tsx` | 5-column footer with socials |
-| `ConditionalLayout` | `app/components/ConditionalLayout.tsx` | Route-based layout switching (navbar/footer visibility, auth gating) |
-| `PageTransition` | `app/components/PageTransition.tsx` | Framer Motion page transitions |
-| `ClientMotionProvider` | `app/components/ClientMotionProvider.tsx` | Motion provider wrapper |
-
-### 4.2 Homepage Sections
-
-| Section | File | Order | Notes |
-|---|---|---|---|
-| HeroSection | `app/sections/HeroSection.tsx` | 1 | Split layout, gradient bg, trust indicators |
-| MiniStats | `app/sections/MiniStats.tsx` | 2 | Key metrics strip |
-| WhyAndishi | `app/sections/WhyAndishi.tsx` | 3 | 6 stats cards + InteractiveTalentVisualization |
-| HowWeDoIt | `app/sections/HowWeDoIt.tsx` | 4 | 4-step process |
-| DevDashboardDisplay | `app/sections/DevDashboardDisplay.tsx` | 5 | Dev dashboard preview |
-| Services | `app/sections/Services.tsx` | 6 | 4 service cards (expandable mosaic) |
-| ClientDashboardDisplay | `app/sections/ClientDashboardDisplay.tsx` | 7 | Client dashboard preview |
-| ProjectsShowcase | `app/sections/ProjectsShowcase.tsx` | 8 | Featured projects |
-| ClientReviews | `app/sections/ClientReviews.tsx` | 9 | Testimonials |
-| LatestInsights | `app/sections/LatestInsights.tsx` | 10 | Blog articles |
-| Newsletter | `app/sections/Newsletter.tsx` | 11 | Email subscribe |
-
-### 4.3 Shared UI Components
-
-| Component | File | Notes |
-|---|---|---|
-| `CTAButton` | `app/components/CTAButton.tsx` | Basic CTA |
-| `Card` | `app/components/Card.tsx` | Generic card |
-| `LoadingSpinner` | `app/components/LoadingSpinner.tsx` | Loader |
-| `ScrollToTop` | `app/components/ScrollToTop.tsx` | Scroll utility |
-| `FloatingWhatsappButton` | `app/components/FloatingWhatsappButton.tsx` | WhatsApp FAB |
-| `InteractiveMap` | `app/components/InteractiveMap.tsx` | Leaflet map |
-| `InteractiveTalentVisualization` | `app/components/InteractiveTalentVisualization.tsx` | Animated talent viz |
-| `DevProfileModal` | `app/components/DevProfileModal.tsx` | Developer profile detail modal |
-| `ProtectedRoutes` | `app/components/ProtectedRoutes.tsx` | Route guard |
-| `SmoothScrollProvider` | `app/components/SmoothScrollProvider.tsx` | Lenis wrapper |
-
-### 4.4 Admin Dashboard Components
-
-| Component | File | Size |
-|---|---|---|
-| `DeveloperProfilesOverview` | `admin-dashboard/DeveloperProfilesOverview.tsx` | 76KB |
-| `DeveloperProfileEditor` | `admin-dashboard/DeveloperProfileEditor.tsx` | 39KB |
-| `AddNewDeveloper` | `admin-dashboard/AddNewDeveloper.tsx` | 38KB |
-| `ProjectOverview` | `admin-dashboard/ProjectOverview.tsx` | 145KB |
-| `ProjectAssignments` | `admin-dashboard/ProjectAssignments.tsx` | 34KB |
-| `ProjectAssignmentManager` | `admin-dashboard/ProjectAssignmentManager.tsx` | 46KB |
-| `ProjectChat` | `admin-dashboard/ProjectChat.tsx` | 17KB |
-| `StartNewProject` | `admin-dashboard/StartNewProject.tsx` | 54KB |
-| `renderAnalytics` | `admin-dashboard/renderAnalytics.tsx` | 28KB |
-| `renderUsers` | `admin-dashboard/renderUsers.tsx` | 90KB |
-
-### 4.5 Client Dashboard Components
-
-| Component | File | Size |
-|---|---|---|
-| `SearchFilter` | `client-dashboard/SearchFilter.tsx` | 18KB |
-| `StartNewProject` | `client-dashboard/StartNewProject.tsx` | 48KB |
-| `projectDetails` | `client-dashboard/projectDetails.tsx` | 87KB |
-
-### 4.6 Developer Dashboard Components
-
-| Component | File | Size |
-|---|---|---|
-| `DevOverview` | `developer-dashboard/DevOverview.tsx` | 22KB |
-| `DevProjects` | `developer-dashboard/DevProjects.tsx` | 30KB |
-| `DevSkills` | `developer-dashboard/devSkills.tsx` | 23KB |
-| `DevAnalytics` | `developer-dashboard/DevAnalytics.tsx` | 28KB |
-| `DevAchievements` | `developer-dashboard/DevAchievements.tsx` | 16KB |
-| `EditProfileModal` | `developer-dashboard/EditProfileModal.tsx` | 9KB |
-| `ProjectDetail` | `developer-dashboard/ProjectDetail.tsx` | 6KB |
-
----
-
-## 5. Design System Audit (Current Issues)
-
-### 5.1 Colors — Inconsistencies
-
-- **Purple used extensively**: `purple-400`, `purple-500`, `purple-900/50`, `bg-purple-500/20` — appears in hero, CTAs, gradients, accents across ALL pages
-- **Primary brand color**: `#00C6FB` (cyan) defined in tailwind.config but rarely used consistently
-- **Hardcoded colors**: Many inline hex values (`#0B0D0E`, `#05122273`, `#96aeff`, `#c156ff`)
-- **No design tokens**: Colors defined ad-hoc in each component, no centralized system
-
-### 5.2 Typography — Violations
-
-- **`font-bold`** used in: Hero (`font-semibold`), Footer, Login page, Dashboard headings
-- **`font-semibold`** used extensively across ALL components
-- **Nunito + Montserrat** — v3 spec requires **Outfit + JetBrains Mono**
-- **No mono font** for numerics — stats, prices, IDs all use body font
-- **`.monty` class** — custom class for Montserrat, used in many places
-
-### 5.3 Icons — Mixed Libraries
-
-- **react-icons/fa** (Font Awesome) — primary icon library across all components
-- **react-icons/si** (Simple Icons) — used for tech brand icons
-- **lucide-react** — used in client dashboard
-- **Inline SVGs** — used in hero CTAs, navbar hamburger
-- v3 spec requires: **@tabler/icons-react only**
-
-### 5.4 Animation
-
-- Framer Motion used but with `ease: "easeOut"` — v3 requires springs (`damping: 25, stiffness: 200`)
-- CSS `animate-pulse` used extensively for ambient effects
-
-### 5.5 Layout
-
-- No route groups — all pages at `app/` root level
-- Dashboard pages are monolithic single files (admin: 3143 lines, client: 2014 lines)
-- No `loading.tsx` or `error.tsx` boundary files
-- Background: SVG overlay pattern applied globally via `bg-gradient-overlay.svg`
-
----
-
-## 6. Auth System (Preserve Entirely)
-
-- **Custom JWT auth** via `jose` library
-- Token stored in `auth_token` cookie (httpOnly) + localStorage
-- Middleware at `middleware.ts` — verifies JWT, adds user headers
-- `useAuth` hook at `hooks/useAuth.ts` — provides user, login, logout, redirectToDashboard
-- Role-based routing: ADMIN → `/admin-dashboard`, CLIENT → `/client-dashboard`, DEVELOPER → `/developer-dashboard`
-- RBAC utility at `utils/rbac.ts`
-- **Login rate limiting** — 5 attempts, 15-minute lockout (client-side localStorage)
-
----
-
-## 7. Third-Party Integrations (Preserve)
-
-| Integration | Implementation |
+| Layer | Current stack |
 |---|---|
-| Google Analytics | GA4 tag `G-8668KBDWFZ` via `next/script` |
-| Google Ads | Conversion tag `AW-16686798799` |
-| Facebook Pixel | Pixel ID `721165943984672` |
-| Vercel Analytics | `@vercel/analytics/next` |
-| Vercel Speed Insights | `@vercel/speed-insights/next` |
-| WhatsApp | Floating button component linking to WhatsApp |
+| Framework | Next.js App Router |
+| Runtime package version | Next.js 16.x |
+| UI | React 19.x |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS 4 with project CSS tokens |
+| Motion | Framer Motion |
+| Theme | next-themes |
+| Icons | `@tabler/icons-react` |
+| Analytics | Vercel Analytics and Speed Insights packages present |
 
----
+## 3. Implemented Route Map
 
-## 8. Key Patterns to Preserve
+| Route | Status | Current role |
+|---|---|---|
+| `/` | Implemented | Talent-first landing page with hero, proof, process, comparison, FAQ, founder, newsletter, and final CTA. |
+| `/services` | Implemented | Talent capability and engagement-model page. Copy now represents engineer skill lines rather than classic studio services. |
+| `/work` | Implemented | Case-study and proof page framed as work shipped by Andishi engineers. |
+| `/about` | Implemented | Origin, mission, founder, operating principles, and talent network positioning. |
+| `/contact` | Implemented | Talent brief/contact route for hiring conversations. |
+| `/start-project` | Implemented with legacy path name | Hiring brief/onboarding flow. The route label is legacy, but the copy now asks for roles, stack, timeline, and engagement model. |
+| `/login` | Implemented | Client hiring workspace login experience, positioned around shortlists, interviews, and onboarding. |
+| `/sitemap.xml` | Implemented | Static sitemap route. |
+| Global `not-found.tsx` | Implemented | Branded fallback route. |
+| Global `loading.tsx` | Implemented | App-level loading boundary. |
 
-1. **ConditionalLayout** pattern — route-based navbar/footer visibility
-2. **Auth flow** — JWT cookie + localStorage, middleware verification
-3. **Project data flow** — `services/clientProjects.ts` service layer → API routes → Prisma/MongoDB
-4. **Role-based dashboard access** — admin can access all, others restricted
-5. **Form validation** — React Hook Form + Zod schemas in `lib/formSchema.ts`
-6. **Project CRUD hooks** — `useProjectCRUD`, `useProjectChat`, `useProjectOperation`
-7. **Developer profile modal** — full profile view modal used in talent pool + admin
+## 4. Implemented Content Shift
+
+Completed as part of the v3.1 content pass:
+
+- Site metadata, Open Graph, Twitter metadata, and Organization schema now describe Andishi as an African engineering talent company.
+- `public/llms.txt` now exposes the talent-first summary and key pages for AI systems.
+- Navbar language now prioritizes engineers, case studies, services, about, contact, login, and a hiring CTA.
+- Footer tagline, column labels, legal line, and CTA language now support the talent outsourcing narrative.
+- Homepage hero, proof strip, process, problem framing, case studies, comparison rows, FAQ, founder preview, newsletter, and final CTA now speak to hiring senior engineers.
+- Services page now presents six talent lines: full-stack, AI, cloud/AWS, Web3, backend/API systems, and mobile.
+- Start hiring/onboarding page copy now asks about role needs, team gaps, engagement model, and timing.
+- Contact page copy now supports hiring briefs rather than project-studio inquiries.
+- Login page copy now frames the workspace around profiles, interviews, onboarding, and placement progress.
+- Work and About pages now use studio output as proof of engineer capability rather than the primary product.
+
+## 5. Typography and Legibility Improvements
+
+The May 8 pass also adjusted the global type and contrast foundation:
+
+- `--on-surface-dim` is stronger in light and dark themes for readable supporting copy.
+- `.body-md` was increased slightly for more comfortable paragraph reading.
+- `.label-caps` was increased slightly so section labels and small UI metadata do not feel fragile.
+- Glass border tokens were strengthened to improve edge definition in both themes.
+- Small helper text in contact, start hiring, login, services, and about surfaces was increased where it affected task comprehension.
+
+## 6. Remaining Page Map From Content System
+
+These pages are recommended by `docs/andishi-v3-content-system.md` but are not yet implemented as standalone routes:
+
+| Page | Purpose | Priority |
+|---|---|---|
+| `/engineers` | Talent directory or profile-led proof page. | High |
+| `/hire` | Dedicated explanation of the hiring process, guarantees, and engagement structure. | High |
+| `/skills/ai` | AI and LLM engineer landing page. | High |
+| `/skills/web3` | Web3/blockchain engineer landing page. | Medium |
+| `/skills/aws` | Cloud/AWS engineer landing page. | Medium |
+| `/skills/fullstack` | Full-stack engineer landing page. | High |
+| `/studio` | Secondary studio arm page separated from the talent offer. | Medium |
+| `/blog` | Authority, hiring education, and AI-search content hub. | Medium |
+| `/hire/faq` | Expanded FAQ for buyer objections and AI extraction. | Medium |
+| `/glossary` | African tech talent glossary and entity-building content. | Low |
+| `/engineers.md` | Machine-readable talent directory for AI agents. | High |
+| `/pricing.md` | Machine-readable engagement model and pricing/range information. | Medium |
+
+## 7. Known Cleanup Items
+
+- `/services` and `/start-project` still carry legacy route names from the studio-era site. Copy is now talent-first, but future routing can add `/hire` and `/studio` to make the IA clearer.
+- `src/app/page.tsx` still has an ESLint warning for an unused `Comparison` function.
+- A small number of `<img>` warnings remain from the Next.js lint rule recommending `next/image`.
+- Browser verification was not completed in this pass because the requested verification gate is `npx tsc --noEmit`.
+- Deleted legacy files are present in the worktree and should be reviewed as part of the commit scope: `docs/andishi-landing-page-content.md`, `docs/andishi-landing-page-content.pdf`, and `hero maybe.png`.
+
+## 8. Verification Status
+
+Latest completed checks during this pass:
+
+- `npm run lint`: passed with warnings only.
+- `npm run build`: passed before the user narrowed the requested verification gate.
+
+Current requested release gate:
+
+- `npx tsc --noEmit`
+
+## 9. Next Recommended Implementation Order
+
+1. Add `/hire` as the canonical hiring process page and route primary hiring CTAs there.
+2. Add `/engineers` with profile cards, skill filters, seniority signals, timezone overlap, and availability states.
+3. Add `/skills/fullstack` and `/skills/ai` first, then Web3 and AWS specialty pages.
+4. Split the studio story into `/studio` so `/services` can either redirect, become a talent-services hub, or sit as a hybrid page intentionally.
+5. Add machine-readable `/engineers.md` and `/pricing.md`.
+6. Expand structured data: FAQPage, Service schema per skill domain, Person schema for founder, and richer Organization fields.
+7. Resolve lint warnings and run the visual QA pass the user plans to handle separately.

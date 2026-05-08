@@ -1,11 +1,20 @@
-Andishi is a Nairobi-based digital product studio that designs, builds, and ships
-web applications, e-commerce systems, and custom digital solutions for businesses
-in Kenya and across Africa. Clients include founders, SMEs, and growth-stage
-companies who need a technical partner, not just a vendor. Andishi scopes projects
-in days, ships working products in weeks, and measures success by client outcomes,
-not deliverables.
+Andishi is an African engineering talent company that places senior, vetted
+software engineers with global startups and technology companies. Engineers are
+sourced across Africa and carry production experience in full-stack web
+development, AI/ML integrations, AWS and cloud infrastructure, Web3 and
+blockchain, backend API systems, and mobile development.
 
-Key pages: /, /#services, /#process, /#comparison, /#contact.
+Andishi also operates a product studio arm that designs and ships digital
+products for African businesses. Each project doubles as a proof-of-work
+portfolio for the engineers Andishi places.
 
-Services: Web Applications (3-8 weeks), E-Commerce (2-5 weeks), Conversion
-Websites (1-3 weeks), Digital Systems & Integrations (2-6 weeks).
+Clients include seed-stage to Series B startups in the US, UK, EU, and GCC who
+need to extend engineering teams quickly, launch MVPs, or scale existing
+products. Andishi handles sourcing, vetting, onboarding, and ongoing performance
+management.
+
+Key pages: /, /services, /work, /about, /contact.
+
+Services: Contract and fractional engineers, team extension, dedicated build
+teams, full-stack engineering, AI integration, Cloud/AWS infrastructure, Web3 and
+blockchain, Data Engineers, backend API systems, and mobile engineering.
