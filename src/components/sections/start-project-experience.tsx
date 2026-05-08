@@ -64,6 +64,16 @@ const budgets = [
   "Permanent hire pathway",
 ];
 
+const controlSurfaceClass =
+  "border-[color-mix(in_srgb,var(--on-surface)_20%,transparent)] bg-[color-mix(in_srgb,var(--surface)_94%,var(--bg)_6%)] shadow-[inset_0_1px_0_color-mix(in_srgb,white_42%,transparent),0_10px_28px_color-mix(in_srgb,var(--bg-deep)_8%,transparent)] dark:border-[var(--glass-border)] dark:bg-[var(--glass-bg)] dark:shadow-none";
+
+const controlFocusClass =
+  "focus:border-[color-mix(in_srgb,var(--primary)_58%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--primary)_18%,transparent)] dark:focus:border-[color-mix(in_srgb,var(--secondary)_40%,transparent)] dark:focus:ring-[color-mix(in_srgb,var(--secondary)_18%,transparent)]";
+
+const fieldLabelClass = "text-[0.9rem] font-medium text-[var(--on-surface)]";
+
+const helperTextClass = "text-[0.88rem] leading-relaxed text-[var(--on-surface-dim)]";
+
 function PlusTexture({ opacity = 0.1 }: { opacity?: number }) {
   return (
     <div
@@ -181,7 +191,7 @@ export function StartProjectExperience() {
             Andishi
           </Link>
 
-          <div className="space-y-0">
+          <div className="space-y-1">
             {steps.map((item, index) => {
               const isActive = index === step;
               const isDone = index < step;
@@ -192,29 +202,29 @@ export function StartProjectExperience() {
                     <span
                       aria-hidden="true"
                       className={cn(
-                        "absolute left-[0.94rem] top-8 h-[calc(100%-2rem)] w-px bg-[var(--glass-border)]",
+                        "absolute left-[0.94rem] top-8 h-[calc(100%-2rem)] w-px bg-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] dark:bg-[var(--glass-border)]",
                         isDone && "bg-[color-mix(in_srgb,var(--tertiary)_38%,transparent)]",
                       )}
                     />
                   )}
                   <span
                     className={cn(
-                      "relative z-[1] grid h-8 w-8 shrink-0 place-items-center rounded-full border bg-[var(--bg)] font-mono text-[0.68rem] tracking-normal",
+                      "relative z-[1] grid h-8 w-8 shrink-0 place-items-center rounded-full border bg-[color-mix(in_srgb,var(--surface)_92%,var(--bg)_8%)] font-mono text-[0.74rem] tracking-normal dark:bg-[var(--bg)]",
                       isDone &&
                         "border-[color-mix(in_srgb,var(--tertiary)_30%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_12%,transparent)] text-[var(--tertiary)]",
                       isActive &&
                         "border-[color-mix(in_srgb,var(--primary)_34%,transparent)] bg-[color-mix(in_srgb,var(--primary)_10%,transparent)] text-[var(--primary)]",
                       !isDone &&
                         !isActive &&
-                        "border-[var(--glass-border)] text-[color-mix(in_srgb,var(--on-surface-dim)_48%,transparent)]",
+                        "border-[color-mix(in_srgb,var(--on-surface)_18%,transparent)] text-[color-mix(in_srgb,var(--on-surface-dim)_74%,var(--on-surface))] dark:border-[var(--glass-border)] dark:text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]",
                     )}
                   >
                     {isDone ? <IconCheck size={14} stroke={2} /> : index + 1}
                   </span>
-                  <span className="pt-1">
+                  <span className="pt-0.5">
                     <span
                       className={cn(
-                        "block text-[0.86rem] font-medium",
+                        "block text-[0.95rem] font-medium leading-snug",
                         isActive
                           ? "text-[var(--on-surface)]"
                           : "text-[var(--on-surface-dim)]",
@@ -224,10 +234,10 @@ export function StartProjectExperience() {
                     </span>
                     <span
                       className={cn(
-                      "mt-1 block text-[0.84rem] leading-relaxed",
+                        "mt-1.5 block text-[0.9rem] leading-relaxed",
                         isActive
                           ? "text-[var(--on-surface-dim)]"
-                          : "text-[color-mix(in_srgb,var(--on-surface-dim)_48%,transparent)]",
+                          : "text-[color-mix(in_srgb,var(--on-surface-dim)_84%,var(--on-surface))] dark:text-[color-mix(in_srgb,var(--on-surface-dim)_72%,transparent)]",
                       )}
                     >
                       {item.sub}
@@ -239,7 +249,7 @@ export function StartProjectExperience() {
           </div>
 
           <div className="mt-auto border-t border-[var(--glass-border)] pt-6">
-            <p className="label-caps mb-4 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
+            <p className="label-caps mb-4 text-[0.82rem] text-[color-mix(in_srgb,var(--on-surface-dim)_88%,var(--on-surface))]">
               What happens next
             </p>
             <div className="grid gap-3">
@@ -251,7 +261,7 @@ export function StartProjectExperience() {
               ].map(([Icon, label]) => (
                 <div
                   key={label as string}
-                  className="flex items-center gap-3 text-[0.88rem] text-[var(--on-surface-dim)]"
+                  className="flex items-center gap-3 text-[0.94rem] leading-snug text-[var(--on-surface-dim)]"
                 >
                   <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-[color-mix(in_srgb,var(--primary)_10%,transparent)] text-[var(--primary)]">
                     <Icon size={14} stroke={1.6} />
@@ -263,8 +273,10 @@ export function StartProjectExperience() {
 
             <div className="mt-6">
               <div className="mb-2 flex justify-between text-[0.74rem]">
-                <span className="text-[var(--on-surface-dim)]">Brief completion</span>
-                <span className="font-mono tracking-normal text-[var(--secondary)]">
+                <span className="text-[0.86rem] text-[var(--on-surface-dim)]">
+                  Brief completion
+                </span>
+                <span className="font-mono text-[0.86rem] tracking-normal text-[var(--secondary)]">
                   {progress}%
                 </span>
               </div>
@@ -283,8 +295,8 @@ export function StartProjectExperience() {
           onSubmit={submitBrief}
           className="flex min-h-[calc(100svh-6rem)] flex-col py-8 lg:pl-10"
         >
-          <div className="mb-6 flex items-center justify-between gap-4 border-b border-[var(--glass-border)] pb-5">
-            <p className="font-mono text-[0.84rem] tracking-normal text-[var(--on-surface-dim)]">
+          <div className="mb-6 flex items-center justify-between gap-4 border-b border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] pb-5 dark:border-[var(--glass-border)]">
+            <p className="font-mono text-[0.86rem] tracking-normal text-[var(--on-surface-dim)]">
               Step {step + 1} of {steps.length} / {steps[step].title}
             </p>
             <Link
@@ -361,16 +373,16 @@ export function StartProjectExperience() {
                       className={cn(
                         "flex min-h-16 gap-3 rounded-[1rem] border px-4 py-3 text-left transition-all duration-300",
                         services.includes(title)
-                          ? "border-[color-mix(in_srgb,var(--primary)_34%,transparent)] bg-[color-mix(in_srgb,var(--primary)_10%,transparent)]"
-                          : "border-[var(--glass-border)] bg-[var(--glass-bg)] hover:border-[color-mix(in_srgb,var(--primary)_22%,transparent)] hover:bg-[color-mix(in_srgb,var(--primary)_7%,transparent)]",
+                          ? "border-[color-mix(in_srgb,var(--primary)_54%,transparent)] bg-[color-mix(in_srgb,var(--primary)_14%,var(--surface)_86%)] shadow-[0_12px_32px_color-mix(in_srgb,var(--primary)_10%,transparent)] dark:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] dark:bg-[color-mix(in_srgb,var(--primary)_10%,transparent)]"
+                          : `${controlSurfaceClass} hover:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] hover:bg-[color-mix(in_srgb,var(--surface)_98%,var(--primary)_2%)] dark:hover:border-[color-mix(in_srgb,var(--primary)_22%,transparent)] dark:hover:bg-[color-mix(in_srgb,var(--primary)_7%,transparent)]`,
                       )}
                     >
                       <span
                         className={cn(
                           "mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-md border text-transparent",
                           services.includes(title)
-                            ? "border-[var(--primary)] bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] text-[var(--primary)]"
-                            : "border-[var(--glass-border)]",
+                            ? "border-[var(--primary)] bg-[color-mix(in_srgb,var(--primary)_16%,var(--surface)_84%)] text-[var(--primary)] dark:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]"
+                            : "border-[color-mix(in_srgb,var(--on-surface)_22%,transparent)] dark:border-[var(--glass-border)]",
                         )}
                       >
                         <IconCheck size={12} stroke={2.4} />
@@ -417,7 +429,7 @@ export function StartProjectExperience() {
                   onSelect={setTimeline}
                 />
                 <div>
-                  <p className="label-caps mb-3 text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
+                  <p className="label-caps mb-3 text-[color-mix(in_srgb,var(--on-surface-dim)_86%,var(--on-surface))]">
                     Engagement model
                   </p>
                   <div className="grid gap-2 sm:grid-cols-2">
@@ -430,8 +442,8 @@ export function StartProjectExperience() {
                         className={cn(
                           "flex h-12 items-center gap-3 rounded-xl border px-4 text-left transition-all duration-300",
                           budget === item
-                            ? "border-[color-mix(in_srgb,var(--primary)_32%,transparent)] bg-[color-mix(in_srgb,var(--primary)_10%,transparent)] text-[var(--primary)]"
-                            : "border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] hover:text-[var(--on-surface)]",
+                            ? "border-[color-mix(in_srgb,var(--primary)_54%,transparent)] bg-[color-mix(in_srgb,var(--primary)_14%,var(--surface)_86%)] text-[var(--primary)] dark:border-[color-mix(in_srgb,var(--primary)_32%,transparent)] dark:bg-[color-mix(in_srgb,var(--primary)_10%,transparent)]"
+                            : `${controlSurfaceClass} text-[var(--on-surface-dim)] hover:text-[var(--on-surface)]`,
                         )}
                       >
                         <span
@@ -516,12 +528,12 @@ export function StartProjectExperience() {
                   ].map(([label, value]) => (
                     <div
                       key={label}
-                      className="grid gap-0 overflow-hidden rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] sm:grid-cols-[8rem_1fr]"
+                      className={`grid gap-0 overflow-hidden rounded-xl border sm:grid-cols-[8rem_1fr] ${controlSurfaceClass}`}
                     >
-                      <p className="border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface-high)_42%,transparent)] px-4 py-3 text-[0.78rem] font-medium uppercase tracking-[0.08em] text-[var(--on-surface-dim)] sm:border-b-0 sm:border-r">
+                      <p className="border-b border-[color-mix(in_srgb,var(--on-surface)_14%,transparent)] bg-[color-mix(in_srgb,var(--surface-high)_72%,var(--surface)_28%)] px-4 py-3 text-[0.8rem] font-medium uppercase tracking-[0.08em] text-[var(--on-surface)] sm:border-b-0 sm:border-r dark:border-[var(--glass-border)] dark:bg-[color-mix(in_srgb,var(--surface-high)_42%,transparent)] dark:text-[var(--on-surface-dim)]">
                         {label}
                       </p>
-                      <p className="px-4 py-3 text-[0.86rem] leading-relaxed text-[var(--on-surface-dim)]">
+                      <p className="px-4 py-3 text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">
                         {value || "Not provided"}
                       </p>
                     </div>
@@ -531,19 +543,19 @@ export function StartProjectExperience() {
                   type="button"
                   onClick={() => setAgreed((current) => !current)}
                   aria-pressed={agreed}
-                  className="mt-4 flex items-start gap-3 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-4 text-left transition-all duration-300 hover:border-[color-mix(in_srgb,var(--primary)_22%,transparent)]"
+                  className={`mt-4 flex items-start gap-3 rounded-xl border p-4 text-left transition-all duration-300 hover:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] ${controlSurfaceClass}`}
                 >
                   <span
                     className={cn(
                       "mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-md border text-transparent",
                       agreed
-                        ? "border-[color-mix(in_srgb,var(--tertiary)_36%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_12%,transparent)] text-[var(--tertiary)]"
-                        : "border-[var(--glass-border)]",
+                        ? "border-[color-mix(in_srgb,var(--tertiary)_46%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_14%,var(--surface)_86%)] text-[var(--tertiary)] dark:border-[color-mix(in_srgb,var(--tertiary)_36%,transparent)] dark:bg-[color-mix(in_srgb,var(--tertiary)_12%,transparent)]"
+                        : "border-[color-mix(in_srgb,var(--on-surface)_22%,transparent)] dark:border-[var(--glass-border)]",
                     )}
                   >
                     <IconCheck size={12} stroke={2.4} />
                   </span>
-                  <span className="text-[0.82rem] leading-relaxed text-[var(--on-surface-dim)]">
+                  <span className="text-[0.88rem] leading-relaxed text-[var(--on-surface-dim)]">
                     I confirm this brief is accurate and understand the matching
                     call is free and non-binding.
                   </span>
@@ -552,7 +564,7 @@ export function StartProjectExperience() {
             )}
           </motion.div>
 
-          <div className="mt-8 flex items-center justify-between gap-4 border-t border-[var(--glass-border)] pt-6">
+          <div className="mt-8 flex items-center justify-between gap-4 border-t border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] pt-6 dark:border-[var(--glass-border)]">
             <button
               type="button"
               disabled={step === 0}
@@ -591,15 +603,15 @@ function ArtworkLayer() {
       <img
         src="/light-blob.svg"
         alt=""
-        className="absolute left-[58%] top-1/2 h-auto w-[min(1180px,96vw)] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.38] dark:hidden max-[899px]:left-1/2 max-[899px]:w-[150vw]"
+        className="absolute left-[58%] top-1/2 h-auto w-[min(1180px,96vw)] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.24] dark:hidden max-[899px]:left-1/2 max-[899px]:w-[150vw]"
       />
       <img
         src="/dark-blob.svg"
         alt=""
         className="absolute left-[58%] top-1/2 hidden h-auto w-[min(1180px,96vw)] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.5] dark:block max-[899px]:left-1/2 max-[899px]:w-[150vw]"
       />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_82%,transparent)_30%,color-mix(in_srgb,var(--bg)_58%,transparent)_58%,color-mix(in_srgb,var(--bg)_78%,transparent)_84%,var(--bg)_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_72%,transparent)_18%,color-mix(in_srgb,var(--bg)_58%,transparent)_56%,var(--bg)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_90%,transparent)_30%,color-mix(in_srgb,var(--bg)_74%,transparent)_58%,color-mix(in_srgb,var(--bg)_84%,transparent)_84%,var(--bg)_100%)] dark:bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_82%,transparent)_30%,color-mix(in_srgb,var(--bg)_58%,transparent)_58%,color-mix(in_srgb,var(--bg)_78%,transparent)_84%,var(--bg)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_84%,transparent)_18%,color-mix(in_srgb,var(--bg)_72%,transparent)_56%,var(--bg)_100%)] dark:bg-[linear-gradient(180deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_72%,transparent)_18%,color-mix(in_srgb,var(--bg)_58%,transparent)_56%,var(--bg)_100%)]" />
     </div>
   );
 }
@@ -653,7 +665,7 @@ function Field({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="text-[0.88rem] font-medium text-[var(--on-surface-dim)]">
+      <span className={fieldLabelClass}>
         {label}
         {required && <span className="ml-1 text-[var(--secondary)]">*</span>}
       </span>
@@ -664,12 +676,10 @@ function Field({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="h-12 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 text-[0.98rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)] focus:border-[color-mix(in_srgb,var(--secondary)_40%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--secondary)_18%,transparent)]"
+        className={`h-12 rounded-xl border px-4 text-[1rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_76%,transparent)] ${controlSurfaceClass} ${controlFocusClass}`}
       />
       {help && (
-        <span className="text-[0.86rem] leading-relaxed text-[var(--on-surface-dim)]">
-          {help}
-        </span>
+        <span className={helperTextClass}>{help}</span>
       )}
     </label>
   );
@@ -692,7 +702,7 @@ function TextArea({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="text-[0.88rem] font-medium text-[var(--on-surface-dim)]">
+      <span className={fieldLabelClass}>
         {label}
         {required && <span className="ml-1 text-[var(--secondary)]">*</span>}
       </span>
@@ -701,12 +711,10 @@ function TextArea({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="min-h-32 resize-none rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-3 text-[0.98rem] leading-relaxed text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)] focus:border-[color-mix(in_srgb,var(--secondary)_40%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--secondary)_18%,transparent)]"
+        className={`min-h-32 resize-none rounded-xl border px-4 py-3 text-[1rem] leading-relaxed text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_76%,transparent)] ${controlSurfaceClass} ${controlFocusClass}`}
       />
       {help && (
-        <span className="text-[0.86rem] leading-relaxed text-[var(--on-surface-dim)]">
-          {help}
-        </span>
+        <span className={helperTextClass}>{help}</span>
       )}
     </label>
   );
@@ -725,13 +733,13 @@ function SelectField({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="text-[0.88rem] font-medium text-[var(--on-surface-dim)]">
+      <span className={fieldLabelClass}>
         {label}
       </span>
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-12 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 text-[0.98rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 focus:border-[color-mix(in_srgb,var(--secondary)_40%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--secondary)_18%,transparent)]"
+        className={`h-12 rounded-xl border px-4 text-[1rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 ${controlSurfaceClass} ${controlFocusClass}`}
       >
         <option value="">Select one...</option>
         {options.map((option) => (
@@ -755,7 +763,7 @@ function PickerGroup({
 }) {
   return (
     <div>
-      <p className="label-caps mb-3 text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
+      <p className="label-caps mb-3 text-[color-mix(in_srgb,var(--on-surface-dim)_86%,var(--on-surface))]">
         {label}
       </p>
       <div className="grid gap-2 sm:grid-cols-4">
@@ -768,14 +776,14 @@ function PickerGroup({
             className={cn(
               "flex min-h-14 flex-col items-center justify-center rounded-xl border px-3 py-2 text-center transition-all duration-300",
               selected === value
-                ? "border-[color-mix(in_srgb,var(--primary)_32%,transparent)] bg-[color-mix(in_srgb,var(--primary)_10%,transparent)]"
-                : "border-[var(--glass-border)] bg-[var(--glass-bg)] hover:border-[color-mix(in_srgb,var(--primary)_22%,transparent)]",
+                ? "border-[color-mix(in_srgb,var(--primary)_54%,transparent)] bg-[color-mix(in_srgb,var(--primary)_14%,var(--surface)_86%)] shadow-[0_12px_32px_color-mix(in_srgb,var(--primary)_10%,transparent)] dark:border-[color-mix(in_srgb,var(--primary)_32%,transparent)] dark:bg-[color-mix(in_srgb,var(--primary)_10%,transparent)]"
+                : `${controlSurfaceClass} hover:border-[color-mix(in_srgb,var(--primary)_34%,transparent)]`,
             )}
           >
-            <span className="font-mono text-[0.82rem] tracking-normal text-[var(--on-surface)]">
+            <span className="font-mono text-[0.84rem] tracking-normal text-[var(--on-surface)]">
               {value}
             </span>
-            <span className="mt-1 text-[0.78rem] text-[var(--on-surface-dim)]">
+            <span className="mt-1 text-[0.8rem] text-[var(--on-surface-dim)]">
               {sub}
             </span>
           </button>

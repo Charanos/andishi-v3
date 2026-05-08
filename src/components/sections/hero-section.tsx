@@ -1,18 +1,23 @@
 "use client";
 
 import {
+  IconApi,
   IconArrowRight,
+  IconBrain,
   IconChartLine,
+  IconCloud,
   IconCode,
+  IconCurrencyEthereum,
   IconDatabase,
+  IconDeviceMobile,
   IconGridDots,
   IconShieldCheck,
+  IconStack2,
   IconUsers,
 } from "@tabler/icons-react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import { useRef } from "react";
-import { partners } from "@/content/landing";
 import { fadeUp, stagger } from "@/lib/motion";
 
 const metricCards = [
@@ -38,6 +43,15 @@ const proofStats = [
   { value: "50+", label: "engineers placed globally" },
   { value: "8", label: "days average time to placement" },
   { value: "12", label: "engineering domains covered" },
+];
+
+const talentStripItems = [
+  { label: "Full-stack", meta: "React / Node", icon: IconStack2 },
+  { label: "AI engineers", meta: "LLMs / RAG", icon: IconBrain },
+  { label: "Cloud & AWS", meta: "Infra / DevOps", icon: IconCloud },
+  { label: "Web3", meta: "Solidity", icon: IconCurrencyEthereum },
+  { label: "Backend APIs", meta: "Data / auth", icon: IconApi },
+  { label: "Mobile", meta: "iOS / Android", icon: IconDeviceMobile },
 ];
 
 const numberClass = "font-mono font-normal tabular-nums tracking-normal";
@@ -298,16 +312,27 @@ export function HeroSection() {
         animate={inView ? "visible" : "hidden"}
         className="relative z-30 mx-auto w-[min(calc(100%_-_3rem),64rem)] rounded-2xl border border-[color-mix(in_srgb,var(--on-surface)_14%,transparent)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--surface)_76%,transparent),color-mix(in_srgb,var(--surface-high)_46%,transparent))] p-4 shadow-[inset_0_1px_0_color-mix(in_srgb,white_18%,transparent),0_24px_70px_color-mix(in_srgb,var(--bg-deep)_54%,transparent),0_0_0_1px_color-mix(in_srgb,var(--secondary)_12%,transparent)] backdrop-blur-2xl max-[560px]:w-[min(calc(100%_-_1rem),64rem)] max-[560px]:rounded-[0.9rem] max-[560px]:p-3"
       >
-        <p className="mb-3 text-[0.72rem] font-medium uppercase tracking-[0.16em] text-[color-mix(in_srgb,var(--on-surface-dim)_64%,transparent)] max-[560px]:text-[0.68rem]">
-          Startups and teams that have hired through Andishi
+        <p className="mb-3 text-[0.74rem] font-medium uppercase tracking-[0.16em] text-[color-mix(in_srgb,var(--on-surface-dim)_78%,transparent)] max-[560px]:text-[0.7rem]">
+          Vetted talent coverage for startup teams
         </p>
         <div className="grid grid-cols-6 items-center gap-2 max-[560px]:grid-cols-3">
-          {partners.slice(0, 6).map((partner) => (
+          {talentStripItems.map(({ label, meta, icon: Icon }) => (
             <span
-              key={partner}
-              className="grid min-h-8 place-items-center rounded-xl text-[0.86rem] font-medium tracking-normal text-[color-mix(in_srgb,var(--on-surface)_62%,transparent)] max-[560px]:text-[0.8rem]"
+              key={label}
+              className="flex min-h-[4.1rem] flex-col items-center justify-center gap-1 rounded-xl border border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] bg-[color-mix(in_srgb,var(--surface-low)_58%,transparent)] px-2.5 py-2 text-center shadow-[inset_0_1px_0_color-mix(in_srgb,white_12%,transparent)]"
             >
-              {partner}
+              <Icon
+                aria-hidden="true"
+                size={19}
+                stroke={1.7}
+                className="text-[var(--primary)]"
+              />
+              <strong className="text-[0.86rem] font-medium leading-tight tracking-normal text-[var(--on-surface)] max-[560px]:text-[0.8rem]">
+                {label}
+              </strong>
+              <small className="font-mono text-[0.68rem] leading-none text-[color-mix(in_srgb,var(--on-surface-dim)_78%,transparent)] max-[560px]:text-[0.64rem]">
+                {meta}
+              </small>
             </span>
           ))}
         </div>

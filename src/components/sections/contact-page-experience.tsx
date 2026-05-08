@@ -69,6 +69,15 @@ const socials = [
   ["Twitter/X", "https://twitter.com/andishidev", IconBrandX],
 ] as const;
 
+const controlSurfaceClass =
+  "border-[color-mix(in_srgb,var(--on-surface)_20%,transparent)] bg-[color-mix(in_srgb,var(--surface)_94%,var(--bg)_6%)] shadow-[inset_0_1px_0_color-mix(in_srgb,white_42%,transparent),0_10px_28px_color-mix(in_srgb,var(--bg-deep)_8%,transparent)] dark:border-[var(--glass-border)] dark:bg-[var(--glass-bg)] dark:shadow-none";
+
+const controlFocusClass =
+  "focus:border-[color-mix(in_srgb,var(--primary)_58%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--primary)_18%,transparent)] dark:focus:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] dark:focus:ring-[color-mix(in_srgb,var(--primary)_14%,transparent)]";
+
+const fieldLabelClass =
+  "label-caps text-[color-mix(in_srgb,var(--on-surface-dim)_88%,var(--on-surface))] dark:text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)]";
+
 function PlusTexture({
   className,
   opacity = 0.11,
@@ -163,7 +172,7 @@ export function ContactPageExperience() {
           initial={{ opacity: 0, x: -18 }}
           animate={{ opacity: 1, x: 0 }}
           transition={cosmicSpring}
-          className="border-b border-[var(--glass-border)] pb-10 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-10"
+          className="border-b border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] pb-10 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-10 dark:border-[var(--glass-border)]"
         >
           <p className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)]">
             <span className="h-px w-7 bg-[var(--secondary)]" />
@@ -245,14 +254,14 @@ export function ContactPageExperience() {
                         onToggle={toggleService}
                       />
                       <label className="grid gap-2">
-                        <span className="label-caps text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
+                        <span className={fieldLabelClass}>
                           Describe the engineering need
                         </span>
                         <textarea
                           value={form.description}
                           onChange={(event) => updateField("description", event.target.value)}
                           placeholder="Tell us what the engineer should own, your current stack, and the bottleneck you need solved."
-                          className="min-h-36 resize-none rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-3 text-[0.98rem] leading-relaxed text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)] focus:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--primary)_14%,transparent)]"
+                          className={`min-h-36 resize-none rounded-xl border px-4 py-3 text-[1rem] leading-relaxed text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_76%,transparent)] ${controlSurfaceClass} ${controlFocusClass}`}
                           required
                         />
                       </label>
@@ -282,13 +291,13 @@ export function ContactPageExperience() {
                         single
                       />
                       <label className="grid gap-2">
-                        <span className="label-caps text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
+                        <span className={fieldLabelClass}>
                           How did you find us?
                         </span>
                         <select
                           value={form.source}
                           onChange={(event) => updateField("source", event.target.value)}
-                          className="h-12 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 text-[0.9rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 focus:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--primary)_14%,transparent)]"
+                          className={`h-12 rounded-xl border px-4 text-[1rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 ${controlSurfaceClass} ${controlFocusClass}`}
                         >
                           <option value="">Select...</option>
                           <option>Google / Search</option>
@@ -306,12 +315,12 @@ export function ContactPageExperience() {
             </div>
 
             {!submittedRef && (
-              <div className="mt-8 flex items-center justify-between gap-4 border-t border-[var(--glass-border)] pt-6">
+              <div className="mt-8 flex items-center justify-between gap-4 border-t border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] pt-6 dark:border-[var(--glass-border)]">
                 {step > 0 ? (
                   <button
                     type="button"
                     onClick={() => setStep((current) => Math.max(current - 1, 0))}
-                    className="inline-flex items-center gap-2 text-[0.9rem] text-[var(--on-surface-dim)] transition-colors duration-300 hover:text-[var(--on-surface)]"
+                    className="inline-flex items-center gap-2 text-[0.92rem] text-[var(--on-surface-dim)] transition-colors duration-300 hover:text-[var(--on-surface)]"
                   >
                     <IconArrowLeft size={15} stroke={1.6} />
                     Back
@@ -359,7 +368,7 @@ export function ContactPageExperience() {
                     href={method.href}
                     target={method.href.startsWith("http") ? "_blank" : undefined}
                     rel={method.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                    className="group flex items-center gap-4 rounded-[1rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-4 backdrop-blur-xl transition-all duration-300 hover:translate-x-1 hover:border-[color-mix(in_srgb,var(--primary)_24%,transparent)] hover:bg-[color-mix(in_srgb,var(--primary)_8%,transparent)]"
+                    className={`group flex items-center gap-4 rounded-[1rem] border p-4 backdrop-blur-xl transition-all duration-300 hover:translate-x-1 hover:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] hover:bg-[color-mix(in_srgb,var(--primary)_7%,var(--surface)_93%)] dark:hover:bg-[color-mix(in_srgb,var(--primary)_8%,transparent)] ${controlSurfaceClass}`}
                   >
                     <span
                       className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border"
@@ -372,7 +381,7 @@ export function ContactPageExperience() {
                       <Icon size={19} stroke={1.6} />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="label-caps block text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
+                      <span className="label-caps block text-[color-mix(in_srgb,var(--on-surface-dim)_84%,var(--on-surface))] dark:text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
                         {method.label}
                       </span>
                       <span className="mt-1 block truncate text-[0.95rem] font-medium text-[var(--on-surface)]">
@@ -385,19 +394,19 @@ export function ContactPageExperience() {
                     <IconArrowRight
                       size={16}
                       stroke={1.6}
-                      className="shrink-0 text-[color-mix(in_srgb,var(--on-surface-dim)_52%,transparent)] transition-transform duration-300 group-hover:translate-x-1 group-hover:text-[var(--primary)]"
+                      className="shrink-0 text-[color-mix(in_srgb,var(--on-surface-dim)_82%,var(--on-surface))] transition-transform duration-300 group-hover:translate-x-1 group-hover:text-[var(--primary)] dark:text-[color-mix(in_srgb,var(--on-surface-dim)_52%,transparent)]"
                     />
                   </a>
                 );
               })}
             </div>
 
-            <div className="mt-5 rounded-[1rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-5 backdrop-blur-xl">
+            <div className={`mt-5 rounded-[1rem] border p-5 backdrop-blur-xl ${controlSurfaceClass}`}>
               <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--tertiary)_26%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_10%,transparent)] px-3 py-1.5 text-[0.84rem] font-medium text-[var(--tertiary)]">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--tertiary)]" />
                 Typically responds within 4 hours
               </div>
-              <p className="label-caps mb-4 text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
+              <p className={cn(fieldLabelClass, "mb-4")}>
                 Office hours / EAT
               </p>
               <div className="grid gap-3">
@@ -408,9 +417,9 @@ export function ContactPageExperience() {
                 ].map(([day, hours, open]) => (
                   <div
                     key={day as string}
-                    className="flex items-center justify-between gap-4 border-b border-[var(--glass-border)] pb-3 last:border-b-0 last:pb-0"
+                    className="flex items-center justify-between gap-4 border-b border-[color-mix(in_srgb,var(--on-surface)_14%,transparent)] pb-3 last:border-b-0 last:pb-0 dark:border-[var(--glass-border)]"
                   >
-                    <span className="text-[0.86rem] text-[var(--on-surface-dim)]">
+                    <span className="text-[0.9rem] text-[var(--on-surface-dim)]">
                       {day}
                     </span>
                     <span
@@ -449,7 +458,7 @@ export function ContactPageExperience() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="grid h-10 w-10 place-items-center rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--secondary)_28%,transparent)] hover:text-[var(--secondary)]"
+                  className={`grid h-10 w-10 place-items-center rounded-xl border text-[var(--on-surface-dim)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--secondary)_34%,transparent)] hover:text-[var(--secondary)] ${controlSurfaceClass}`}
                 >
                   <Icon size={17} stroke={1.6} />
                 </a>
@@ -480,7 +489,7 @@ function StepIndicator({ step }: { step: number }) {
                   "border-[color-mix(in_srgb,var(--primary)_30%,transparent)] bg-[color-mix(in_srgb,var(--primary)_10%,transparent)] text-[var(--primary)]",
                 !isDone &&
                   !isActive &&
-                  "border-[var(--glass-border)] text-[color-mix(in_srgb,var(--on-surface-dim)_48%,transparent)]",
+                  "border-[color-mix(in_srgb,var(--on-surface)_18%,transparent)] text-[color-mix(in_srgb,var(--on-surface-dim)_76%,var(--on-surface))] dark:border-[var(--glass-border)] dark:text-[color-mix(in_srgb,var(--on-surface-dim)_48%,transparent)]",
               )}
             >
               {isDone ? <IconCheck size={13} stroke={2} /> : index + 1}
@@ -488,7 +497,7 @@ function StepIndicator({ step }: { step: number }) {
             {index < 2 && (
               <span
                 className={cn(
-                  "h-px flex-1 bg-[var(--glass-border)] transition-colors duration-300",
+                  "h-px flex-1 bg-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] transition-colors duration-300 dark:bg-[var(--glass-border)]",
                   isDone && "bg-[color-mix(in_srgb,var(--tertiary)_38%,transparent)]",
                 )}
               />
@@ -519,7 +528,7 @@ function Field({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="label-caps text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
+      <span className={fieldLabelClass}>
         {label}
       </span>
       <input
@@ -529,7 +538,7 @@ function Field({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="h-12 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 text-[0.98rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)] focus:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--primary)_14%,transparent)]"
+        className={`h-12 rounded-xl border px-4 text-[1rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_76%,transparent)] ${controlSurfaceClass} ${controlFocusClass}`}
       />
     </label>
   );
@@ -550,7 +559,7 @@ function ChoiceGroup({
 }) {
   return (
     <div className="grid gap-3">
-      <p className="label-caps text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
+      <p className={fieldLabelClass}>
         {label}
       </p>
       <div className="grid gap-2 sm:grid-cols-2">
@@ -566,8 +575,8 @@ function ChoiceGroup({
               className={cn(
                 "flex min-h-12 items-center gap-3 rounded-xl border px-4 py-3 text-left text-[0.94rem] transition-all duration-300",
                 isSelected
-                  ? "border-[color-mix(in_srgb,var(--primary)_30%,transparent)] bg-[color-mix(in_srgb,var(--primary)_10%,transparent)] text-[var(--primary)]"
-                  : "border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] hover:border-[color-mix(in_srgb,var(--primary)_20%,transparent)] hover:bg-[color-mix(in_srgb,var(--primary)_7%,transparent)] hover:text-[var(--on-surface)]",
+                  ? "border-[color-mix(in_srgb,var(--primary)_54%,transparent)] bg-[color-mix(in_srgb,var(--primary)_14%,var(--surface)_86%)] text-[var(--primary)] shadow-[0_12px_32px_color-mix(in_srgb,var(--primary)_10%,transparent)] dark:border-[color-mix(in_srgb,var(--primary)_30%,transparent)] dark:bg-[color-mix(in_srgb,var(--primary)_10%,transparent)]"
+                  : `${controlSurfaceClass} text-[var(--on-surface-dim)] hover:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] hover:bg-[color-mix(in_srgb,var(--primary)_7%,var(--surface)_93%)] hover:text-[var(--on-surface)] dark:hover:bg-[color-mix(in_srgb,var(--primary)_7%,transparent)]`,
               )}
             >
               <span
@@ -615,9 +624,9 @@ function SuccessState({ refCode }: { refCode: string }) {
 
 function NairobiPanel() {
   return (
-    <div className="relative overflow-hidden rounded-[1.35rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_40%,transparent)] p-5 shadow-[0_24px_70px_color-mix(in_srgb,var(--bg-deep)_22%,transparent)] backdrop-blur-2xl">
+    <div className="relative overflow-hidden rounded-[1.35rem] border border-[color-mix(in_srgb,var(--on-surface)_18%,transparent)] bg-[color-mix(in_srgb,var(--surface)_90%,var(--bg)_10%)] p-5 shadow-[0_24px_70px_color-mix(in_srgb,var(--bg-deep)_14%,transparent)] backdrop-blur-2xl dark:border-[var(--glass-border)] dark:bg-[color-mix(in_srgb,var(--surface)_40%,transparent)] dark:shadow-[0_24px_70px_color-mix(in_srgb,var(--bg-deep)_22%,transparent)]">
       <PlusTexture opacity={0.08} />
-      <div className="relative h-56 overflow-hidden rounded-[1rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface-high)_34%,transparent)]">
+      <div className="relative h-56 overflow-hidden rounded-[1rem] border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[color-mix(in_srgb,var(--surface-high)_68%,var(--surface)_32%)] dark:border-[var(--glass-border)] dark:bg-[color-mix(in_srgb,var(--surface-high)_34%,transparent)]">
         <svg
           aria-hidden="true"
           className="absolute inset-0 h-full w-full text-[var(--on-surface)] opacity-[0.16]"
@@ -672,7 +681,7 @@ function NairobiPanel() {
         ].map(([Icon, value, label]) => (
           <div
             key={label as string}
-            className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-3"
+            className={`rounded-xl border px-4 py-3 ${controlSurfaceClass}`}
           >
             <Icon
               size={16}

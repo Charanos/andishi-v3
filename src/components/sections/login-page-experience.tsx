@@ -19,6 +19,12 @@ import { cosmicSpring } from "@/lib/motion";
 
 type AuthMode = "password" | "magic";
 
+const controlSurfaceClass =
+  "border-[color-mix(in_srgb,var(--on-surface)_20%,transparent)] bg-[color-mix(in_srgb,var(--surface)_94%,var(--bg)_6%)] shadow-[inset_0_1px_0_color-mix(in_srgb,white_42%,transparent),0_10px_28px_color-mix(in_srgb,var(--bg-deep)_8%,transparent)] dark:border-[var(--glass-border)] dark:bg-[var(--glass-bg)] dark:shadow-none";
+
+const panelSurfaceClass =
+  "border-[color-mix(in_srgb,var(--on-surface)_18%,transparent)] bg-[color-mix(in_srgb,var(--surface)_92%,var(--bg)_8%)] shadow-[0_24px_70px_color-mix(in_srgb,var(--bg-deep)_14%,transparent)] dark:border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] dark:bg-[color-mix(in_srgb,var(--surface)_52%,transparent)] dark:shadow-[0_30px_100px_color-mix(in_srgb,var(--bg-deep)_44%,transparent)]";
+
 export function LoginPageExperience() {
   const [mode, setMode] = useState<AuthMode>("password");
   const [email, setEmail] = useState("");
@@ -81,12 +87,12 @@ export function LoginPageExperience() {
             ].map(([label, detail]) => (
               <div
                 key={label}
-                className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-3 backdrop-blur-xl"
+                className={`rounded-xl border px-4 py-3 backdrop-blur-xl ${controlSurfaceClass}`}
               >
                 <p className="font-mono text-[0.78rem] tracking-normal text-[var(--on-surface)]">
                   {label}
                 </p>
-                <p className="mt-1 text-[0.76rem] leading-snug text-[var(--on-surface-dim)]">
+                <p className="mt-1 text-[0.8rem] leading-snug text-[var(--on-surface-dim)]">
                   {detail}
                 </p>
               </div>
@@ -98,9 +104,9 @@ export function LoginPageExperience() {
           initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...cosmicSpring, delay: 0.08 }}
-          className="mx-auto w-full max-w-xl rounded-[1.6rem] bg-[color-mix(in_srgb,var(--surface)_52%,transparent)] p-1 shadow-[0_30px_100px_color-mix(in_srgb,var(--bg-deep)_44%,transparent)] backdrop-blur-2xl"
+          className="mx-auto w-full max-w-xl rounded-[1.6rem] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] p-1 shadow-[0_30px_100px_color-mix(in_srgb,var(--bg-deep)_18%,transparent)] backdrop-blur-2xl dark:bg-[color-mix(in_srgb,var(--surface)_52%,transparent)] dark:shadow-[0_30px_100px_color-mix(in_srgb,var(--bg-deep)_44%,transparent)]"
         >
-          <div className="overflow-hidden rounded-[1.6rem] border border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] bg-[color-mix(in_srgb,var(--surface)_52%,transparent)] shadow-[0_30px_100px_color-mix(in_srgb,var(--bg-deep)_44%,transparent)] backdrop-blur-2xl">
+          <div className={`overflow-hidden rounded-[1.6rem] border backdrop-blur-2xl ${panelSurfaceClass}`}>
             <div className="px-6 pt-7 text-center sm:px-7">
               <h2 className="mt-5 text-[1.55rem] font-normal leading-tight tracking-normal text-[var(--on-surface)]">
                 Secure access.
@@ -110,7 +116,7 @@ export function LoginPageExperience() {
               </p>
             </div>
 
-            <div className="mx-6 mt-6 grid grid-cols-2 gap-1 rounded-xl border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface-high)_40%,transparent)] p-1 sm:mx-7">
+            <div className="mx-6 mt-6 grid grid-cols-2 gap-1 rounded-xl border border-[color-mix(in_srgb,var(--on-surface)_18%,transparent)] bg-[color-mix(in_srgb,var(--surface-high)_74%,var(--surface)_26%)] p-1 sm:mx-7 dark:border-[var(--glass-border)] dark:bg-[color-mix(in_srgb,var(--surface-high)_40%,transparent)]">
               {(["password", "magic"] as const).map((item) => (
                 <button
                   key={item}
@@ -119,8 +125,8 @@ export function LoginPageExperience() {
                   className={cn(
                     "rounded-lg px-3 cursor-pointer py-2.5 text-[0.9rem] font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--secondary)_35%,transparent)]",
                     mode === item
-                      ? "border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface)] shadow-[0_8px_20px_color-mix(in_srgb,var(--bg-deep)_24%,transparent)]"
-                      : "text-[color-mix(in_srgb,var(--on-surface-dim)_64%,transparent)] hover:text-[var(--on-surface)]",
+                      ? "border border-[color-mix(in_srgb,var(--primary)_34%,transparent)] bg-[color-mix(in_srgb,var(--surface)_98%,var(--primary)_2%)] text-[var(--on-surface)] shadow-[0_8px_20px_color-mix(in_srgb,var(--bg-deep)_12%,transparent)] dark:border-[var(--glass-border)] dark:bg-[var(--glass-bg)] dark:shadow-[0_8px_20px_color-mix(in_srgb,var(--bg-deep)_24%,transparent)]"
+                      : "text-[color-mix(in_srgb,var(--on-surface-dim)_86%,var(--on-surface))] hover:text-[var(--on-surface)] dark:text-[color-mix(in_srgb,var(--on-surface-dim)_64%,transparent)]",
                   )}
                 >
                   {item === "password" ? "Password" : "Magic link"}
@@ -136,11 +142,11 @@ export function LoginPageExperience() {
               ) : (
                 <div className="grid gap-4">
                   {mode === "magic" && (
-                    <div className="flex gap-3 rounded-xl border border-[color-mix(in_srgb,var(--secondary)_20%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_8%,transparent)] p-4">
+                    <div className="flex gap-3 rounded-xl border border-[color-mix(in_srgb,var(--secondary)_34%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_10%,var(--surface)_90%)] p-4 dark:border-[color-mix(in_srgb,var(--secondary)_20%,transparent)] dark:bg-[color-mix(in_srgb,var(--secondary)_8%,transparent)]">
                       <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] text-[var(--secondary)]">
                         <IconMail size={16} stroke={1.7} />
                       </span>
-                      <p className="text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">
+                      <p className="text-[0.92rem] leading-relaxed text-[var(--on-surface-dim)]">
                         We will prepare a one-click sign-in link for this
                         workspace email.
                       </p>
@@ -162,7 +168,7 @@ export function LoginPageExperience() {
                       type="email"
                       autoComplete="email"
                       placeholder="you@company.com"
-                      className="min-w-0 flex-1 bg-transparent text-[0.94rem] text-[var(--on-surface)] outline-none placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_48%,transparent)]"
+                      className="min-w-0 flex-1 bg-transparent text-[1rem] text-[var(--on-surface)] outline-none placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_76%,transparent)] dark:placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]"
                     />
                   </FieldShell>
 
@@ -192,7 +198,7 @@ export function LoginPageExperience() {
                           type={showPassword ? "text" : "password"}
                           autoComplete="current-password"
                           placeholder="Enter password"
-                          className="min-w-0 flex-1 bg-transparent text-[0.94rem] text-[var(--on-surface)] outline-none placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_48%,transparent)]"
+                          className="min-w-0 flex-1 bg-transparent text-[1rem] text-[var(--on-surface)] outline-none placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_76%,transparent)] dark:placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]"
                         />
                         <button
                           type="button"
@@ -200,7 +206,7 @@ export function LoginPageExperience() {
                           aria-label={
                             showPassword ? "Hide password" : "Show password"
                           }
-                          className="grid h-8 w-8 place-items-center rounded-lg text-[color-mix(in_srgb,var(--on-surface-dim)_60%,transparent)] transition-colors duration-300 hover:text-[var(--on-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--secondary)_35%,transparent)]"
+                          className="grid h-8 w-8 place-items-center rounded-lg text-[color-mix(in_srgb,var(--on-surface-dim)_86%,var(--on-surface))] transition-colors duration-300 hover:text-[var(--on-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--secondary)_35%,transparent)] dark:text-[color-mix(in_srgb,var(--on-surface-dim)_60%,transparent)]"
                         >
                           {showPassword ? (
                             <IconEyeOff size={16} stroke={1.6} />
@@ -214,14 +220,14 @@ export function LoginPageExperience() {
                         type="button"
                         onClick={() => setRemember((current) => !current)}
                         aria-pressed={remember}
-                        className="flex w-fit items-center gap-2 text-[0.8rem] text-[var(--on-surface-dim)] cursor-pointer transition-opacity duration-300 hover:opacity-75"
+                        className="flex w-fit cursor-pointer items-center gap-2 text-[0.86rem] text-[var(--on-surface-dim)] transition-opacity duration-300 hover:opacity-75"
                       >
                         <span
                           className={cn(
                             "grid h-5 w-5 place-items-center rounded-md border text-transparent",
                             remember
                               ? "border-[color-mix(in_srgb,var(--tertiary)_34%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_12%,transparent)] text-[var(--tertiary)]"
-                              : "border-[var(--glass-border)]",
+                              : "border-[color-mix(in_srgb,var(--on-surface)_22%,transparent)] dark:border-[var(--glass-border)]",
                           )}
                         >
                           <IconCheck size={12} stroke={2.3} />
@@ -251,16 +257,16 @@ export function LoginPageExperience() {
                   </Button>
 
                   <div className="flex items-center gap-3">
-                    <span className="h-px flex-1 bg-[var(--glass-border)]" />
-                    <span className="text-[0.68rem] font-medium uppercase tracking-[0.08em] text-[color-mix(in_srgb,var(--on-surface-dim)_50%,transparent)]">
+                    <span className="h-px flex-1 bg-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] dark:bg-[var(--glass-border)]" />
+                    <span className="text-[0.7rem] font-medium uppercase tracking-[0.08em] text-[color-mix(in_srgb,var(--on-surface-dim)_82%,var(--on-surface))] dark:text-[color-mix(in_srgb,var(--on-surface-dim)_50%,transparent)]">
                       or
                     </span>
-                    <span className="h-px flex-1 bg-[var(--glass-border)]" />
+                    <span className="h-px flex-1 bg-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] dark:bg-[var(--glass-border)]" />
                   </div>
 
                   <button
                     type="button"
-                    className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 text-[0.86rem] text-[var(--on-surface-dim)] transition-all duration-300 hover:border-[color-mix(in_srgb,var(--primary)_22%,transparent)] hover:bg-[color-mix(in_srgb,var(--primary)_7%,transparent)] hover:text-[var(--on-surface)]"
+                    className={`inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border px-4 text-[0.9rem] text-[var(--on-surface-dim)] transition-all duration-300 hover:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] hover:bg-[color-mix(in_srgb,var(--primary)_7%,var(--surface)_93%)] hover:text-[var(--on-surface)] dark:hover:bg-[color-mix(in_srgb,var(--primary)_7%,transparent)] ${controlSurfaceClass}`}
                   >
                     <IconBrandGoogle size={16} stroke={1.7} />
                     Continue with Google
@@ -269,7 +275,7 @@ export function LoginPageExperience() {
               )}
             </form>
 
-            <div className="border-t border-[var(--glass-border)] px-6 py-4 text-center text-[0.9rem] text-[var(--on-surface-dim)] sm:px-7">
+            <div className="border-t border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] px-6 py-4 text-center text-[0.92rem] text-[var(--on-surface-dim)] sm:px-7 dark:border-[var(--glass-border)]">
               Need access?{" "}
               <Link
                 href="/start-project"
@@ -308,8 +314,8 @@ function HeroArtwork() {
       className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
     >
       <div className="absolute left-1/2 top-0 bottom-0 w-[min(1500px,112vw)] -translate-x-1/2 bg-no-repeat opacity-[var(--hero-overlay-opacity)] [background-image:var(--hero-overlay-src)] [background-position:center_top] [background-size:100%_auto] [mix-blend-mode:var(--hero-overlay-blend)] max-[899px]:w-[185vw] max-[899px]:[background-position:center_4rem]" />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_82%,transparent)_30%,color-mix(in_srgb,var(--bg)_48%,transparent)_62%,color-mix(in_srgb,var(--bg)_72%,transparent)_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_64%,transparent)_28%,color-mix(in_srgb,var(--bg)_54%,transparent)_62%,var(--bg)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_90%,transparent)_30%,color-mix(in_srgb,var(--bg)_70%,transparent)_62%,color-mix(in_srgb,var(--bg)_82%,transparent)_100%)] dark:bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_82%,transparent)_30%,color-mix(in_srgb,var(--bg)_48%,transparent)_62%,color-mix(in_srgb,var(--bg)_72%,transparent)_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_78%,transparent)_28%,color-mix(in_srgb,var(--bg)_70%,transparent)_62%,var(--bg)_100%)] dark:bg-[linear-gradient(180deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_64%,transparent)_28%,color-mix(in_srgb,var(--bg)_54%,transparent)_62%,var(--bg)_100%)]" />
     </div>
   );
 }
@@ -329,19 +335,20 @@ function FieldShell({
 }) {
   return (
     <label className="grid gap-2">
-      <span className="flex items-center justify-between gap-3 text-[0.88rem] font-medium text-[var(--on-surface-dim)]">
+      <span className="flex items-center justify-between gap-3 text-[0.9rem] font-medium text-[var(--on-surface)]">
         {label}
         {labelAction}
       </span>
       <span
         className={cn(
-          "flex min-h-12 items-center gap-3 rounded-xl border bg-[color-mix(in_srgb,var(--surface-high)_44%,transparent)] px-4 transition-all duration-300 focus-within:border-[color-mix(in_srgb,var(--secondary)_40%,transparent)] focus-within:ring-2 focus-within:ring-[color-mix(in_srgb,var(--secondary)_18%,transparent)]",
+          "flex min-h-12 items-center gap-3 rounded-xl border px-4 transition-all duration-300 focus-within:border-[color-mix(in_srgb,var(--primary)_58%,transparent)] focus-within:ring-2 focus-within:ring-[color-mix(in_srgb,var(--primary)_18%,transparent)] dark:focus-within:border-[color-mix(in_srgb,var(--secondary)_40%,transparent)] dark:focus-within:ring-[color-mix(in_srgb,var(--secondary)_18%,transparent)]",
+          controlSurfaceClass,
           error
             ? "border-[color-mix(in_srgb,#ff6b6b_48%,transparent)]"
-            : "border-[var(--glass-border)]",
+            : "",
         )}
       >
-        <span className="text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
+        <span className="text-[color-mix(in_srgb,var(--on-surface-dim)_84%,var(--on-surface))] dark:text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
           {icon}
         </span>
         {children}
