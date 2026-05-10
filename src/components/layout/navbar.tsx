@@ -91,7 +91,7 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <Link
-              href="/hire"
+              href="/start-project"
               className="hidden min-h-10 items-center gap-2 rounded-full px-5 py-2.5
                          text-[0.84rem] font-medium text-white transition-all duration-300
                          hover:-translate-y-px active:scale-[0.98] sm:inline-flex"
@@ -103,7 +103,7 @@ export function Navbar() {
                 color: "var(--bg)",
               }}
             >
-              Hire engineers
+              Start hiring
               <IconArrowRight size={14} stroke={2.2} />
             </Link>
 
@@ -179,7 +179,7 @@ export function Navbar() {
                 style={{ borderTop: "1px solid var(--glass-border)" }}
               >
                 <Link
-                  href="/hire"
+                  href="/start-project"
                   onClick={() => setMobileOpen(false)}
                   className="flex min-h-[3.4rem] w-full items-center justify-center gap-2 rounded-xl px-5 py-4
                              text-[0.98rem] font-medium transition-all duration-200 hover:-translate-y-px"
@@ -188,7 +188,7 @@ export function Navbar() {
                     color: "var(--bg)",
                   }}
                 >
-                  Hire engineers
+                  Start hiring
                   <IconArrowRight size={18} stroke={2} />
                 </Link>
               </div>

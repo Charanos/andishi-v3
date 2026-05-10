@@ -7,7 +7,7 @@ export const siteConfig = {
   nav: [
     { label: "Engineers", href: "/engineers" },
     { label: "How to Hire", href: "/hire" },
-    { label: "Skills", href: "/skills" },
+    { label: "About", href: "/about" },
     { label: "Case Studies", href: "/work" },
     { label: "Login", href: "/login" },
   ],

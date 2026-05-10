@@ -11,6 +11,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { faqItems } from "@/content/landing";
+import { blogPosts } from "@/data/blog";
+import { Logo } from "../brand/logo";
 
 const textureStyle = {
   backgroundImage:
@@ -44,6 +46,7 @@ const articles = [
     read: "8 min",
     image: "/images/blog-image-1.jpg",
     hero: true,
+    slug: "what-vetting-should-prove",
   },
   {
     title: "Why African engineers are underpriced in global hiring",
@@ -53,6 +56,7 @@ const articles = [
     date: "Apr 2026",
     read: "5 min",
     image: "/images/blog-image-2.jpg",
+    slug: "why-africa-is-a-strong-timezone-for-startups",
   },
   {
     title: "What a strong AI integration engineer actually does",
@@ -62,6 +66,7 @@ const articles = [
     date: "Mar 2026",
     read: "6 min",
     image: "/images/blog-image-6.jpeg",
+    slug: "production-ai-needs-product-engineers",
   },
 ];
 
@@ -114,7 +119,7 @@ function ArticleCard({
 }) {
   return (
     <Link
-      href="/work"
+      href={`/blog/${article.slug}`}
       className={`group relative overflow-hidden rounded-[1.45rem] border border-[color-mix(in_srgb,var(--on-surface)_11%,transparent)] bg-[color-mix(in_srgb,var(--surface)_34%,transparent)] shadow-[0_26px_90px_color-mix(in_srgb,var(--bg-deep)_24%,transparent)] transition-all duration-300 hover:-translate-y-1 hover:border-[color-mix(in_srgb,var(--secondary)_24%,transparent)] ${
         article.hero ? "lg:row-span-2" : ""
       }`}
@@ -208,7 +213,7 @@ function ArticleCard({
 
         <div className="mt-5 flex items-center gap-3 border-t border-[color-mix(in_srgb,var(--on-surface)_9%,transparent)] pt-4">
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-[var(--on-surface)] font-mono text-[0.68rem] text-[var(--bg)]">
-            A
+            <Logo />
           </span>
           <span className="text-[0.82rem] font-medium text-[var(--on-surface-dim)]">
             Andishi Talent
@@ -224,7 +229,7 @@ function ArticleCard({
 
 function BlogSection() {
   return (
-    <section className="relative isolate overflow-hidden bg-[var(--bg)] pb-12 sm:pb-14 lg:p-18">
+    <section className="relative isolate overflow-hidden bg-[var(--bg)] pb-12 sm:pb-14 lg:pb-18">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 opacity-[0.08]"

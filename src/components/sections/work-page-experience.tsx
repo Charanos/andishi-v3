@@ -150,7 +150,7 @@ export function WorkPageExperience() {
                 ].map(([value, label]) => (
                   <div
                     key={label}
-                    className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-4 backdrop-blur-xl"
+                    className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 py-2 backdrop-blur-xl"
                   >
                     <p className="font-mono text-[1.45rem] leading-none tracking-tight text-[var(--on-surface)]">
                       {value}
