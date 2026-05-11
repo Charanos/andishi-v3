@@ -69,6 +69,13 @@ const breadcrumbSchema = {
   ],
 };
 
+const patternTextureStyle = {
+  backgroundImage:
+    "url(\"data:image/svg+xml,%3Csvg width='34' height='34' viewBox='0 0 34 34' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M17 11v12M11 17h12' stroke='%23c5b8e8' stroke-width='0.65' stroke-linecap='round' opacity='0.22'/%3E%3Cpath d='M4 4h4M26 30h4' stroke='%23c5b8e8' stroke-width='0.55' stroke-linecap='round' opacity='0.16'/%3E%3C/svg%3E\"), radial-gradient(circle, color-mix(in srgb, var(--secondary) 16%, transparent) 0 1px, transparent 1.8px)",
+  backgroundPosition: "0 0, 17px 17px",
+  backgroundSize: "34px 34px, 34px 34px",
+};
+
 const routeLinks = [
   { href: "#runway", label: "Runway" },
   { href: "#brief", label: "Brief lab" },
@@ -118,14 +125,28 @@ const shortlist = [
 function GlassPanel({
   children,
   className = "",
+  label = "",
+  showChrome = false,
 }: {
   children: React.ReactNode;
   className?: string;
+  label?: string;
+  showChrome?: boolean;
 }) {
   return (
     <div
       className={`relative overflow-hidden rounded-[1.35rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] shadow-[0_24px_70px_color-mix(in_srgb,var(--bg-deep)_22%,transparent)] backdrop-blur-xl ${className}`}
     >
+      {showChrome && label && (
+        <div className="flex h-9 items-center gap-2 border-b border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[color-mix(in_srgb,var(--surface-high)_54%,transparent)] px-4">
+          <span className="h-2 w-2 rounded-full bg-[#ff6b57]" />
+          <span className="h-2 w-2 rounded-full bg-[#ffbd2e]" />
+          <span className="h-2 w-2 rounded-full bg-[#27c93f]" />
+          <span className="ml-auto font-mono text-[0.62rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface)_42%,transparent)]">
+            {label}
+          </span>
+        </div>
+      )}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(to_right,transparent,color-mix(in_srgb,var(--secondary)_34%,transparent),transparent)]"
@@ -260,20 +281,19 @@ function ShortlistDeck() {
         className="absolute left-7 right-7 top-1/2 h-px bg-[linear-gradient(to_right,transparent,color-mix(in_srgb,var(--on-surface)_14%,transparent),transparent)]"
       />
 
-      <GlassPanel className="absolute left-0 top-0 w-[min(19rem,78vw)] p-4">
-        <div className="mb-4 flex items-center justify-between border-b border-[var(--glass-border)] pb-3">
-          <div className="flex items-center gap-2">
-            <IconTerminal2
-              size={15}
-              stroke={1.5}
-              className="text-[var(--secondary)]"
-              aria-hidden="true"
-            />
-            <p className="label-caps text-[var(--secondary)]">Matching OS</p>
-          </div>
-          <span className="rounded-full border border-[color-mix(in_srgb,var(--tertiary)_28%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_10%,transparent)] px-2.5 py-1 font-mono text-[0.62rem] text-[var(--tertiary)]">
-            live
-          </span>
+      <GlassPanel
+        className="absolute left-0 top-0 w-[min(19rem,78vw)] p-4"
+        showChrome
+        label="match.engine"
+      >
+        <div className="mt-4 flex items-center gap-2 border-b border-[var(--glass-border)] pb-3">
+          <IconTerminal2
+            size={15}
+            stroke={1.5}
+            className="text-[var(--secondary)]"
+            aria-hidden="true"
+          />
+          <p className="label-caps text-[var(--secondary)]">Matching score</p>
         </div>
         <div className="grid gap-3">
           {[
@@ -378,36 +398,46 @@ function BriefLab() {
             key={field.label}
             className="group relative min-h-64 overflow-hidden rounded-[1.25rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[color-mix(in_srgb,var(--secondary)_28%,transparent)]"
           >
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-0 opacity-[0.08]"
+              style={patternTextureStyle}
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--secondary)_12%,transparent),transparent_70%)]"
+            />
             <span
               aria-hidden="true"
               className="absolute inset-x-5 top-0 h-px bg-[linear-gradient(to_right,transparent,color-mix(in_srgb,var(--secondary)_46%,transparent),transparent)] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
             />
-            <p className="font-mono text-[0.72rem] text-[var(--secondary)]">
-              {String(index + 1).padStart(2, "0")}
-            </p>
-            <h3 className="mt-6 text-[1.25rem] font-medium leading-tight text-[var(--on-surface)]">
-              {field.label}
-            </h3>
-            <p className="mt-3 text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">
-              {field.prompt}
-            </p>
-            <div className="absolute inset-x-5 bottom-5 rounded-xl border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_42%,transparent)] px-3 py-3">
-              <p className="label-caps mb-1 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
-                Good signal
+            <div className="relative z-[1]">
+              <p className="font-mono text-[0.72rem] text-[var(--secondary)]">
+                {String(index + 1).padStart(2, "0")}
               </p>
-              <p className="text-[0.82rem] leading-snug text-[var(--on-surface)]">
-                {field.sample}
+              <h3 className="mt-6 text-[1.25rem] font-medium leading-tight text-[var(--on-surface)]">
+                {field.label}
+              </h3>
+              <p className="mt-3 text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">
+                {field.prompt}
               </p>
+              <div className="absolute inset-x-5 bottom-5 rounded-xl border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_42%,transparent)] px-3 py-3">
+                <p className="label-caps mb-1 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
+                  Good signal
+                </p>
+                <p className="text-[0.82rem] leading-snug text-[var(--on-surface)]">
+                  {field.sample}
+                </p>
+              </div>
             </div>
           </article>
         ))}
       </div>
 
-      <GlassPanel className="p-5 lg:sticky lg:top-32">
-        <div className="mb-5 flex items-center justify-between border-b border-[var(--glass-border)] pb-4">
-          <p className="label-caps text-[var(--secondary)]">Risk controls</p>
+      <GlassPanel className="p-5 lg:sticky lg:top-32" showChrome label="risk.controls">
+        <div className="mt-4 flex items-center justify-between border-b border-[var(--glass-border)] pb-4">
+          <p className="label-caps text-[var(--secondary)]">Included</p>
           <span className="font-mono text-[0.68rem] text-[var(--on-surface-dim)]">
-            included
           </span>
         </div>
         <div className="grid gap-3">
@@ -457,22 +487,39 @@ function ProcessRunway() {
             <article
               key={step.name}
               className={[
-                "relative rounded-[1.25rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[color-mix(in_srgb,var(--secondary)_26%,transparent)]",
+                "group relative overflow-hidden rounded-[1.25rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[color-mix(in_srgb,var(--secondary)_26%,transparent)]",
                 index % 2 === 1 ? "lg:mt-12" : "",
               ].join(" ")}
             >
-              <span className="mb-6 grid h-11 w-11 place-items-center rounded-xl border border-[color-mix(in_srgb,var(--secondary)_24%,transparent)] bg-[var(--bg)] text-[var(--secondary)] shadow-[0_0_0_6px_color-mix(in_srgb,var(--bg)_82%,transparent)]">
-                <Icon size={20} stroke={1.6} aria-hidden="true" />
-              </span>
-              <p className="font-mono text-[0.72rem] text-[color-mix(in_srgb,var(--on-surface-dim)_66%,transparent)]">
-                {String(index + 1).padStart(2, "0")}
-              </p>
-              <h3 className="mt-3 text-[1.02rem] font-medium leading-snug text-[var(--on-surface)]">
-                {step.name}
-              </h3>
-              <p className="mt-3 text-[0.88rem] leading-relaxed text-[var(--on-surface-dim)]">
-                {step.text}
-              </p>
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 z-0 opacity-[0.06]"
+                style={patternTextureStyle}
+              />
+              <div
+                aria-hidden="true"
+                className={`pointer-events-none absolute h-24 w-24 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--secondary)_8%,transparent),transparent_70%)]`}
+                style={{
+                  top: index % 3 === 0 ? "-2rem" : "auto",
+                  bottom: index % 3 === 1 ? "-1rem" : "auto",
+                  right: index % 2 === 0 ? "-2rem" : "auto",
+                  left: index % 2 === 1 ? "-1.5rem" : "auto",
+                }}
+              />
+              <div className="relative z-[1]">
+                <span className="mb-6 grid h-11 w-11 place-items-center rounded-xl border border-[color-mix(in_srgb,var(--secondary)_24%,transparent)] bg-[var(--bg)] text-[var(--secondary)] shadow-[0_0_0_6px_color-mix(in_srgb,var(--bg)_82%,transparent)] group-hover:shadow-[0_0_0_6px_color-mix(in_srgb,var(--secondary)_12%,transparent)] transition-shadow duration-300">
+                  <Icon size={20} stroke={1.6} aria-hidden="true" />
+                </span>
+                <p className="font-mono text-[0.72rem] text-[color-mix(in_srgb,var(--on-surface-dim)_66%,transparent)]">
+                  {String(index + 1).padStart(2, "0")}
+                </p>
+                <h3 className="mt-3 text-[1.02rem] font-medium leading-snug text-[var(--on-surface)]">
+                  {step.name}
+                </h3>
+                <p className="mt-3 text-[0.88rem] leading-relaxed text-[var(--on-surface-dim)]">
+                  {step.text}
+                </p>
+              </div>
             </article>
           );
         })}
@@ -491,10 +538,19 @@ function EngagementModels() {
         return (
           <article
             key={model.title}
-            className="group grid gap-5 rounded-[1.25rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[color-mix(in_srgb,var(--secondary)_26%,transparent)] md:grid-cols-[13rem_1fr_auto] md:items-center"
+            className="group relative grid gap-5 overflow-hidden rounded-[1.25rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[color-mix(in_srgb,var(--secondary)_26%,transparent)] md:grid-cols-[13rem_1fr_auto] md:items-center"
           >
-            <div>
-              <span className="grid h-11 w-11 place-items-center rounded-xl border border-[color-mix(in_srgb,var(--primary)_24%,transparent)] bg-[color-mix(in_srgb,var(--primary)_9%,transparent)] text-[var(--primary)]">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-0 opacity-[0.05]"
+              style={patternTextureStyle}
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -bottom-8 -right-8 h-32 w-32 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--primary)_10%,transparent),transparent_70%)]"
+            />
+            <div className="relative z-[1]">
+              <span className="grid h-11 w-11 place-items-center rounded-xl border border-[color-mix(in_srgb,var(--primary)_24%,transparent)] bg-[color-mix(in_srgb,var(--primary)_9%,transparent)] text-[var(--primary)] group-hover:shadow-[0_0_0_8px_color-mix(in_srgb,var(--primary)_8%,transparent)] transition-shadow duration-300">
                 <Icon size={20} stroke={1.6} aria-hidden="true" />
               </span>
               <p className="mt-4 font-mono text-[0.76rem] text-[var(--on-surface-dim)]">
@@ -621,6 +677,11 @@ export default function HirePage() {
         />
 
         <section className="relative z-[1] mx-auto max-w-[96rem] overflow-hidden px-5 pb-16 pt-32 sm:px-8 lg:px-10 lg:pb-24 lg:pt-40">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-0 opacity-[0.08]"
+            style={patternTextureStyle}
+          />
           <HireIllustrationLayer />
           <div
             aria-hidden="true"
@@ -687,9 +748,14 @@ export default function HirePage() {
 
         <section
           id="runway"
-          className="relative z-[1] px-5 py-16 sm:px-8 lg:px-10 lg:py-24"
+          className="relative z-[1] overflow-hidden px-5 py-16 sm:px-8 lg:px-10 lg:py-24"
         >
-          <div className="mx-auto max-w-[96rem]">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-0 opacity-[0.06]"
+            style={patternTextureStyle}
+          />
+          <div className="relative z-[1] mx-auto max-w-[96rem]">
             <div className="mb-12 grid gap-6 lg:grid-cols-[minmax(0,0.78fr)_minmax(18rem,0.35fr)] lg:items-end">
               <div>
                 <SectionEyebrow>Matching runway</SectionEyebrow>
@@ -708,9 +774,14 @@ export default function HirePage() {
 
         <section
           id="brief"
-          className="relative z-[1] px-5 py-16 sm:px-8 lg:px-10 lg:py-24"
+          className="relative z-[1] overflow-hidden px-5 py-16 sm:px-8 lg:px-10 lg:py-24"
         >
-          <div className="mx-auto max-w-[96rem]">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-0 opacity-[0.06]"
+            style={patternTextureStyle}
+          />
+          <div className="relative z-[1] mx-auto max-w-[96rem]">
             <div className="mb-12 grid gap-6 border-y border-[var(--glass-border)] py-8 lg:grid-cols-[0.42fr_1fr] lg:items-end">
               <div>
                 <p className="font-mono text-[0.74rem] uppercase tracking-[0.14em] text-[color-mix(in_srgb,var(--secondary)_82%,transparent)]">
@@ -736,9 +807,14 @@ export default function HirePage() {
 
         <section
           id="models"
-          className="relative z-[1] px-5 py-16 sm:px-8 lg:px-10 lg:py-24"
+          className="relative z-[1] overflow-hidden px-5 py-16 sm:px-8 lg:px-10 lg:py-24"
         >
-          <div className="mx-auto grid max-w-[96rem] gap-10 lg:grid-cols-[0.34fr_1fr] lg:items-start">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-0 opacity-[0.06]"
+            style={patternTextureStyle}
+          />
+          <div className="relative z-[1] mx-auto grid max-w-[96rem] gap-10 lg:grid-cols-[0.34fr_1fr] lg:items-start">
             <GlassPanel className="p-6 sm:p-8 lg:sticky lg:top-32">
               <p className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-[var(--secondary)]">
                 Engagement models
@@ -776,9 +852,14 @@ export default function HirePage() {
 
         <section
           id="decision"
-          className="relative z-[1] px-5 py-16 sm:px-8 lg:px-10 lg:py-24"
+          className="relative z-[1] overflow-hidden px-5 py-16 sm:px-8 lg:px-10 lg:py-24"
         >
-          <div className="mx-auto max-w-[96rem]">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-0 opacity-[0.06]"
+            style={patternTextureStyle}
+          />
+          <div className="relative z-[1] mx-auto max-w-[96rem]">
             <div className="mb-12 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <SectionTitle className="max-w-[13ch]">
                 Evaluate for ownership before onboarding.
@@ -794,9 +875,14 @@ export default function HirePage() {
 
         <section
           id="faq"
-          className="relative z-[1] px-5 py-16 sm:px-8 lg:px-10 lg:py-24"
+          className="relative z-[1] overflow-hidden px-5 py-16 sm:px-8 lg:px-10 lg:py-24"
         >
-          <div className="mx-auto grid max-w-[96rem] gap-10 lg:grid-cols-[0.42fr_1fr] lg:items-start">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-0 opacity-[0.06]"
+            style={patternTextureStyle}
+          />
+          <div className="relative z-[1] mx-auto grid max-w-[96rem] gap-10 lg:grid-cols-[0.42fr_1fr] lg:items-start">
             <div className="lg:sticky lg:top-32">
               <p className="font-mono text-[0.74rem] uppercase tracking-[0.14em] text-[var(--secondary)]">
                 Buyer FAQ
