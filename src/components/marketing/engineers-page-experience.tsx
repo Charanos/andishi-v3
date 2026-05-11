@@ -102,9 +102,8 @@ function PatternTexture({
       style={{
         opacity,
         backgroundImage:
-          "url(\"data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M14 10.5v7M10.5 14h7' stroke='%23c5b8e8' stroke-width='0.7' stroke-linecap='round' opacity='0.24'/%3E%3C/svg%3E\"), radial-gradient(circle, color-mix(in srgb, var(--secondary) 18%, transparent) 0 1px, transparent 1.7px)",
-        backgroundPosition: "0 0, 14px 14px",
-        backgroundSize: "28px 28px, 28px 28px",
+          "url(\"data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 11.5v9M11.5 16h9' stroke='%23c5b8e8' stroke-width='0.7' stroke-linecap='round' opacity='0.32'/%3E%3C/svg%3E\")",
+        backgroundSize: "32px 32px",
       }}
     />
   );
@@ -118,8 +117,8 @@ function AvailabilityBadge({ engineer }: { engineer: Engineer }) {
       className={cn(
         "flex items-center gap-1.5 rounded-full border px-3 py-1 backdrop-blur-xl",
         availableNow
-          ? "border-[color-mix(in_srgb,var(--tertiary)_28%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_10%,transparent)] text-[var(--tertiary)]"
-          : "border-[color-mix(in_srgb,var(--secondary)_24%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_8%,transparent)] text-[var(--secondary)]",
+          ? "border-[color-mix(in_srgb,var(--tertiary)_32%,transparent)] bg-[color-mix(in_srgb,var(--bg)_64%,transparent)] text-[var(--on-surface)]"
+          : "border-[color-mix(in_srgb,var(--secondary)_30%,transparent)] bg-[color-mix(in_srgb,var(--bg)_64%,transparent)] text-[var(--on-surface)]",
       )}
     >
       <span
@@ -131,7 +130,7 @@ function AvailabilityBadge({ engineer }: { engineer: Engineer }) {
         )}
         aria-hidden="true"
       />
-      <span className="text-[0.62rem] font-medium">
+      <span className="text-[0.68rem] font-medium leading-none">
         {availabilityText(engineer)}
       </span>
     </span>
@@ -194,7 +193,7 @@ function EngineerCard({
               </h2>
             </div>
             {engineer.featured && (
-              <span className="shrink-0 rounded-full border border-[color-mix(in_srgb,var(--secondary)_28%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] px-2.5 py-1 font-mono text-[0.62rem] text-[var(--secondary)] backdrop-blur-xl">
+              <span className="shrink-0 rounded-full border border-[color-mix(in_srgb,var(--secondary)_32%,transparent)] bg-[color-mix(in_srgb,var(--bg)_62%,transparent)] px-2.5 py-1 font-mono text-[0.64rem] text-[var(--on-surface)] backdrop-blur-xl">
                 Featured
               </span>
             )}
@@ -202,11 +201,11 @@ function EngineerCard({
         </div>
 
         <div className="px-5 pb-5 pt-5 sm:px-6 sm:pb-6">
-          <p className="text-[0.88rem] text-[var(--on-surface-dim)]">
+          <p className="text-[0.92rem] leading-relaxed text-[var(--on-surface-dim)]">
             {engineer.role}
           </p>
 
-          <p className="mt-3 line-clamp-2 text-[0.86rem] leading-[1.6] text-[color-mix(in_srgb,var(--on-surface-dim)_78%,transparent)]">
+          <p className="mt-3 line-clamp-2 text-[0.9rem] leading-[1.65] text-[var(--on-surface-dim)]">
             {engineer.highlights[0]}
           </p>
 
@@ -219,27 +218,27 @@ function EngineerCard({
               <span
                 key={skill}
                 role="listitem"
-                className="rounded-full border px-2.5 py-1 text-[0.7rem] font-medium"
+                className="rounded-full border px-2.5 py-1 text-[0.72rem] font-medium leading-none"
                 style={{
                   backgroundColor:
                     skillIndex === 0
                       ? "color-mix(in srgb, var(--secondary) 10%, transparent)"
-                      : "var(--glass-bg)",
+                      : "color-mix(in srgb, var(--surface) 58%, transparent)",
                   borderColor:
                     skillIndex === 0
-                      ? "color-mix(in srgb, var(--secondary) 24%, transparent)"
+                      ? "color-mix(in srgb, var(--secondary) 30%, transparent)"
                       : "var(--glass-border)",
                   color:
                     skillIndex === 0
-                      ? "var(--secondary)"
-                      : "var(--on-surface-dim)",
+                      ? "var(--on-surface)"
+                      : "color-mix(in srgb, var(--on-surface) 84%, transparent)",
                 }}
               >
                 {skill}
               </span>
             ))}
             {extraSkillCount > 0 && (
-              <span className="rounded-full border border-[color-mix(in_srgb,var(--primary)_20%,transparent)] bg-[color-mix(in_srgb,var(--primary)_8%,transparent)] px-2.5 py-1 font-mono text-[0.7rem] text-[var(--primary)]">
+              <span className="rounded-full border border-[color-mix(in_srgb,var(--primary)_26%,transparent)] bg-[color-mix(in_srgb,var(--surface)_58%,transparent)] px-2.5 py-1 font-mono text-[0.72rem] leading-none text-[var(--on-surface)]">
                 +{extraSkillCount}
               </span>
             )}
@@ -247,13 +246,13 @@ function EngineerCard({
 
           <div className="mt-5 flex items-center justify-between gap-4 border-t border-[var(--glass-border)] pt-4">
             <div className="min-w-0 space-y-1">
-              <span className="flex min-w-0 items-center gap-1 text-[0.72rem] text-[color-mix(in_srgb,var(--on-surface-dim)_64%,transparent)]">
+              <span className="flex min-w-0 items-center gap-1 text-[0.76rem] leading-snug text-[var(--on-surface-dim)]">
                 <IconMapPin size={11} stroke={1.5} aria-hidden="true" />
                 <span className="truncate">
                   {engineer.location.city}, {engineer.location.country}
                 </span>
               </span>
-              <span className="flex items-center gap-1 text-[0.72rem] text-[color-mix(in_srgb,var(--on-surface-dim)_64%,transparent)]">
+              <span className="flex items-center gap-1 text-[0.76rem] leading-snug text-[var(--on-surface-dim)]">
                 <IconClock size={11} stroke={1.5} aria-hidden="true" />
                 {timezoneText(engineer.location.utcOffset)}
               </span>

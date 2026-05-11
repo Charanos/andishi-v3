@@ -50,7 +50,7 @@ const processTextureStyle = {
 export default function Home() {
   return (
     <>
-      <main className="relative overflow-hidden">
+      <main className="relative mx-auto max-w-[96rem] overflow-hidden">
         <HeroSection />
         <ProjectShowcase />
         <Process />
@@ -254,7 +254,7 @@ function Process() {
         className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--surface-high)_5%,transparent),transparent_18rem),linear-gradient(90deg,color-mix(in_srgb,var(--bg-deep)_42%,transparent),transparent_36%,color-mix(in_srgb,var(--bg-deep)_40%,transparent))]"
       />
 
-      <div className="relative z-[1] mx-auto max-w-7xl">
+      <div className="relative z-[1] mx-auto max-w-[96rem]">
         <div className="mx-auto mb-12 max-w-3xl text-center lg:mb-16">
           <p className="label-caps mb-5 flex items-center justify-center gap-3 text-[var(--secondary)]">
             <span className="h-px w-7 bg-[var(--secondary)]" />
@@ -476,7 +476,7 @@ function IllustrationBreak() {
 
         <div className="relative z-[1] flex min-h-screen items-center px-5 py-28 sm:px-8 lg:px-12">
           <div className="w-full">
-            <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_0.82fr] lg:items-center">
+            <div className="mx-auto grid max-w-[96rem] gap-8 lg:grid-cols-[1fr_0.82fr] lg:items-center">
               <div className="max-w-2xl rounded-[1.75rem] border border-[color-mix(in_srgb,var(--on-surface)_13%,transparent)] bg-[color-mix(in_srgb,var(--surface)_60%,transparent)] p-5 shadow-[0_28px_90px_color-mix(in_srgb,var(--bg-deep)_34%,transparent)] backdrop-blur-2xl sm:p-7 lg:p-9">
                 <p className="label-caps mb-4 flex items-center gap-3 text-[var(--secondary)]">
                   <span className="h-px w-7 bg-[var(--secondary)]" />
@@ -530,7 +530,7 @@ function Founder() {
         className="pointer-events-none absolute inset-x-0 top-0 z-0 h-px bg-[linear-gradient(to_right,transparent,color-mix(in_srgb,var(--on-surface)_14%,transparent),transparent)]"
       />
 
-      <div className="relative z-[1] mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+      <div className="relative z-[1] mx-auto grid max-w-[96rem] gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
         <div className="order-2 lg:order-1">
           <div className="relative mx-auto max-w-[28rem] lg:mx-0">
             <div
@@ -661,7 +661,7 @@ function FinalCTA() {
           className="pointer-events-none absolute inset-0 z-0 opacity-[0.06]"
           style={processTextureStyle}
         />
-        <div className="relative z-[1] mx-auto max-w-7xl">
+        <div className="relative z-[1] mx-auto max-w-[96rem]">
           <div className="mx-auto max-w-3xl rounded-[1.75rem] border border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] bg-[color-mix(in_srgb,var(--surface)_58%,transparent)] px-5 py-10 shadow-[0_30px_110px_color-mix(in_srgb,var(--bg-deep)_38%,transparent)] backdrop-blur-2xl sm:px-10 sm:py-12 lg:px-14 lg:py-14">
             <p
               className="label-caps mb-4"
