@@ -1,0 +1,21 @@
+Andishi is a software development studio that designs, builds, and ships custom software, SaaS platforms, AI systems, and mobile apps. Headquartered in Nairobi, Kenya, Andishi delivers production-grade digital products to global startups and local enterprises with direct developer contact, structured sprint cycles, and full IP ownership.
+
+Andishi also maintains a vetted network of senior African software engineers, enabling clients to augment their existing engineering teams with autonomous developers who integrate directly into their workflows.
+
+Key pages: /, /services, /work, /skills, /about, /contact, /start-project, /login.
+
+Core Services:
+1. Web Applications: Custom-built web apps for business workflows.
+2. SaaS Products: Architecture, MVP builds, and multi-tenant platforms.
+3. Mobile Applications: iOS and Android apps (native or React Native).
+4. AI & Intelligent Systems: LLM integrations, retrieval systems (RAG), and agentic workflows.
+5. Enterprise Software: Internal tooling, workflows, and database revamps.
+6. Blockchain & Web3: Smart contracts, on-chain integrations, and DeFi tooling.
+7. APIs & Integrations: Backend data pipelines and payment operations (M-Pesa, Stripe).
+8. Product Strategy & Design: UX wireframes, scoping briefs, and technical advisory.
+
+Staff Augmentation:
+Clients can hire fractional or dedicated senior developers directly from our network (Full-stack, AI, Cloud/AWS, Backend, Mobile) with a 30-day replacement guarantee.
+
+Homepage product experience:
+Andishi displays our build capability comparison matrix, process timeline, featured product case studies, and comparison metrics. It also provides client and developer workspaces for project brief tracking and active build sprints visibility.
