@@ -145,7 +145,7 @@
 @theme inline {
   --color-background: var(--bg);
   --color-foreground: var(--on-surface);
-  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-editorial), "Cormorant Garamond", Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
@@ -168,7 +168,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--on-surface);
-  font-family: var(--font-outfit), "Outfit", ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-nunito), "Nunito", ui-sans-serif, system-ui, sans-serif;
   font-weight: 500;
   letter-spacing: 0;
   -webkit-font-smoothing: antialiased;

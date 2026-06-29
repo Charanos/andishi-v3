@@ -1,6 +1,6 @@
 # Andishi v3 Progress Tracker
 
-Last updated: June 18, 2026
+Last updated: June 29, 2026
 
 ## Project Status ✅
 
@@ -8,6 +8,7 @@ The project has transitioned from a talent supply service to a **software develo
 
 - **Phase A - Backend Architecture Revamp**: Complete. We have updated schemas, validation libraries, public API endpoints for inquiry intake and portfolio retrieval, email templates, and executed Neon DB migrations successfully.
 - **Phase B - Frontend Pivot & Docs Updates**: Complete. All navigation configurations, public marketing landing pages, dynamic services sub-pages, sitemap, capability pages, onboarding forms, and type-checks are now functional.
+- **Phase C - Contact & Communication Overhaul**: Complete. General inquiries API, map integrations, collapsible coordinates banner, branded WhatsApp FAB, and typography pivot to Nunito are fully implemented.
 
 ---
 
@@ -28,8 +29,18 @@ The project has transitioned from a talent supply service to a **software develo
 - **B6: Capability & Portfolio Pages**: Added service and vertical filters to the `/work` client case study grid. Upgraded all four `/skills/[domain]` sub-pages with `DualTrackCTA`, schema updates, and studio copy.
 - **B7: Verification & Optimization**: Integrated the dynamic service slugs in `sitemap.ts`. Resolved all workspace compiler warnings (unescaped characters, type safety checks on dynamic verticals, unused variables).
 
+### Phase C: Contact & Communication Overhaul (June 2026)
+- **General Inquiry API**: Integrated `POST /api/general-inquiry` with input validations, console logging, and admin Resend email routing.
+- **Collapsible Coordinates Banner**: Added centered address & coordinates bar above the navbar in `navbar.tsx`, tracking closed state via `localStorage`.
+- **Branded WhatsApp FAB**: Implemented branded WhatsApp green trigger button (`#25D366`) and popover chat widget, with path-hiding filters for admin/contact pages.
+- **Contact Page Revamp**: Overhauled `/contact` into a sleek general inquiry portal featuring direct contact widgets and standard color Google Map centered at `1°11'37.1"S 36°54'18.9"E`.
+- **Global Typography Pivot**: Switched global branding font from Outfit to Nunito across layouts and CSS style variables.
+- **Lint Warning Cleanups**: Resolved sync setState warnings, unused imports, and generic catches.
+
 ---
 
 ## Technical Audit & Verification Pass
-- **Type Safety**: Verified via `npx.cmd tsc --noEmit` and `npm run typecheck` (Passes cleanly with exit code 0).
+- **Type Safety**: Verified via `npx tsc --noEmit` and `npm run typecheck` (Passes cleanly with exit code 0).
+- **Production Build**: Verified successful production bundling via `npm run build`.
 - **Environment**: PowerShell script execution policy set to `RemoteSigned` for the local workspace current user.
+
