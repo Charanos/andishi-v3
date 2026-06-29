@@ -36,6 +36,7 @@ The project has transitioned from a talent supply service to a **software develo
 - **Contact Page Revamp**: Overhauled `/contact` into a sleek general inquiry portal featuring direct contact widgets and standard color Google Map centered at `1°11'37.1"S 36°54'18.9"E`.
 - **Global Typography Pivot**: Switched global branding font from Outfit to Nunito across layouts and CSS style variables.
 - **Lint Warning Cleanups**: Resolved sync setState warnings, unused imports, and generic catches.
+- **Header Nav Adjustments**: Replaced the Skills link with the Contact link in `siteConfig` config, and included a glassmorphic Login button on both desktop and mobile header bars.
 
 ---
 

@@ -585,18 +585,17 @@ function InlineCta() {
         <div>
           <SectionEyebrow>Apply this</SectionEyebrow>
           <h2 className="title-serif text-[clamp(1.72rem,3vw,2.15rem)] font-normal leading-[1.1] tracking-tight text-[var(--on-surface)]">
-            Turn the insight into a sharper brief.
+            Turn the insight into your next product.
           </h2>
           <p className="mt-3 text-[0.94rem] leading-relaxed text-[var(--on-surface-dim)]">
-            The fastest path from this guidance to a matched engineer is a brief
-            that names ownership, stack, timezone, and timeline.
+            We design, build, and ship — or place a specialist engineer on your team. Share what you need.
           </p>
         </div>
         <Link
           href="/start-project"
           className="inline-flex min-h-[2.75rem] shrink-0 items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-7 py-3 text-[0.92rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_38%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--secondary)_40%,transparent)]"
         >
-          Start hiring
+          Start a project
           <IconArrowRight size={14} stroke={2} aria-hidden="true" />
         </Link>
       </div>
@@ -816,9 +815,9 @@ export default async function BlogPostPage({ params }: Props) {
 
         <section
           className="relative z-[1] px-5 py-14 sm:px-8 lg:px-10 lg:py-24"
-          aria-label="Start hiring call to action"
+          aria-label="Start a project"
         >
-          <div className="mx-auto max-w-[92rem]">
+          <div className="mx-auto max-w-[72rem]">
             <div className="relative overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_40%,transparent)] px-6 py-14 text-center shadow-[0_28px_90px_color-mix(in_srgb,var(--bg-deep)_26%,transparent)] backdrop-blur-2xl sm:px-10 lg:px-20 lg:py-20">
               <FinalCtaArtwork />
               <PatternTexture opacity={0.08} />
@@ -828,22 +827,20 @@ export default async function BlogPostPage({ params }: Props) {
               />
               <div className="relative z-[1] mx-auto max-w-2xl">
                 <p className="label-caps mb-5 text-[var(--secondary)]">
-                  Need senior signal?
+                  Ready to build?
                 </p>
                 <h2 className="title-serif text-[clamp(2.18rem,4.5vw,3.45rem)] font-normal leading-[1.02] tracking-tight text-[var(--on-surface)]">
-                  Convert what you learned into a sharper match.
+                  Let&apos;s design, build, and ship your next product.
                 </h2>
                 <p className="body-md mx-auto my-8 max-w-lg text-[var(--on-surface-dim)]">
-                  Send the problem, stack, ownership gap, and timeline. Andishi
-                  translates it into a shortlist of vetted senior engineers in
-                  eight days.
+                  Tell us what you&apos;re building. We return a clear brief, fixed timeline, and direct pricing within 48 hours — or match you with a vetted specialist.
                 </p>
                 <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
                   <Link
                     href="/start-project"
                     className="inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-8 py-3 text-[0.92rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_40%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--secondary)_40%,transparent)]"
                   >
-                    Start hiring
+                    Start a project
                     <IconArrowRight size={15} stroke={2} aria-hidden="true" />
                   </Link>
                   <a
@@ -856,9 +853,9 @@ export default async function BlogPostPage({ params }: Props) {
                 </div>
                 <div className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
                   {[
-                    "Senior-only talent",
-                    "8-day first profiles",
-                    "30-day guarantee",
+                    "32+ products shipped",
+                    "48h scoping proposal",
+                    "30-day post-launch support",
                   ].map((item) => (
                     <span
                       key={item}

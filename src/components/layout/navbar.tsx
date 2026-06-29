@@ -75,9 +75,8 @@ export function Navbar() {
       </AnimatePresence>
 
       <header
-        className={`fixed left-0 right-0 z-50 px-5 transition-all duration-300 sm:px-8 lg:px-10 ${
-          bannerOpen ? "top-10 sm:top-11 pt-2" : "top-0 pt-4"
-        }`}
+        className={`fixed left-0 right-0 z-50 px-5 transition-all duration-300 sm:px-8 lg:px-10 ${bannerOpen ? "top-10 sm:top-11 pt-2" : "top-0 pt-4"
+          }`}
       >
         <motion.nav
           className="mx-auto flex h-16 w-full max-w-[92rem] items-center justify-between rounded-2xl px-3 lg:px-4"
@@ -140,6 +139,12 @@ export function Navbar() {
           {/* Right actions */}
           <div className="flex items-center gap-2">
             <ThemeToggle />
+            <Link
+              href="/login"
+              className="hidden min-h-10 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-5 py-2.5 text-[0.84rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-[0.98] sm:inline-flex"
+            >
+              Login
+            </Link>
             <Link
               href="/start-project"
               className="hidden min-h-10 items-center gap-2 rounded-full px-5 py-2.5
@@ -225,9 +230,16 @@ export function Navbar() {
               ))}
 
               <div
-                className="mt-3 pt-3"
+                className="mt-3 pt-3 flex flex-col gap-2"
                 style={{ borderTop: "1px solid var(--glass-border)" }}
               >
+                <Link
+                  href="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex min-h-[3.4rem] w-full items-center justify-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-5 py-4 text-[0.98rem] font-medium transition-all duration-200 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)]"
+                >
+                  Login
+                </Link>
                 <Link
                   href="/start-project"
                   onClick={() => setMobileOpen(false)}

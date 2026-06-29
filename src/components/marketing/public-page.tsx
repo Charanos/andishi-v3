@@ -141,7 +141,7 @@ export function FinalRouteCta({
   title,
   body,
   href = "/start-project",
-  label = "Submit a hiring brief",
+  label = "Start a project",
 }: {
   title: string;
   body: string;

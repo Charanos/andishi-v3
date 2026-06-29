@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Image from "next/image";
+import { CaseStudyExperience } from "@/components/marketing/case-study-experience";
 import { JsonLd } from "@/components/marketing/json-ld";
-import { FinalRouteCta, GlassPanel, PublicPageShell, RouteHero, SectionBlock } from "@/components/marketing/public-page";
 import { workProjects } from "@/content/work";
 import { siteConfig } from "@/config/site";
 
@@ -16,9 +15,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const project = workProjects.find((item) => item.id === slug);
   if (!project) return {};
+
   return {
-    title: `${project.title} Case Study - Andishi`,
+    title: `${project.title} — Case Study | Andishi`,
     description: project.description,
+    openGraph: {
+      title: `${project.title} — Case Study | Andishi`,
+      description: project.description,
+      images: [{ url: `${siteConfig.url}${project.image}`, width: 1200, height: 630 }],
+      type: "article",
+    },
   };
 }
 
@@ -27,15 +33,24 @@ export default async function WorkDetailPage({ params }: Props) {
   const project = workProjects.find((item) => item.id === slug);
   if (!project) notFound();
 
+  const related = workProjects
+    .filter((item) => item.id !== project.id)
+    .sort((a, b) => {
+      const sameVertical = a.sector === project.sector ? -1 : 1;
+      return sameVertical;
+    })
+    .slice(0, 2);
+
   const articleSchema = {
     "@context": "https://schema.org",
-    "@type": "Article",
-    headline: project.title,
+    "@type": "CreativeWork",
+    name: project.title,
     description: project.description,
     image: `${siteConfig.url}${project.image}`,
-    author: { "@type": "Organization", name: "Andishi" },
-    publisher: { "@type": "Organization", name: "Andishi" },
-    mainEntityOfPage: `${siteConfig.url}/work/${project.id}`,
+    author: { "@type": "Organization", name: "Andishi", url: siteConfig.url },
+    creator: { "@type": "Organization", name: "Andishi", url: siteConfig.url },
+    url: `${siteConfig.url}/work/${project.id}`,
+    keywords: project.tags.join(", "),
   };
 
   const breadcrumbSchema = {
@@ -50,50 +65,7 @@ export default async function WorkDetailPage({ params }: Props) {
 
   return (
     <>
-      <PublicPageShell>
-        <RouteHero
-          eyebrow={project.sectorLabel}
-          title={project.title}
-          body={project.description}
-          primary={{ href: "/start-project", label: "Hire similar talent" }}
-          secondary={{ href: "/work", label: "All case studies" }}
-        />
-        <section className="px-5 pb-10 sm:px-8 lg:px-10 lg:pb-16">
-          <div className="mx-auto max-w-[92rem]">
-            <div className="relative aspect-[16/9] overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[var(--surface-high)]">
-              <Image src={project.image} alt={project.title} fill sizes="(min-width: 1024px) 80rem, 100vw" className="object-cover" priority />
-            </div>
-          </div>
-        </section>
-        <SectionBlock eyebrow="Case study" title="Challenge, solution, result.">
-          <div className="grid gap-4 lg:grid-cols-3">
-            {[
-              ["Challenge", project.challenge],
-              ["Solution", project.solution],
-              ["Result", `${project.metric} ${project.metricLabel} across a ${project.timeline} build.`],
-            ].map(([title, body]) => (
-              <GlassPanel key={title}>
-                <h2 className="text-[1.08rem] font-medium text-[var(--on-surface)]">{title}</h2>
-                <p className="mt-4 text-[0.96rem] leading-relaxed text-[var(--on-surface-dim)]">{body}</p>
-              </GlassPanel>
-            ))}
-          </div>
-        </SectionBlock>
-        <SectionBlock eyebrow="Metrics" title="What changed.">
-          <div className="grid gap-4 md:grid-cols-4">
-            {project.metrics.map((metric) => (
-              <GlassPanel key={metric.label}>
-                <p className="font-mono text-[1.65rem] leading-none text-[var(--on-surface)]">{metric.value}</p>
-                <p className="label-caps mt-3 text-[var(--on-surface-dim)]">{metric.label}</p>
-              </GlassPanel>
-            ))}
-          </div>
-        </SectionBlock>
-        <FinalRouteCta
-          title="Need this level of ownership?"
-          body="Share the system, stack, and current bottleneck. We will match the right senior engineer or tell you plainly if we cannot."
-        />
-      </PublicPageShell>
+      <CaseStudyExperience project={project} related={related} />
       <JsonLd id="work-article-schema" data={articleSchema} />
       <JsonLd id="work-breadcrumb-schema" data={breadcrumbSchema} />
     </>

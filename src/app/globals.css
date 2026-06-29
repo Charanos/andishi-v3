@@ -305,7 +305,7 @@ body {
 
 .body-lg {
   font-size: clamp(1rem, 4vw, 1.125rem);
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.7;
   letter-spacing: 0;
 }
@@ -319,7 +319,7 @@ body {
 
 .label-caps {
   font-size: 0.79rem;
-  font-weight: 500;
+  font-weight: 900;
   line-height: 1;
   letter-spacing: 0.1em;
   text-transform: uppercase;

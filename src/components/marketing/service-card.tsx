@@ -14,10 +14,27 @@ interface ServiceCardProps {
   glow?: "violet" | "cyan" | "amber";
 }
 
+// Light-mode safe glow map — no raw cyan.
+// "cyan" maps to --tertiary (dark-purple in light, cyan in dark).
 const glowMap = {
-  violet: "hover:shadow-[0_0_30px_rgba(208,188,255,0.12)] border-[rgba(208,188,255,0.12)]",
-  cyan:   "hover:shadow-[0_0_30px_rgba(76,215,246,0.12)] border-[rgba(76,215,246,0.12)]",
-  amber:  "hover:shadow-[0_0_30px_rgba(255,184,105,0.12)] border-[rgba(255,184,105,0.12)]",
+  violet: {
+    card: "group-hover:shadow-[0_16px_48px_color-mix(in_srgb,var(--primary)_14%,transparent)] group-hover:border-[color-mix(in_srgb,var(--primary)_28%,transparent)]",
+    iconBg: "bg-[var(--primary-container)]",
+    chip: "bg-[var(--primary-container)] text-[var(--primary)] border-[var(--glass-border)]",
+    accentColor: "var(--primary)",
+  },
+  cyan: {
+    card: "group-hover:shadow-[0_16px_48px_color-mix(in_srgb,var(--tertiary)_12%,transparent)] group-hover:border-[color-mix(in_srgb,var(--tertiary)_28%,transparent)]",
+    iconBg: "bg-[var(--tertiary-container)]",
+    chip: "bg-[var(--tertiary-container)] text-[var(--tertiary)] border-[var(--glass-border)]",
+    accentColor: "var(--tertiary)",
+  },
+  amber: {
+    card: "group-hover:shadow-[0_16px_48px_rgba(180,120,0,0.12)] group-hover:border-[rgba(200,140,0,0.28)]",
+    iconBg: "bg-[rgba(200,140,0,0.10)]",
+    chip: "bg-[rgba(200,140,0,0.10)] text-[rgba(120,75,0,0.90)] border-[rgba(200,140,0,0.22)]",
+    accentColor: "rgba(120,75,0,0.9)",
+  },
 };
 
 export function ServiceCard({
@@ -28,47 +45,65 @@ export function ServiceCard({
   href,
   glow = "violet",
 }: ServiceCardProps) {
-  return (
-    <Link href={href} className="group block no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d0bcff]/50 rounded-xl">
-      <div className={cn(
-        "relative overflow-hidden rounded-xl p-8 h-full flex flex-col justify-between",
-        "bg-white/[0.03] backdrop-blur-xl border border-white/[0.08]",
-        "transition-all duration-300 hover:bg-white/[0.06] hover:border-white/[0.14] hover:-translate-y-1",
-        glowMap[glow]
-      )}>
-        {/* Subtle decorative inner gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#d0bcff]/[0.02] via-transparent to-[#4cd7f6]/[0.01] pointer-events-none rounded-xl" />
+  const accent = glowMap[glow];
 
-        <div>
-          {/* Top line with Icon and Timeline chip */}
-          <div className="flex items-start justify-between gap-4 mb-6">
-            <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/[0.05] border border-white/[0.08] text-[var(--on-surface)] transition-transform duration-300 group-hover:scale-110">
-              {icon}
+  return (
+    <Link
+      href={href}
+      className="group block no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/40 rounded-[1.2rem]"
+    >
+      <div
+        className={cn(
+          "relative flex h-full flex-col justify-between overflow-hidden rounded-[1.2rem]",
+          "border border-[var(--glass-border)] bg-[var(--glass-bg)] p-7 backdrop-blur-xl",
+          "transition-all duration-300 group-hover:-translate-y-1",
+          accent.card,
+        )}
+      >
+        {/* subtle inner gradient */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[var(--primary-container)]/[0.04] via-transparent to-transparent rounded-[1.2rem]" />
+
+        <div className="relative">
+          {/* icon + timeline chip */}
+          <div className="mb-5 flex items-start justify-between gap-3">
+            <div
+              className={cn(
+                "grid h-10 w-10 place-items-center rounded-xl border border-[var(--glass-border)] transition-transform duration-300 group-hover:scale-105",
+                accent.iconBg,
+              )}
+            >
+              <span style={{ color: accent.accentColor }}>{icon}</span>
             </div>
             {timeline && (
-              <span className="inline-block px-2.5 py-0.5 rounded-full font-mono text-[11px] bg-[#4cd7f6]/10 text-[#4cd7f6] border border-[#4cd7f6]/20">
+              <span
+                className={cn(
+                  "inline-block rounded-full border px-2.5 py-0.5 font-mono text-[0.68rem]",
+                  accent.chip,
+                )}
+              >
                 {timeline}
               </span>
             )}
           </div>
 
-          {/* Service Title */}
-          <h3 className="text-[1.2rem] font-normal tracking-tight text-[var(--on-surface)] mb-3 group-hover:text-[var(--primary)] transition-colors duration-200">
+          <h3 className="mb-2.5 text-[1.12rem] font-normal tracking-tight text-[var(--on-surface)] transition-colors duration-200 group-hover:text-[var(--primary)]">
             {title}
           </h3>
 
-          {/* Description */}
-          <p className="text-[0.92rem] leading-relaxed text-[var(--on-surface-dim)] mb-6">
+          <p className="text-[0.88rem] leading-[1.65] text-[var(--on-surface-dim)]">
             {description}
           </p>
         </div>
 
-        {/* Bottom indicator & link action */}
-        <div className="mt-auto pt-4 border-t border-white/[0.05] flex items-center justify-between">
-          <span className="text-[0.78rem] font-medium uppercase tracking-[0.1em] text-[var(--on-surface-dim)] group-hover:text-[var(--on-surface)] transition-colors duration-200">
-            Learn More
+        <div className="relative mt-6 flex items-center justify-between border-t border-[var(--glass-border)] pt-4">
+          <span className="text-[0.76rem] tracking-[0.07em] text-[var(--on-surface-dim)] transition-colors duration-200 group-hover:text-[var(--on-surface)]">
+            Learn more
           </span>
-          <IconArrowRight size={16} stroke={1.8} className="text-[var(--on-surface-dim)] group-hover:text-[var(--on-surface)] group-hover:translate-x-1 transition-all duration-200" />
+          <IconArrowRight
+            size={15}
+            stroke={1.8}
+            className="text-[var(--on-surface-dim)] transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-[var(--on-surface)]"
+          />
         </div>
       </div>
     </Link>
