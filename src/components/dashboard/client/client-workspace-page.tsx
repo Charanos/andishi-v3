@@ -1304,7 +1304,7 @@ function buildClientConfig(kind: ClientWorkspaceKind): ClientConfig {
         ),
         clientRecord(
           "team-dennis",
-          "Dennis Munge",
+          "Ian Mwangi",
           "Andishi admin resolver",
           "Admin",
           "Andishi",
@@ -1710,7 +1710,7 @@ function clientRecord(
 
 function defaultRelation(): ClientRecord["relation"] {
   return {
-    admin: "Dennis Munge",
+    admin: "Ian Mwangi",
     client: "Kijani Analytics",
     developer: "Amina Otieno",
     project: "AI support workflow",

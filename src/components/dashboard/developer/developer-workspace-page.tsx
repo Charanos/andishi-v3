@@ -597,7 +597,7 @@ function DeveloperAvailabilityPanel({
         {[
           ["Active record", record?.title ?? "Select work"],
           ["Project", record?.relation.project ?? "AI support workflow"],
-          ["Admin resolver", record?.relation.admin ?? "Dennis Munge"],
+          ["Admin resolver", record?.relation.admin ?? "Ian Mwangi"],
         ].map(([label, value]) => (
           <div
             key={label}
@@ -1672,7 +1672,7 @@ function devRecord(
 
 function defaultRelation(): DeveloperRecord["relation"] {
   return {
-    admin: "Dennis Munge",
+    admin: "Ian Mwangi",
     client: "Kijani Analytics",
     developer: "Amina Otieno",
     project: "AI support workflow",

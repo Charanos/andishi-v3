@@ -301,7 +301,7 @@ export function CaseStudyExperience({
                 <div className="relative z-[1]">
                   <p className="label-caps mb-3 text-[var(--secondary)]">Build your product</p>
                   <p className="text-[0.92rem] leading-relaxed text-[var(--on-surface-dim)]">
-                    Need a similar outcome? Share your brief. We scope, design, and ship your product — just like this.
+                    Need a similar outcome? Share your brief. We scope, design, and ship your product - just like this.
                   </p>
                   <Link
                     href="/start-project"

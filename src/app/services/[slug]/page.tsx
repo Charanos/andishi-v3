@@ -19,10 +19,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!service) return {};
 
   return {
-    title: `${service.title} — Software Development | Andishi`,
+    title: `${service.title} - Software Development | Andishi`,
     description: service.tagline,
     openGraph: {
-      title: `${service.title} — Software Development | Andishi`,
+      title: `${service.title} - Software Development | Andishi`,
       description: service.scope,
       type: "website",
     },

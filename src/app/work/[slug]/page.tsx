@@ -17,10 +17,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!project) return {};
 
   return {
-    title: `${project.title} — Case Study | Andishi`,
+    title: `${project.title} - Case Study | Andishi`,
     description: project.description,
     openGraph: {
-      title: `${project.title} — Case Study | Andishi`,
+      title: `${project.title} - Case Study | Andishi`,
       description: project.description,
       images: [{ url: `${siteConfig.url}${project.image}`, width: 1200, height: 630 }],
       type: "article",

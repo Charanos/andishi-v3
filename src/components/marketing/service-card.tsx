@@ -14,7 +14,7 @@ interface ServiceCardProps {
   glow?: "violet" | "cyan" | "amber";
 }
 
-// Light-mode safe glow map — no raw cyan.
+// Light-mode safe glow map - no raw cyan.
 // "cyan" maps to --tertiary (dark-purple in light, cyan in dark).
 const glowMap = {
   violet: {

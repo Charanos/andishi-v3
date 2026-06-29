@@ -19,6 +19,13 @@ import {
   IconUsers,
   IconWorld,
 } from "@tabler/icons-react";
+import {
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  Radar,
+  ResponsiveContainer,
+} from "recharts";
 import { LinkButton } from "@/components/ui/button";
 import { FinalCtaArtwork } from "@/components/ui/final-cta-artwork";
 import { cn } from "@/lib/utils";
@@ -145,6 +152,17 @@ const activeProjects = [
   ["Analytics SaaS Interface", "React / API data pipeline integration", "84%", "A"],
 ];
 
+const radarData = [
+  { domain: "Frontend", v: 93 },
+  { domain: "Backend", v: 90 },
+  { domain: "Mobile", v: 78 },
+  { domain: "AI / ML", v: 86 },
+  { domain: "Web3", v: 80 },
+  { domain: "Cloud", v: 85 },
+  { domain: "DevOps", v: 88 },
+  { domain: "Payments", v: 90 },
+];
+
 const skillGroups = [
   {
     label: "Frontend",
@@ -243,13 +261,16 @@ export function AboutPageExperience() {
       />
 
       <div className="relative z-[1] mx-auto flex w-full max-w-[92rem] items-start gap-0 pb-24 pt-32 lg:pt-36">
-        <aside className="sticky top-28 hidden max-h-[calc(100svh-8rem)] w-60 shrink-0 flex-col justify-between self-start overflow-y-auto border-r border-[var(--glass-border)] pr-5 xl:flex">
-          <div>
-            <p className="label-caps mb-4 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
+        <aside className="sticky top-28 hidden max-h-[calc(100svh-8rem)] w-64 shrink-0 flex-col justify-between self-start overflow-y-auto border-r border-[var(--glass-border)] pr-6 xl:flex">
+          <div className="relative">
+            <p className="label-caps mb-6 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
               About Andishi
             </p>
-            <div className="border-y border-[var(--glass-border)]">
-              {storySections.map((section) => {
+            {/* Sidebar vertical track */}
+            <div className="absolute left-[11px] top-12 bottom-4 w-[1px] bg-[var(--glass-border)]" />
+
+            <div className="flex flex-col gap-1">
+              {storySections.map((section, idx) => {
                 const isActive = activeSection === section.id;
 
                 return (
@@ -257,45 +278,33 @@ export function AboutPageExperience() {
                     key={section.id}
                     type="button"
                     onClick={() => scrollToSection(section.id)}
-                    className="group flex w-full items-center gap-3 border-b border-[var(--glass-border)] py-3.5 text-left text-[0.88rem] font-medium uppercase tracking-[0.08em] text-[var(--on-surface-dim)] transition-all duration-300 last:border-b-0 hover:text-[var(--on-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]"
+                    className="group relative flex w-full flex-col items-start pl-7 py-3 text-left focus-visible:outline-none focus-visible:ring-0"
                   >
-                    <span
+                    {/* Visual dot on vertical track */}
+                    <div
                       className={cn(
-                        "h-px w-4 bg-current transition-all duration-300",
-                        isActive && "w-8 bg-[var(--secondary)]",
+                        "absolute left-[7px] top-[18px] z-10 h-[9px] w-[9px] rounded-full border transition-all duration-300",
+                        isActive
+                          ? "border-[var(--primary)] bg-[var(--primary)] shadow-[0_0_6px_var(--primary)] scale-110"
+                          : "border-transparent bg-[color-mix(in_srgb,var(--on-surface)_20%,transparent)] group-hover:bg-[var(--on-surface-dim)] group-hover:scale-105"
                       )}
                     />
-                    <span className={isActive ? "text-[var(--secondary)]" : ""}>
+
+                    {/* Section Index & Label */}
+                    <span className="font-mono text-[0.6rem] tracking-[0.14em] uppercase text-[var(--on-surface-dim)] opacity-50 mb-0.5 group-hover:text-[var(--primary)] group-hover:opacity-100 transition-all duration-300">
+                      0{idx + 1}
+                    </span>
+                    <span
+                      className={cn(
+                        "text-[0.84rem] font-medium uppercase tracking-[0.06em] transition-all duration-300 group-hover:text-[var(--on-surface)]",
+                        isActive ? "text-[var(--primary)] font-medium tracking-wide" : "text-[var(--on-surface-dim)]"
+                      )}
+                    >
                       {section.label}
                     </span>
                   </button>
                 );
               })}
-            </div>
-          </div>
-
-          <div className="border-t border-[var(--glass-border)] pt-5">
-            <p className="label-caps mb-4 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
-              Studio facts
-            </p>
-            <div className="grid gap-4">
-              {[
-                ["32+", "Products shipped"],
-                ["8", "Service domains"],
-                ["Nairobi", "Global delivery"],
-              ].map(([value, label]) => (
-                <div
-                  key={label}
-                  className="border-l border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] pl-3"
-                >
-                  <p className="font-mono text-[1.1rem] leading-none tracking-tight text-[var(--on-surface)]">
-                    {value}
-                  </p>
-                  <p className="mt-2 text-[0.82rem] leading-snug text-[var(--on-surface-dim)]">
-                    {label}
-                  </p>
-                </div>
-              ))}
             </div>
           </div>
         </aside>
@@ -388,7 +397,7 @@ function Hero() {
               </div>
             ))}
           </div>
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_34%,color-mix(in_srgb,var(--bg-deep)_86%,transparent)_100%)]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
           <div className="absolute left-4 right-4 top-4 flex flex-wrap gap-2">
             <PortraitChip icon={IconMapPin} label="Africa-sourced" />
             <PortraitChip icon={IconCode} label="Senior product builders" />
@@ -499,7 +508,7 @@ function Story() {
   return (
     <section
       id="origin"
-      className="scroll-mt-32 border-b border-[var(--glass-border)] pb-16"
+      className="scroll-mt-32 flex justify-end text-right border-b border-[var(--glass-border)] pb-16"
     >
       <motion.div
         initial={{ opacity: 0, y: 24 }}
@@ -508,11 +517,11 @@ function Story() {
         transition={cosmicSpring}
         className="max-w-4xl"
       >
-        <p className="label-caps mb-4 flex items-center gap-3 text-[var(--secondary)]">
-          <span className="h-px w-7 bg-[var(--secondary)]" />
+        <p className="label-caps mb-4 flex items-end justify-end gap-3 text-[var(--primary)]">
+          <span className="h-px w-7 bg-[var(--primary)]" />
           Origin
         </p>
-        <h2 className="title-serif max-w-[19ch] text-[clamp(2.25rem,4.8vw,3.75rem)] font-normal leading-[0.96] tracking-tight text-[var(--on-surface)]">
+        <h2 className="title-serif max-w-[19ch] lg:ml-60 mr-0 text-right text-[clamp(2.25rem,4.8vw,3.75rem)] font-normal leading-[0.96] tracking-tight text-[var(--on-surface)]">
           Why Andishi exists.
         </h2>
         <div className="mt-7 max-w-3xl space-y-5">
@@ -556,28 +565,28 @@ function FounderContext() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-70px" }}
           transition={cosmicSpring}
-          className="relative overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-5 backdrop-blur-2xl sm:p-6"
+          className="relative overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-5 backdrop-blur-2xl sm:p-6 max-md:!rounded-none max-md:!border-none max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!p-0"
         >
           <PlusTexture opacity={0.08} />
           <div className="relative grid gap-6 md:grid-cols-[13rem_1fr] md:items-center">
             <div className="relative aspect-[4/5] overflow-hidden rounded-[1.2rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_42%,transparent)]">
               <Image
                 src="/images/ian.jpg"
-                alt="Dennis Munge, founder of Andishi"
+                alt="Ian Mwangi, founder of Andishi"
                 fill
                 sizes="(min-width: 1024px) 13rem, 70vw"
                 className="object-cover brightness-[0.86] saturate-[0.92]"
               />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_42%,color-mix(in_srgb,var(--bg-deep)_78%,transparent)_100%)]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
             </div>
 
             <div>
               <p className="label-caps mb-4 text-[var(--primary)]">
-                Dennis Munge / Founder & CEO
+                Ian Mwangi / Founder & CEO
               </p>
               <div className="space-y-4 text-[0.94rem] leading-[1.8] text-[var(--on-surface-dim)]">
                 <p>
-                  Dennis started Andishi to fix the broken agency model: founders paying for bloated
+                  Ian started Andishi to fix the broken agency model: founders paying for bloated
                   account manager layers, missed deadlines, and unmotivated developers who don&apos;t
                   understand the product&apos;s business goals.
                 </p>
@@ -624,59 +633,85 @@ function Timeline() {
       id="timeline"
       className="scroll-mt-32 border-b border-[var(--glass-border)] py-16"
     >
-      <div className="grid gap-10 lg:grid-cols-[0.42fr_1fr]">
-        <div className="lg:sticky lg:top-28 lg:self-start">
-          <p className="label-caps mb-4 text-[var(--secondary)]">Timeline</p>
-          <h2 className="title-serif max-w-[17ch] text-[clamp(2.16rem,4.4vw,3.35rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
-            The journey so far.
-          </h2>
-        </div>
+      {/* Title row */}
+      <div className="mb-12 flex items-baseline justify-between gap-6">
+        <h2 className="title-serif text-[clamp(2.16rem,4.4vw,3.35rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
+          The journey so far.
+        </h2>
+        <p className="label-caps shrink-0 text-[var(--primary)]">Timeline</p>
+      </div>
 
-        <div className="relative border-l border-[var(--glass-border)] pl-7">
-          {timeline.map((item, index) => (
+      {/* Vertical timeline track container */}
+      <div className="relative pl-6 sm:pl-10">
+        {/* Timeline connector line */}
+        <div className="absolute left-[11px] top-2 bottom-2 w-[1px] bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--primary)_30%,transparent),color-mix(in_srgb,var(--tertiary)_40%,transparent))]" />
+
+        {timeline.map((item, index) => {
+          const isFeatured = !!item.badge;
+          return (
             <motion.article
               key={`${item.year}-${item.event}`}
               initial={{ opacity: 0, x: -16 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{
-                ...cosmicSpring,
-                delay: Math.min(index * 0.05, 0.24),
-              }}
-              className="relative pb-8 last:pb-0"
-            >
-              <span
-                className={cn(
-                  "absolute -left-[2.1rem] top-1 h-3 w-3 rounded-full border-2 bg-[var(--bg)]",
-                  item.current
-                     ? "border-[var(--tertiary)]"
-                     : "border-[color-mix(in_srgb,var(--on-surface)_22%,transparent)]",
-                )}
-              />
-              <p className="font-mono text-[0.72rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface-dim)_64%,transparent)]">
-                {item.year}
-              </p>
-              <h3 className="mt-2 text-[1rem] font-medium leading-snug text-[var(--on-surface)]">
-                {item.event}
-              </h3>
-              <p className="mt-2 max-w-2xl text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">
-                {item.detail}
-              </p>
-              {item.badge && (
-                <span
-                  className={cn(
-                    "mt-3 inline-flex rounded-full border px-3 py-1 text-[0.65rem] font-medium",
-                    item.current
-                      ? "border-[color-mix(in_srgb,var(--tertiary)_26%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_10%,transparent)] text-[var(--tertiary)]"
-                      : "border-[color-mix(in_srgb,var(--primary)_24%,transparent)] bg-[color-mix(in_srgb,var(--primary)_8%,transparent)] text-[var(--primary)]",
-                  )}
-                >
-                  {item.badge}
-                </span>
+              transition={{ ...cosmicSpring, delay: Math.min(index * 0.06, 0.25) }}
+              className={cn(
+                "relative pb-10 last:pb-0 group",
+                "max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:!pb-8 max-md:!pt-2 max-md:last:!border-b-0"
               )}
+            >
+              {/* Timeline dot */}
+              <div className="absolute left-[-29px] sm:left-[-33px] top-1.5 z-10 flex h-[10px] w-[10px] items-center justify-center rounded-full bg-[var(--bg)]">
+                <div
+                  className={cn(
+                    "h-[10px] w-[10px] rounded-full border transition-all duration-300 group-hover:scale-125",
+                    item.current
+                      ? "border-[var(--tertiary)] bg-[var(--tertiary)] shadow-[0_0_8px_var(--tertiary)]"
+                      : isFeatured
+                        ? "border-[var(--primary)] bg-[var(--primary)] shadow-[0_0_8px_var(--primary)]"
+                        : "border-[var(--glass-border)] bg-[var(--on-surface-dim)]"
+                  )}
+                />
+              </div>
+
+              {/* Destructured content card */}
+              <div className="grid gap-3 sm:grid-cols-[10rem_1fr] sm:gap-6">
+                <div>
+                  <p
+                    className="font-mono text-[0.74rem] font-normal tracking-tight"
+                    style={{
+                      color: item.current
+                        ? "var(--tertiary)"
+                        : "var(--primary)",
+                    }}
+                  >
+                    {item.year}
+                  </p>
+                  <h3 className="mt-1 text-[0.98rem] font-normal text-[var(--on-surface)] leading-snug">
+                    {item.event}
+                  </h3>
+                  {item.badge && (
+                    <span
+                      className={cn(
+                        "mt-2 inline-flex rounded-full border px-2 py-0.5 text-[0.62rem] font-medium tracking-tight",
+                        item.current
+                          ? "border-[color-mix(in_srgb,var(--tertiary)_26%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_10%,transparent)] text-[var(--tertiary)]"
+                          : "border-[color-mix(in_srgb,var(--primary)_24%,transparent)] bg-[color-mix(in_srgb,var(--primary)_8%,transparent)] text-[var(--primary)]",
+                      )}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
+                </div>
+                <div>
+                  <p className="text-[0.88rem] leading-[1.7] text-[var(--on-surface-dim)] max-w-xl">
+                    {item.detail}
+                  </p>
+                </div>
+              </div>
             </motion.article>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </section>
   );
@@ -688,11 +723,12 @@ function Values() {
       id="values"
       className="scroll-mt-32 border-b border-[var(--glass-border)] py-16"
     >
-      <div className="mb-9 max-w-3xl">
-        <p className="label-caps mb-4 text-[var(--secondary)]">Values</p>
-        <h2 className="title-serif max-w-[19ch] text-[clamp(2.18rem,4.5vw,3.45rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
+      {/* Title row: heading left, label right — z-pattern balance */}
+      <div className="mb-9 flex items-baseline justify-between gap-6">
+        <h2 className="title-serif text-[clamp(2.18rem,4.5vw,3.45rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
           What we actually believe.
         </h2>
+        <p className="label-caps shrink-0 text-[var(--primary)]">Values</p>
       </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {values.map((value, index) => {
@@ -822,7 +858,7 @@ function StudioStatus() {
                       whileInView={{ width: progress }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.9, delay: index * 0.08 }}
-                      className="h-full rounded-full bg-[var(--secondary)]"
+                      className="h-full rounded-full bg-[var(--primary)]"
                     />
                   </div>
                   <p className="mt-1 text-right font-mono text-[0.62rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
@@ -869,8 +905,8 @@ function StatusPanel({
   title: string;
 }) {
   return (
-    <article className="overflow-hidden rounded-[1.3rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl">
-      <div className="flex items-center justify-between border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface-high)_42%,transparent)] px-5 py-4">
+    <article className="overflow-hidden rounded-[1.3rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl max-md:!rounded-none max-md:!border-x-0 max-md:!border-t-0 max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!px-0 max-md:!py-6 max-md:last:!border-b-0">
+      <div className="flex items-center justify-between border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface-high)_42%,transparent)] px-5 py-4 max-md:!border-b-0 max-md:!bg-transparent max-md:!px-0 max-md:!pb-3">
         <p className="text-[0.86rem] font-medium text-[var(--on-surface)]">
           {title}
         </p>
@@ -878,7 +914,7 @@ function StatusPanel({
           {aside}
         </p>
       </div>
-      <div className="p-5">{children}</div>
+      <div className="p-5 max-md:!px-0 max-md:!pb-2">{children}</div>
     </article>
   );
 }
@@ -889,62 +925,72 @@ function Capabilities() {
       id="capabilities"
       className="scroll-mt-32 border-b border-[var(--glass-border)] py-16"
     >
-      <div className="grid gap-10 lg:grid-cols-[0.36fr_1fr]">
-        <div className="lg:sticky lg:top-28 lg:self-start">
-          <p className="label-caps mb-4 text-[var(--secondary)]">
-            Capabilities
+      {/* Title row: label left, heading right — z-pattern balance */}
+      <div className="mb-10 flex items-baseline justify-between gap-6">
+        <p className="label-caps shrink-0 text-[var(--primary)]">Capabilities</p>
+        <h2 className="title-serif text-right text-[clamp(2.16rem,4.4vw,3.35rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
+          Our technical coverage.
+        </h2>
+      </div>
+
+      <div className="grid gap-10 lg:grid-cols-[1fr_380px]">
+        {/* Skill groups as chip clouds */}
+        <div>
+          <p className="body-md mb-7 text-[var(--on-surface-dim)]">
+            Our build teams cover core product engineering needs across full-stack web, SaaS architectures, backend APIs, AI systems, cloud infrastructure, Web3, and mobile apps.
           </p>
-          <h2 className="title-serif max-w-[18ch] text-[clamp(2.16rem,4.4vw,3.35rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
-            Our technical coverage.
-          </h2>
-          <p className="body-md my-8 text-[var(--on-surface-dim)]">
-            Our build teams cover core product engineering needs across
-            full-stack web, SaaS architectures, backend APIs, AI systems,
-            cloud infrastructure, Web3, and mobile apps.
-          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {skillGroups.map((group) => (
+              <div
+                key={group.label}
+                className="rounded-[1.1rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-4 backdrop-blur-xl max-md:!rounded-none max-md:!border-none max-md:!bg-transparent max-md:!px-0 max-md:!py-3 max-md:!shadow-none max-md:!backdrop-blur-none"
+              >
+                <p className="label-caps mb-3 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
+                  {group.label}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {group.skills.map(([name]) => (
+                    <span
+                      key={name}
+                      className="rounded-full border border-[var(--glass-border)] px-2.5 py-1 font-mono text-[0.7rem] text-[var(--on-surface-dim)] transition-colors hover:border-[color-mix(in_srgb,var(--primary)_28%,transparent)] hover:text-[var(--primary)]"
+                    >
+                      {name as string}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="grid gap-7">
-          {skillGroups.map((group) => (
-            <div key={group.label}>
-              <p className="label-caps mb-4 flex items-center gap-3 text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)]">
-                {group.label}
-                <span className="h-px flex-1 bg-[var(--glass-border)]" />
-              </p>
-              <div className="grid gap-3">
-                {group.skills.map(([name, value]) => (
-                  <SkillBar
-                    key={name}
-                    name={name as string}
-                    value={value as number}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
+        {/* Radar chart — depth index */}
+        <div>
+          <div className="overflow-hidden rounded-[1.35rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-5 backdrop-blur-2xl">
+            <p className="label-caps mb-0.5 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">Depth index</p>
+            <p className="mb-3 text-[0.66rem] text-[color-mix(in_srgb,var(--on-surface-dim)_40%,transparent)]">Self-assessed across active projects</p>
+            <ResponsiveContainer width="100%" height={286}>
+              <RadarChart data={radarData} margin={{ top: 10, right: 28, bottom: 10, left: 28 }}>
+                <PolarGrid
+                  stroke="color-mix(in srgb, var(--on-surface) 9%, transparent)"
+                  strokeDasharray="3 3"
+                />
+                <PolarAngleAxis
+                  dataKey="domain"
+                  tick={{ fontSize: 10, fill: "var(--on-surface-dim)", fontFamily: "var(--font-jetbrains)" }}
+                />
+                <Radar
+                  dataKey="v"
+                  stroke="var(--primary)"
+                  fill="var(--primary)"
+                  fillOpacity={0.14}
+                  strokeWidth={1.5}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function SkillBar({ name, value }: { name: string; value: number }) {
-  return (
-    <div className="grid gap-2 sm:grid-cols-[10rem_1fr_2.5rem] sm:items-center sm:gap-4">
-      <p className="text-[0.84rem] text-[var(--on-surface-dim)]">{name}</p>
-      <div className="h-1.5 overflow-hidden rounded-full bg-[color-mix(in_srgb,var(--on-surface)_10%,transparent)]">
-        <motion.div
-          initial={{ width: 0 }}
-          whileInView={{ width: `${value}%` }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="h-full rounded-full bg-[var(--secondary)]"
-        />
-      </div>
-      <p className="font-mono text-[0.7rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)] sm:text-right">
-        {value}%
-      </p>
-    </div>
   );
 }
 
@@ -957,7 +1003,7 @@ function Signoff() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={cosmicSpring}
-          className="relative overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-6 backdrop-blur-2xl sm:p-8"
+          className="relative overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-6 backdrop-blur-2xl sm:p-8 max-md:!rounded-none max-md:!border-x-0 max-md:!border-t-0 max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!px-0 max-md:!py-8 max-md:last:!border-b-0 max-md:!translate-y-0"
         >
           <PlusTexture opacity={0.08} />
           <div className="relative">
@@ -1002,7 +1048,7 @@ function Signoff() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ ...cosmicSpring, delay: 0.08 }}
-          className="relative overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_42%,transparent)] p-6 shadow-[0_24px_80px_color-mix(in_srgb,var(--bg-deep)_20%,transparent)] backdrop-blur-2xl sm:p-8"
+          className="relative overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_42%,transparent)] p-6 shadow-[0_24px_80px_color-mix(in_srgb,var(--bg-deep)_20%,transparent)] backdrop-blur-2xl sm:p-8 max-md:!rounded-none max-md:!border-none max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!px-0 max-md:!py-8 max-md:!translate-y-0"
         >
           <FinalCtaArtwork
             imageClassName="left-[66%] top-[47%] w-[min(780px,150%)] opacity-[0.15] dark:opacity-[0.22]"

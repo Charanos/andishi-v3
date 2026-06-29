@@ -7,7 +7,7 @@ export const siteConfig = {
   nav: [
     { label: "Services", href: "/services" },
     { label: "Work", href: "/work" },
-    { label: "Contact", href: "/contact" },
     { label: "About", href: "/about" },
+    { label: "Contact", href: "/contact" },
   ],
 };

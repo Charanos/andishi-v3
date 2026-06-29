@@ -11,7 +11,7 @@ export function FloatingWhatsappButton() {
   const whatsappUrl = "https://wa.me/25474882157?text=Hi%20Andishi%20team,%20I%27d%20like%20to%20discuss%20a%20project%20or%20ask%20a%20question...";
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div className="fixed bottom-12 right-6 z-50 flex flex-col items-end">
       {/* WhatsApp Dialog Popover */}
       <AnimatePresence>
         {open && (

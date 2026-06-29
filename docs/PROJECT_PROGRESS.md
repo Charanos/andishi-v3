@@ -37,11 +37,15 @@ The project has transitioned from a talent supply service to a **software develo
 - **Global Typography Pivot**: Switched global branding font from Outfit to Nunito across layouts and CSS style variables.
 - **Lint Warning Cleanups**: Resolved sync setState warnings, unused imports, and generic catches.
 - **Header Nav Adjustments**: Replaced the Skills link with the Contact link in `siteConfig` config, and included a glassmorphic Login button on both desktop and mobile header bars.
+- **Mobile Card Destructuring**: Destructured cards and sections (FounderContext, Values, StudioStatus, and Signoff) on both About and Service Detail pages to form borderless list panels on mobile.
+- **Timeline & Sidebar Overhauls**: Replaced card-based grids with a real vertical line timeline on the About page. Designed a custom dotted visual timeline tracker within the left story sidebar.
+- **Mobile Nav Sheet Revamp**: Upgraded the expanded mobile drawer into a premium slide-down navigation overlay with side-by-side rounded action buttons, numbered links, and location details inline at the footer.
+- **Location Banner UX**: Bound location banner displaying visibility conditionally (`bannerOpen && !mobileOpen`) to gracefully resolve header layout space and avoid overlapping expanded mobile menus.
 
 ---
 
 ## Technical Audit & Verification Pass
 - **Type Safety**: Verified via `npx tsc --noEmit` and `npm run typecheck` (Passes cleanly with exit code 0).
-- **Production Build**: Verified successful production bundling via `npm run build`.
+- **Production Build**: Verified successful production bundling via `npm run build` (Passes cleanly with exit code 0).
 - **Environment**: PowerShell script execution policy set to `RemoteSigned` for the local workspace current user.
 

@@ -233,7 +233,7 @@ export function SupportWorkspacePage({ user }: { user: AuthUser }) {
           </p>
           <div className="mt-4 grid gap-3">
             {[
-              ["Admin resolver", "Dennis Munge"],
+              ["Admin resolver", "Ian Mwangi"],
               [
                 user.role === "client"
                   ? "Client workspace"

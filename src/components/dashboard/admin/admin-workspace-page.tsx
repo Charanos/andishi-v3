@@ -262,7 +262,7 @@ export function AdminWorkspacePage({
       description: note,
       tags: [status, "Admin"],
       relation: {
-        admin: "Dennis Munge",
+        admin: "Ian Mwangi",
         client: "Kijani Analytics",
         developer: "Amina Otieno",
         project: "AI support workflow",
@@ -880,31 +880,31 @@ function AuthIntakePanel({ records }: { records: AdminAuthIntakeRecord[] }) {
   const displayRecords = records.length
     ? records
     : [
-        {
-          id: "demo-client",
-          name: "Maya Kamau",
-          email: "client@andishi.dev",
-          role: "client" as const,
-          status: "active" as const,
-          emailVerified: true,
-          organizationId: "demo-org",
-          engineerId: null,
-          createdAt: new Date().toISOString(),
-          lastLoginAt: null,
-        },
-        {
-          id: "demo-dev",
-          name: "Amina Otieno",
-          email: "developer@andishi.dev",
-          role: "developer" as const,
-          status: "active" as const,
-          emailVerified: true,
-          organizationId: null,
-          engineerId: "demo-engineer",
-          createdAt: new Date().toISOString(),
-          lastLoginAt: null,
-        },
-      ];
+      {
+        id: "demo-client",
+        name: "Maya Kamau",
+        email: "client@andishi.dev",
+        role: "client" as const,
+        status: "active" as const,
+        emailVerified: true,
+        organizationId: "demo-org",
+        engineerId: null,
+        createdAt: new Date().toISOString(),
+        lastLoginAt: null,
+      },
+      {
+        id: "demo-dev",
+        name: "Amina Otieno",
+        email: "developer@andishi.dev",
+        role: "developer" as const,
+        status: "active" as const,
+        emailVerified: true,
+        organizationId: null,
+        engineerId: "demo-engineer",
+        createdAt: new Date().toISOString(),
+        lastLoginAt: null,
+      },
+    ];
 
   return (
     <section className="rounded-[1.35rem] border border-[var(--glass-border)] bg-[var(--surface)] p-4 sm:p-5">
@@ -1232,7 +1232,7 @@ function buildPageConfig(kind: AdminWorkspaceKind): PageConfig {
   const projectTwo = dashboardDemoData.projects[1];
   const invoice = dashboardDemoData.invoices[0];
   const commonRelation = {
-    admin: "Dennis Munge",
+    admin: "Ian Mwangi",
     client: org.name,
     developer: engineer.name,
     project: project.title,

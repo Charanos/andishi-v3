@@ -371,7 +371,7 @@ function EditUserModal({ onClose, onSubmit, user }: { onClose: () => void; onSub
 }
 
 function SectionHeader({ description, eyebrow, title }: { description: string; eyebrow: string; title: string }) {
-return <div><p className="label-caps text-[var(--primary)]">{eyebrow}</p><h2 className="title-serif mt-3 text-[clamp(1.48rem,2vw,1.9rem)] font-medium text-[var(--on-surface)]">{title}</h2><p className="mt-2 max-w-3xl text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">{description}</p></div>;
+  return <div><p className="label-caps text-[var(--primary)]">{eyebrow}</p><h2 className="title-serif mt-3 text-[clamp(1.48rem,2vw,1.9rem)] font-medium text-[var(--on-surface)]">{title}</h2><p className="mt-2 max-w-3xl text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">{description}</p></div>;
 }
 
 function ChartPanel({ children, description, title, value }: { children: ReactNode; description: string; title: string; value: string }) {
@@ -517,7 +517,7 @@ const fallbackUsers: AdminAuthIntakeRecord[] = [
     engineerId: null,
     id: "seed-admin",
     lastLoginAt: "2026-06-04T08:30:00.000Z",
-    name: "Dennis Munge",
+    name: "Ian Mwangi",
     organizationId: null,
     role: "admin",
     status: "active",

@@ -1940,7 +1940,7 @@ async function seedAdmin() {
   } else {
     await db.insert(users).values({
       email,
-      name:          "Dennis Munge",
+      name:          "Ian Mwangi",
       role:          "admin",
       status:        "active",
       emailVerified: true,

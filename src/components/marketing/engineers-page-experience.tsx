@@ -174,9 +174,9 @@ function EngineerCard({
             className="object-cover brightness-[0.82] saturate-[0.88] transition duration-700 group-hover/card:scale-105 group-hover/card:brightness-[0.95] group-hover/card:saturate-100"
           />
           <PatternTexture opacity={0.08} />
-          <div className="absolute inset-0 bg-[linear-gradient(to_top,color-mix(in_srgb,var(--bg)_78%,transparent),transparent_58%)]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
 
-          <span className="absolute left-4 top-4 rounded-lg bg-[color-mix(in_srgb,var(--bg)_48%,transparent)] px-2.5 py-1 font-mono text-[0.68rem] tracking-tight text-[color-mix(in_srgb,var(--on-surface)_68%,transparent)] backdrop-blur-xl">
+          <span className="absolute left-4 top-4 rounded-lg bg-black/40 px-2.5 py-1 font-mono text-[0.68rem] tracking-tight text-white/80 backdrop-blur-xl">
             {formatIndex(index)}
           </span>
           <span className="absolute right-4 top-4">
@@ -185,15 +185,15 @@ function EngineerCard({
 
           <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
             <div className="min-w-0">
-              <p className="label-caps mb-2 text-[color-mix(in_srgb,var(--on-surface)_74%,transparent)]">
+              <p className="label-caps mb-2 text-white/70">
                 {engineer.domains.map(domainLabel).join(" / ")}
               </p>
-              <h2 className="truncate text-[1.18rem] font-medium leading-tight tracking-tight text-[var(--on-surface)]">
+              <h2 className="truncate text-[1.18rem] font-medium leading-tight tracking-tight text-white">
                 {engineer.name}
               </h2>
             </div>
             {engineer.featured && (
-              <span className="shrink-0 rounded-full border border-[color-mix(in_srgb,var(--secondary)_32%,transparent)] bg-[color-mix(in_srgb,var(--bg)_62%,transparent)] px-2.5 py-1 font-mono text-[0.64rem] text-[var(--on-surface)] backdrop-blur-xl">
+              <span className="shrink-0 rounded-full border border-white/20 bg-black/40 px-2.5 py-1 font-mono text-[0.64rem] text-white backdrop-blur-xl">
                 Featured
               </span>
             )}

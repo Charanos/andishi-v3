@@ -9,7 +9,7 @@ config({ path: ".env" });
 
 const email = (process.env.ADMIN_SEED_EMAIL ?? "dennis@andishi.dev").toLowerCase();
 const password = process.env.ADMIN_SEED_PASSWORD ?? "dennis-andishi@123";
-const name = process.env.ADMIN_SEED_NAME ?? "Dennis Munge";
+const name = process.env.ADMIN_SEED_NAME ?? "Ian Mwangi";
 
 async function main() {
   console.log(`Seeding admin: ${email}`);

@@ -1339,7 +1339,7 @@ We build software for clients across Africa, Europe, and North America because d
 
 We also place engineers because the talent is real and the arbitrage is real. Both services come from the same network and the same standards.
 
-**Attribution:** Dennis Munge, Founder, Andishi
+**Attribution:** Ian Mwangi, Founder, Andishi
 
 ### Design
 

@@ -299,7 +299,7 @@ export function StartProjectExperience() {
 
         <form
           onSubmit={submitBrief}
-          className="flex min-h-[calc(100svh-6rem)] flex-col py-8 lg:pl-10"
+          className="flex min-h-[calc(100svh-6rem)] w-full max-w-4xl flex-col py-8 lg:mx-auto lg:px-8 xl:px-12"
         >
           <div className="mb-6 flex items-center justify-between gap-4 border-b border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] pb-5 dark:border-[var(--glass-border)]">
             <p className="font-mono text-[0.86rem] tracking-tight text-[var(--on-surface-dim)]">

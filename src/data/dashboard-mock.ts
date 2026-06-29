@@ -20,7 +20,7 @@ export const demoUsers = [
   {
     id: demoIds.adminUser,
     email: "dennis@andishi.dev",
-    name: "Dennis Munge",
+    name: "Ian Mwangi",
     role: "admin",
     status: "active",
     emailVerified: true,

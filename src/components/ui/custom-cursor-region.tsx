@@ -18,6 +18,7 @@ export function CustomCursorRegion({
 }) {
   const [visible, setVisible] = useState(false);
   const [hoveringAction, setHoveringAction] = useState(false);
+  const [cursorText, setCursorText] = useState<string | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const cursorRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
@@ -51,10 +52,15 @@ export function CustomCursorRegion({
     pointerRef.current.my = event.clientY;
 
     const target = event.target;
-    setHoveringAction(
-      target instanceof Element &&
-        Boolean(target.closest("a, button, input, textarea, select")),
-    );
+    if (target instanceof Element) {
+      setHoveringAction(Boolean(target.closest("a, button, input, textarea, select, [role='button']")));
+      const customCursorTarget = target.closest("[data-cursor-text]");
+      if (customCursorTarget) {
+        setCursorText(customCursorTarget.getAttribute("data-cursor-text"));
+      } else {
+        setCursorText(null);
+      }
+    }
 
     if (cursorRef.current) {
       cursorRef.current.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, -50%)`;
@@ -78,21 +84,29 @@ export function CustomCursorRegion({
           <div
             ref={cursorRef}
             aria-hidden="true"
-            className="pointer-events-none fixed left-0 top-0 z-[90] hidden rounded-full bg-[var(--secondary)] mix-blend-difference transition-[height,width,opacity,background-color] duration-300 md:block"
+            className="pointer-events-none fixed left-0 top-0 z-[100] hidden flex-col items-center justify-center overflow-hidden rounded-full mix-blend-difference transition-[height,width,opacity,background-color] duration-300 md:flex"
             style={{
               opacity: visible ? 1 : 0,
-              width: hoveringAction ? 46 : 10,
-              height: hoveringAction ? 46 : 10,
-              backgroundColor: hoveringAction
+              width: cursorText ? 72 : hoveringAction ? 46 : 10,
+              height: cursorText ? 72 : hoveringAction ? 46 : 10,
+              backgroundColor: cursorText
+                ? "var(--secondary)"
+                : hoveringAction
                 ? "color-mix(in srgb, var(--secondary) 18%, transparent)"
                 : "var(--secondary)",
             }}
-          />
+          >
+            {cursorText && (
+              <span className="font-mono text-[0.65rem] font-bold tracking-widest text-white whitespace-nowrap text-center opacity-100">
+                {cursorText}
+              </span>
+            )}
+          </div>
           <div
             ref={ringRef}
             aria-hidden="true"
-            className="pointer-events-none fixed left-0 top-0 z-[89] hidden h-9 w-9 rounded-full border border-[color-mix(in_srgb,var(--secondary)_48%,transparent)] transition-opacity duration-300 md:block"
-            style={{ opacity: visible && !hoveringAction ? 1 : 0 }}
+            className="pointer-events-none fixed left-0 top-0 z-[99] hidden h-9 w-9 rounded-full border border-[color-mix(in_srgb,var(--secondary)_48%,transparent)] transition-opacity duration-300 md:block"
+            style={{ opacity: visible && !hoveringAction && !cursorText ? 1 : 0 }}
           />
         </>
       )}

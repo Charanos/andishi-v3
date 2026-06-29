@@ -588,7 +588,7 @@ function InlineCta() {
             Turn the insight into your next product.
           </h2>
           <p className="mt-3 text-[0.94rem] leading-relaxed text-[var(--on-surface-dim)]">
-            We design, build, and ship — or place a specialist engineer on your team. Share what you need.
+            We design, build, and ship - or place a specialist engineer on your team. Share what you need.
           </p>
         </div>
         <Link
@@ -833,7 +833,7 @@ export default async function BlogPostPage({ params }: Props) {
                   Let&apos;s design, build, and ship your next product.
                 </h2>
                 <p className="body-md mx-auto my-8 max-w-lg text-[var(--on-surface-dim)]">
-                  Tell us what you&apos;re building. We return a clear brief, fixed timeline, and direct pricing within 48 hours — or match you with a vetted specialist.
+                  Tell us what you&apos;re building. We return a clear brief, fixed timeline, and direct pricing within 48 hours - or match you with a vetted specialist.
                 </p>
                 <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
                   <Link
