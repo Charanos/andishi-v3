@@ -64,6 +64,8 @@ The public frontend is **pivot-accurate** and is treated as a requirements sourc
 6. **Observable by default.** Sentry, structured logging, request IDs, and health checks are part of "done," not an afterthought.
 7. **Migrations are the only way to change the DB.** No manual schema edits; every change is a generated, reviewed, committed migration.
 8. **Backwards-safe.** New columns are nullable or defaulted; enums are extended, not repurposed; existing routes keep working while the layer is introduced behind them.
+9. **Serverless-native infrastructure only.** Every piece of infra (DB driver, cache, rate limiter) must work as stateless serverless functions with no persistent connections - see ADR-0002's driver swap and ADR-0008's Upstash choice for why this isn't optional.
+10. **Stay unified until a real trigger fires.** One Next.js codebase for frontend + API, deliberately, until a concrete condition (second consumer, non-serverless workload, dedicated backend team, proven platform limit) makes a separate backend service worth its cost - see [ADR-0010](adr/ADR-0010-monolith-vs-separated-backend.md). The service layer is already structured so that split would be an extraction, not a rewrite, if/when it happens.
 
 ---
 
@@ -153,6 +155,7 @@ Ten modules. Each has: owning team(s), permission namespace, tables, key service
 | **Marketing** | Campaigns, newsletter, attribution, SEO/analytics ingestion | marketer | site-wide |
 | **CMS** | Blog, work/case studies, services, skills, static pages | content_editor | `/blog`, `/work`, `/services`, `/skills` |
 | **Support** | Cases, threads, resolver queue | support_agent | dashboard support chat |
+| ↳ delivery mechanism | Polling first (15-20s notifications, 5-8s active chat), managed realtime or SSE only if proven necessary | — | see [ADR-0009](adr/ADR-0009-messaging-delivery-strategy.md) |
 | **Platform** | Settings, integrations, notifications, audit, jobs | super_admin | `/admin/settings` |
 
 ⭐ = first build module.
@@ -307,7 +310,7 @@ idempotency_keys    key text pk, user_id, route, response_hash, created_at
 - **Filtering/sort**: explicit whitelisted query params per resource; never interpolate raw input into SQL (Drizzle parameterises).
 - **Validation**: one Zod schema per input in `lib/validation/<module>.ts`; `safeParse` → `validationError`.
 - **Idempotency**: mutating POSTs that create money/records accept an `Idempotency-Key` header checked against `idempotency_keys`.
-- **Rate limiting**: public unauthenticated POSTs (`contact`, `general-inquiry`, `register`, careers `apply`) are rate-limited by IP.
+- **Rate limiting** ✅: `src/lib/rate-limit.ts` (Upstash, [ADR-0008](adr/ADR-0008-caching-and-jobs.md)), wired into `login`, `register`, `contact`, `general-inquiry`. Fails open until `UPSTASH_REDIS_REST_URL`/`TOKEN` are provisioned. Extend to careers `apply` in P5.
 - **Response envelope**: success `{ <resource>: ... }` or `{ data, ... }`; error `{ error, field?, code? }`.
 - **Versioning**: internal API is co-deployed with the app; breaking changes are gated behind additive fields, not URL versions, for now.
 

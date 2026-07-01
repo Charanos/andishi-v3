@@ -3,12 +3,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { emailVerificationTokens, engineers, organizations, users } from "@/db/schema";
+import { getClientIp } from "@/lib/api/request";
 import { hashPassword, validatePassword } from "@/lib/auth/password";
 import { createSession } from "@/lib/auth/session";
 import { sendVerificationEmail } from "@/lib/email";
+import { rateLimit } from "@/lib/rate-limit";
 import { registerSchema } from "@/lib/validation/auth";
 
 export async function POST(req: NextRequest) {
+  const { allowed } = await rateLimit("register", getClientIp(req) ?? "unknown", {
+    limit: 5,
+    windowSeconds: 3600,
+  });
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many registration attempts. Try again later." },
+      { status: 429 },
+    );
+  }
+
   const body = await req.json().catch(() => null);
   const parsed = registerSchema.safeParse(body);
 
@@ -32,7 +45,10 @@ export async function POST(req: NextRequest) {
     .limit(1);
 
   if (existing) {
-    return NextResponse.json({ error: "An account with this email already exists." }, { status: 409 });
+    return NextResponse.json(
+      { error: "An account with this email already exists." },
+      { status: 409 },
+    );
   }
 
   const [user] = await db
@@ -117,17 +133,20 @@ export async function POST(req: NextRequest) {
     user.role,
   );
 
-  return NextResponse.json({
-    user: {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-      organizationId: linkedOrganizationId,
-      engineerId: linkedEngineerId,
+  return NextResponse.json(
+    {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        organizationId: linkedOrganizationId,
+        engineerId: linkedEngineerId,
+      },
+      redirect: parsed.data.role === "client" ? "/dashboard" : "/dev",
     },
-    redirect: parsed.data.role === "client" ? "/dashboard" : "/dev",
-  }, { status: 201 });
+    { status: 201 },
+  );
 }
 
 function hashToken(token: string) {
@@ -145,10 +164,12 @@ function createSlug(name: string, id: string) {
 }
 
 function getInitials(name: string) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("") || "AD";
+  return (
+    name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join("") || "AD"
+  );
 }

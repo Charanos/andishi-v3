@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { Resend } from "resend";
+import { getClientIp } from "@/lib/api/request";
+import { rateLimit } from "@/lib/rate-limit";
 
 const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL ?? "dennis@andishi.dev";
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "noreply@andishi.dev";
@@ -14,6 +16,17 @@ const generalInquirySchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    const { allowed } = await rateLimit("general-inquiry", getClientIp(req) ?? "unknown", {
+      limit: 5,
+      windowSeconds: 3600,
+    });
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "Too many submissions. Please try again later." },
+        { status: 429 },
+      );
+    }
+
     const body = await req.json().catch(() => null);
     if (!body) {
       return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
@@ -24,18 +37,20 @@ export async function POST(req: NextRequest) {
       const issue = parsed.error.issues[0];
       return NextResponse.json(
         { error: issue?.message ?? "Validation failed", field: issue?.path.join(".") },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const { name, email, subject, message } = parsed.data;
 
-    console.log(`[General Inquiry] Received from ${name} (${email}): Subject: "${subject}" - Message: "${message}"`);
+    console.log(
+      `[General Inquiry] Received from ${name} (${email}): Subject: "${subject}" - Message: "${message}"`,
+    );
 
     // Attempt to send email via Resend if API key is configured
     if (process.env.RESEND_API_KEY) {
       const resend = new Resend(process.env.RESEND_API_KEY);
-      
+
       const cleanHtml = (text: string) => {
         return text
           .replaceAll("&", "&amp;")
@@ -45,11 +60,12 @@ export async function POST(req: NextRequest) {
           .replaceAll("'", "&#039;");
       };
 
-      await resend.emails.send({
-        from: FROM_EMAIL,
-        to: ADMIN_EMAIL,
-        subject: `[Andishi] General Inquiry: ${subject}`,
-        html: `
+      await resend.emails
+        .send({
+          from: FROM_EMAIL,
+          to: ADMIN_EMAIL,
+          subject: `[Andishi] General Inquiry: ${subject}`,
+          html: `
           <p><strong>New General Inquiry Received</strong></p>
           <p><strong>Name:</strong> ${cleanHtml(name)}</p>
           <p><strong>Email:</strong> ${cleanHtml(email)}</p>
@@ -57,9 +73,10 @@ export async function POST(req: NextRequest) {
           <p><strong>Message:</strong></p>
           <p style="white-space: pre-wrap; padding: 12px; background-color: #f6f6f6; border-radius: 6px;">${cleanHtml(message)}</p>
         `,
-      }).catch((err) => {
-        console.error("[General Inquiry Email Error]:", err);
-      });
+        })
+        .catch((err) => {
+          console.error("[General Inquiry Email Error]:", err);
+        });
     } else {
       console.log("[General Inquiry] Resend not configured, skipping email dispatch.");
     }

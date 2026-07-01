@@ -2,13 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { activityEvents, briefs, organizations, users } from "@/db/schema";
-import { parseJson, validationError } from "@/lib/api/responses";
+import { getClientIp } from "@/lib/api/request";
+import { jsonError, parseJson, validationError } from "@/lib/api/responses";
 import { contactSchema } from "@/lib/validation/contact";
 import {
   sendBuildBriefConfirmation,
   sendHireBriefConfirmation,
   sendProjectInquiryNotification,
 } from "@/lib/email";
+import { rateLimit } from "@/lib/rate-limit";
 
 const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL ?? "dennis@andishi.dev";
 
@@ -30,6 +32,12 @@ const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL ?? "dennis@andishi.dev"
  * Security: does NOT leak whether an email already exists (silent upsert).
  */
 export async function POST(req: NextRequest) {
+  const { allowed } = await rateLimit("contact", getClientIp(req) ?? "unknown", {
+    limit: 5,
+    windowSeconds: 3600,
+  });
+  if (!allowed) return jsonError("Too many submissions. Please try again later.", 429);
+
   const body = await parseJson(req);
   const parsed = contactSchema.safeParse(body);
 
@@ -73,7 +81,7 @@ export async function POST(req: NextRequest) {
         email: data.email.toLowerCase(),
         name: data.name,
         role: "client",
-        status: "invited",  // guest - not yet a registered user
+        status: "invited", // guest - not yet a registered user
         emailVerified: false,
         organizationId: org.id,
       })
@@ -85,30 +93,30 @@ export async function POST(req: NextRequest) {
   const briefValues =
     data.type === "build"
       ? {
-        organizationId: org.id,
-        submittedById: user.id,
-        title: `Build: ${data.serviceType} - ${data.company ?? data.name}`,
-        briefType: "build" as const,
-        serviceType: data.serviceType,
-        problemStatement: data.problemStatement,
-        projectBudget: data.projectBudget,
-        projectTimeline: data.projectTimeline,
-        status: "submitted" as const,
-      }
+          organizationId: org.id,
+          submittedById: user.id,
+          title: `Build: ${data.serviceType} - ${data.company ?? data.name}`,
+          briefType: "build" as const,
+          serviceType: data.serviceType,
+          problemStatement: data.problemStatement,
+          projectBudget: data.projectBudget,
+          projectTimeline: data.projectTimeline,
+          status: "submitted" as const,
+        }
       : {
-        organizationId: org.id,
-        submittedById: user.id,
-        title: `Hire: ${data.seniority} ${data.role} - ${data.company ?? data.name}`,
-        briefType: "hire" as const,
-        role: data.role,
-        domain: data.domain,
-        seniority: data.seniority,
-        stackTags: data.stackTags,
-        timeline: data.timeline,
-        engagementModel: data.engagementModel,
-        description: data.description,
-        status: "submitted" as const,
-      };
+          organizationId: org.id,
+          submittedById: user.id,
+          title: `Hire: ${data.seniority} ${data.role} - ${data.company ?? data.name}`,
+          briefType: "hire" as const,
+          role: data.role,
+          domain: data.domain,
+          seniority: data.seniority,
+          stackTags: data.stackTags,
+          timeline: data.timeline,
+          engagementModel: data.engagementModel,
+          description: data.description,
+          status: "submitted" as const,
+        };
 
   const [brief] = await db.insert(briefs).values(briefValues).returning();
 
@@ -132,17 +140,17 @@ export async function POST(req: NextRequest) {
   // ── 5. Send emails (non-blocking - failures are logged, not thrown) ──
 
   if (data.type === "build") {
-    sendBuildBriefConfirmation(data.email, data.name, data.serviceType).catch(
-      (err) => console.error("[email] Build confirmation failed:", err),
+    sendBuildBriefConfirmation(data.email, data.name, data.serviceType).catch((err) =>
+      console.error("[email] Build confirmation failed:", err),
     );
   } else {
-    sendHireBriefConfirmation(data.email, data.name, data.role).catch(
-      (err) => console.error("[email] Hire confirmation failed:", err),
+    sendHireBriefConfirmation(data.email, data.name, data.role).catch((err) =>
+      console.error("[email] Hire confirmation failed:", err),
     );
   }
 
-  sendProjectInquiryNotification(ADMIN_EMAIL, data as Record<string, unknown>).catch(
-    (err) => console.error("[email] Admin notification failed:", err),
+  sendProjectInquiryNotification(ADMIN_EMAIL, data as Record<string, unknown>).catch((err) =>
+    console.error("[email] Admin notification failed:", err),
   );
 
   return NextResponse.json({ success: true, briefId: brief.id }, { status: 201 });

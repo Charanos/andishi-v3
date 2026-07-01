@@ -11,6 +11,9 @@ ADRs record the significant, hard-to-reverse backend decisions and the reasoning
 | [0005](ADR-0005-observability-testing.md) | Observability (Sentry) & testing strategy | Accepted |
 | [0006](ADR-0006-careers-talent-supply.md) | Careers / talent-supply model (freelance, internal, outsourced) | Accepted |
 | [0007](ADR-0007-role-interconnections.md) | Cross-role interconnection and workflow handoff model | Accepted |
+| [0008](ADR-0008-caching-and-jobs.md) | Caching, rate limiting, and background job infrastructure (Upstash) | Accepted |
+| [0009](ADR-0009-messaging-delivery-strategy.md) | Internal messaging & notification delivery strategy (polling first) | Accepted |
+| [0010](ADR-0010-monolith-vs-separated-backend.md) | Stay unified on Next.js — defer a separated backend service | Accepted |
 
 **Status values**: Proposed · Accepted · Deprecated · Superseded.
 Add a new ADR by copying the format and incrementing the number. Never edit an accepted ADR's decision in place — supersede it with a new one.
