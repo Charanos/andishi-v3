@@ -12,6 +12,7 @@ import {
 import { briefs } from "@/db/schema/briefs";
 import { organizations } from "@/db/schema/organizations";
 import { placements } from "@/db/schema/placements";
+import { users } from "@/db/schema/users";
 
 // ── Enums ─────────────────────────────────────────────────────────
 
@@ -29,6 +30,19 @@ export const milestoneStatusEnum = pgEnum("milestone_status", [
   "submitted",
   "approved",
   "revision",
+]);
+
+// NEW - P1: rollup health signal, distinct from status (a project can be
+// "active" and still "at_risk"). Set/derived by delivery_pm services.
+export const projectHealthEnum = pgEnum("project_health", ["on_track", "at_risk", "off_track"]);
+
+// NEW - P1: determines how delivery.milestone/timesheet data feeds finance's
+// invoice generation (fixed = milestone amounts, time_and_materials = billed
+// hours, retainer = flat recurring).
+export const projectBillingTypeEnum = pgEnum("project_billing_type", [
+  "fixed",
+  "time_and_materials",
+  "retainer",
 ]);
 
 // ── Interfaces ────────────────────────────────────────────────────
@@ -49,7 +63,9 @@ export const projects = pgTable("projects", {
   id: uuid("id").primaryKey().defaultRandom(),
   briefId: uuid("brief_id").references(() => briefs.id),
   placementId: uuid("placement_id").references(() => placements.id),
-  organizationId: uuid("organization_id").notNull().references(() => organizations.id),
+  organizationId: uuid("organization_id")
+    .notNull()
+    .references(() => organizations.id),
   engineerIds: jsonb("engineer_ids").$type<string[]>().notNull().default(sql`'[]'::jsonb`),
   title: text("title").notNull(),
   description: text("description").notNull(),
@@ -57,10 +73,18 @@ export const projects = pgTable("projects", {
   startDate: text("start_date"),
   targetDate: text("target_date"),
   stackTags: jsonb("stack_tags").$type<string[]>().notNull().default(sql`'[]'::jsonb`),
-  milestones: jsonb("milestones")
-    .$type<ProjectMilestone[]>()
-    .notNull()
-    .default(sql`'[]'::jsonb`),
+  // DEPRECATED - P1 promotes milestones to a real table (see
+  // src/db/schema/delivery.ts). Kept for backward compatibility with the
+  // existing PATCH /api/projects/[id] passthrough; new milestone workflows
+  // (submit/approve/amount) should use the `milestones` table instead.
+  milestones: jsonb("milestones").$type<ProjectMilestone[]>().notNull().default(sql`'[]'::jsonb`),
+
+  // ── NEW P1 - delivery/PM rollup fields ──────────────────────────
+  code: text("code").unique(), // short reference code, e.g. "PRJ-001"
+  health: projectHealthEnum("health").notNull().default("on_track"),
+  budgetCents: integer("budget_cents"),
+  billingType: projectBillingTypeEnum("billing_type"),
+  leadPmUserId: uuid("lead_pm_user_id").references(() => users.id, { onDelete: "set null" }),
 
   // ── NEW June 2026 - public case study fields ───────────────────
   // Service type maps to /services/[slug] - determines which service this project represents
@@ -79,13 +103,13 @@ export const projects = pgTable("projects", {
 
   // Case study content
   coverImageUrl: text("cover_image_url"),
-  challenge: text("challenge"),              // one-paragraph problem statement
-  solution: text("solution"),              // one-paragraph what was built
-  outcome: text("outcome"),               // key result value e.g. "6hrs"
-  outcomeLabel: text("outcome_label"),         // context e.g. "saved per staff member weekly"
+  challenge: text("challenge"), // one-paragraph problem statement
+  solution: text("solution"), // one-paragraph what was built
+  outcome: text("outcome"), // key result value e.g. "6hrs"
+  outcomeLabel: text("outcome_label"), // context e.g. "saved per staff member weekly"
   clientQuote: text("client_quote"),
   clientQuoteAttribution: text("client_quote_attribution"),
-  clientName: text("client_name"),           // display name for the case study card
+  clientName: text("client_name"), // display name for the case study card
 
   // Featured ordering - lower number appears earlier on /work (null = not featured)
   featuredOrder: integer("featured_order"),

@@ -2,7 +2,8 @@
 
 **Version**: 3.0 - Supersedes all previous dashboard notes
 **Date**: May 2026
-**Source of truth**: This document is the primary dashboard execution authority.
+**Source of truth**: This document is the primary dashboard **UI/UX** execution authority.
+**Backend authority**: `docs/backend/BACKEND_ARCHITECTURE_MASTER.md` governs the server-side data model, RBAC/permissions, service layer, ERP modules, CMS/CRM, careers, finance ledger, and observability that power these dashboards. Where the two overlap (entities, RBAC, persistence), the backend master is authoritative for server behaviour.
 **Supporting docs**: DASHBOARD_CLAUDE_CODE_PROMPT.md -> DASHBOARD_IMPLEMENTATION_PLAYBOOK.md -> Component_Library.md -> THEME_GUIDE.md -> V3_CURRENT_STATE_AUDIT.md -> PROJECT_PROGRESS.md
 **Page revamp pattern**: ADMIN_DASHBOARD_PAGE_REVAMP_PATTERN.md documents the page-specific decomposition pattern started with `/admin/briefs`.
 **GitHub**: `https://github.com/Charanos/andishi-v3.git`

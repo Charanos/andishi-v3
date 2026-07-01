@@ -19,7 +19,9 @@ export async function GET(req: NextRequest) {
   const expectedState = cookieStore.get(googleStateCookieName)?.value;
   const verifier = cookieStore.get(googleVerifierCookieName)?.value;
 
+  // eslint-disable-next-line drizzle/enforce-delete-with-where -- Next.js cookie store, not a Drizzle table
   cookieStore.delete(googleStateCookieName);
+  // eslint-disable-next-line drizzle/enforce-delete-with-where -- Next.js cookie store, not a Drizzle table
   cookieStore.delete(googleVerifierCookieName);
 
   if (!code || !state || !expectedState || !verifier || state !== expectedState) {

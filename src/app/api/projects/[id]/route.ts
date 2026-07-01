@@ -10,28 +10,18 @@ async function getProjectForRequest(id: string) {
   const session = await getSession();
   if (!session) return { session: null, project: null, allowed: false };
 
-  const [project] = await getDb()
-    .select()
-    .from(projects)
-    .where(eq(projects.id, id))
-    .limit(1);
+  const [project] = await getDb().select().from(projects).where(eq(projects.id, id)).limit(1);
   if (!project) return { session, project: null, allowed: false };
 
   const allowed =
     session.user.role === "admin" ||
     session.user.organizationId === project.organizationId ||
-    Boolean(
-      session.user.engineerId &&
-        project.engineerIds.includes(session.user.engineerId),
-    );
+    Boolean(session.user.engineerId && project.engineerIds.includes(session.user.engineerId));
 
   return { session, project, allowed };
 }
 
-export async function GET(
-  _req: NextRequest,
-  context: { params: Promise<{ id: string }> },
-) {
+export async function GET(_req: NextRequest, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
   const { session, project, allowed } = await getProjectForRequest(id);
   if (!session) return jsonError("Unauthorized", 401);
@@ -40,10 +30,7 @@ export async function GET(
   return NextResponse.json({ project });
 }
 
-export async function PUT(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> },
-) {
+export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
   const { session, project, allowed } = await getProjectForRequest(id);
   if (!session) return jsonError("Unauthorized", 401);
@@ -59,7 +46,7 @@ export async function PUT(
       ? parsed.data
       : {
           milestones: parsed.data.milestones,
-          status:     parsed.data.status,
+          status: parsed.data.status,
         };
 
   const [updated] = await getDb()
@@ -78,21 +65,14 @@ export async function PUT(
  * 1. isPublic: true → validate against publishCaseStudySchema and publish to /work
  * 2. Standard partial update → any subset of project fields
  */
-export async function PATCH(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> },
-) {
+export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session || session.user.role !== "admin") {
     return jsonError("Forbidden", 403);
   }
 
   const { id } = await context.params;
-  const [existing] = await getDb()
-    .select()
-    .from(projects)
-    .where(eq(projects.id, id))
-    .limit(1);
+  const [existing] = await getDb().select().from(projects).where(eq(projects.id, id)).limit(1);
   if (!existing) return jsonError("Project not found", 404);
 
   const body = await parseJson(req);
@@ -109,15 +89,17 @@ export async function PATCH(
       .where(eq(projects.id, id))
       .returning();
 
-    await getDb().insert(activityEvents).values({
-      type:        "project_published",
-      actorId:     session.user.id,
-      actorRole:   "admin",
-      entityType:  "project",
-      entityId:    updated.id,
-      description: `Project "${updated.title}" published as public case study at /work/${updated.publicSlug}`,
-      visibleTo:   ["admin"],
-    });
+    await getDb()
+      .insert(activityEvents)
+      .values({
+        type: "project_published",
+        actorId: session.user.id,
+        actorRole: "admin",
+        entityType: "project",
+        entityId: updated.id,
+        description: `Project "${updated.title}" published as public case study at /work/${updated.publicSlug}`,
+        visibleTo: ["admin"],
+      });
 
     return NextResponse.json({ project: updated });
   }
@@ -131,15 +113,17 @@ export async function PATCH(
       .where(eq(projects.id, id))
       .returning();
 
-    await getDb().insert(activityEvents).values({
-      type:        "project_unpublished",
-      actorId:     session.user.id,
-      actorRole:   "admin",
-      entityType:  "project",
-      entityId:    updated.id,
-      description: `Project "${updated.title}" unpublished from /work`,
-      visibleTo:   ["admin"],
-    });
+    await getDb()
+      .insert(activityEvents)
+      .values({
+        type: "project_unpublished",
+        actorId: session.user.id,
+        actorRole: "admin",
+        entityType: "project",
+        entityId: updated.id,
+        description: `Project "${updated.title}" unpublished from /work`,
+        visibleTo: ["admin"],
+      });
 
     return NextResponse.json({ project: updated });
   }
@@ -157,10 +141,7 @@ export async function PATCH(
   return NextResponse.json({ project: updated });
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  context: { params: Promise<{ id: string }> },
-) {
+export async function DELETE(_req: NextRequest, context: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session || session.user.role !== "admin") return jsonError("Forbidden", 403);
 

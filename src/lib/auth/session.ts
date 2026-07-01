@@ -30,11 +30,7 @@ export type LoginResult =
   | { ok: true; user: AuthUser }
   | {
       ok: false;
-      reason:
-        | "invalid_credentials"
-        | "account_disabled"
-        | "account_invited"
-        | "email_unverified";
+      reason: "invalid_credentials" | "account_disabled" | "account_invited" | "email_unverified";
     };
 
 function getJwtSecret() {
@@ -47,10 +43,7 @@ function getJwtSecret() {
   return secret;
 }
 
-export async function authenticateUser(
-  email: string,
-  password: string,
-): Promise<LoginResult> {
+export async function authenticateUser(email: string, password: string): Promise<LoginResult> {
   const normalized = email.trim().toLowerCase();
   const [user] = await getDb().select().from(users).where(eq(users.email, normalized)).limit(1);
 
@@ -120,6 +113,7 @@ export async function setSessionCookie(token: string) {
 
 export async function clearSession() {
   const cookieStore = await cookies();
+  // eslint-disable-next-line drizzle/enforce-delete-with-where -- Next.js cookie store, not a Drizzle table
   cookieStore.delete(sessionCookieName);
 }
 
@@ -143,12 +137,7 @@ export const getSession = cache(async function getSession(): Promise<SessionCont
   let payload: JwtPayload;
   try {
     const decoded = jwt.verify(token, getJwtSecret()) as Partial<JwtPayload>;
-    if (
-      !decoded.sessionId ||
-      !decoded.userId ||
-      !decoded.role ||
-      !isUserRole(decoded.role)
-    ) {
+    if (!decoded.sessionId || !decoded.userId || !decoded.role || !isUserRole(decoded.role)) {
       return null;
     }
     payload = decoded as JwtPayload;

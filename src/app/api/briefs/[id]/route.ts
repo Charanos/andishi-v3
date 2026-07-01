@@ -6,50 +6,30 @@ import { getSession } from "@/lib/auth/session";
 import { jsonError, parseJson, validationError } from "@/lib/api/responses";
 import { updateBriefSchema } from "@/lib/validation/entities";
 
-export async function GET(
-  _req: NextRequest,
-  context: { params: Promise<{ id: string }> },
-) {
+export async function GET(_req: NextRequest, context: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session) return jsonError("Unauthorized", 401);
 
   const { id } = await context.params;
-  const [brief] = await getDb()
-    .select()
-    .from(briefs)
-    .where(eq(briefs.id, id))
-    .limit(1);
+  const [brief] = await getDb().select().from(briefs).where(eq(briefs.id, id)).limit(1);
   if (!brief) return jsonError("Brief not found", 404);
 
-  if (
-    session.user.role !== "admin" &&
-    session.user.organizationId !== brief.organizationId
-  ) {
+  if (session.user.role !== "admin" && session.user.organizationId !== brief.organizationId) {
     return jsonError("Forbidden", 403);
   }
 
   return NextResponse.json({ brief });
 }
 
-export async function PUT(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> },
-) {
+export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session) return jsonError("Unauthorized", 401);
 
   const { id } = await context.params;
-  const [existing] = await getDb()
-    .select()
-    .from(briefs)
-    .where(eq(briefs.id, id))
-    .limit(1);
+  const [existing] = await getDb().select().from(briefs).where(eq(briefs.id, id)).limit(1);
   if (!existing) return jsonError("Brief not found", 404);
 
-  if (
-    session.user.role !== "admin" &&
-    session.user.organizationId !== existing.organizationId
-  ) {
+  if (session.user.role !== "admin" && session.user.organizationId !== existing.organizationId) {
     return jsonError("Forbidden", 403);
   }
 
@@ -101,25 +81,24 @@ export async function PUT(
   return NextResponse.json({ brief });
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  context: { params: Promise<{ id: string }> },
-) {
+export async function DELETE(_req: NextRequest, context: { params: Promise<{ id: string }> }) {
   const session = await getSession();
   if (!session || session.user.role !== "admin") return jsonError("Forbidden", 403);
 
   const { id } = await context.params;
   await getDb().delete(briefs).where(eq(briefs.id, id));
 
-  await getDb().insert(activityEvents).values({
-    type: "brief_deleted",
-    actorId: session.user.id,
-    actorRole: session.user.role,
-    entityType: "brief",
-    entityId: id,
-    description: `Brief ${id} deleted`,
-    visibleTo: ["admin"],
-  });
+  await getDb()
+    .insert(activityEvents)
+    .values({
+      type: "brief_deleted",
+      actorId: session.user.id,
+      actorRole: session.user.role,
+      entityType: "brief",
+      entityId: id,
+      description: `Brief ${id} deleted`,
+      visibleTo: ["admin"],
+    });
 
   return NextResponse.json({ success: true });
 }

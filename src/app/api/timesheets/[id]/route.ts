@@ -1,73 +1,78 @@
 import { NextRequest, NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
-import { getDb } from "@/db";
-import { timesheetEntries } from "@/db/schema";
 import { getSession } from "@/lib/auth/session";
-import { jsonError, parseJson, validationError } from "@/lib/api/responses";
+import { getClientIp } from "@/lib/api/request";
+import {
+  generateRequestId,
+  handleRouteError,
+  jsonError,
+  parseJson,
+  validationError,
+} from "@/lib/api/responses";
+import { deleteTimesheet, getTimesheet, updateTimesheet } from "@/lib/services/delivery/timesheets";
 import { updateTimesheetSchema } from "@/lib/validation/entities";
 
-async function getTimesheetForRequest(id: string) {
+export async function GET(_req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const requestId = generateRequestId();
   const session = await getSession();
-  if (!session) return { session: null, timesheet: null, allowed: false };
+  if (!session) return jsonError("Unauthorized", 401);
 
-  const [timesheet] = await getDb()
-    .select()
-    .from(timesheetEntries)
-    .where(eq(timesheetEntries.id, id))
-    .limit(1);
+  const { id } = await context.params;
 
-  if (!timesheet) return { session, timesheet: null, allowed: false };
-
-  const allowed = session.user.role === "admin" || session.user.engineerId === timesheet.engineerId;
-  return { session, timesheet, allowed };
+  try {
+    const timesheet = await getTimesheet({ session, requestId }, id);
+    return NextResponse.json({ timesheet });
+  } catch (error) {
+    return handleRouteError(error, {
+      requestId,
+      actorUserId: session.user.id,
+      module: "delivery",
+      action: "timesheet.read",
+    });
+  }
 }
 
-export async function GET(
-  _req: NextRequest,
-  context: { params: Promise<{ id: string }> },
-) {
-  const { id } = await context.params;
-  const { session, timesheet, allowed } = await getTimesheetForRequest(id);
+export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const requestId = generateRequestId();
+  const session = await getSession();
   if (!session) return jsonError("Unauthorized", 401);
-  if (!timesheet) return jsonError("Timesheet not found", 404);
-  if (!allowed) return jsonError("Forbidden", 403);
-  return NextResponse.json({ timesheet });
-}
 
-export async function PUT(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> },
-) {
   const { id } = await context.params;
-  const { session, timesheet, allowed } = await getTimesheetForRequest(id);
-  if (!session) return jsonError("Unauthorized", 401);
-  if (!timesheet) return jsonError("Timesheet not found", 404);
-  if (!allowed) return jsonError("Forbidden", 403);
-
   const parsed = updateTimesheetSchema.safeParse(await parseJson(req));
   if (!parsed.success) return validationError(parsed.error);
 
-  const update = session.user.role === "admin" ? parsed.data : { ...parsed.data, engineerId: timesheet.engineerId };
-  const [updated] = await getDb()
-    .update(timesheetEntries)
-    .set({ ...update, updatedAt: new Date() })
-    .where(eq(timesheetEntries.id, id))
-    .returning();
-
-  return NextResponse.json({ timesheet: updated });
+  try {
+    const timesheet = await updateTimesheet(
+      { session, requestId, actorIp: getClientIp(req) },
+      id,
+      parsed.data,
+    );
+    return NextResponse.json({ timesheet });
+  } catch (error) {
+    return handleRouteError(error, {
+      requestId,
+      actorUserId: session.user.id,
+      module: "delivery",
+      action: "timesheet.write",
+    });
+  }
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  context: { params: Promise<{ id: string }> },
-) {
-  const { id } = await context.params;
-  const { session, timesheet, allowed } = await getTimesheetForRequest(id);
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const requestId = generateRequestId();
+  const session = await getSession();
   if (!session) return jsonError("Unauthorized", 401);
-  if (!timesheet) return jsonError("Timesheet not found", 404);
-  if (!allowed) return jsonError("Forbidden", 403);
 
-  await getDb().delete(timesheetEntries).where(eq(timesheetEntries.id, id));
-  return NextResponse.json({ success: true });
+  const { id } = await context.params;
+
+  try {
+    await deleteTimesheet({ session, requestId, actorIp: getClientIp(req) }, id);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return handleRouteError(error, {
+      requestId,
+      actorUserId: session.user.id,
+      module: "delivery",
+      action: "timesheet.write",
+    });
+  }
 }
-

@@ -114,7 +114,9 @@ const createBuildBriefSchema = z.object({
   organizationId: uuid.optional(),
   submittedById: uuid.optional(),
   title: z.string().trim().min(3),
-  status: z.enum(["draft", "submitted", "under_review", "matching", "shortlisted", "scoping", "closed"]).default("submitted"),
+  status: z
+    .enum(["draft", "submitted", "under_review", "matching", "shortlisted", "scoping", "closed"])
+    .default("submitted"),
   andishiNotes: optionalText,
   serviceType: serviceTypeEnum.optional(),
   problemStatement: z.string().trim().min(10).optional(),
@@ -134,7 +136,9 @@ const createHireBriefSchema = z.object({
   organizationId: uuid.optional(),
   submittedById: uuid.optional(),
   title: z.string().trim().min(3),
-  status: z.enum(["draft", "submitted", "under_review", "matching", "shortlisted", "scoping", "closed"]).default("submitted"),
+  status: z
+    .enum(["draft", "submitted", "under_review", "matching", "shortlisted", "scoping", "closed"])
+    .default("submitted"),
   andishiNotes: optionalText,
   role: z.string().trim().min(2),
   domain: z.string().trim().min(2),
@@ -164,7 +168,16 @@ export const updateBriefSchema = z.union([
 export const createMatchSchema = z.object({
   briefId: uuid,
   engineerId: uuid,
-  status: z.enum(["proposed", "client_reviewing", "intro_scheduled", "intro_completed", "accepted", "declined"]).default("proposed"),
+  status: z
+    .enum([
+      "proposed",
+      "client_reviewing",
+      "intro_scheduled",
+      "intro_completed",
+      "accepted",
+      "declined",
+    ])
+    .default("proposed"),
   introScheduledAt: z.coerce.date().optional().nullable(),
   introCompletedAt: z.coerce.date().optional().nullable(),
   acceptedAt: z.coerce.date().optional().nullable(),
@@ -219,7 +232,11 @@ export const updateProjectSchema = createProjectSchema.partial();
  */
 export const publishCaseStudySchema = z.object({
   isPublic: z.literal(true),
-  publicSlug: z.string().trim().min(3).regex(/^[a-z0-9-]+$/, "Slug must be lowercase alphanumeric with hyphens"),
+  publicSlug: z
+    .string()
+    .trim()
+    .min(3)
+    .regex(/^[a-z0-9-]+$/, "Slug must be lowercase alphanumeric with hyphens"),
   serviceType: serviceTypeEnum,
   vertical: verticalEnum,
   challenge: z.string().trim().min(20),
@@ -237,6 +254,7 @@ export const publishCaseStudySchema = z.object({
 
 export const createTimesheetSchema = z.object({
   projectId: uuid,
+  taskId: uuid.optional().nullable(),
   engineerId: uuid.optional(),
   date: z.string().trim().min(1),
   minutes: z.coerce.number().int().min(1),

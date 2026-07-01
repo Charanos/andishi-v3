@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "../src/db";
 import { users } from "../src/db/schema";
 import { hashPassword } from "../src/lib/auth/password";
+import { assignRole, seedPermissionCatalog } from "../src/lib/authz/seed";
 
 config({ path: ".env.local" });
 config({ path: ".env" });
@@ -18,6 +19,8 @@ async function main() {
   const passwordHash = await hashPassword(password);
   const [existing] = await db.select().from(users).where(eq(users.email, email)).limit(1);
 
+  let userId: string;
+
   if (existing) {
     await db
       .update(users)
@@ -31,20 +34,30 @@ async function main() {
       })
       .where(eq(users.id, existing.id));
 
+    userId = existing.id;
     console.log("Updated existing user -> admin");
-    return;
+  } else {
+    const [created] = await db
+      .insert(users)
+      .values({
+        email,
+        name,
+        role: "admin",
+        status: "active",
+        passwordHash,
+        emailVerified: true,
+      })
+      .returning();
+
+    userId = created.id;
+    console.log("Created admin user");
   }
 
-  await db.insert(users).values({
-    email,
-    name,
-    role: "admin",
-    status: "active",
-    passwordHash,
-    emailVerified: true,
-  });
+  console.log("Seeding permission catalog and system roles...");
+  await seedPermissionCatalog(db);
 
-  console.log("Created admin user");
+  await assignRole(db, userId, "super_admin");
+  console.log("Assigned super_admin role");
 }
 
 main().catch((error) => {
