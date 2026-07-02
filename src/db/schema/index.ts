@@ -1,6 +1,7 @@
 export * from "@/db/schema/activity";
 export * from "@/db/schema/audit";
 export * from "@/db/schema/briefs";
+export * from "@/db/schema/careers";
 export * from "@/db/schema/delivery";
 export * from "@/db/schema/engineers";
 export * from "@/db/schema/invoices";
@@ -10,6 +11,7 @@ export * from "@/db/schema/permissions";
 export * from "@/db/schema/placements";
 export * from "@/db/schema/projects";
 export * from "@/db/schema/sessions";
+export * from "@/db/schema/testimonials";
 export * from "@/db/schema/timesheets";
 export * from "@/db/schema/tokens";
 export * from "@/db/schema/users";

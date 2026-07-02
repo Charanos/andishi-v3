@@ -24,9 +24,9 @@ export default function Error({
 
       <div className="relative mx-auto max-w-xl">
         <Logo className="mb-8 justify-center" />
-        <p className="label-caps mb-4 text-[var(--secondary)]">Error</p>
+        <p className="label-caps my-4 text-[var(--secondary)]">Error</p>
         <h1 className="headline-lg">Something went out of bounds.</h1>
-        <p className="body-lg my-8 text-[var(--on-surface-dim)]">
+        <p className="body-lg text-[var(--on-surface-dim)]">
           An unexpected error occurred. It has been logged and we&apos;ve notified our engineers.
         </p>
 

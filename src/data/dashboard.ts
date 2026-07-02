@@ -16,6 +16,7 @@ import {
   IconTimeline,
   IconUserCircle,
   IconUsers,
+  IconUserCheck,
 } from "@tabler/icons-react";
 import type { Icon } from "@tabler/icons-react";
 import { engineers } from "@/data/engineers";
@@ -58,6 +59,13 @@ export const roleNav: Record<DashboardRole, DashboardNavItem[]> = {
         { href: "/admin/placements/timeline", label: "Timeline" },
       ],
     },
+    { href: "/admin/careers", label: "Careers", icon: IconUserCheck, group: "Operations" },
+    {
+      href: "/admin/testimonials",
+      label: "Testimonials",
+      icon: IconMessageCircle,
+      group: "Operations",
+    },
     {
       href: "/admin/engineers",
       label: "Engineers",
@@ -85,8 +93,18 @@ export const roleNav: Record<DashboardRole, DashboardNavItem[]> = {
     { href: "/dashboard/matches", label: "Developer Profiles", icon: IconUsers, group: "Hiring" },
     { href: "/dashboard/team", label: "My Team", icon: IconCode, group: "Engagement" },
     { href: "/dashboard/projects", label: "Projects", icon: IconBriefcase, group: "Engagement" },
-    { href: "/dashboard/support", label: "Support", icon: IconMessageQuestion, group: "Engagement" },
-    { href: "/dashboard/messages", label: "Messages", icon: IconMessageCircle, group: "Engagement" },
+    {
+      href: "/dashboard/support",
+      label: "Support",
+      icon: IconMessageQuestion,
+      group: "Engagement",
+    },
+    {
+      href: "/dashboard/messages",
+      label: "Messages",
+      icon: IconMessageCircle,
+      group: "Engagement",
+    },
     { href: "/dashboard/payments", label: "Payments", icon: IconCreditCard, group: "Billing" },
     { href: "/dashboard/settings", label: "Settings", icon: IconSettings, group: "Account" },
   ],
@@ -112,7 +130,12 @@ export const kpis = {
   admin: [
     { label: "Active Briefs", value: "18", trend: "+4 this week", data: [5, 7, 8, 7, 11, 13, 18] },
     { label: "Live Placements", value: "42", trend: "+9%", data: [21, 24, 28, 31, 35, 39, 42] },
-    { label: "Monthly Revenue", value: "$118k", trend: "+16%", data: [64, 72, 78, 84, 91, 105, 118] },
+    {
+      label: "Monthly Revenue",
+      value: "$118k",
+      trend: "+16%",
+      data: [64, 72, 78, 84, 91, 105, 118],
+    },
   ],
   client: [
     { label: "Profiles Ready", value: "3", trend: "2 strong matches", data: [0, 0, 1, 1, 2, 3, 3] },
@@ -120,8 +143,18 @@ export const kpis = {
     { label: "Days to Target", value: "5", trend: "inside 8-day SLA", data: [8, 7, 7, 6, 6, 5, 5] },
   ],
   developer: [
-    { label: "Hours This Week", value: "26.5", trend: "+4.5 vs last week", data: [12, 16, 18, 19, 22, 24, 26] },
-    { label: "This Month Earned", value: "$7.8k", trend: "+12%", data: [3, 4, 5, 6, 6.8, 7.2, 7.8] },
+    {
+      label: "Hours This Week",
+      value: "26.5",
+      trend: "+4.5 vs last week",
+      data: [12, 16, 18, 19, 22, 24, 26],
+    },
+    {
+      label: "This Month Earned",
+      value: "$7.8k",
+      trend: "+12%",
+      data: [3, 4, 5, 6, 6.8, 7.2, 7.8],
+    },
     { label: "Active Projects", value: "2", trend: "1 milestone due", data: [1, 1, 2, 2, 2, 2, 2] },
   ],
 };

@@ -230,22 +230,25 @@ vetting_stages      id, engineer_id, stage, status, reviewer_user_id, notes, dec
 availability_windows id, engineer_id, start_date, end_date, capacity_hours_per_week
 ```
 
-### 6.5 Careers / Talent Supply (ADR-0006 — greenfield)
+### 6.5 Careers / Talent Supply (ADR-0006) ✅ implemented July 1, 2026
 
 Handles three supply channels from one admin surface: **freelance project work**, **internal recruitment** (Andishi hires), and **third-party outsourcing** (place external talent with clients).
 
 ```
 job_openings        id, title, slug, kind(enum:'freelance'|'internal'|'outsourced'), department, location, remote bool,
                               seniority, description_md, skills jsonb, compensation_note, status(enum:'draft'|'open'|'closed'),
-                              published_at, org_id? (for outsourced/client-facing)
+                              published_at, organization_id? (for outsourced/client-facing)
 applications        id, job_opening_id, applicant_name, applicant_email, resume_url, links jsonb, cover_note,
                               engineer_id? (if existing network), stage(enum:'applied'|'screening'|'interview'|'offer'|'hired'|'rejected'),
                               source, owner_user_id, rating int?, created_at
-application_events  id, application_id, type, note, user_id, occurred_at
-talent_pool_entries id, engineer_id, channel(enum:'freelance'|'internal'|'outsourced'), status, notes  -- supply-side pipeline
+application_events  id, application_id, type, note, user_id (null = system event), occurred_at
 ```
 
-Public: a new `/careers` (list) + `/careers/[slug]` (detail + apply) served from `job_openings`; applications flow into the admin recruiter queue.
+Implemented in `src/lib/services/careers/{openings,applications}.ts`, `src/db/schema/careers.ts`. Public: `GET /api/careers` (list, `?kind=`), `GET /api/careers/[slug]` (detail - 404s on draft/closed, doesn't leak existence), `POST /api/careers/[slug]/apply` (rate-limited, ADR-0008). Staff: `GET/POST /api/careers/openings`, `PATCH /api/careers/openings/[id]`, `POST .../publish`, `POST .../close`, `GET /api/careers/applications`, `GET /api/careers/applications/[id]` (includes event trail), `PATCH .../stage`, `PATCH .../rating` - all gated by `careers.job.*`/`careers.application.*` (recruiter owns these per ADR-0007). Verified live: 17-check e2e run (draft/publish/apply/stage-progress/rate/close, plus client-forbidden checks) against real Neon data.
+
+Column names were derived directly from the frontend's already-built `src/data/careers.ts` TypeScript interfaces (`JobOpening`/`Application`/`ApplicationEvent`), which independently converged on nearly the same shape as this ADR - confirming the design. Note: the frontend currently uses snake_case field names in its local interfaces (a prototyping-stage inconsistency with the rest of the app's camelCase convention); the backend keeps camelCase for consistency with every other table, so wiring the frontend to these live endpoints later will need a small field-name adapter, not a schema change.
+
+**Not yet built**: `talent_pool_entries` (cross-channel supply-side pipeline view) - deferred until there's a concrete UI need for it beyond what `applications`/`stage` already provide.
 
 ### 6.6 CMS (ADR-0004 — migrate hardcoded content to DB)
 
@@ -259,9 +262,8 @@ case_studies        (backed by projects.isPublic today) → keep on projects tab
 services_content    id, slug(ServiceType), title, description, icon, timeline, group, tagline, image_url, scope,
                               engagement_options jsonb, faq jsonb, stack_highlights jsonb, glow, order int, published bool
 skill_domains       id, slug, label, h1, subheadline, technologies jsonb, use_cases jsonb, differentiators jsonb, faq jsonb
-testimonials        id, author_name, author_role, author_company, author_avatar_url, quote, rating int?,
-                              source(enum:'client'|'engineer'|'partner'), project_id?, org_id?, engineer_id?,
-                              featured bool, order int, published bool, created_at
+testimonials ✅     id, author_name, author_role, content, avatar_url, project_url?, rating, date, status(enum:'active'|'archived'),
+                              featured bool, order int, project_id?, organization_id?, engineer_id?, created_at
 faqs                id, section(enum:'landing'|'services'|'hire'|'careers'|'general'), question, answer, order int, published bool
 content_revisions   id, content_type, content_id, snapshot jsonb, editor_user_id, created_at  -- version history
 ```
@@ -273,6 +275,8 @@ content_revisions   id, content_type, content_id, snapshot jsonb, editor_user_id
 - **FAQs** are currently duplicated per page (`landing.ts faqItems`, service FAQs, skill-domain FAQs, `/hire/faq`). The `faqs` table with a `section` discriminator lets each page query its own slice from one editable source.
 
 Migration path: seed these tables from the current `src/data/*.ts` / `src/content/*.ts` so nothing regresses; public pages switch to reading DB with the static files as fallback until cutover, then the static files are deleted (not kept as permanent dual-source).
+
+**Status (July 1, 2026)**: `testimonials` ✅ implemented (`src/db/schema/testimonials.ts`, `src/lib/services/cms/testimonials.ts`) - column names mirror the frontend's existing `Testimonial` interface (`src/data/testimonials.ts`) closely for a low-friction future swap. Public `GET /api/testimonials` (`?featured=true`), staff `GET /api/testimonials?all=true`, `POST`, `PATCH/DELETE /api/testimonials/[id]` gated by `cms.testimonial.write`. Verified live (create/publish/archive/staff-vs-client visibility). `blog_posts`, `services_content`, `skill_domains`, `faqs`, `content_revisions` remain **not built** - deferred to a dedicated CMS pass since they involve the consolidation work described above, which testimonials (being net-new with no prior source to reconcile) didn't need.
 
 ### 6.7 Marketing
 

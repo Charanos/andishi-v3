@@ -17,7 +17,7 @@ export function PostCard({ post }: { post: BlogPost }) {
           />
         </div>
         <div className="p-5">
-          <p className="label-caps text-[var(--secondary)]">{post.category}</p>
+          <p className="label-caps text-[var(--tertiary)]">{post.category}</p>
           <h3 className="mt-4 text-[1.12rem] font-medium leading-tight text-[var(--on-surface)]">
             {post.title}
           </h3>

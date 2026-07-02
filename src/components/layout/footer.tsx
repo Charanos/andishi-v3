@@ -31,6 +31,7 @@ const columns = [
       ["Studio", "/studio"],
       ["Blog", "/blog"],
       ["About Us", "/about"],
+      ["Careers", "/careers"],
     ],
   },
   {
@@ -84,9 +85,7 @@ function Clock() {
 
 export function Footer() {
   return (
-    <footer
-      className="relative z-0 w-full overflow-hidden bg-[var(--footer-bg)] border-t border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] pt-20 sm:pt-32 pb-16 flex flex-col"
-    >
+    <footer className="relative z-0 w-full overflow-hidden bg-[var(--footer-bg)] border-t border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] pt-20 sm:pt-32 pb-16 flex flex-col">
       {/* Background Artwork - Massive subtle "Andishi" text */}
       <div className="absolute inset-x-0 bottom-0 flex justify-center items-end select-none pointer-events-none z-0 overflow-hidden h-[30vh] sm:h-[40vh] translate-y-[20%]">
         <h1 className="title-serif text-[24vw] leading-[0.7] tracking-[-0.04em] text-[color-mix(in_srgb,var(--on-surface)_3.5%,transparent)]">
@@ -96,7 +95,6 @@ export function Footer() {
 
       {/* General Footer Content */}
       <div className="relative z-10 mx-auto max-w-[92rem] px-5 sm:px-8 lg:px-10 w-full">
-
         {/* Top Section: Studio Philosophy & Status Board */}
         <div className="flex flex-col gap-10 border-b border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] pb-16 lg:flex-row lg:items-end lg:justify-between lg:pb-20">
           <div className="max-w-2xl">
@@ -125,7 +123,8 @@ export function Footer() {
             <div>
               <Logo className="mb-6 scale-110 origin-left" />
               <p className="body-md max-w-sm text-[0.95rem] leading-[1.8] text-[var(--on-surface-dim)]">
-                Operating globally from Nairobi, Kenya. We design, engineer, and scale software products that demand precision.
+                Operating globally from Nairobi, Kenya. We design, engineer, and scale software
+                products that demand precision.
               </p>
             </div>
           </div>

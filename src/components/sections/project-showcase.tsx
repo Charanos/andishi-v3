@@ -30,7 +30,7 @@ export function ProjectShowcase() {
               trigger: block,
               start: "top 85%",
             },
-          }
+          },
         );
       });
     }, containerRef);
@@ -58,13 +58,14 @@ export function ProjectShowcase() {
             Products we have shipped
           </h2>
           <p className="body-md mt-5 max-w-2xl text-[var(--on-surface-dim)] font-normal">
-            A selection of recent applications, platforms, and intelligent systems built for our clients.
+            A selection of recent applications, platforms, and intelligent systems built for our
+            clients.
           </p>
         </div>
 
         {/* Featured Flagship Project */}
         {featuredProject && (
-          <div className="project-block flex flex-col gap-10 lg:gap-16 lg:flex-row items-center mb-28">
+          <div className="project-block flex flex-col gap-10 lg:gap-16 lg:flex-row items-center mb-28 md:rounded-[2.5rem] md:border md:border-[var(--glass-border)] md:bg-[var(--glass-bg)] md:shadow-[var(--glass-inner-shadow)] md:p-8 lg:p-12 hover:border-[color-mix(in_srgb,var(--tertiary)_30%,transparent)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] transition-all duration-500 max-md:border-b max-md:border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:pb-12 max-md:mb-16">
             {/* Image Side */}
             <div className="w-full lg:w-7/12 relative group">
               <div className="relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden border border-[var(--glass-border)] bg-[var(--surface-low)] shadow-[var(--glass-inner-shadow)] transition-all duration-700 ease-out hover:border-[color-mix(in_srgb,var(--on-surface)_15%,transparent)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] max-md:!rounded-[1.25rem]">
@@ -138,8 +139,14 @@ export function ProjectShowcase() {
                     className="rounded-full border px-3 py-1 font-mono text-[0.68rem]"
                     style={{
                       color: i === 0 ? "var(--on-surface)" : "var(--on-surface-dim)",
-                      borderColor: i === 0 ? "color-mix(in srgb, var(--on-surface) 15%, transparent)" : "color-mix(in srgb, var(--on-surface) 8%, transparent)",
-                      backgroundColor: i === 0 ? "color-mix(in srgb, var(--on-surface) 4%, transparent)" : "color-mix(in srgb, var(--surface) 30%, transparent)",
+                      borderColor:
+                        i === 0
+                          ? "color-mix(in srgb, var(--on-surface) 15%, transparent)"
+                          : "color-mix(in srgb, var(--on-surface) 8%, transparent)",
+                      backgroundColor:
+                        i === 0
+                          ? "color-mix(in srgb, var(--on-surface) 4%, transparent)"
+                          : "color-mix(in srgb, var(--surface) 30%, transparent)",
                     }}
                   >
                     {tag}
@@ -175,12 +182,15 @@ export function ProjectShowcase() {
         {gridProjects.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-16 lg:gap-y-20">
             {gridProjects.map((project) => (
-              <div 
-                key={project.title} 
-                className="project-block flex flex-col group md:rounded-[2rem] md:border md:border-[var(--glass-border)] md:bg-[var(--glass-bg)] md:shadow-[var(--glass-inner-shadow)] md:p-4 md:transition-all md:duration-500 md:hover:border-[color-mix(in_srgb,var(--on-surface)_15%,transparent)] md:hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] md:hover:-translate-y-1.5"
+              <div
+                key={project.title}
+                className="project-block flex flex-col group md:rounded-[2rem] md:border md:border-[var(--glass-border)] md:bg-[var(--glass-bg)] md:shadow-[var(--glass-inner-shadow)] md:p-4 md:transition-all md:duration-500 md:hover:border-[color-mix(in_srgb,var(--tertiary)_30%,transparent)] md:hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] md:hover:-translate-y-1.5 max-md:border-b max-md:border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:pb-10 max-md:mb-10 max-md:last:border-0 max-md:last:pb-0 max-md:last:mb-0"
               >
                 {/* Image */}
-                <Link href="/work" className="block relative w-full aspect-[16/11] rounded-[1.5rem] md:rounded-[1.25rem] overflow-hidden max-md:border max-md:border-[var(--glass-border)] max-md:bg-[var(--surface-low)] max-md:shadow-[var(--glass-inner-shadow)] mb-6 md:mb-5 transition-all duration-700 ease-out">
+                <Link
+                  href="/work"
+                  className="block relative w-full aspect-[16/11] rounded-[1.5rem] md:rounded-[1.25rem] overflow-hidden max-md:border max-md:border-[var(--glass-border)] max-md:bg-[var(--surface-low)] max-md:shadow-[var(--glass-inner-shadow)] mb-6 md:mb-5 transition-all duration-700 ease-out"
+                >
                   <div className="absolute inset-0 bg-gradient-to-tr from-[var(--bg)]/10 to-transparent z-10 pointer-events-none" />
                   {project.image && (
                     <Image
@@ -215,8 +225,14 @@ export function ProjectShowcase() {
                         className="rounded-full border px-3 py-1 font-mono text-[0.62rem]"
                         style={{
                           color: i === 0 ? "var(--on-surface)" : "var(--on-surface-dim)",
-                          borderColor: i === 0 ? "color-mix(in srgb, var(--on-surface) 15%, transparent)" : "color-mix(in srgb, var(--on-surface) 8%, transparent)",
-                          backgroundColor: i === 0 ? "color-mix(in srgb, var(--on-surface) 4%, transparent)" : "color-mix(in srgb, var(--surface) 30%, transparent)",
+                          borderColor:
+                            i === 0
+                              ? "color-mix(in srgb, var(--on-surface) 15%, transparent)"
+                              : "color-mix(in srgb, var(--on-surface) 8%, transparent)",
+                          backgroundColor:
+                            i === 0
+                              ? "color-mix(in srgb, var(--on-surface) 4%, transparent)"
+                              : "color-mix(in srgb, var(--surface) 30%, transparent)",
                         }}
                       >
                         {tag}

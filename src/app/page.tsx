@@ -8,6 +8,7 @@ import { ProjectShowcase } from "@/components/sections/project-showcase";
 import { WhyAndishiSection } from "@/components/sections/why-andishi-section";
 import { ServicesBentoGrid } from "@/components/sections/services-bento";
 import { ProcessSection } from "@/components/sections/process-section";
+import { cn } from "@/lib/utils";
 
 const faqSchema = {
   "@context": "https://schema.org",
@@ -31,7 +32,6 @@ const faqSchema = {
     },
   ],
 };
-
 
 const processTextureStyle = {
   backgroundImage:
@@ -82,7 +82,10 @@ function TalentTrack() {
                 Need to extend your engineering team instead?
               </h3>
               <p className="body-md mt-4 text-[var(--on-surface-dim)]">
-                If you&apos;re not looking for a product partner but for a senior engineer to embed in your existing team - that&apos;s also something we do. We source, vet, and place senior engineers from across Africa with global teams who need to move fast without the recruiting overhead.
+                If you&apos;re not looking for a product partner but for a senior engineer to embed
+                in your existing team - that&apos;s also something we do. We source, vet, and place
+                senior engineers from across Africa with global teams who need to move fast without
+                the recruiting overhead.
               </p>
               <div className="mt-8">
                 <Link
@@ -101,9 +104,14 @@ function TalentTrack() {
               </p>
               <div className="space-y-4">
                 {stats.map(([value, label]) => (
-                  <div key={label} className="flex items-center justify-between border-b border-white/[0.05] pb-2 last:border-b-0">
+                  <div
+                    key={label}
+                    className="flex items-center justify-between border-b border-white/[0.05] pb-2 last:border-b-0"
+                  >
                     <span className="text-[0.92rem] text-[var(--on-surface-dim)]">{label}</span>
-                    <span className="font-mono text-[1.15rem] text-[var(--tertiary)] font-medium">{value}</span>
+                    <span className="font-mono text-[1.15rem] text-[var(--tertiary)] font-medium">
+                      {value}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -118,8 +126,8 @@ function TalentTrack() {
 function Founder() {
   const founderStats = [
     ["32+", "Products shipped"],
-    ["Founder-led", "Direct accountability"],
-    ["30 days", "Launch support guarantee"],
+    ["Founder-led", "Direct contact"],
+    ["30 days", "Support guarantee"],
   ];
 
   const operatingRules = [
@@ -129,51 +137,64 @@ function Founder() {
   ];
 
   return (
-    <section className="relative isolate overflow-hidden px-5 py-24 max-sm:py-16 sm:px-8 lg:px-10 lg:py-32 bg-[var(--bg)]">
+    <section className="relative isolate overflow-hidden px-5 py-24 max-sm:py-16 sm:px-8 lg:px-10 lg:py-36 bg-[var(--bg)]">
+      {/* Subtle top section border line */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 z-0 h-px bg-[linear-gradient(to_right,transparent,color-mix(in_srgb,var(--on-surface)_14%,transparent),transparent)]"
       />
 
-      <div className="relative z-[1] mx-auto grid max-w-[92rem] gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+      {/* Decorative atmospheric halo */}
+      <div className="absolute left-[30%] top-[40%] h-[35rem] w-[35rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[color-mix(in_srgb,var(--tertiary)_8%,transparent)] blur-[120px] pointer-events-none z-0" />
+
+      <div className="relative z-[1] mx-auto grid max-w-[92rem] gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+        {/* Left Column: Image Canvas & Stats */}
         <div className="order-2 lg:order-1">
           <div className="relative mx-auto max-w-[28rem] lg:mx-0">
+            {/* Elegant overlapping glass outlines */}
             <div
               aria-hidden="true"
-              className="absolute -left-5 -top-5 h-24 w-36 rotate-[-8deg] rounded-[2rem] border border-[color-mix(in_srgb,var(--tertiary)_18%,transparent)] opacity-60"
+              className="absolute -left-6 -top-6 h-28 w-40 rotate-[-6deg] rounded-[2.2rem] border border-[color-mix(in_srgb,var(--tertiary)_22%,transparent)] opacity-70 pointer-events-none"
             />
             <div
               aria-hidden="true"
-              className="absolute -bottom-7 -right-6 h-32 w-52 rotate-[7deg] rounded-[2rem] border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] opacity-60"
+              className="absolute -bottom-8 -right-6 h-36 w-56 rotate-[5deg] rounded-[2.2rem] border border-[color-mix(in_srgb,var(--secondary)_16%,transparent)] opacity-70 pointer-events-none"
             />
 
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-[color-mix(in_srgb,var(--on-surface)_13%,transparent)] bg-[color-mix(in_srgb,var(--surface)_34%,transparent)] shadow-[0_28px_90px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)]">
-              <Image
-                src="/images/ian.jpg"
-                alt="Andishi founder"
-                fill
-                sizes="(min-width: 1024px) 28rem, 88vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_46%,color-mix(in_srgb,var(--bg-deep)_84%,transparent)_100%)]" />
-              <div className="absolute inset-x-0 bottom-8 p-5 sm:p-6">
-                <p className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-[var(--on-surface-dim)]">
-                  FOUNDER
-                </p>
-                <p className="mt-2 text-[1.3rem] font-medium leading-tight text-[var(--on-surface)]">
-                  Built close to the client and the code.
-                </p>
+            {/* Main Image glass container */}
+            <div className="relative rounded-[2.2rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-2 shadow-[0_32px_90px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] backdrop-blur-md">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[1.9rem]">
+                <Image
+                  src="/images/ian.jpg"
+                  alt="Ian Mwangi, founder of Andishi"
+                  fill
+                  sizes="(min-width: 1024px) 28rem, 88vw"
+                  className="object-cover transition-transform duration-[4s] ease-out hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_50%,#09090b_100%)] opacity-85" />
+                <div className="absolute inset-x-0 bottom-8 p-6 z-20">
+                  <p className="font-mono text-[0.66rem] uppercase tracking-[0.18em] text-emerald-400 font-medium">
+                    STUDIO OPERATOR
+                  </p>
+                  <p className="mt-2 text-[1.4rem] font-normal leading-tight text-white">
+                    Built close to the client and the code.
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="relative z-[2] mx-4 -mt-10 rounded-[1.3rem] border border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] bg-[color-mix(in_srgb,var(--surface)_70%,transparent)] p-4 shadow-[0_20px_70px_color-mix(in_srgb,var(--bg-deep)_28%,transparent)] backdrop-blur-2xl sm:mx-8 max-md:!rounded-none max-md:!border-none max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!p-0 max-md:mt-6">
-              <div className="grid grid-cols-3 gap-2">
-                {founderStats.map(([value, label]) => (
-                  <div key={label}>
-                    <p className="font-mono text-[0.78rem] leading-tight tracking-tight text-[var(--on-surface)]">
+            {/* Stats Dashboard Plate */}
+            <div className="relative z-[2] mx-4 -mt-12 rounded-[1.5rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_85%,transparent)] p-5 shadow-[0_24px_70px_color-mix(in_srgb,var(--bg-deep)_24%,transparent)] backdrop-blur-2xl sm:mx-8 max-md:!rounded-none max-md:!border-none max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!p-0 max-md:mt-8">
+              <div className="grid grid-cols-3 gap-4 divide-x divide-[var(--glass-border)]">
+                {founderStats.map(([value, label], idx) => (
+                  <div
+                    key={label}
+                    className={cn("flex flex-col justify-between", idx > 0 && "pl-4")}
+                  >
+                    <p className="font-mono text-[1.1rem] leading-none tracking-tight text-[var(--tertiary)] font-medium">
                       {value}
                     </p>
-                    <p className="mt-1 text-[0.64rem] leading-snug text-[var(--on-surface-dim)]">
+                    <p className="mt-2 text-[0.6rem] uppercase tracking-wider text-[var(--on-surface-dim)] leading-tight font-medium opacity-85">
                       {label}
                     </p>
                   </div>
@@ -183,35 +204,49 @@ function Founder() {
           </div>
         </div>
 
+        {/* Right Column: Founder Copy */}
         <div className="order-1 lg:order-2">
-          <p className="label-caps mb-5 flex items-center gap-3 text-[var(--tertiary)]">
+          <p className="label-caps mb-5 flex items-center gap-3 text-[var(--tertiary)] font-medium tracking-[0.18em]">
             <span className="h-px w-7 bg-[var(--tertiary)]" />
-            FOUNDER
+            FOUNDER CONTEXT
           </p>
-          <h2 className="title-serif max-w-[19ch] text-[clamp(1.95rem,5.4vw,4.45rem)] font-normal leading-[0.94] tracking-tight text-foreground">
+          <h2 className="title-serif max-w-[19ch] text-[clamp(2.1rem,5.6vw,4.55rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
             Built from Nairobi. Shipping for the world.
           </h2>
           <p className="body-md mt-6 max-w-2xl text-[var(--on-surface-dim)] leading-relaxed">
-            Andishi was started because we kept seeing the same problem: founders with real ambition, stuck with digital partners who missed deadlines, padded budgets, or didn&apos;t understand what the product was actually for.
+            Andishi was started because we kept seeing the same problem: founders with real
+            ambition, stuck with digital partners who missed deadlines, padded budgets, or
+            didn&apos;t understand what the product was actually for.
           </p>
           <p className="body-md mt-4 max-w-2xl text-[var(--on-surface-dim)] leading-relaxed">
-            We build software for clients across Africa, Europe, and North America because delivery quality doesn&apos;t have an address. Our processes are structured, and every project has an owner who answers directly to you.
+            We build software for clients across Africa, Europe, and North America because delivery
+            quality doesn&apos;t have an address. Our processes are structured, and every project
+            has an owner who answers directly to you.
           </p>
 
-          <blockquote className="mt-8 border-l border-[color-mix(in_srgb,var(--tertiary)_38%,transparent)] pl-5 text-[clamp(1.15rem,2.2vw,1.55rem)] font-normal leading-snug text-foreground">
+          <blockquote className="title-serif italic mt-8 border-l-2 border-[var(--tertiary)] pl-5 text-[clamp(1.22rem,2.4vw,1.65rem)] font-normal leading-snug text-[var(--on-surface)]">
             “The quality of delivery is the only credential that matters.”
           </blockquote>
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          {/* Operating Rules Bento Grid */}
+          <div className="mt-10 grid gap-4 sm:grid-cols-3">
             {operatingRules.map((rule, index) => (
               <div
                 key={rule}
-                className="relative flex flex-col justify-between overflow-hidden rounded-[1.75rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] shadow-[var(--glass-inner-shadow)] p-6 transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-[color-mix(in_srgb,var(--on-surface)_15%,transparent)] hover:shadow-[0_16px_40px_rgba(0,0,0,0.06)] backdrop-blur-md max-md:!rounded-none max-md:!border-none max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!p-0 max-md:flex-row max-md:gap-4 max-md:items-start max-md:hover:translate-y-0"
+                className="relative flex flex-col justify-between overflow-hidden rounded-[1.75rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] shadow-[var(--glass-inner-shadow)] p-6 transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-[color-mix(in_srgb,var(--on-surface)_15%,transparent)] hover:shadow-[0_18px_44px_rgba(0,0,0,0.06)] backdrop-blur-md max-md:!rounded-none max-md:!border-none max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!p-0 max-md:flex-row max-md:gap-4 max-md:items-start max-md:hover:translate-y-0"
               >
-                <p className="font-mono text-[0.68rem] tracking-[0.1em] text-[var(--on-surface-dim)] max-md:mt-0 max-md:pt-[3px] opacity-70">
-                  {String(index + 1).padStart(2, "0")}
+                {/* Floating backdrop rule number */}
+                <span className="absolute -right-3 -bottom-8 font-serif text-[6.5rem] select-none pointer-events-none opacity-[0.035] text-[var(--on-surface-dim)] font-normal leading-none group-hover:scale-105">
+                  0{index + 1}
+                </span>
+
+                <div className="h-1.5 w-1.5 rounded-full bg-[var(--primary)] mb-6 max-md:hidden shrink-0" />
+
+                <p className="font-mono text-[0.66rem] tracking-[0.1em] text-[var(--on-surface-dim)] opacity-55 max-md:mt-0 max-md:pt-[3px] lg:hidden">
+                  0{index + 1}
                 </p>
-                <p className="mt-8 mb-2 text-[0.95rem] font-medium leading-relaxed text-[var(--on-surface)] max-md:mt-0 max-md:mb-0">
+
+                <p className="text-[0.92rem] font-medium leading-relaxed text-[var(--on-surface)] max-md:mt-0 max-md:mb-0 relative z-10">
                   {rule}
                 </p>
               </div>
@@ -229,10 +264,7 @@ function FinalCTA() {
       id="contact"
       className="relative isolate overflow-hidden bg-[var(--bg-deep)] px-5 py-20 text-center sm:px-8 lg:px-10 lg:py-36"
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 opacity-80"
-      >
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 opacity-80">
         <Image
           src="/final-cta.svg"
           alt=""
@@ -259,10 +291,7 @@ function FinalCTA() {
       />
       <div className="relative z-[1] mx-auto max-w-[92rem]">
         <div className="mx-auto max-w-3xl rounded-[1.75rem] border border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] bg-[color-mix(in_srgb,var(--surface)_58%,transparent)] px-5 py-10 sm:px-10 sm:py-14 lg:px-14 lg:py-14 shadow-[0_30px_110px_color-mix(in_srgb,var(--bg-deep)_38%,transparent)] backdrop-blur-2xl">
-          <p
-            className="label-caps mb-4"
-            style={{ color: "var(--tertiary)" }}
-          >
+          <p className="label-caps mb-4" style={{ color: "var(--tertiary)" }}>
             Start here
           </p>
           <h2
@@ -277,11 +306,9 @@ function FinalCTA() {
           >
             Ready to build something?
           </h2>
-          <p
-            className="body-md mx-auto my-8 max-w-lg"
-            style={{ color: "var(--on-surface-dim)" }}
-          >
-            Tell us what you&apos;re working on. We&apos;ll come back with a scope, timeline, and honest assessment of fit within one business day.
+          <p className="body-md mx-auto my-8 max-w-lg" style={{ color: "var(--on-surface-dim)" }}>
+            Tell us what you&apos;re working on. We&apos;ll come back with a scope, timeline, and
+            honest assessment of fit within one business day.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link

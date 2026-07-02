@@ -53,7 +53,9 @@ export function CustomCursorRegion({
 
     const target = event.target;
     if (target instanceof Element) {
-      setHoveringAction(Boolean(target.closest("a, button, input, textarea, select, [role='button']")));
+      setHoveringAction(
+        Boolean(target.closest("a, button, input, textarea, select, [role='button']")),
+      );
       const customCursorTarget = target.closest("[data-cursor-text]");
       if (customCursorTarget) {
         setCursorText(customCursorTarget.getAttribute("data-cursor-text"));
@@ -92,12 +94,12 @@ export function CustomCursorRegion({
               backgroundColor: cursorText
                 ? "var(--secondary)"
                 : hoveringAction
-                ? "color-mix(in srgb, var(--secondary) 18%, transparent)"
-                : "var(--secondary)",
+                  ? "color-mix(in srgb, var(--secondary) 18%, transparent)"
+                  : "var(--secondary)",
             }}
           >
             {cursorText && (
-              <span className="font-mono text-[0.65rem] font-bold tracking-widest text-white whitespace-nowrap text-center opacity-100">
+              <span className="font-mono text-[0.65rem] font-medium tracking-widest text-white whitespace-nowrap text-center opacity-100">
                 {cursorText}
               </span>
             )}
