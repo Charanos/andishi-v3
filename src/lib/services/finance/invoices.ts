@@ -496,6 +496,20 @@ export async function markInvoicePaid(ctx: CallerContext, id: string, paidAt?: D
       .where(eq(invoices.id, id))
       .returning();
 
+    await emitActivityEvent(
+      {
+        type: "invoice_paid",
+        actorId: ctx.session.user.id,
+        actorRole: ctx.session.user.role,
+        organizationId: updated.organizationId,
+        entityType: "invoice",
+        entityId: updated.id,
+        description: `Invoice ${updated.invoiceNumber} paid ($${(updated.amountCents / 100).toFixed(2)})`,
+        visibleTo: ["client", "finance.invoice.read"],
+      },
+      tx,
+    );
+
     await writeAudit(
       {
         actorUserId: ctx.session.user.id,

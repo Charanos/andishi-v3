@@ -7,6 +7,7 @@ import { writeAudit } from "@/lib/authz/audit";
 import { ConflictError, ForbiddenError, NotFoundError } from "@/lib/authz/errors";
 import { ACCOUNT_CODES } from "@/lib/services/finance/accounts";
 import { postTransaction } from "@/lib/services/finance/ledger";
+import { emitActivityEvent } from "@/lib/services/activity";
 import type { CallerContext } from "@/lib/services/types";
 import type { approvePayoutSchema, createPayoutSchema } from "@/lib/validation/finance";
 
@@ -107,6 +108,20 @@ export async function approvePayout(ctx: CallerContext, id: string, input: Appro
       .where(eq(payouts.id, id))
       .returning();
 
+    await emitActivityEvent(
+      {
+        type: "payout_approved",
+        actorId: ctx.session.user.id,
+        actorRole: ctx.session.user.role,
+        engineerId: updated.engineerId,
+        entityType: "payout",
+        entityId: updated.id,
+        description: `Payout of $${(updated.amountCents / 100).toFixed(2)} approved for ${updated.periodStart} - ${updated.periodEnd}`,
+        visibleTo: ["developer", "finance.payout.read"],
+      },
+      tx,
+    );
+
     await writeAudit(
       {
         actorUserId: ctx.session.user.id,
@@ -167,6 +182,20 @@ export async function markPayoutPaid(ctx: CallerContext, id: string, paidAt?: Da
       .set({ status: "paid", paidAt: paidAt ?? new Date(), updatedAt: new Date() })
       .where(eq(payouts.id, id))
       .returning();
+
+    await emitActivityEvent(
+      {
+        type: "payout_paid",
+        actorId: ctx.session.user.id,
+        actorRole: ctx.session.user.role,
+        engineerId: updated.engineerId,
+        entityType: "payout",
+        entityId: updated.id,
+        description: `Payout of $${(updated.amountCents / 100).toFixed(2)} paid for ${updated.periodStart} - ${updated.periodEnd}`,
+        visibleTo: ["developer", "finance.payout.read"],
+      },
+      tx,
+    );
 
     await writeAudit(
       {
