@@ -3,6 +3,7 @@ export * from "@/db/schema/audit";
 export * from "@/db/schema/blog";
 export * from "@/db/schema/briefs";
 export * from "@/db/schema/careers";
+export * from "@/db/schema/cms";
 export * from "@/db/schema/crm";
 export * from "@/db/schema/delivery";
 export * from "@/db/schema/engineers";
