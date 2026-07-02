@@ -10,6 +10,7 @@ export * from "@/db/schema/engineers";
 export * from "@/db/schema/finance";
 export * from "@/db/schema/invoices";
 export * from "@/db/schema/jobs";
+export * from "@/db/schema/marketing";
 export * from "@/db/schema/matches";
 export * from "@/db/schema/organizations";
 export * from "@/db/schema/permissions";
