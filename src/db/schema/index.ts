@@ -18,6 +18,7 @@ export * from "@/db/schema/placements";
 export * from "@/db/schema/platform";
 export * from "@/db/schema/projects";
 export * from "@/db/schema/sessions";
+export * from "@/db/schema/support";
 export * from "@/db/schema/talent";
 export * from "@/db/schema/testimonials";
 export * from "@/db/schema/timesheets";
