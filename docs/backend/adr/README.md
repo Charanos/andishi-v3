@@ -14,6 +14,7 @@ ADRs record the significant, hard-to-reverse backend decisions and the reasoning
 | [0008](ADR-0008-caching-and-jobs.md) | Caching, rate limiting, and background job infrastructure (Upstash) | Accepted |
 | [0009](ADR-0009-messaging-delivery-strategy.md) | Internal messaging & notification delivery strategy (polling first) | Accepted |
 | [0010](ADR-0010-monolith-vs-separated-backend.md) | Stay unified on Next.js — defer a separated backend service | Accepted |
+| [0011](ADR-0011-crm-sales.md) | CRM/Sales model (leads, deals, proposals) | Implemented |
 
 **Status values**: Proposed · Accepted · Deprecated · Superseded.
 Add a new ADR by copying the format and incrementing the number. Never edit an accepted ADR's decision in place — supersede it with a new one.

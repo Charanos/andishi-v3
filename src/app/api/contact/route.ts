@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
-import { activityEvents, briefs, organizations, users } from "@/db/schema";
+import { activityEvents, briefs, leads } from "@/db/schema";
 import { getClientIp } from "@/lib/api/request";
 import { jsonError, parseJson, validationError } from "@/lib/api/responses";
 import { contactSchema, type BuildContactInput } from "@/lib/validation/contact";
@@ -11,6 +11,8 @@ import {
   sendProjectInquiryNotification,
 } from "@/lib/email";
 import { rateLimit } from "@/lib/rate-limit";
+import { findOrCreateGuestAccount } from "@/lib/services/crm/guest-accounts";
+import { recordIntakeLead } from "@/lib/services/crm/leads";
 
 const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL ?? "dennis@andishi.dev";
 
@@ -22,9 +24,9 @@ const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL ?? "dennis@andishi.dev"
  *
  * Flow:
  * 1. Validate input via discriminated union (type: "build" | "hire")
- * 2. Find or create a guest organization (keyed by billing email)
- * 3. Find or create a guest user (status: "invited", not yet a full account)
- * 4. Create a brief record with the correct briefType
+ * 2. Find or create a guest organization + user (keyed by email)
+ * 3. Record a CRM lead (ADR per master doc §6.3)
+ * 4. Create a brief record with the correct briefType (4b: link the lead to it)
  * 5. Log an activity event
  * 6. Fire confirmation email to submitter (non-blocking)
  * 7. Fire admin notification email (non-blocking)
@@ -48,47 +50,35 @@ export async function POST(req: NextRequest) {
   const data = parsed.data;
   const db = getDb();
 
-  // ── 1. Find or create guest organization ─────────────────────
+  // ── 2. Find or create guest organization + user ───────────────
 
-  let [org] = await db
-    .select()
-    .from(organizations)
-    .where(eq(organizations.billingEmail, data.email.toLowerCase()))
-    .limit(1);
+  const { organization: org, user } = await findOrCreateGuestAccount({
+    email: data.email,
+    name: data.name,
+    company: data.company,
+  });
 
-  if (!org) {
-    [org] = await db
-      .insert(organizations)
-      .values({
-        name: data.company ?? data.name,
-        billingEmail: data.email.toLowerCase(),
-      })
-      .returning();
-  }
+  // ── 3. Record the CRM lead (ADR per master doc §6.3) ───────────
+  // This wizard is self-qualifying (a multi-step form, not a one-line
+  // message), so the brief below is created immediately rather than
+  // waiting for a manual convertLeadToBrief - the lead row still exists
+  // for funnel/source-attribution reporting and gets linked once the
+  // brief is created.
 
-  // ── 2. Find or create guest user ──────────────────────────────
+  const lead = await recordIntakeLead({
+    source: data.type === "build" ? "start_project" : "hire",
+    name: data.name,
+    email: data.email,
+    company: data.company,
+    phone: data.type === "build" ? data.phone : undefined,
+    message: data.type === "build" ? data.problemStatement : data.description,
+    intendedTrack: data.type,
+    serviceType: data.type === "build" ? data.serviceType : undefined,
+    briefType: data.type,
+    organizationId: org.id,
+  });
 
-  let [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, data.email.toLowerCase()))
-    .limit(1);
-
-  if (!user) {
-    [user] = await db
-      .insert(users)
-      .values({
-        email: data.email.toLowerCase(),
-        name: data.name,
-        role: "client",
-        status: "invited", // guest - not yet a registered user
-        emailVerified: false,
-        organizationId: org.id,
-      })
-      .returning();
-  }
-
-  // ── 3. Create brief record (type-discriminated) ───────────────
+  // ── 4. Create brief record (type-discriminated) ───────────────
 
   const briefValues =
     data.type === "build"
@@ -122,7 +112,14 @@ export async function POST(req: NextRequest) {
 
   const [brief] = await db.insert(briefs).values(briefValues).returning();
 
-  // ── 4. Log activity event ─────────────────────────────────────
+  // ── 4b. Link the lead to its brief - qualified, not just "new" ─
+
+  await db
+    .update(leads)
+    .set({ status: "qualified", convertedToBriefId: brief.id, updatedAt: new Date() })
+    .where(eq(leads.id, lead.id));
+
+  // ── 5. Log activity event ─────────────────────────────────────
 
   await db.insert(activityEvents).values({
     type: data.type === "build" ? "brief_build_submitted" : "brief_hire_submitted",
@@ -140,7 +137,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // ── 5. Send emails (non-blocking - failures are logged, not thrown) ──
+  // ── 6. Fire confirmation email to submitter (non-blocking) ────
 
   if (data.type === "build") {
     sendBuildBriefConfirmation(data.email, data.name, data.serviceType).catch((err) =>
@@ -151,6 +148,8 @@ export async function POST(req: NextRequest) {
       console.error("[email] Hire confirmation failed:", err),
     );
   }
+
+  // ── 7. Fire admin notification email (non-blocking) ───────────
 
   sendProjectInquiryNotification(ADMIN_EMAIL, data as Record<string, unknown>).catch((err) =>
     console.error("[email] Admin notification failed:", err),
