@@ -8,51 +8,31 @@ import {
   parseJson,
   validationError,
 } from "@/lib/api/responses";
-import { cancelInvoice, getInvoice, updateInvoice } from "@/lib/services/finance/invoices";
-import { updateInvoiceSchema } from "@/lib/validation/finance";
+import { deleteBudget, updateBudget } from "@/lib/services/finance/budgets";
+import { updateBudgetSchema } from "@/lib/validation/finance";
 
-export async function GET(_req: NextRequest, context: { params: Promise<{ id: string }> }) {
+export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   const requestId = generateRequestId();
   const session = await getSession();
   if (!session) return jsonError("Unauthorized", 401);
 
   const { id } = await context.params;
-
-  try {
-    const result = await getInvoice({ session, requestId }, id);
-    return NextResponse.json(result);
-  } catch (error) {
-    return handleRouteError(error, {
-      requestId,
-      actorUserId: session.user.id,
-      module: "finance",
-      action: "invoice.read",
-    });
-  }
-}
-
-export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
-  const requestId = generateRequestId();
-  const session = await getSession();
-  if (!session) return jsonError("Unauthorized", 401);
-
-  const { id } = await context.params;
-  const parsed = updateInvoiceSchema.safeParse(await parseJson(req));
+  const parsed = updateBudgetSchema.safeParse(await parseJson(req));
   if (!parsed.success) return validationError(parsed.error);
 
   try {
-    const invoice = await updateInvoice(
+    const budget = await updateBudget(
       { session, requestId, actorIp: getClientIp(req) },
       id,
       parsed.data,
     );
-    return NextResponse.json({ invoice });
+    return NextResponse.json({ budget });
   } catch (error) {
     return handleRouteError(error, {
       requestId,
       actorUserId: session.user.id,
       module: "finance",
-      action: "invoice.write",
+      action: "budget.write",
     });
   }
 }
@@ -65,14 +45,14 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ id: 
   const { id } = await context.params;
 
   try {
-    const invoice = await cancelInvoice({ session, requestId, actorIp: getClientIp(req) }, id);
-    return NextResponse.json({ invoice });
+    await deleteBudget({ session, requestId, actorIp: getClientIp(req) }, id);
+    return NextResponse.json({ success: true });
   } catch (error) {
     return handleRouteError(error, {
       requestId,
       actorUserId: session.user.id,
       module: "finance",
-      action: "invoice.approve",
+      action: "budget.write",
     });
   }
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
+import { getClientIp } from "@/lib/api/request";
 import {
   generateRequestId,
   handleRouteError,
@@ -7,38 +8,19 @@ import {
   parseJson,
   validationError,
 } from "@/lib/api/responses";
-import { getClientIp } from "@/lib/api/request";
-import { createInvoice, listInvoices } from "@/lib/services/finance/invoices";
-import { createInvoiceSchema } from "@/lib/validation/finance";
-
-export async function GET() {
-  const requestId = generateRequestId();
-  const session = await getSession();
-  if (!session) return jsonError("Unauthorized", 401);
-
-  try {
-    const result = await listInvoices({ session, requestId });
-    return NextResponse.json({ invoices: result });
-  } catch (error) {
-    return handleRouteError(error, {
-      requestId,
-      actorUserId: session.user.id,
-      module: "finance",
-      action: "invoice.read",
-    });
-  }
-}
+import { generateInvoiceFromTimesheets } from "@/lib/services/finance/invoices";
+import { generateInvoiceFromTimesheetsSchema } from "@/lib/validation/finance";
 
 export async function POST(req: NextRequest) {
   const requestId = generateRequestId();
   const session = await getSession();
   if (!session) return jsonError("Unauthorized", 401);
 
-  const parsed = createInvoiceSchema.safeParse(await parseJson(req));
+  const parsed = generateInvoiceFromTimesheetsSchema.safeParse(await parseJson(req));
   if (!parsed.success) return validationError(parsed.error);
 
   try {
-    const invoice = await createInvoice(
+    const invoice = await generateInvoiceFromTimesheets(
       { session, requestId, actorIp: getClientIp(req) },
       parsed.data,
     );

@@ -49,6 +49,10 @@ export const milestones = pgTable(
     // Set only for fixed-price billing_type projects - finance reads this
     // to generate an invoice line item when the milestone is approved.
     amountCents: integer("amount_cents"),
+    // NEW - P2: set once this milestone has been rolled into an invoice
+    // line item, so finance's invoice-generation job never double-bills
+    // it. Plain uuid (not FK) - same convention as invoices.ledgerTransactionId.
+    invoiceId: uuid("invoice_id"),
     submittedAt: timestamp("submitted_at", { withTimezone: true }),
     approvedAt: timestamp("approved_at", { withTimezone: true }),
     order: integer("order").notNull().default(0),

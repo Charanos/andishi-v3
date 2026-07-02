@@ -8,23 +8,31 @@ import {
   validationError,
 } from "@/lib/api/responses";
 import { getClientIp } from "@/lib/api/request";
-import { createInvoice, listInvoices } from "@/lib/services/finance/invoices";
-import { createInvoiceSchema } from "@/lib/validation/finance";
+import { createRateCard, listRateCards } from "@/lib/services/finance/rate-cards";
+import { createRateCardSchema } from "@/lib/validation/finance";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const requestId = generateRequestId();
   const session = await getSession();
   if (!session) return jsonError("Unauthorized", 401);
 
+  const { searchParams } = new URL(req.url);
+
   try {
-    const result = await listInvoices({ session, requestId });
-    return NextResponse.json({ invoices: result });
+    const result = await listRateCards(
+      { session, requestId },
+      {
+        subjectType: searchParams.get("subjectType") ?? undefined,
+        subjectId: searchParams.get("subjectId") ?? undefined,
+      },
+    );
+    return NextResponse.json({ rateCards: result });
   } catch (error) {
     return handleRouteError(error, {
       requestId,
       actorUserId: session.user.id,
       module: "finance",
-      action: "invoice.read",
+      action: "rate.read",
     });
   }
 }
@@ -34,21 +42,21 @@ export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return jsonError("Unauthorized", 401);
 
-  const parsed = createInvoiceSchema.safeParse(await parseJson(req));
+  const parsed = createRateCardSchema.safeParse(await parseJson(req));
   if (!parsed.success) return validationError(parsed.error);
 
   try {
-    const invoice = await createInvoice(
+    const rateCard = await createRateCard(
       { session, requestId, actorIp: getClientIp(req) },
       parsed.data,
     );
-    return NextResponse.json({ invoice }, { status: 201 });
+    return NextResponse.json({ rateCard }, { status: 201 });
   } catch (error) {
     return handleRouteError(error, {
       requestId,
       actorUserId: session.user.id,
       module: "finance",
-      action: "invoice.write",
+      action: "rate.write",
     });
   }
 }

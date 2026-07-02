@@ -4,6 +4,7 @@ import { getDb } from "../src/db";
 import { users } from "../src/db/schema";
 import { hashPassword } from "../src/lib/auth/password";
 import { assignRole, seedPermissionCatalog } from "../src/lib/authz/seed";
+import { seedChartOfAccounts } from "../src/lib/services/finance/accounts";
 
 config({ path: ".env.local" });
 config({ path: ".env" });
@@ -55,6 +56,9 @@ async function main() {
 
   console.log("Seeding permission catalog and system roles...");
   await seedPermissionCatalog(db);
+
+  console.log("Seeding chart of accounts...");
+  await seedChartOfAccounts();
 
   await assignRole(db, userId, "super_admin");
   console.log("Assigned super_admin role");

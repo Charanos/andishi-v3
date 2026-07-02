@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
+import { getClientIp } from "@/lib/api/request";
 import {
   generateRequestId,
   handleRouteError,
@@ -7,9 +8,8 @@ import {
   parseJson,
   validationError,
 } from "@/lib/api/responses";
-import { getClientIp } from "@/lib/api/request";
-import { createInvoice, listInvoices } from "@/lib/services/finance/invoices";
-import { createInvoiceSchema } from "@/lib/validation/finance";
+import { createPayout, listPayouts } from "@/lib/services/finance/payouts";
+import { createPayoutSchema } from "@/lib/validation/finance";
 
 export async function GET() {
   const requestId = generateRequestId();
@@ -17,14 +17,14 @@ export async function GET() {
   if (!session) return jsonError("Unauthorized", 401);
 
   try {
-    const result = await listInvoices({ session, requestId });
-    return NextResponse.json({ invoices: result });
+    const result = await listPayouts({ session, requestId });
+    return NextResponse.json({ payouts: result });
   } catch (error) {
     return handleRouteError(error, {
       requestId,
       actorUserId: session.user.id,
       module: "finance",
-      action: "invoice.read",
+      action: "payout.read",
     });
   }
 }
@@ -34,21 +34,21 @@ export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return jsonError("Unauthorized", 401);
 
-  const parsed = createInvoiceSchema.safeParse(await parseJson(req));
+  const parsed = createPayoutSchema.safeParse(await parseJson(req));
   if (!parsed.success) return validationError(parsed.error);
 
   try {
-    const invoice = await createInvoice(
+    const payout = await createPayout(
       { session, requestId, actorIp: getClientIp(req) },
       parsed.data,
     );
-    return NextResponse.json({ invoice }, { status: 201 });
+    return NextResponse.json({ payout }, { status: 201 });
   } catch (error) {
     return handleRouteError(error, {
       requestId,
       actorUserId: session.user.id,
       module: "finance",
-      action: "invoice.write",
+      action: "payout.write",
     });
   }
 }

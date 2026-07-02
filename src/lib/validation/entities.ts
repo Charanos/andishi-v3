@@ -267,19 +267,5 @@ export const updateTimesheetSchema = createTimesheetSchema.partial();
 
 // ── Invoice ───────────────────────────────────────────────────────
 
-export const createInvoiceSchema = z.object({
-  organizationId: uuid,
-  engineerId: uuid.optional().nullable(),
-  projectId: uuid.optional().nullable(),
-  invoiceNumber: z.string().trim().min(1),
-  periodStart: z.string().trim().min(1),
-  periodEnd: z.string().trim().min(1),
-  amountCents: z.coerce.number().int().min(0),
-  currency,
-  status: z.enum(["draft", "sent", "paid", "overdue", "cancelled"]).default("draft"),
-  pdfUrl: optionalText,
-  issuedAt: z.coerce.date().optional().nullable(),
-  paidAt: z.coerce.date().optional().nullable(),
-});
-
-export const updateInvoiceSchema = createInvoiceSchema.partial();
+// Invoice schemas moved to src/lib/validation/finance.ts (ADR-0003) - kept
+// this file focused on non-finance entities.
