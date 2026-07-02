@@ -31,10 +31,7 @@ export function LoginPageExperience({
   initialError,
   nextPath,
 }: {
-  action: (
-    state: LoginFormState,
-    formData: FormData,
-  ) => Promise<LoginFormState>;
+  action: (state: LoginFormState, formData: FormData) => Promise<LoginFormState>;
   initialError?: string;
   nextPath?: string;
 }) {
@@ -46,9 +43,7 @@ export function LoginPageExperience({
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [status, setStatus] = useState<"idle" | "loading" | "sent" | "signed">(
-    "idle",
-  );
+  const [status, setStatus] = useState<"idle" | "loading" | "sent" | "signed">("idle");
   const [attempted, setAttempted] = useState(false);
 
   const emailValid = useMemo(() => isEmail(email), [email]);
@@ -63,9 +58,13 @@ export function LoginPageExperience({
       if (!emailValid) return;
 
       setStatus("loading");
-      window.setTimeout(() => {
-        setStatus("sent");
-      }, 800);
+      fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
+        .catch(() => null)
+        .finally(() => setStatus("sent"));
       return;
     }
 
@@ -98,9 +97,8 @@ export function LoginPageExperience({
             Welcome back to Andishi.
           </h1>
           <p className="body-md mt-7 max-w-xl text-[var(--on-surface-dim)]">
-            Sign in to review engineer matches, interview notes, onboarding
-            status, placement guarantees, and the talent conversations moving
-            through your workspace.
+            Sign in to review engineer matches, interview notes, onboarding status, placement
+            guarantees, and the talent conversations moving through your workspace.
           </p>
           <div className="mt-8 grid max-w-xl gap-3 sm:grid-cols-3">
             {[
@@ -154,7 +152,7 @@ export function LoginPageExperience({
                       : "text-[color-mix(in_srgb,var(--on-surface-dim)_86%,var(--on-surface))] hover:text-[var(--on-surface)] dark:text-[color-mix(in_srgb,var(--on-surface-dim)_64%,transparent)]",
                   )}
                 >
-                  {item === "password" ? "Password" : "Magic link"}
+                  {item === "password" ? "Password" : "Reset link"}
                 </button>
               ))}
             </div>
@@ -178,18 +176,14 @@ export function LoginPageExperience({
                   {mode === "magic" && (
                     <div className="flex gap-3 items-center">
                       <p className="text-[0.92rem] leading-relaxed text-[color-mix(in_srgb,var(--primary)_100%,var(--surface)_90%)]">
-                        We will prepare a one-click sign-in link for this
-                        workspace email.
+                        We will email a password reset link to this workspace address if an account
+                        exists for it.
                       </p>
                     </div>
                   )}
 
                   <FieldShell
-                    error={
-                      attempted && !emailValid
-                        ? "Enter a valid email address"
-                        : ""
-                    }
+                    error={attempted && !emailValid ? "Enter a valid email address" : ""}
                     icon={<IconMail size={17} stroke={1.6} />}
                     label="Email address"
                   >
@@ -236,9 +230,7 @@ export function LoginPageExperience({
                         <button
                           type="button"
                           onClick={() => setShowPassword((current) => !current)}
-                          aria-label={
-                            showPassword ? "Hide password" : "Show password"
-                          }
+                          aria-label={showPassword ? "Hide password" : "Show password"}
                           className="grid h-8 w-8 place-items-center rounded-lg text-[color-mix(in_srgb,var(--on-surface-dim)_86%,var(--on-surface))] transition-colors duration-300 hover:text-[var(--on-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--secondary)_35%,transparent)] dark:text-[color-mix(in_srgb,var(--on-surface-dim)_60%,transparent)]"
                         >
                           {showPassword ? (
@@ -279,11 +271,11 @@ export function LoginPageExperience({
                     {status === "loading" || pending ? (
                       <>
                         <span className="h-4 w-4 animate-spin rounded-full border-2 border-[color-mix(in_srgb,var(--bg)_26%,transparent)] border-t-[var(--bg)]" />
-                        {mode === "magic" ? "Preparing link" : "Signing in"}
+                        {mode === "magic" ? "Sending link" : "Signing in"}
                       </>
                     ) : (
                       <>
-                        {mode === "magic" ? "Send magic link" : "Sign in"}
+                        {mode === "magic" ? "Send reset link" : "Sign in"}
                         <IconArrowRight size={16} stroke={1.8} />
                       </>
                     )}
@@ -325,11 +317,7 @@ export function LoginPageExperience({
                 key={item}
                 className="inline-flex items-center gap-1.5 text-[0.76rem] font-medium uppercase tracking-[0.08em] text-[var(--on-surface-dim)]"
               >
-                <IconShieldCheck
-                  size={12}
-                  stroke={1.8}
-                  className="text-[var(--tertiary)]"
-                />
+                <IconShieldCheck size={12} stroke={1.8} className="text-[var(--tertiary)]" />
                 {item}
               </span>
             ))}
@@ -342,10 +330,7 @@ export function LoginPageExperience({
 
 function HeroArtwork() {
   return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
-    >
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <div className="absolute left-1/2 top-0 bottom-0 w-[min(1500px,112vw)] -translate-x-1/2 bg-no-repeat opacity-[var(--hero-overlay-opacity)] [background-image:var(--hero-overlay-src)] [background-position:center_top] [background-size:100%_auto] [mix-blend-mode:var(--hero-overlay-blend)] max-[899px]:w-[185vw] max-[899px]:[background-position:center_4rem]" />
       <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_90%,transparent)_30%,color-mix(in_srgb,var(--bg)_70%,transparent)_62%,color-mix(in_srgb,var(--bg)_82%,transparent)_100%)] dark:bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_82%,transparent)_30%,color-mix(in_srgb,var(--bg)_48%,transparent)_62%,color-mix(in_srgb,var(--bg)_72%,transparent)_100%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_78%,transparent)_28%,color-mix(in_srgb,var(--bg)_70%,transparent)_62%,var(--bg)_100%)] dark:bg-[linear-gradient(180deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_64%,transparent)_28%,color-mix(in_srgb,var(--bg)_54%,transparent)_62%,var(--bg)_100%)]" />
@@ -395,11 +380,9 @@ function SentState({ email, onReset }: { email: string; onReset: () => void }) {
       <span className="mx-auto grid h-14 w-14 place-items-center rounded-full border border-[color-mix(in_srgb,var(--tertiary)_28%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_12%,transparent)] text-[var(--tertiary)]">
         <IconMail size={24} stroke={1.8} />
       </span>
-      <h3 className="my-8 text-[1.15rem] font-medium text-[var(--on-surface)]">
-        Check your inbox
-      </h3>
+      <h3 className="my-8 text-[1.15rem] font-medium text-[var(--on-surface)]">Check your inbox</h3>
       <p className="mt-2 text-[0.94rem] leading-relaxed text-[var(--on-surface-dim)]">
-        A sign-in link is ready for:
+        If an account exists, a password reset link is on its way to:
       </p>
       <p className="mx-auto mt-3 w-fit rounded-lg border border-[color-mix(in_srgb,var(--secondary)_22%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] px-3 py-1.5 font-mono text-[0.74rem] tracking-tight text-[var(--secondary)]">
         {email}

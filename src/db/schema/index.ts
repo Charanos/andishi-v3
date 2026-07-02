@@ -1,5 +1,6 @@
 export * from "@/db/schema/activity";
 export * from "@/db/schema/audit";
+export * from "@/db/schema/blog";
 export * from "@/db/schema/briefs";
 export * from "@/db/schema/careers";
 export * from "@/db/schema/delivery";

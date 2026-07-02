@@ -646,13 +646,6 @@ export function CareersPageExperience() {
           </div>
         )}
       </AnimatePresence>
-
-      <FinalRouteCta
-        title="Ready to build?"
-        body="Join Nairobi's premier developer network. Connect with international client teams or join Andishi's core software studio."
-        label="Start a Project"
-        href="/start-project"
-      />
     </PublicPageShell>
   );
 }

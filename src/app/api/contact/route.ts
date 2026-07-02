@@ -4,7 +4,7 @@ import { getDb } from "@/db";
 import { activityEvents, briefs, organizations, users } from "@/db/schema";
 import { getClientIp } from "@/lib/api/request";
 import { jsonError, parseJson, validationError } from "@/lib/api/responses";
-import { contactSchema } from "@/lib/validation/contact";
+import { contactSchema, type BuildContactInput } from "@/lib/validation/contact";
 import {
   sendBuildBriefConfirmation,
   sendHireBriefConfirmation,
@@ -98,9 +98,11 @@ export async function POST(req: NextRequest) {
           title: `Build: ${data.serviceType} - ${data.company ?? data.name}`,
           briefType: "build" as const,
           serviceType: data.serviceType,
-          problemStatement: data.problemStatement,
+          problemStatement: composeBuildProblemStatement(data),
           projectBudget: data.projectBudget,
           projectTimeline: data.projectTimeline,
+          hasExistingProduct: data.hasExistingProduct ?? false,
+          buildStackPreferences: data.stackPreferences ?? [],
           status: "submitted" as const,
         }
       : {
@@ -133,7 +135,8 @@ export async function POST(req: NextRequest) {
     metadata: {
       company: data.company,
       serviceType: data.type === "build" ? data.serviceType : data.domain,
-      source: "public_contact_form",
+      source:
+        data.type === "build" ? (data.source ?? "public_contact_form") : "public_contact_form",
     },
   });
 
@@ -154,4 +157,28 @@ export async function POST(req: NextRequest) {
   );
 
   return NextResponse.json({ success: true, briefId: brief.id }, { status: 201 });
+}
+
+/**
+ * Folds the /start-project wizard's extra fields (phone, role, additional
+ * services beyond the primary one, and free-text context) into the single
+ * problemStatement text, so nothing submitted is lost even though those
+ * fields don't have dedicated brief columns yet.
+ */
+function composeBuildProblemStatement(data: BuildContactInput): string {
+  const parts = [data.problemStatement];
+  const extras: string[] = [];
+
+  if (data.submitterRole) extras.push(`Submitter role: ${data.submitterRole}`);
+  if (data.phone) extras.push(`Phone: ${data.phone}`);
+  if (data.additionalServices?.length) {
+    extras.push(`Also interested in: ${data.additionalServices.join(", ")}`);
+  }
+  if (data.additionalContext) extras.push(`Additional context: ${data.additionalContext}`);
+
+  if (extras.length > 0) {
+    parts.push("", "— Additional details —", ...extras);
+  }
+
+  return parts.join("\n");
 }

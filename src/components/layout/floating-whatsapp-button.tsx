@@ -8,7 +8,8 @@ import { floatSpring } from "@/lib/motion";
 export function FloatingWhatsappButton() {
   const [open, setOpen] = useState(false);
 
-  const whatsappUrl = "https://wa.me/25474882157?text=Hi%20Andishi%20team,%20I%27d%20like%20to%20discuss%20a%20project%20or%20ask%20a%20question...";
+  const whatsappUrl =
+    "https://wa.me/254748825157?text=Hi%20Andishi%20team,%20I%27d%20like%20to%20discuss%20a%20project%20or%20ask%20a%20question...";
 
   return (
     <div className="fixed bottom-12 right-6 z-50 flex flex-col items-end">
@@ -52,7 +53,8 @@ export function FloatingWhatsappButton() {
 
             {/* Body message */}
             <p className="mt-4 font-sans text-[0.84rem] leading-relaxed text-[var(--on-surface-dim)]">
-              Hi! Have a general inquiry or want to build a digital product with Andishi Studio? Let&apos;s chat on WhatsApp.
+              Hi! Have a general inquiry or want to build a digital product with Andishi Studio?
+              Let&apos;s chat on WhatsApp.
             </p>
 
             {/* CTA Button */}

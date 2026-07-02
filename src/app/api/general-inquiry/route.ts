@@ -3,6 +3,7 @@ import { z } from "zod";
 import { Resend } from "resend";
 import { getClientIp } from "@/lib/api/request";
 import { rateLimit } from "@/lib/rate-limit";
+import { emitActivityEvent } from "@/lib/services/activity";
 
 const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL ?? "dennis@andishi.dev";
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "noreply@andishi.dev";
@@ -46,6 +47,21 @@ export async function POST(req: NextRequest) {
     console.log(
       `[General Inquiry] Received from ${name} (${email}): Subject: "${subject}" - Message: "${message}"`,
     );
+
+    // Persist to the activity feed so admins can track/action it in the
+    // dashboard even if Resend isn't configured or the notification email
+    // fails to send - the DB row is the durable record, the email is a
+    // best-effort nudge.
+    await emitActivityEvent({
+      type: "general_inquiry_submitted",
+      actorRole: "guest",
+      entityType: "general_inquiry",
+      description: `General inquiry from ${name} (${email}): ${subject}`,
+      metadata: { name, email, subject, message },
+      visibleTo: ["admin"],
+    }).catch((err) => {
+      console.error("[General Inquiry] Failed to log activity event:", err);
+    });
 
     // Attempt to send email via Resend if API key is configured
     if (process.env.RESEND_API_KEY) {

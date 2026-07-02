@@ -28,9 +28,9 @@ const directContacts = [
     tone: "var(--primary)",
   },
   {
-    href: "https://wa.me/25474882157",
+    href: "https://wa.me/254748825157",
     label: "WhatsApp",
-    value: "+254 748 821 57",
+    value: "+254 748 825 157",
     sub: "Direct text line",
     icon: IconBrandWhatsapp,
     tone: "var(--secondary)",
@@ -98,10 +98,8 @@ function HireIllustrationLayer({ compact = false }: { compact?: boolean }) {
             : "left-1/2 top-[5.5rem] w-[min(1500px,118vw)] -translate-x-1/2 opacity-[0.24] dark:opacity-[0.28] max-lg:top-[12rem] max-lg:w-[min(1180px,165vw)]",
         ].join(" ")}
         style={{
-          maskImage:
-            "radial-gradient(ellipse at 50% 20%, black 10%, transparent 75%)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse at 50% 20%, black 10%, transparent 75%)",
+          maskImage: "radial-gradient(ellipse at 50% 20%, black 10%, transparent 75%)",
+          WebkitMaskImage: "radial-gradient(ellipse at 50% 20%, black 10%, transparent 75%)",
         }}
       />
       <div className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(to_top,var(--bg)_10%,transparent_60%)]" />
@@ -150,7 +148,8 @@ export function ContactPageExperience() {
       setSuccess(true);
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      const message =
+        err instanceof Error ? err.message : "Something went wrong. Please try again.";
       setError(message);
     } finally {
       setLoading(false);
@@ -167,7 +166,6 @@ export function ContactPageExperience() {
       />
 
       <section className="relative z-[1] mx-auto grid min-h-[calc(100svh-5rem)] w-full max-w-[92rem] gap-12 pb-24 pt-32 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 lg:pt-36">
-        
         {/* Left Column: Title & General Contact Form */}
         <motion.div
           initial={{ opacity: 0, x: -18 }}
@@ -184,7 +182,8 @@ export function ContactPageExperience() {
               Get in touch with Andishi.
             </h1>
             <p className="body-md mt-6 max-w-xl text-[var(--on-surface-dim)]">
-              Have a question about our software studio, design services, or general inquiries? Send us a message and our team will get back to you within 4 hours.
+              Have a question about our software studio, design services, or general inquiries? Send
+              us a message and our team will get back to you within 4 hours.
             </p>
           </div>
 
@@ -206,7 +205,8 @@ export function ContactPageExperience() {
                     Message Sent Successfully.
                   </h2>
                   <p className="body-md mt-4 max-w-md text-[var(--on-surface-dim)]">
-                    Thank you for reaching out! We have received your inquiry. A team member from Andishi Studio will review your message and respond shortly.
+                    Thank you for reaching out! We have received your inquiry. A team member from
+                    Andishi Studio will review your message and respond shortly.
                   </p>
                   <button
                     onClick={() => setSuccess(false)}
@@ -216,11 +216,7 @@ export function ContactPageExperience() {
                   </button>
                 </motion.div>
               ) : (
-                <motion.form
-                  key="form"
-                  onSubmit={handleSubmit}
-                  className="grid gap-5"
-                >
+                <motion.form key="form" onSubmit={handleSubmit} className="grid gap-5">
                   {error && (
                     <div className="flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-[0.88rem] text-red-400">
                       <IconAlertCircle size={18} className="shrink-0" />
@@ -230,7 +226,9 @@ export function ContactPageExperience() {
 
                   <div className="grid gap-5 sm:grid-cols-2">
                     <label className="grid gap-2">
-                      <span className="label-caps text-[0.74rem] text-[var(--on-surface-dim)]">Your Name</span>
+                      <span className="label-caps text-[0.74rem] text-[var(--on-surface-dim)]">
+                        Your Name
+                      </span>
                       <input
                         required
                         type="text"
@@ -242,7 +240,9 @@ export function ContactPageExperience() {
                       />
                     </label>
                     <label className="grid gap-2">
-                      <span className="label-caps text-[0.74rem] text-[var(--on-surface-dim)]">Email Address</span>
+                      <span className="label-caps text-[0.74rem] text-[var(--on-surface-dim)]">
+                        Email Address
+                      </span>
                       <input
                         required
                         type="email"
@@ -256,7 +256,9 @@ export function ContactPageExperience() {
                   </div>
 
                   <label className="grid gap-2">
-                    <span className="label-caps text-[0.74rem] text-[var(--on-surface-dim)]">Subject</span>
+                    <span className="label-caps text-[0.74rem] text-[var(--on-surface-dim)]">
+                      Subject
+                    </span>
                     <input
                       required
                       type="text"
@@ -269,7 +271,9 @@ export function ContactPageExperience() {
                   </label>
 
                   <label className="grid gap-2">
-                    <span className="label-caps text-[0.74rem] text-[var(--on-surface-dim)]">Your Message</span>
+                    <span className="label-caps text-[0.74rem] text-[var(--on-surface-dim)]">
+                      Your Message
+                    </span>
                     <textarea
                       required
                       disabled={loading}
@@ -321,17 +325,24 @@ export function ContactPageExperience() {
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-[linear-gradient(to_top,color-mix(in_srgb,var(--surface)_96%,transparent),transparent_50%)] pointer-events-none" />
-              
+
               {/* Studio Info overlayed on map bottom */}
               <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 flex flex-col justify-end pointer-events-none">
                 <div className="inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_70%,transparent)] px-3 py-1.5 font-mono text-[0.7rem] tracking-tight text-[var(--on-surface)] backdrop-blur-xl mb-4 w-fit pointer-events-auto">
-                  <IconMapPin size={12} stroke={2} className="text-[var(--secondary)] animate-bounce" />
+                  <IconMapPin
+                    size={12}
+                    stroke={2}
+                    className="text-[var(--secondary)] animate-bounce"
+                  />
                   <span>1°11&apos;37.1&quot;S 36°54&apos;18.9&quot;E</span>
                 </div>
                 <div className="pointer-events-auto">
-                  <h4 className="text-[1.2rem] font-medium text-[var(--on-surface)]">Studio Headquarters</h4>
+                  <h4 className="text-[1.2rem] font-medium text-[var(--on-surface)]">
+                    Studio Headquarters
+                  </h4>
                   <p className="mt-1.5 text-[0.95rem] leading-relaxed text-[var(--on-surface-dim)] font-medium">
-                    Bypass Business Arcade Ground Floor,<br />
+                    Bypass Business Arcade Ground Floor,
+                    <br />
                     Northern Bypass - Ruiru, Kenya
                   </p>
                 </div>
@@ -421,7 +432,6 @@ export function ContactPageExperience() {
               studio @ andishi
             </span>
           </div>
-
         </motion.aside>
       </section>
     </main>

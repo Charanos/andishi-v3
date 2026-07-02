@@ -110,13 +110,7 @@ const springTransition = {
   stiffness: 210,
 } as const;
 
-function AnnotationCard({
-  annotation,
-  index,
-}: {
-  annotation: Annotation;
-  index: number;
-}) {
+function AnnotationCard({ annotation, index }: { annotation: Annotation; index: number }) {
   const Icon = annotation.icon;
 
   return (
@@ -172,9 +166,7 @@ function BrowserChrome({ view }: { view: ViewMode }) {
           transition={springTransition}
           className="ml-2 flex-1 rounded-lg border border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_20%,transparent)] px-3 py-1 text-center font-mono text-[0.68rem] text-[color-mix(in_srgb,var(--on-surface-dim)_72%,transparent)]"
         >
-          {view === "client"
-            ? "workspace.andishi.dev/client"
-            : "workspace.andishi.dev/developer"}
+          {view === "client" ? "workspace.andishi.dev/client" : "workspace.andishi.dev/developer"}
         </motion.div>
       </AnimatePresence>
       <div className="hidden items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--secondary)_16%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_7%,transparent)] px-3 py-1 sm:flex">
@@ -192,11 +184,7 @@ function BrowserChrome({ view }: { view: ViewMode }) {
   );
 }
 
-function AppRail({
-  icons,
-}: {
-  icons: Array<{ icon: TablerIcon; active?: boolean }>;
-}) {
+function AppRail({ icons }: { icons: Array<{ icon: TablerIcon; active?: boolean }> }) {
   return (
     <div
       className="hidden w-[3.4rem] shrink-0 flex-col items-center gap-3 border-r border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] bg-[color-mix(in_srgb,var(--bg-deep)_18%,transparent)] pt-4 sm:flex"
@@ -298,12 +286,7 @@ function ClientPanel() {
             detail="+1 this week"
             accent="var(--tertiary)"
           />
-          <MetricCell
-            label="Milestones"
-            value="12/14"
-            detail="2 pending"
-            accent="#d97706"
-          />
+          <MetricCell label="Milestones" value="12/14" detail="2 pending" accent="#d97706" />
         </div>
 
         <div className="grid gap-3">
@@ -374,9 +357,7 @@ function ClientPanel() {
                 {initials}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[0.78rem] text-[var(--on-surface)]">
-                  {text}
-                </p>
+                <p className="truncate text-[0.78rem] text-[var(--on-surface)]">{text}</p>
                 <p className="font-mono text-[0.66rem] text-[color-mix(in_srgb,var(--on-surface-dim)_56%,transparent)]">
                   {time}
                 </p>
@@ -438,23 +419,17 @@ function DeveloperPanel() {
           <p className="mt-2 font-mono text-[1.9rem] leading-none tracking-tight text-[var(--on-surface)]">
             $6,840
           </p>
-          <p className="mt-2 text-[0.82rem] text-[var(--tertiary)]">
-            $1,200 above last month
-          </p>
+          <p className="mt-2 text-[0.82rem] text-[var(--tertiary)]">$1,200 above last month</p>
         </div>
 
         <div className="rounded-[1rem] border border-[color-mix(in_srgb,var(--on-surface)_9%,transparent)] bg-[color-mix(in_srgb,var(--surface)_34%,transparent)] p-4">
           <div className="mb-2 flex items-center justify-between">
-            <p className="text-[0.9rem] font-medium text-[var(--on-surface)]">
-              Time tracker
-            </p>
+            <p className="text-[0.9rem] font-medium text-[var(--on-surface)]">Time tracker</p>
             <span className="grid h-9 w-9 place-items-center rounded-full border border-[color-mix(in_srgb,var(--secondary)_22%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] text-[var(--secondary)]">
               <IconPlayerPause size={15} stroke={1.7} />
             </span>
           </div>
-          <p className="font-mono text-[1.7rem] tracking-tight text-[var(--secondary)]">
-            03:42:18
-          </p>
+          <p className="font-mono text-[1.7rem] tracking-tight text-[var(--secondary)]">03:42:18</p>
           <p className="mb-3 text-[0.78rem] text-[var(--on-surface-dim)]">
             Fintech dashboard / API layer
           </p>
@@ -533,17 +508,9 @@ function PlatformFrame({ view }: { view: ViewMode }) {
             <motion.div
               key="client"
               className="absolute inset-0"
-              initial={
-                prefersReducedMotion
-                  ? { opacity: 0 }
-                  : { opacity: 0, x: -36, scale: 0.985 }
-              }
+              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: -36, scale: 0.985 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={
-                prefersReducedMotion
-                  ? { opacity: 0 }
-                  : { opacity: 0, x: -36, scale: 0.985 }
-              }
+              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: -36, scale: 0.985 }}
               transition={springTransition}
             >
               <ClientPanel />
@@ -552,17 +519,9 @@ function PlatformFrame({ view }: { view: ViewMode }) {
             <motion.div
               key="developer"
               className="absolute inset-0"
-              initial={
-                prefersReducedMotion
-                  ? { opacity: 0 }
-                  : { opacity: 0, x: 36, scale: 0.985 }
-              }
+              initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: 36, scale: 0.985 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={
-                prefersReducedMotion
-                  ? { opacity: 0 }
-                  : { opacity: 0, x: 36, scale: 0.985 }
-              }
+              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: 36, scale: 0.985 }}
               transition={springTransition}
             >
               <DeveloperPanel />
@@ -576,8 +535,7 @@ function PlatformFrame({ view }: { view: ViewMode }) {
 
 export function PlatformDualSection() {
   const [view, setView] = useState<ViewMode>("client");
-  const annotations =
-    view === "client" ? clientAnnotations : developerAnnotations;
+  const annotations = view === "client" ? clientAnnotations : developerAnnotations;
 
   return (
     <section
@@ -618,9 +576,9 @@ export function PlatformDualSection() {
             </div>
             <div className="max-w-xl lg:text-right">
               <p className="body-md text-[var(--on-surface-dim)]">
-                One workspace gives clients a clean view of matched engineers,
-                while developers get the delivery context, payment clarity, and
-                reputation trail they need to do senior work well.
+                One workspace gives clients a clean view of matched engineers, while developers get
+                the delivery context, payment clarity, and reputation trail they need to do senior
+                work well.
               </p>
               <div
                 className="mt-6 inline-flex rounded-full border border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] bg-[color-mix(in_srgb,var(--surface)_38%,transparent)] p-1 backdrop-blur-xl"
@@ -657,11 +615,7 @@ export function PlatformDualSection() {
               <AnimatePresence mode="wait">
                 <motion.div key={view} className="contents">
                   {annotations.map((annotation, index) => (
-                    <AnnotationCard
-                      key={annotation.title}
-                      annotation={annotation}
-                      index={index}
-                    />
+                    <AnnotationCard key={annotation.title} annotation={annotation} index={index} />
                   ))}
                 </motion.div>
               </AnimatePresence>
@@ -675,33 +629,24 @@ export function PlatformDualSection() {
               Start matching
               <IconRocket size={16} stroke={1.8} />
             </LinkButton>
-            <LinkButton
-              href="mailto:hire@andishi.dev?subject=Developer talent application"
-              variant="glass"
-            >
+            <LinkButton href="/careers" variant="glass">
               Apply as developer
               <IconCode size={16} stroke={1.7} />
             </LinkButton>
           </div>
 
           <div className="my-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-            {[
-              "No lock-in contracts",
-              "Senior engineers only",
-              "48-hour first match",
-            ].map((item) => (
-              <span
-                key={item}
-                className="inline-flex items-center gap-2 text-[0.78rem] font-medium text-[color-mix(in_srgb,var(--on-surface-dim)_70%,transparent)]"
-              >
-                <IconCheck
-                  size={14}
-                  stroke={2}
-                  className="text-[var(--tertiary)]"
-                />
-                {item}
-              </span>
-            ))}
+            {["No lock-in contracts", "Senior engineers only", "48-hour first match"].map(
+              (item) => (
+                <span
+                  key={item}
+                  className="inline-flex items-center gap-2 text-[0.78rem] font-medium text-[color-mix(in_srgb,var(--on-surface-dim)_70%,transparent)]"
+                >
+                  <IconCheck size={14} stroke={2} className="text-[var(--tertiary)]" />
+                  {item}
+                </span>
+              ),
+            )}
           </div>
         </div>
       </CustomCursorRegion>

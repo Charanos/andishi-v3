@@ -51,6 +51,18 @@ const serviceOptions = [
   ["APIs & integrations", "Backend data pipelines, custom webhooks, payments"],
 ] as const;
 
+// Maps this form's service labels to the shared serviceTypeEnum used by
+// /api/contact. The first selected service becomes the brief's primary
+// serviceType; any others are folded into problemStatement as extras.
+const SERVICE_TYPE_MAP: Record<string, string> = {
+  "Web Application": "custom-software",
+  "SaaS Platform": "saas-development",
+  "Mobile Application": "mobile-apps",
+  "AI & Intelligent Systems": "ai-systems",
+  "Enterprise Software": "enterprise-software",
+  "APIs & integrations": "apis-integrations",
+};
+
 const timelines = [
   ["ASAP", "this week"],
   ["2 weeks", "near-term"],
@@ -73,8 +85,7 @@ const controlFocusClass =
 
 const fieldLabelClass = "text-[0.9rem] font-medium text-[var(--on-surface)]";
 
-const helperTextClass =
-  "text-[0.88rem] leading-relaxed text-[var(--on-surface-dim)]";
+const helperTextClass = "text-[0.88rem] leading-relaxed text-[var(--on-surface-dim)]";
 
 function PlusTexture({ opacity = 0.1 }: { opacity?: number }) {
   return (
@@ -98,6 +109,8 @@ export function StartProjectExperience() {
   const [budget, setBudget] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [sentRef, setSentRef] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [form, setForm] = useState({
     name: "",
     role: "",
@@ -115,21 +128,11 @@ export function StartProjectExperience() {
 
   const canContinue = useMemo(() => {
     if (step === 0) return form.name.trim().length > 1 && isEmail(form.email);
-    if (step === 1)
-      return services.length > 0 && form.description.trim().length > 19;
+    if (step === 1) return services.length > 0 && form.description.trim().length > 19;
     if (step === 2) return timeline && budget;
     if (step === 4) return agreed;
     return true;
-  }, [
-    agreed,
-    budget,
-    form.description,
-    form.email,
-    form.name,
-    services.length,
-    step,
-    timeline,
-  ]);
+  }, [agreed, budget, form.description, form.email, form.name, services.length, step, timeline]);
 
   const update = (field: keyof typeof form, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -137,9 +140,7 @@ export function StartProjectExperience() {
 
   const toggleService = (value: string) => {
     setServices((current) =>
-      current.includes(value)
-        ? current.filter((item) => item !== value)
-        : [...current, value],
+      current.includes(value) ? current.filter((item) => item !== value) : [...current, value],
     );
   };
 
@@ -148,39 +149,68 @@ export function StartProjectExperience() {
     setStep((current) => Math.min(current + 1, steps.length - 1));
   };
 
-  const submitBrief = (event: FormEvent<HTMLFormElement>) => {
+  const submitBrief = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!canContinue) return;
+    if (!canContinue || isSubmitting) return;
 
-    const ref = `AND-${Date.now().toString(36).toUpperCase().slice(-6)}`;
-    const body = [
-      `Project brief reference: ${ref}`,
-      "",
-      `Name: ${form.name}`,
-      `Role: ${form.role || "Not provided"}`,
-      `Email: ${form.email}`,
-      `Phone / WhatsApp: ${form.phone || "Not provided"}`,
-      `Company: ${form.company || "Not provided"}`,
-      "",
-      `Product Type: ${services.join(", ")}`,
-      `Start timing: ${timeline}`,
-      `Project scale: ${budget}`,
-      "",
-      "Project details:",
-      form.description,
-      "",
-      `Existing product or team: ${form.existing || "Not provided"}`,
-      `Current / preferred stack: ${form.stack || "No preference"}`,
-      `Source: ${form.source || "Not provided"}`,
-      "",
-      "Extra context:",
-      form.extra || "Not provided",
-    ].join("\n");
+    setSubmitError("");
+    setIsSubmitting(true);
 
-    setSentRef(ref);
-    window.location.href = `mailto:hire@andishi.dev?subject=${encodeURIComponent(
-      `Project brief ${ref}`,
-    )}&body=${encodeURIComponent(body)}`;
+    const [primaryService, ...additionalServices] = services;
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "build",
+          name: form.name,
+          email: form.email,
+          company: form.company || undefined,
+          serviceType: SERVICE_TYPE_MAP[primaryService] ?? "custom-software",
+          problemStatement: form.description,
+          projectBudget: budget || undefined,
+          projectTimeline: timeline || undefined,
+          phone: form.phone || undefined,
+          submitterRole: form.role || undefined,
+          hasExistingProduct: form.existing.trim().length > 0,
+          stackPreferences: form.stack
+            ? form.stack
+                .split(",")
+                .map((item) => item.trim())
+                .filter(Boolean)
+            : undefined,
+          additionalServices: additionalServices.length ? additionalServices : undefined,
+          source: form.source || undefined,
+          additionalContext:
+            [form.existing && `Existing product or team: ${form.existing}`, form.extra]
+              .filter(Boolean)
+              .join("\n\n") || undefined,
+        }),
+      });
+
+      const result: { briefId?: string; error?: string } | null = await response
+        .json()
+        .catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(result?.error ?? "Something went wrong. Please try again.");
+      }
+
+      const ref = `AND-${(result?.briefId ?? Date.now().toString(36))
+        .toString()
+        .toUpperCase()
+        .slice(-6)}`;
+      setSentRef(ref);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "We couldn't send your brief. Please try again or email hire@andishi.dev directly.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (sentRef) {
@@ -199,17 +229,13 @@ export function StartProjectExperience() {
               const isDone = index < step;
 
               return (
-                <div
-                  key={item.title}
-                  className="relative flex gap-4 pb-6 last:pb-0"
-                >
+                <div key={item.title} className="relative flex gap-4 pb-6 last:pb-0">
                   {index < steps.length - 1 && (
                     <span
                       aria-hidden="true"
                       className={cn(
                         "absolute left-[0.94rem] top-8 h-[calc(100%-2rem)] w-px bg-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] dark:bg-[var(--glass-border)]",
-                        isDone &&
-                          "bg-[color-mix(in_srgb,var(--tertiary)_38%,transparent)]",
+                        isDone && "bg-[color-mix(in_srgb,var(--tertiary)_38%,transparent)]",
                       )}
                     />
                   )}
@@ -231,9 +257,7 @@ export function StartProjectExperience() {
                     <span
                       className={cn(
                         "block text-[0.95rem] font-medium leading-snug",
-                        isActive
-                          ? "text-[var(--on-surface)]"
-                          : "text-[var(--on-surface-dim)]",
+                        isActive ? "text-[var(--on-surface)]" : "text-[var(--on-surface-dim)]",
                       )}
                     >
                       {item.title}
@@ -458,9 +482,7 @@ export function StartProjectExperience() {
                             budget === item && "bg-current",
                           )}
                         />
-                        <span className="font-mono text-[0.8rem] tracking-tight">
-                          {item}
-                        </span>
+                        <span className="font-mono text-[0.8rem] tracking-tight">{item}</span>
                       </button>
                     ))}
                   </div>
@@ -562,13 +584,19 @@ export function StartProjectExperience() {
                     <IconCheck size={12} stroke={2.4} />
                   </span>
                   <span className="text-[0.88rem] leading-relaxed text-[var(--on-surface-dim)]">
-                    I confirm this brief is accurate and understand the scoping
-                    call is free and non-binding.
+                    I confirm this brief is accurate and understand the scoping call is free and
+                    non-binding.
                   </span>
                 </button>
               </StepShell>
             )}
           </motion.div>
+
+          {step === steps.length - 1 && submitError && (
+            <p className="mt-4 rounded-lg border border-[color-mix(in_srgb,var(--tertiary)_40%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_10%,transparent)] px-4 py-3 text-[0.86rem] leading-relaxed text-[var(--tertiary)]">
+              {submitError}
+            </p>
+          )}
 
           <div className="mt-8 flex items-center justify-between gap-4 border-t border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] pt-6 dark:border-[var(--glass-border)]">
             <button
@@ -581,18 +609,13 @@ export function StartProjectExperience() {
               Back
             </button>
             {step < steps.length - 1 ? (
-              <Button
-                type="button"
-                variant="primary"
-                disabled={!canContinue}
-                onClick={goNext}
-              >
+              <Button type="button" variant="primary" disabled={!canContinue} onClick={goNext}>
                 Continue
                 <IconArrowRight size={16} stroke={1.8} />
               </Button>
             ) : (
-              <Button type="submit" variant="primary" disabled={!canContinue}>
-                Prepare project brief
+              <Button type="submit" variant="primary" disabled={!canContinue || isSubmitting}>
+                {isSubmitting ? "Sending..." : "Prepare project brief"}
                 <IconSend size={16} stroke={1.8} />
               </Button>
             )}
@@ -605,10 +628,7 @@ export function StartProjectExperience() {
 
 function ArtworkLayer() {
   return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
-    >
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <Image
         src="/light-blob.svg"
         alt=""
@@ -649,9 +669,7 @@ function StepShell({
       <h1 className="title-serif max-w-[19ch] text-[clamp(2.75rem,5.8vw,4.55rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
         {title}
       </h1>
-      <p className="body-md mt-6 max-w-2xl text-[var(--on-surface-dim)]">
-        {desc}
-      </p>
+      <p className="body-md mt-6 max-w-2xl text-[var(--on-surface-dim)]">{desc}</p>
       <div className="mt-9 grid gap-5">{children}</div>
     </div>
   );
@@ -790,9 +808,7 @@ function PickerGroup({
             <span className="font-mono text-[0.84rem] tracking-tight text-[var(--on-surface)]">
               {value}
             </span>
-            <span className="mt-1 text-[0.8rem] text-[var(--on-surface-dim)]">
-              {sub}
-            </span>
+            <span className="mt-1 text-[0.8rem] text-[var(--on-surface-dim)]">{sub}</span>
           </button>
         ))}
       </div>
@@ -809,15 +825,13 @@ function SuccessScreen({ refCode }: { refCode: string }) {
         <span className="grid h-20 w-20 place-items-center rounded-full border border-[color-mix(in_srgb,var(--tertiary)_30%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_12%,transparent)] text-[var(--tertiary)]">
           <IconCheck size={34} stroke={2} />
         </span>
-        <p className="label-caps mt-8 text-[var(--tertiary)]">
-          Project brief prepared
-        </p>
+        <p className="label-caps mt-8 text-[var(--tertiary)]">Project brief prepared</p>
         <h1 className="title-serif mt-4 text-[clamp(2.45rem,5vw,3.9rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
           Project brief ready to transmit.
         </h1>
         <p className="body-md my-8 max-w-lg text-[var(--on-surface-dim)]">
-          Your email client should open with the full project brief. Send it from
-          there, and Andishi will respond with the next step within 24 hours.
+          Your email client should open with the full project brief. Send it from there, and Andishi
+          will respond with the next step within 24 hours.
         </p>
         <p className="mt-6 rounded-xl border border-[color-mix(in_srgb,var(--secondary)_22%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] px-5 py-2.5 font-mono text-[0.78rem] tracking-tight text-[var(--secondary)]">
           ref: {refCode}
