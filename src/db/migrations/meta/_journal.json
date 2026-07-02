@@ -57,6 +57,13 @@
       "when": 1783001249526,
       "tag": "0007_great_meltdown",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1783004962118,
+      "tag": "0008_bent_ma_gnuci",
+      "breakpoints": true
     }
   ]
 }
