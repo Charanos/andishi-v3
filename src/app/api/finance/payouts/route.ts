@@ -8,6 +8,7 @@ import {
   parseJson,
   validationError,
 } from "@/lib/api/responses";
+import { withIdempotency } from "@/lib/api/idempotency";
 import { createPayout, listPayouts } from "@/lib/services/finance/payouts";
 import { createPayoutSchema } from "@/lib/validation/finance";
 
@@ -38,11 +39,13 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) return validationError(parsed.error);
 
   try {
-    const payout = await createPayout(
-      { session, requestId, actorIp: getClientIp(req) },
-      parsed.data,
-    );
-    return NextResponse.json({ payout }, { status: 201 });
+    return await withIdempotency(req, session.user.id, "payouts.create", async () => {
+      const payout = await createPayout(
+        { session, requestId, actorIp: getClientIp(req) },
+        parsed.data,
+      );
+      return { status: 201, body: { payout } };
+    });
   } catch (error) {
     return handleRouteError(error, {
       requestId,

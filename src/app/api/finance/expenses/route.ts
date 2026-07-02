@@ -8,6 +8,7 @@ import {
   parseJson,
   validationError,
 } from "@/lib/api/responses";
+import { withIdempotency } from "@/lib/api/idempotency";
 import { createExpense, listExpenses } from "@/lib/services/finance/expenses";
 import { createExpenseSchema } from "@/lib/validation/finance";
 
@@ -38,11 +39,13 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) return validationError(parsed.error);
 
   try {
-    const expense = await createExpense(
-      { session, requestId, actorIp: getClientIp(req) },
-      parsed.data,
-    );
-    return NextResponse.json({ expense }, { status: 201 });
+    return await withIdempotency(req, session.user.id, "expenses.create", async () => {
+      const expense = await createExpense(
+        { session, requestId, actorIp: getClientIp(req) },
+        parsed.data,
+      );
+      return { status: 201, body: { expense } };
+    });
   } catch (error) {
     return handleRouteError(error, {
       requestId,

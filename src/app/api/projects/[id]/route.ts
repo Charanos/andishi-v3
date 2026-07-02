@@ -3,7 +3,15 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { activityEvents, projects } from "@/db/schema";
 import { getSession } from "@/lib/auth/session";
-import { jsonError, parseJson, validationError } from "@/lib/api/responses";
+import { authorize } from "@/lib/authz/can";
+import { ForbiddenError } from "@/lib/authz/errors";
+import {
+  generateRequestId,
+  handleRouteError,
+  jsonError,
+  parseJson,
+  validationError,
+} from "@/lib/api/responses";
 import { publishCaseStudySchema, updateProjectSchema } from "@/lib/validation/entities";
 
 async function getProjectForRequest(id: string) {
@@ -31,6 +39,7 @@ export async function GET(_req: NextRequest, context: { params: Promise<{ id: st
 }
 
 export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const requestId = generateRequestId();
   const { id } = await context.params;
   const { session, project, allowed } = await getProjectForRequest(id);
   if (!session) return jsonError("Unauthorized", 401);
@@ -40,32 +49,44 @@ export async function PUT(req: NextRequest, context: { params: Promise<{ id: str
   const parsed = updateProjectSchema.safeParse(await parseJson(req));
   if (!parsed.success) return validationError(parsed.error);
 
-  // Non-admin users can only update milestone status and project status
-  const update =
-    session.user.role === "admin"
-      ? parsed.data
-      : {
-          milestones: parsed.data.milestones,
-          status: parsed.data.status,
-        };
+  try {
+    // Non-admin users can only update milestone status and project status
+    let update: Record<string, unknown> = {
+      milestones: parsed.data.milestones,
+      status: parsed.data.status,
+    };
 
-  const [updated] = await getDb()
-    .update(projects)
-    .set({ ...update, updatedAt: new Date() })
-    .where(eq(projects.id, id))
-    .returning();
+    if (session.user.role === "admin") {
+      await authorize(session, "delivery.project.write");
+      update = parsed.data;
+    }
 
-  return NextResponse.json({ project: updated });
+    const [updated] = await getDb()
+      .update(projects)
+      .set({ ...update, updatedAt: new Date() })
+      .where(eq(projects.id, id))
+      .returning();
+
+    return NextResponse.json({ project: updated });
+  } catch (error) {
+    return handleRouteError(error, {
+      requestId,
+      actorUserId: session.user.id,
+      module: "delivery",
+      action: "project.write",
+    });
+  }
 }
 
 /**
  * PATCH /api/projects/[id]
  *
  * Admin-only. Two modes:
- * 1. isPublic: true → validate against publishCaseStudySchema and publish to /work
- * 2. Standard partial update → any subset of project fields
+ * 1. isPublic: true → validate against publishCaseStudySchema and publish to /work (delivery.project.publish)
+ * 2. Standard partial update → any subset of project fields (delivery.project.write)
  */
 export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const requestId = generateRequestId();
   const session = await getSession();
   if (!session || session.user.role !== "admin") {
     return jsonError("Forbidden", 403);
@@ -77,10 +98,66 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ id: s
 
   const body = await parseJson(req);
 
-  // ── Publish as case study ─────────────────────────────────────
+  try {
+    // ── Publish as case study ─────────────────────────────────────
 
-  if (body?.isPublic === true) {
-    const parsed = publishCaseStudySchema.safeParse(body);
+    if (body?.isPublic === true) {
+      await authorize(session, "delivery.project.publish");
+
+      const parsed = publishCaseStudySchema.safeParse(body);
+      if (!parsed.success) return validationError(parsed.error);
+
+      const [updated] = await getDb()
+        .update(projects)
+        .set({ ...parsed.data, updatedAt: new Date() })
+        .where(eq(projects.id, id))
+        .returning();
+
+      await getDb()
+        .insert(activityEvents)
+        .values({
+          type: "project_published",
+          actorId: session.user.id,
+          actorRole: "admin",
+          entityType: "project",
+          entityId: updated.id,
+          description: `Project "${updated.title}" published as public case study at /work/${updated.publicSlug}`,
+          visibleTo: ["admin"],
+        });
+
+      return NextResponse.json({ project: updated });
+    }
+
+    // ── Unpublish / standard partial update ───────────────────────
+
+    if (body?.isPublic === false) {
+      await authorize(session, "delivery.project.publish");
+
+      const [updated] = await getDb()
+        .update(projects)
+        .set({ isPublic: false, updatedAt: new Date() })
+        .where(eq(projects.id, id))
+        .returning();
+
+      await getDb()
+        .insert(activityEvents)
+        .values({
+          type: "project_unpublished",
+          actorId: session.user.id,
+          actorRole: "admin",
+          entityType: "project",
+          entityId: updated.id,
+          description: `Project "${updated.title}" unpublished from /work`,
+          visibleTo: ["admin"],
+        });
+
+      return NextResponse.json({ project: updated });
+    }
+
+    // Standard field update (admin-only free-form)
+    await authorize(session, "delivery.project.write");
+
+    const parsed = updateProjectSchema.safeParse(body);
     if (!parsed.success) return validationError(parsed.error);
 
     const [updated] = await getDb()
@@ -89,63 +166,36 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ id: s
       .where(eq(projects.id, id))
       .returning();
 
-    await getDb()
-      .insert(activityEvents)
-      .values({
-        type: "project_published",
-        actorId: session.user.id,
-        actorRole: "admin",
-        entityType: "project",
-        entityId: updated.id,
-        description: `Project "${updated.title}" published as public case study at /work/${updated.publicSlug}`,
-        visibleTo: ["admin"],
-      });
-
     return NextResponse.json({ project: updated });
+  } catch (error) {
+    return handleRouteError(error, {
+      requestId,
+      actorUserId: session.user.id,
+      module: "delivery",
+      action: "project.write",
+    });
   }
-
-  // ── Unpublish / standard partial update ───────────────────────
-
-  if (body?.isPublic === false) {
-    const [updated] = await getDb()
-      .update(projects)
-      .set({ isPublic: false, updatedAt: new Date() })
-      .where(eq(projects.id, id))
-      .returning();
-
-    await getDb()
-      .insert(activityEvents)
-      .values({
-        type: "project_unpublished",
-        actorId: session.user.id,
-        actorRole: "admin",
-        entityType: "project",
-        entityId: updated.id,
-        description: `Project "${updated.title}" unpublished from /work`,
-        visibleTo: ["admin"],
-      });
-
-    return NextResponse.json({ project: updated });
-  }
-
-  // Standard field update (admin-only free-form)
-  const parsed = updateProjectSchema.safeParse(body);
-  if (!parsed.success) return validationError(parsed.error);
-
-  const [updated] = await getDb()
-    .update(projects)
-    .set({ ...parsed.data, updatedAt: new Date() })
-    .where(eq(projects.id, id))
-    .returning();
-
-  return NextResponse.json({ project: updated });
 }
 
 export async function DELETE(_req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const requestId = generateRequestId();
   const session = await getSession();
-  if (!session || session.user.role !== "admin") return jsonError("Forbidden", 403);
+  if (!session) return jsonError("Unauthorized", 401);
 
   const { id } = await context.params;
-  await getDb().delete(projects).where(eq(projects.id, id));
-  return NextResponse.json({ success: true });
+
+  try {
+    if (session.user.role !== "admin") throw new ForbiddenError();
+    await authorize(session, "delivery.project.delete");
+
+    await getDb().delete(projects).where(eq(projects.id, id));
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return handleRouteError(error, {
+      requestId,
+      actorUserId: session.user.id,
+      module: "delivery",
+      action: "project.delete",
+    });
+  }
 }

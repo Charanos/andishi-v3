@@ -3,7 +3,14 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { placements } from "@/db/schema";
 import { getSession } from "@/lib/auth/session";
-import { jsonError, parseJson, validationError } from "@/lib/api/responses";
+import { authorize } from "@/lib/authz/can";
+import {
+  generateRequestId,
+  handleRouteError,
+  jsonError,
+  parseJson,
+  validationError,
+} from "@/lib/api/responses";
 import { createPlacementSchema } from "@/lib/validation/entities";
 
 export async function GET() {
@@ -34,13 +41,24 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const requestId = generateRequestId();
   const session = await getSession();
   if (!session || session.user.role !== "admin") return jsonError("Forbidden", 403);
 
   const parsed = createPlacementSchema.safeParse(await parseJson(req));
   if (!parsed.success) return validationError(parsed.error);
 
-  const [placement] = await getDb().insert(placements).values(parsed.data).returning();
-  return NextResponse.json({ placement }, { status: 201 });
-}
+  try {
+    await authorize(session, "delivery.placement.write");
 
+    const [placement] = await getDb().insert(placements).values(parsed.data).returning();
+    return NextResponse.json({ placement }, { status: 201 });
+  } catch (error) {
+    return handleRouteError(error, {
+      requestId,
+      actorUserId: session.user.id,
+      module: "delivery",
+      action: "placement.write",
+    });
+  }
+}

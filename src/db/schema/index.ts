@@ -13,6 +13,7 @@ export * from "@/db/schema/matches";
 export * from "@/db/schema/organizations";
 export * from "@/db/schema/permissions";
 export * from "@/db/schema/placements";
+export * from "@/db/schema/platform";
 export * from "@/db/schema/projects";
 export * from "@/db/schema/sessions";
 export * from "@/db/schema/testimonials";

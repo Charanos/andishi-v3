@@ -3,6 +3,18 @@ import { z } from "zod";
 const uuid = z.string().uuid();
 const optionalText = z.string().trim().min(1).optional().nullable();
 
+// ── Brief -> project promotion (ADR-0007's central handoff) ──────────
+
+export const promoteBriefToProjectSchema = z.object({
+  title: z.string().trim().min(2).optional(),
+  engineerIds: z.array(uuid).default([]),
+  billingType: z.enum(["fixed", "time_and_materials", "retainer"]),
+  budgetCents: z.coerce.number().int().min(0).optional().nullable(),
+  startDate: optionalText,
+  targetDate: optionalText,
+  leadPmUserId: uuid.optional().nullable(),
+});
+
 // ── Milestones ──────────────────────────────────────────────────────
 
 export const createMilestoneSchema = z.object({

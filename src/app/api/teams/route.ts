@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
+import { getClientIp } from "@/lib/api/request";
 import {
   generateRequestId,
   handleRouteError,
@@ -7,10 +8,8 @@ import {
   parseJson,
   validationError,
 } from "@/lib/api/responses";
-import { getClientIp } from "@/lib/api/request";
-import { withIdempotency } from "@/lib/api/idempotency";
-import { createInvoice, listInvoices } from "@/lib/services/finance/invoices";
-import { createInvoiceSchema } from "@/lib/validation/finance";
+import { createTeam, listTeams } from "@/lib/services/identity/teams";
+import { createTeamSchema } from "@/lib/validation/identity";
 
 export async function GET() {
   const requestId = generateRequestId();
@@ -18,14 +17,14 @@ export async function GET() {
   if (!session) return jsonError("Unauthorized", 401);
 
   try {
-    const result = await listInvoices({ session, requestId });
-    return NextResponse.json({ invoices: result });
+    const result = await listTeams({ session, requestId });
+    return NextResponse.json({ teams: result });
   } catch (error) {
     return handleRouteError(error, {
       requestId,
       actorUserId: session.user.id,
-      module: "finance",
-      action: "invoice.read",
+      module: "identity",
+      action: "team.read",
     });
   }
 }
@@ -35,23 +34,18 @@ export async function POST(req: NextRequest) {
   const session = await getSession();
   if (!session) return jsonError("Unauthorized", 401);
 
-  const parsed = createInvoiceSchema.safeParse(await parseJson(req));
+  const parsed = createTeamSchema.safeParse(await parseJson(req));
   if (!parsed.success) return validationError(parsed.error);
 
   try {
-    return await withIdempotency(req, session.user.id, "invoices.create", async () => {
-      const invoice = await createInvoice(
-        { session, requestId, actorIp: getClientIp(req) },
-        parsed.data,
-      );
-      return { status: 201, body: { invoice } };
-    });
+    const team = await createTeam({ session, requestId, actorIp: getClientIp(req) }, parsed.data);
+    return NextResponse.json({ team }, { status: 201 });
   } catch (error) {
     return handleRouteError(error, {
       requestId,
       actorUserId: session.user.id,
-      module: "finance",
-      action: "invoice.write",
+      module: "identity",
+      action: "team.write",
     });
   }
 }

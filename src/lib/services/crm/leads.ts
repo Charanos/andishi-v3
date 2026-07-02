@@ -6,6 +6,7 @@ import { briefs, leads } from "@/db/schema";
 import { authorize } from "@/lib/authz/can";
 import { writeAudit } from "@/lib/authz/audit";
 import { ConflictError, ForbiddenError, NotFoundError } from "@/lib/authz/errors";
+import { emitActivityEvent } from "@/lib/services/activity";
 import { findOrCreateGuestAccount } from "@/lib/services/crm/guest-accounts";
 import type { CallerContext } from "@/lib/services/types";
 import type {
@@ -227,6 +228,25 @@ export async function convertLeadToBrief(
           };
 
     const [brief] = await tx.insert(briefs).values(briefValues).returning();
+
+    // Same event shape as crm/briefs.ts's createBrief() - convertLeadToBrief
+    // can't call that service directly (it manages its own transaction;
+    // nesting would risk deadlocking the pool), so this mirrors it inline
+    // to keep both brief-creation paths equally visible to the client and
+    // to delivery/support staff (crm.brief.read).
+    await emitActivityEvent(
+      {
+        type: brief.briefType === "build" ? "brief_build_submitted" : "brief_hire_submitted",
+        actorId: ctx.session.user.id,
+        actorRole: ctx.session.user.role,
+        organizationId: brief.organizationId,
+        entityType: "brief",
+        entityId: brief.id,
+        description: `${brief.briefType === "build" ? "Build" : "Hire"} brief "${brief.title}" created from a qualified lead`,
+        visibleTo: ["client", "crm.brief.read"],
+      },
+      tx,
+    );
 
     const [updatedLead] = await tx
       .update(leads)
