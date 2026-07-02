@@ -14,10 +14,8 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 export function TestimonialsMarquee() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(() => {
-    if (typeof window === "undefined") return [];
-    return getTestimonials().filter((t) => t.status !== "archived");
-  });
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [mounted, setMounted] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
   const [isNew, setIsNew] = useState(false);
@@ -28,6 +26,12 @@ export function TestimonialsMarquee() {
   const tweenRef = useRef<gsap.core.Tween | null>(null);
 
   useEffect(() => {
+    // Client-side initialization to avoid hydration mismatch (deferred asynchronously)
+    const frameId = requestAnimationFrame(() => {
+      setTestimonials(getTestimonials().filter((t) => t.status !== "archived"));
+      setMounted(true);
+    });
+
     const handleUpdate = () => {
       setTestimonials(getTestimonials().filter((t) => t.status !== "archived"));
     };
@@ -42,6 +46,7 @@ export function TestimonialsMarquee() {
     window.addEventListener("admin_sim_changed", checkAdmin);
 
     return () => {
+      cancelAnimationFrame(frameId);
       window.removeEventListener("testimonials_updated", handleUpdate);
       window.removeEventListener("storage", checkAdmin);
       window.removeEventListener("admin_sim_changed", checkAdmin);
@@ -186,7 +191,7 @@ export function TestimonialsMarquee() {
 
         {/* Moving track wrapper */}
         <div ref={trackRef} className="flex w-max will-change-transform">
-          {duplicatedItems.map((item, index) => (
+          {mounted && duplicatedItems.map((item, index) => (
             <div
               key={`${item.id}-${index}`}
               className="group/card relative w-[420px] max-w-[85vw] shrink-0 p-8 mx-5 rounded-[2rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] shadow-[var(--glass-inner-shadow)] backdrop-blur-md transition-all duration-300 hover:border-[color-mix(in_srgb,var(--on-surface)_18%,transparent)]"
@@ -212,7 +217,6 @@ export function TestimonialsMarquee() {
                     alt={item.authorName}
                     width={36}
                     height={36}
-                    unoptimized
                     className="h-full w-full object-cover"
                   />
                 </div>

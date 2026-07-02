@@ -31,6 +31,7 @@ export function FinalCtaArtwork({
           imageClassName,
         )}
         style={{
+          height: "auto",
           maskImage:
             "linear-gradient(to right, transparent 0%, black 16%, black 84%, transparent 100%)",
           WebkitMaskImage:

@@ -39,9 +39,19 @@ export function LoginPageExperience({
     error: initialError,
   });
   const [mode, setMode] = useState<AuthMode>("password");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("andishi_remember_email") || "";
+    }
+    return "";
+  });
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false);
+  const [remember, setRemember] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("andishi_remember_email") !== null;
+    }
+    return false;
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "signed">("idle");
   const [attempted, setAttempted] = useState(false);
@@ -70,6 +80,12 @@ export function LoginPageExperience({
 
     if (!canSubmit) {
       event.preventDefault();
+    } else {
+      if (remember) {
+        localStorage.setItem("andishi_remember_email", email);
+      } else {
+        localStorage.removeItem("andishi_remember_email");
+      }
     }
   };
 

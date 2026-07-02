@@ -129,7 +129,7 @@ export const roleLabels: Record<DashboardRole, string> = {
 export const kpis = {
   admin: [
     { label: "Active Briefs", value: "18", trend: "+4 this week", data: [5, 7, 8, 7, 11, 13, 18] },
-    { label: "Live Placements", value: "42", trend: "+9%", data: [21, 24, 28, 31, 35, 39, 42] },
+    { label: "Live Builds", value: "42", trend: "+9%", data: [21, 24, 28, 31, 35, 39, 42] },
     {
       label: "Monthly Revenue",
       value: "$118k",
@@ -138,8 +138,8 @@ export const kpis = {
     },
   ],
   client: [
-    { label: "Profiles Ready", value: "3", trend: "2 strong matches", data: [0, 0, 1, 1, 2, 3, 3] },
-    { label: "Intro Requests", value: "1", trend: "awaiting reply", data: [0, 0, 0, 1, 1, 1, 1] },
+    { label: "Proposals Scoped", value: "3", trend: "2 proposals ready", data: [0, 0, 1, 1, 2, 3, 3] },
+    { label: "Discovery Syncs", value: "1", trend: "awaiting kickoff", data: [0, 0, 0, 1, 1, 1, 1] },
     { label: "Days to Target", value: "5", trend: "inside 8-day SLA", data: [8, 7, 7, 6, 6, 5, 5] },
   ],
   developer: [

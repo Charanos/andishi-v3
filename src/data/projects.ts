@@ -17,6 +17,7 @@ export interface ProjectEntry {
   image: string;
   services: ServiceType[];
   year: string;
+  accent?: string;
 }
 
 export const projects: ProjectEntry[] = [
@@ -98,7 +99,7 @@ export const projects: ProjectEntry[] = [
     resultLabel: "Vehicles managed daily",
     resultContext: "across 3 countries",
     tags: ["React Native", "Geolocation", "Redis", "Routing"],
-    image: "https://images.unsplash.com/photo-1586528116311-ad8ed7c508b0?auto=format&fit=crop&w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1200&q=80",
     services: ["mobile-apps", "enterprise-software"],
     year: "2024",
   },
@@ -626,7 +627,47 @@ export const projects: ProjectEntry[] = [
   },
 ];
 
+/** Returns all projects list from localStorage or seed fallback. */
+export function getProjectsList(): ProjectEntry[] {
+  if (typeof window === "undefined") {
+    return projects;
+  }
+  const stored = localStorage.getItem("andishi_projects");
+  if (!stored) {
+    localStorage.setItem("andishi_projects", JSON.stringify(projects));
+    return projects;
+  }
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return projects;
+  }
+}
+
+/** Saves or updates a project entry. */
+export function saveProjectEntry(project: ProjectEntry): void {
+  if (typeof window === "undefined") return;
+  const list = getProjectsList();
+  const index = list.findIndex((p) => p.slug === project.slug);
+  if (index >= 0) {
+    list[index] = project;
+  } else {
+    list.unshift(project);
+  }
+  localStorage.setItem("andishi_projects", JSON.stringify(list));
+  window.dispatchEvent(new Event("projects_updated"));
+}
+
+/** Deletes a project entry. */
+export function deleteProjectEntry(slug: string): void {
+  if (typeof window === "undefined") return;
+  const list = getProjectsList().filter((p) => p.slug !== slug);
+  localStorage.setItem("andishi_projects", JSON.stringify(list));
+  window.dispatchEvent(new Event("projects_updated"));
+}
+
 /** Returns all projects for a given service slug, max `limit` items. */
 export function getProjectsByService(slug: ServiceType, limit = 6): ProjectEntry[] {
-  return projects.filter((p) => p.services.includes(slug)).slice(0, limit);
+  return getProjectsList().filter((p) => p.services.includes(slug)).slice(0, limit);
 }
+

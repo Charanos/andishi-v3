@@ -216,7 +216,7 @@ export const showcaseProjects = [
     statValue: "18%",
     statSub: "reduction in idle time",
     tags: ["Geolocation", "Redis", "React Native", "Routing"],
-    image: "https://images.unsplash.com/photo-1586528116311-ad8ed7c508b0?auto=format&fit=crop&w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1200&q=80",
   },
   {
     eyebrow: "Healthcare / Connect",

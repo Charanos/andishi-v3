@@ -175,7 +175,7 @@ export function ServicesBentoGrid() {
 
                     {/* Right - browser mockup */}
                     <div className="relative hidden h-full items-center justify-end lg:flex">
-                      <div className="h-full w-full overflow-hidden rounded-[1.1rem] border border-[var(--glass-border)] bg-[var(--surface-low)] shadow-[0_8px_32px_color-mix(in_srgb,var(--bg-deep)_18%,transparent)] transition-all duration-700 group-hover:scale-[1.025] group-hover:rotate-[-0.4deg]">
+                      <div className="h-full w-full overflow-hidden rounded-[1.1rem] soft-neumorphic-inner transition-all duration-700 group-hover:scale-[1.025] group-hover:rotate-[-0.4deg]">
                         {/* Browser chrome */}
                         <div className="flex h-6 shrink-0 items-center gap-1.5 border-b border-[var(--glass-border)] bg-[var(--surface-high)] px-3">
                           <span className="h-[7px] w-[7px] rounded-full bg-red-400/70" />
@@ -253,7 +253,7 @@ export function ServicesBentoGrid() {
 
                     {/* Phone mockup - fills vertical space */}
                     <div className="hidden lg:flex flex-1 items-end justify-center py-3">
-                      <div className="relative w-[72%] overflow-hidden rounded-t-2xl border border-[var(--glass-border)] bg-[var(--surface-low)] shadow-[0_-8px_32px_color-mix(in_srgb,var(--bg-deep)_14%,transparent)] transition-all duration-700 group-hover:scale-[1.03] group-hover:-translate-y-1.5">
+                      <div className="relative w-[72%] overflow-hidden rounded-t-2xl soft-neumorphic-inner transition-all duration-700 group-hover:scale-[1.03] group-hover:-translate-y-1.5">
                         <div className="absolute left-1/2 top-1.5 z-20 h-2.5 w-10 -translate-x-1/2 rounded-full bg-black/30" />
                         <div className="relative h-[200px] w-full overflow-hidden bg-[var(--bg-deep)]">
                           {service.image && (
@@ -333,7 +333,7 @@ export function ServicesBentoGrid() {
 
                     {/* Image panel - desktop only */}
                     <div className="relative hidden lg:flex h-full w-[160px] shrink-0 items-center">
-                      <div className="relative h-[140px] w-full overflow-hidden rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] shadow-md transition-all duration-700 group-hover:scale-[1.03]">
+                      <div className="relative h-[140px] w-full overflow-hidden rounded-xl soft-neumorphic-inner transition-all duration-700 group-hover:scale-[1.03]">
                         {service.image && (
                           <Image src={service.image} alt="" fill className="object-cover transition-transform duration-[3s] ease-out group-hover:scale-105" sizes="12vw" />
                         )}

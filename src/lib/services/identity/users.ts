@@ -5,12 +5,19 @@ import { users } from "@/db/schema";
 import { authorize } from "@/lib/authz/can";
 import { writeAudit } from "@/lib/authz/audit";
 import { ConflictError, ForbiddenError, NotFoundError } from "@/lib/authz/errors";
+import { sendInviteEmail } from "@/lib/email";
 import { isLastSuperAdmin } from "@/lib/services/identity/roles";
+import { buildActivationUrl, provisionUserAccount } from "@/lib/services/identity/provisioning";
 import type { CallerContext } from "@/lib/services/types";
-import type { updateUserAccessSchema, updateUserProfileSchema } from "@/lib/validation/identity";
+import type {
+  inviteUserSchema,
+  updateUserAccessSchema,
+  updateUserProfileSchema,
+} from "@/lib/validation/identity";
 
 type UpdateUserProfileInput = z.infer<typeof updateUserProfileSchema>;
 type UpdateUserAccessInput = z.infer<typeof updateUserAccessSchema>;
+type InviteUserInput = z.infer<typeof inviteUserSchema>;
 
 function omitPasswordHash<T extends { passwordHash: unknown }>(user: T) {
   const safeUser = { ...user };
@@ -137,4 +144,59 @@ export async function updateUserAccess(
 
     return omitPasswordHash(updated);
   });
+}
+
+/**
+ * Provisions login access for someone not yet in the system - or re-sends
+ * an activation link if they're still "invited". Reuses the exact same
+ * password_reset_tokens + /reset-password activation mechanism built for
+ * guest accounts (see lib/services/crm/guest-accounts.ts and
+ * app/api/auth/reset-password/route.ts) - a fresh invite and "I never set
+ * a password yet" are the same underlying state. Never issues a token for
+ * an already-active account (re-inviting an active user would be a way to
+ * hijack their session via a password-set link).
+ */
+export async function inviteUser(ctx: CallerContext, input: InviteUserInput) {
+  const { session, requestId, actorIp } = ctx;
+
+  if (session.user.role !== "admin") {
+    throw new ForbiddenError("Only Andishi staff can invite a user.");
+  }
+  await authorize(session, "identity.user.write");
+
+  const db = getDb();
+  const [existing] = await db.select().from(users).where(eq(users.email, input.email)).limit(1);
+
+  if (existing?.status === "active") {
+    throw new ConflictError("This email already has an active account.");
+  }
+
+  const { user, token } = await db.transaction(async (tx) => {
+    const result = await provisionUserAccount(tx, input);
+
+    await writeAudit(
+      {
+        actorUserId: session.user.id,
+        actorIp,
+        action: "identity.user.write",
+        resourceType: "user",
+        resourceId: result.user.id,
+        after: omitPasswordHash(result.user),
+        requestId,
+      },
+      tx,
+    );
+
+    return result;
+  });
+
+  if (token) {
+    sendInviteEmail(user.email, session.user.name, user.role, buildActivationUrl(token)).catch(
+      (error) => {
+        console.error("[inviteUser] Failed to send invite email:", error);
+      },
+    );
+  }
+
+  return omitPasswordHash(user);
 }

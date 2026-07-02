@@ -20,6 +20,20 @@ export const updateUserAccessSchema = z.object({
   engineerId: uuid.optional().nullable(),
 });
 
+/**
+ * Provisions login access for someone not yet in the system (a newly
+ * placed developer, a client contact added outside the brief-intake flow,
+ * a new staff hire) - or re-sends an activation link if they're still
+ * "invited". See lib/services/identity/users.ts's inviteUser.
+ */
+export const inviteUserSchema = z.object({
+  email: z.string().trim().toLowerCase().email(),
+  name: z.string().trim().min(2),
+  role: z.enum(["admin", "client", "developer"]),
+  organizationId: uuid.optional().nullable(),
+  engineerId: uuid.optional().nullable(),
+});
+
 // ── Roles ─────────────────────────────────────────────────────────────
 
 const permissionKey = z.string().trim().min(1);

@@ -1,3 +1,6 @@
+"use client";
+
+import { useRef } from "react";
 import { IconArrowRight } from "@tabler/icons-react";
 import Image from "next/image";
 import Script from "next/script";
@@ -9,6 +12,13 @@ import { WhyAndishiSection } from "@/components/sections/why-andishi-section";
 import { ServicesBentoGrid } from "@/components/sections/services-bento";
 import { ProcessSection } from "@/components/sections/process-section";
 import { cn } from "@/lib/utils";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const faqSchema = {
   "@context": "https://schema.org",
@@ -64,16 +74,42 @@ export default function Home() {
 }
 
 function TalentTrack() {
+  const containerRef = useRef<HTMLDivElement>(null);
   const stats = [
     ["50+", "engineers placed"],
     ["8 days", "avg match speed"],
     ["30d", "replacement guarantee"],
   ];
 
+  useGSAP(
+    () => {
+      gsap.fromTo(
+        containerRef.current,
+        { opacity: 0, y: 16 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 88%",
+            once: true,
+          },
+        }
+      );
+    },
+    { scope: containerRef }
+  );
+
   return (
     <section className="relative isolate px-5 py-20 max-sm:py-14 sm:px-8 lg:px-10 lg:py-28 bg-[color-mix(in_srgb,var(--bg-deep)_72%,var(--bg))]">
       <div className="mx-auto max-w-[92rem]">
-        <div className="mx-auto max-w-4xl rounded-xl border border-white/[0.08] bg-white/[0.03] p-8 max-sm:p-5 shadow-xl backdrop-blur-xl hover:bg-white/[0.05] transition-all duration-300 max-md:!rounded-none max-md:!border-none max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!p-0 max-md:hover:!bg-transparent">
+        <div
+          ref={containerRef}
+          style={{ willChange: "transform, opacity" }}
+          className="mx-auto max-w-4xl rounded-xl border border-white/[0.08] bg-white/[0.03] p-8 max-sm:p-5 shadow-xl backdrop-blur-xl hover:bg-white/[0.05] transition-all duration-300 max-md:!rounded-none max-md:!border-none max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!p-0 max-md:hover:!bg-transparent"
+        >
           <div className="absolute inset-0 bg-gradient-to-br from-[#d0bcff]/[0.02] via-transparent to-[var(--tertiary)]/[0.01] pointer-events-none rounded-xl max-md:hidden" />
           <div className="relative z-[1] grid gap-8 md:grid-cols-[1.5fr_1fr]">
             <div>
@@ -124,6 +160,7 @@ function TalentTrack() {
 }
 
 function Founder() {
+  const containerRef = useRef<HTMLDivElement>(null);
   const founderStats = [
     ["32+", "Products shipped"],
     ["Founder-led", "Direct contact"],
@@ -136,8 +173,65 @@ function Founder() {
     "Stand behind delivery outcomes.",
   ];
 
+  useGSAP(
+    () => {
+      // Animate left side image & stats plate
+      gsap.fromTo(
+        ".founder-left-anim",
+        { opacity: 0, y: 16 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.65,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".founder-left-anim",
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+
+      // Animate right side contents
+      gsap.fromTo(
+        ".founder-right-anim",
+        { opacity: 0, y: 16 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".founder-right-anim",
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+
+      // Animate operating rules cards stagger
+      gsap.fromTo(
+        ".founder-rule-card",
+        { opacity: 0, y: 12 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          stagger: 0.08,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".founder-rule-grid",
+            start: "top 88%",
+            once: true,
+          },
+        }
+      );
+    },
+    { scope: containerRef }
+  );
+
   return (
-    <section className="relative isolate overflow-hidden px-5 py-24 max-sm:py-16 sm:px-8 lg:px-10 lg:py-36 bg-[var(--bg)]">
+    <section ref={containerRef} className="relative isolate overflow-hidden px-5 py-24 max-sm:py-16 sm:px-8 lg:px-10 lg:py-36 bg-[var(--bg)]">
       {/* Subtle top section border line */}
       <div
         aria-hidden="true"
@@ -149,7 +243,7 @@ function Founder() {
 
       <div className="relative z-[1] mx-auto grid max-w-[92rem] gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
         {/* Left Column: Image Canvas & Stats */}
-        <div className="order-2 lg:order-1">
+        <div className="order-2 lg:order-1 founder-left-anim" style={{ willChange: "transform, opacity" }}>
           <div className="relative mx-auto max-w-[28rem] lg:mx-0">
             {/* Elegant overlapping glass outlines */}
             <div
@@ -184,7 +278,7 @@ function Founder() {
             </div>
 
             {/* Stats Dashboard Plate */}
-            <div className="relative z-[2] mx-4 -mt-12 rounded-[1.5rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_85%,transparent)] p-5 shadow-[0_24px_70px_color-mix(in_srgb,var(--bg-deep)_24%,transparent)] backdrop-blur-2xl sm:mx-8 max-md:!rounded-none max-md:!border-none max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!p-0 max-md:mt-8">
+            <div className="relative z-[2] mx-4 -mt-12 sm:-mt-16 rounded-[1.5rem] soft-neumorphic-inner bg-[var(--surface)] border border-[var(--outline-variant)] dark:border-white/5 p-5 sm:mx-8 shadow-[0_24px_70px_color-mix(in_srgb,var(--bg-deep)_24%,transparent)]">
               <div className="grid grid-cols-3 gap-4 divide-x divide-[var(--glass-border)]">
                 {founderStats.map(([value, label], idx) => (
                   <div
@@ -205,7 +299,7 @@ function Founder() {
         </div>
 
         {/* Right Column: Founder Copy */}
-        <div className="order-1 lg:order-2">
+        <div className="order-1 lg:order-2 founder-right-anim" style={{ willChange: "transform, opacity" }}>
           <p className="label-caps mb-5 flex items-center gap-3 text-[var(--tertiary)] font-medium tracking-[0.18em]">
             <span className="h-px w-7 bg-[var(--tertiary)]" />
             FOUNDER CONTEXT
@@ -229,11 +323,12 @@ function Founder() {
           </blockquote>
 
           {/* Operating Rules Bento Grid */}
-          <div className="mt-10 grid gap-4 sm:grid-cols-3">
+          <div className="mt-10 grid gap-4 sm:grid-cols-3 founder-rule-grid">
             {operatingRules.map((rule, index) => (
               <div
                 key={rule}
-                className="relative flex flex-col justify-between overflow-hidden rounded-[1.75rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] shadow-[var(--glass-inner-shadow)] p-6 transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-[color-mix(in_srgb,var(--on-surface)_15%,transparent)] hover:shadow-[0_18px_44px_rgba(0,0,0,0.06)] backdrop-blur-md max-md:!rounded-none max-md:!border-none max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!p-0 max-md:flex-row max-md:gap-4 max-md:items-start max-md:hover:translate-y-0"
+                className="founder-rule-card relative flex flex-col justify-between overflow-hidden rounded-[1.75rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] shadow-[var(--glass-inner-shadow)] p-6 transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-[color-mix(in_srgb,var(--on-surface)_15%,transparent)] hover:shadow-[0_18px_44px_rgba(0,0,0,0.06)] backdrop-blur-md max-md:!rounded-none max-md:!border-none max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!p-0 max-md:flex-row max-md:gap-4 max-md:items-start max-md:hover:translate-y-0"
+                style={{ willChange: "transform, opacity" }}
               >
                 {/* Floating backdrop rule number */}
                 <span className="absolute -right-3 -bottom-8 font-serif text-[6.5rem] select-none pointer-events-none opacity-[0.035] text-[var(--on-surface-dim)] font-normal leading-none group-hover:scale-105">
@@ -259,6 +354,30 @@ function Founder() {
 }
 
 function FinalCTA() {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      gsap.fromTo(
+        cardRef.current,
+        { opacity: 0, scale: 0.96, y: 16 },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.65,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: cardRef.current,
+            start: "top 88%",
+            once: true,
+          },
+        }
+      );
+    },
+    { scope: cardRef }
+  );
+
   return (
     <section
       id="contact"
@@ -273,6 +392,7 @@ function FinalCTA() {
           loading="lazy"
           className="absolute left-1/2 top-1/2 h-auto w-[min(1580px,150vw)] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.56] dark:opacity-[0.5]"
           style={{
+            height: "auto",
             maskImage:
               "linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)",
             WebkitMaskImage:
@@ -290,7 +410,11 @@ function FinalCTA() {
         style={processTextureStyle}
       />
       <div className="relative z-[1] mx-auto max-w-[92rem]">
-        <div className="mx-auto max-w-3xl rounded-[1.75rem] border border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] bg-[color-mix(in_srgb,var(--surface)_58%,transparent)] px-5 py-10 sm:px-10 sm:py-14 lg:px-14 lg:py-14 shadow-[0_30px_110px_color-mix(in_srgb,var(--bg-deep)_38%,transparent)] backdrop-blur-2xl">
+        <div
+          ref={cardRef}
+          style={{ willChange: "transform, scale, opacity" }}
+          className="mx-auto max-w-3xl rounded-[1.75rem] border border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] bg-[color-mix(in_srgb,var(--surface)_58%,transparent)] px-5 py-10 sm:px-10 sm:py-14 lg:px-14 lg:py-14 shadow-[0_30px_110px_color-mix(in_srgb,var(--bg-deep)_38%,transparent)] backdrop-blur-2xl"
+        >
           <p className="label-caps mb-4" style={{ color: "var(--tertiary)" }}>
             Start here
           </p>

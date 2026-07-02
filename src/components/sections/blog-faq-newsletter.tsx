@@ -18,41 +18,10 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TestimonialsMarquee } from "./testimonials-marquee";
 import { BlogPost, getBlogPosts, saveBlogPost, deleteBlogPost } from "@/data/blog";
+import { MarkdownEditor } from "@/components/ui/markdown-editor";
 import { cn } from "@/lib/utils";
 
-const articles = [
-  {
-    title: "How to vet senior African engineers for startup teams",
-    excerpt:
-      "What to check beyond the CV: production ownership, references, code depth, communication habits, and timezone fit.",
-    tag: "Hiring",
-    date: "May 2026",
-    read: "8 min",
-    image: "/images/blog-image-1.jpg",
-    hero: true,
-    slug: "what-vetting-should-prove",
-  },
-  {
-    title: "Why African engineers are underpriced in global hiring",
-    excerpt:
-      "The arbitrage global startups miss: senior production talent, English fluency, and strong Europe overlap.",
-    tag: "Point of View",
-    date: "Apr 2026",
-    read: "5 min",
-    image: "/images/blog-image-2.jpg",
-    slug: "why-africa-is-a-strong-timezone-for-startups",
-  },
-  {
-    title: "What a strong AI integration engineer actually does",
-    excerpt:
-      "LLM APIs are the easy part. Retrieval, evaluation, cost control, security, and product fit are where seniority shows.",
-    tag: "AI Talent",
-    date: "Mar 2026",
-    read: "6 min",
-    image: "/images/blog-image-6.jpeg",
-    slug: "production-ai-needs-product-engineers",
-  },
-];
+
 
 const topics = [
   "Senior Engineers",
@@ -92,9 +61,10 @@ function ArticleCard({
       className={cn(
         "article-card-anim group relative flex overflow-hidden transition-all duration-500",
         "md:rounded-[1.75rem] md:border md:border-[var(--glass-border)] md:bg-[var(--glass-bg)] md:shadow-[var(--glass-inner-shadow)] md:backdrop-blur-md md:hover:-translate-y-1.5 md:hover:border-[color-mix(in_srgb,var(--tertiary)_30%,transparent)] md:hover:shadow-[0_24px_50px_rgba(0,0,0,0.08)]",
-        "max-md:border-b max-md:border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:pb-10 max-md:last:border-b-0",
+        "max-md:border-b max-md:border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:pb-12 max-md:mb-12 max-md:last:border-b-0 max-md:last:pb-0 max-md:last:mb-0",
         article.featured ? "flex-col lg:flex-row col-span-full" : "flex-col",
       )}
+      style={{ willChange: "transform, opacity" }}
     >
       <Link href={`/blog/${article.slug}`} className="absolute inset-0 z-0" />
 
@@ -206,17 +176,17 @@ function ArticleCard({
 
       {/* Admin actions overlay */}
       {isAdmin && (
-        <div className="absolute top-4 right-4 flex items-center gap-1.5 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute top-4 right-4 flex items-center gap-1.5 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-auto">
           <button
             onClick={(e) => onEdit(article, e)}
-            className="p-1.5 rounded-lg border border-white/10 bg-black/60 text-[var(--on-surface)] hover:bg-white/10 transition-colors pointer-events-auto cursor-pointer"
+            className="p-1.5 rounded-lg border border-[var(--glass-border)] bg-[var(--surface-low)] text-[var(--on-surface-dim)] hover:text-[var(--on-surface)] hover:bg-[color-mix(in_srgb,var(--on-surface)_6%,transparent)] transition-all cursor-pointer"
             title="Edit Post"
           >
             <IconEdit size={13} />
           </button>
           <button
             onClick={(e) => onDelete(article.slug, e)}
-            className="p-1.5 rounded-lg border border-red-500/20 bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors pointer-events-auto cursor-pointer"
+            className="p-1.5 rounded-lg border border-red-500/20 bg-[var(--surface-low)] text-red-500 hover:bg-red-500/10 transition-all cursor-pointer"
             title="Delete Post"
           >
             <IconTrash size={13} />
@@ -619,22 +589,18 @@ function BlogSection() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[0.68rem] font-mono uppercase tracking-wider text-[var(--on-surface-dim)] mb-1">
-                  Article Body paragraphs (Separate paragraphs by double newlines)
-                </label>
-                <textarea
+              <div className="text-left">
+                <MarkdownEditor
+                  label="Article Body Content"
                   value={editingPost.body.join("\n\n")}
-                  onChange={(e) =>
+                  onChange={(val) =>
                     setEditingPost({
                       ...editingPost,
-                      body: e.target.value.split("\n\n").filter(Boolean),
+                      body: val.split("\n\n").filter(Boolean),
                     })
                   }
+                  placeholder="Separate paragraphs by double newlines. Markdown is allowed..."
                   rows={8}
-                  className="w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container)] px-3 py-2 text-[0.8rem] text-[var(--on-surface)] focus:outline-none focus:border-[var(--primary)] leading-relaxed"
-                  placeholder="Type article content paragraphs..."
-                  required
                 />
               </div>
 

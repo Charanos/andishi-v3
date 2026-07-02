@@ -1,17 +1,21 @@
 import { arrayContains, eq } from "drizzle-orm";
 import type { z } from "zod";
 import { getDb } from "@/db";
-import { briefs, projects } from "@/db/schema";
+import { briefs, placements, projects } from "@/db/schema";
 import { authorize } from "@/lib/authz/can";
 import { writeAudit } from "@/lib/authz/audit";
 import { ConflictError, ForbiddenError, NotFoundError } from "@/lib/authz/errors";
 import { emitActivityEvent } from "@/lib/services/activity";
-import type { promoteBriefToProjectSchema } from "@/lib/validation/delivery";
+import type {
+  createProjectFromPlacementSchema,
+  promoteBriefToProjectSchema,
+} from "@/lib/validation/delivery";
 import type { createProjectSchema } from "@/lib/validation/entities";
 import type { CallerContext } from "@/lib/services/types";
 
 type CreateProjectInput = z.infer<typeof createProjectSchema>;
 type PromoteBriefToProjectInput = z.infer<typeof promoteBriefToProjectSchema>;
+type CreateProjectFromPlacementInput = z.infer<typeof createProjectFromPlacementSchema>;
 
 /**
  * Admin (staff): sees all projects, gated by delivery.project.read.
@@ -186,5 +190,93 @@ export async function promoteBriefToProject(
     );
 
     return { project, brief: updatedBrief };
+  });
+}
+
+/**
+ * The hire-track equivalent of promoteBriefToProject: once a placement
+ * (engineer <-> client, formalized via matches/placements) is active, this
+ * gives that engagement the same delivery infrastructure a build-track
+ * project gets - milestones, tasks, project messaging, completion/review.
+ * A placement without a project is still valid (many freelance engagements
+ * never need delivery tracking), so this is opt-in, not automatic.
+ */
+export async function createProjectFromPlacement(
+  ctx: CallerContext,
+  placementId: string,
+  input: CreateProjectFromPlacementInput,
+) {
+  const { session, requestId, actorIp } = ctx;
+
+  if (session.user.role !== "admin") {
+    throw new ForbiddenError("Only Andishi staff can start a project from a placement.");
+  }
+  await authorize(session, "delivery.project.write");
+
+  const [placement] = await getDb()
+    .select()
+    .from(placements)
+    .where(eq(placements.id, placementId))
+    .limit(1);
+  if (!placement) throw new NotFoundError("Placement not found.");
+  if (placement.status === "terminated") {
+    throw new ConflictError("This placement was terminated - it can't start a project.");
+  }
+
+  const [existingProject] = await getDb()
+    .select({ id: projects.id })
+    .from(projects)
+    .where(eq(projects.placementId, placementId))
+    .limit(1);
+  if (existingProject) {
+    throw new ConflictError("This placement already has a project.");
+  }
+
+  return getDb().transaction(async (tx) => {
+    const [project] = await tx
+      .insert(projects)
+      .values({
+        placementId: placement.id,
+        organizationId: placement.organizationId,
+        engineerIds: [placement.engineerId],
+        title: input.title,
+        description: input.description,
+        status: "scoping",
+        billingType: input.billingType,
+        budgetCents: input.budgetCents,
+        startDate: input.startDate ?? placement.startDate,
+        targetDate: input.targetDate,
+        leadPmUserId: input.leadPmUserId,
+      })
+      .returning();
+
+    await emitActivityEvent(
+      {
+        type: "placement_promoted_to_project",
+        actorId: session.user.id,
+        actorRole: session.user.role,
+        organizationId: project.organizationId,
+        entityType: "project",
+        entityId: project.id,
+        description: `"${input.title}" started from an active placement`,
+        visibleTo: ["client", "delivery.project.read"],
+      },
+      tx,
+    );
+
+    await writeAudit(
+      {
+        actorUserId: session.user.id,
+        actorIp,
+        action: "delivery.project.write",
+        resourceType: "project",
+        resourceId: project.id,
+        after: project,
+        requestId,
+      },
+      tx,
+    );
+
+    return project;
   });
 }

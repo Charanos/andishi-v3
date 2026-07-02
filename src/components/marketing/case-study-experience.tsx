@@ -172,6 +172,15 @@ export function CaseStudyExperience({
                     transition={{ ...cosmicSpring, delay: 0.38 + i * 0.08 }}
                     className="relative overflow-hidden rounded-[1.35rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_36%,transparent)] p-6 shadow-[0_20px_60px_color-mix(in_srgb,var(--bg-deep)_22%,transparent)] backdrop-blur-2xl"
                   >
+                    {/* Subtle overlapping orbital outlines for challenge/solution */}
+                    <div
+                      aria-hidden="true"
+                      className="absolute -right-6 -bottom-6 h-20 w-32 rotate-[12deg] rounded-[1.5rem] border border-[color-mix(in_srgb,var(--secondary)_12%,transparent)] opacity-60 pointer-events-none z-0"
+                    />
+                    <div
+                      aria-hidden="true"
+                      className="absolute -right-8 -bottom-4 h-24 w-36 rotate-[-8deg] rounded-[1.8rem] border border-[color-mix(in_srgb,var(--tertiary)_8%,transparent)] opacity-50 pointer-events-none z-0"
+                    />
                     <div
                       aria-hidden="true"
                       className="pointer-events-none absolute inset-x-0 top-0 h-px"

@@ -15,6 +15,18 @@ export const promoteBriefToProjectSchema = z.object({
   leadPmUserId: uuid.optional().nullable(),
 });
 
+// ── Placement -> project promotion (hire-track equivalent of the above) ──
+
+export const createProjectFromPlacementSchema = z.object({
+  title: z.string().trim().min(2),
+  description: z.string().trim().min(2),
+  billingType: z.enum(["fixed", "time_and_materials", "retainer"]),
+  budgetCents: z.coerce.number().int().min(0).optional().nullable(),
+  startDate: optionalText,
+  targetDate: optionalText,
+  leadPmUserId: uuid.optional().nullable(),
+});
+
 // ── Milestones ──────────────────────────────────────────────────────
 
 export const createMilestoneSchema = z.object({

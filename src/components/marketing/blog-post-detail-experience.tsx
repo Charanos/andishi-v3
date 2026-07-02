@@ -504,7 +504,6 @@ function HeroCoverArtifact({ post }: { post: BlogPost }) {
           priority
           sizes="(min-width: 1280px) 28rem, (min-width: 1024px) 38vw, 100vw"
           className="object-cover brightness-[0.82] saturate-[0.9] transition duration-700 hover:scale-[1.03] hover:brightness-[0.92]"
-          unoptimized
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_36%,color-mix(in_srgb,var(--bg-deep)_86%,transparent)_100%)]" />
       </div>
@@ -558,7 +557,6 @@ function AuthorPanel({ post }: { post: BlogPost }) {
             fill
             sizes="56px"
             className="object-cover"
-            unoptimized
           />
         </div>
         <div className="min-w-0">

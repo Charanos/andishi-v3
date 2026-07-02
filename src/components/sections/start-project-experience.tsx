@@ -635,6 +635,7 @@ function ArtworkLayer() {
         width={1180}
         height={980}
         className="absolute left-[58%] top-1/2 h-auto w-[min(1180px,96vw)] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.24] dark:hidden max-[899px]:left-1/2 max-[899px]:w-[150vw]"
+        style={{ height: "auto" }}
       />
       <Image
         src="/dark-blob.svg"
@@ -642,6 +643,7 @@ function ArtworkLayer() {
         width={1180}
         height={980}
         className="absolute left-[58%] top-1/2 hidden h-auto w-[min(1180px,96vw)] max-w-none -translate-x-1/2 -translate-y-1/2 object-contain opacity-[0.5] dark:block max-[899px]:left-1/2 max-[899px]:w-[150vw]"
+        style={{ height: "auto" }}
       />
       <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_90%,transparent)_30%,color-mix(in_srgb,var(--bg)_74%,transparent)_58%,color-mix(in_srgb,var(--bg)_84%,transparent)_84%,var(--bg)_100%)] dark:bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_82%,transparent)_30%,color-mix(in_srgb,var(--bg)_58%,transparent)_58%,color-mix(in_srgb,var(--bg)_78%,transparent)_84%,var(--bg)_100%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_84%,transparent)_18%,color-mix(in_srgb,var(--bg)_72%,transparent)_56%,var(--bg)_100%)] dark:bg-[linear-gradient(180deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_72%,transparent)_18%,color-mix(in_srgb,var(--bg)_58%,transparent)_56%,var(--bg)_100%)]" />

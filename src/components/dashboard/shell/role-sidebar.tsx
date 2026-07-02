@@ -186,7 +186,12 @@ function SidebarContent({
   user: AuthUser;
 }) {
   const initials = getInitials(user.name);
-  const grouped = useMemo(() => groupItems(items), [items]);
+  const { overviewItem, otherItems } = useMemo(() => {
+    const overview = items.find((item) => item.label === "Overview");
+    const others = items.filter((item) => item.label !== "Overview");
+    return { overviewItem: overview, otherItems: others };
+  }, [items]);
+  const grouped = useMemo(() => groupItems(otherItems), [otherItems]);
   const activeGroups = useMemo(
     () =>
       grouped
@@ -312,6 +317,7 @@ function SidebarContent({
         <CollapsedNav items={items} pathname={pathname} role={role} />
       ) : (
         <ExpandedNav
+          overviewItem={overviewItem}
           grouped={grouped}
           onToggleGroup={toggleGroup}
           openGroup={openGroup}
@@ -335,12 +341,14 @@ function SidebarContent({
 }
 
 function ExpandedNav({
+  overviewItem,
   grouped,
   onToggleGroup,
   openGroup,
   pathname,
   role,
 }: {
+  overviewItem: DashboardNavItem | undefined;
   grouped: Array<[string, DashboardNavItem[]]>;
   onToggleGroup: (group: string) => void;
   openGroup: string | null;
@@ -348,7 +356,18 @@ function ExpandedNav({
   role: AuthUser["role"];
 }) {
   return (
-    <nav className="flex-1 overflow-y-auto pr-1" aria-label="Main navigation">
+    <nav className="flex-1 overflow-y-auto pr-1 space-y-1" aria-label="Main navigation">
+      {/* Standalone Overview item at the top */}
+      {overviewItem && (
+        <div className="mb-2">
+          <SidebarNavItem
+            item={overviewItem}
+            pathname={pathname}
+            role={role}
+          />
+        </div>
+      )}
+
       {grouped.map(([group, groupItems], groupIndex) => {
         const groupOpen = openGroup === group;
 
@@ -356,30 +375,28 @@ function ExpandedNav({
           <div
             key={group}
             className={cn(
-              "py-2",
-              groupIndex === 0 ? "pt-0" : "pt-3",
+              "py-1",
               groupIndex > 0 &&
-                "border-t border-[var(--dashboard-sidebar-border)]",
+                "border-t border-[var(--dashboard-sidebar-border)]/40 mt-1 pt-2",
             )}
           >
             <button
               type="button"
               onClick={() => onToggleGroup(group)}
               aria-expanded={groupOpen}
-              className="mb-1.5 flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors duration-200 hover:bg-[var(--dashboard-sidebar-hover)]"
+              className="group/btn mb-1.5 flex w-full cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-left transition-colors duration-200 hover:bg-[var(--dashboard-sidebar-hover)]"
             >
-              <span className="h-px w-4 bg-[color-mix(in_srgb,var(--dashboard-sidebar-faint)_54%,transparent)]" />
-              <span className="label-caps flex-1 text-[0.63rem] tracking-[0.15em] text-[var(--dashboard-sidebar-faint)]">
+              <span className="label-caps flex-1 text-[0.68rem] tracking-[0.18em] text-[var(--dashboard-sidebar-faint)] transition-colors duration-200 group-hover/btn:text-[var(--dashboard-sidebar-text)]">
                 {group}
               </span>
-              <span className="font-mono text-[0.62rem] tabular-nums text-[var(--dashboard-sidebar-faint)] opacity-55">
+              <span className="font-mono text-[0.62rem] tabular-nums text-[var(--dashboard-sidebar-faint)] opacity-55 pr-1">
                 {groupItems.length.toString().padStart(2, "0")}
               </span>
               <IconChevronDown
                 size={11}
                 stroke={2.2}
                 className={cn(
-                  "shrink-0 text-[var(--dashboard-sidebar-faint)] transition-transform duration-300",
+                  "shrink-0 text-[var(--dashboard-sidebar-faint)] transition-all duration-300 group-hover/btn:text-[var(--dashboard-sidebar-text)]",
                   groupOpen && "rotate-180",
                 )}
               />
@@ -428,27 +445,28 @@ function SidebarNavItem({
         href={item.href}
         aria-current={active ? "page" : undefined}
         className={cn(
-          "group relative flex min-h-[2.6rem] w-full cursor-pointer items-center gap-3 rounded-xl px-3 text-[0.86rem] font-medium transition-colors duration-200",
+          "group relative flex min-h-[2.6rem] w-full cursor-pointer items-center gap-3 rounded-xl px-3 text-[0.86rem] font-medium border transition-all duration-200",
           active
-            ? "bg-[var(--dashboard-sidebar-active)] text-[var(--dashboard-sidebar-text)] shadow-[inset_0_1px_0_color-mix(in_srgb,var(--secondary)_10%,transparent)]"
-            : "text-[var(--dashboard-sidebar-muted)] hover:bg-[var(--dashboard-sidebar-hover)] hover:text-[var(--dashboard-sidebar-text)]",
+            ? "bg-[var(--dashboard-sidebar-active)] text-[var(--dashboard-sidebar-text)] border-[color-mix(in_srgb,var(--secondary)_15%,transparent)] shadow-[inset_0_1px_0_color-mix(in_srgb,var(--secondary)_10%,transparent),0_0_12px_color-mix(in_srgb,var(--secondary)_8%,transparent)]"
+            : "text-[var(--dashboard-sidebar-muted)] border-transparent hover:bg-[var(--dashboard-sidebar-hover)] hover:text-[var(--dashboard-sidebar-text)]",
         )}
       >
         {active && (
           <span
-            className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-full bg-[var(--secondary)]"
+            className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-full bg-[var(--secondary)] transition-all duration-300"
             style={{ boxShadow: "0 0 10px var(--secondary)" }}
           />
         )}
-        <span className="relative grid h-5 w-5 shrink-0 place-items-center transition-transform duration-200 group-hover:translate-x-0.5">
+        <span className="relative grid h-5 w-5 shrink-0 place-items-center transition-all duration-200 group-hover:translate-x-0.5">
           <Icon
             size={17}
             stroke={active ? 2 : 1.5}
-            className={
+            className={cn(
+              "transition-all duration-200 group-hover:scale-105",
               active
                 ? "text-[var(--secondary)] drop-shadow-[0_0_7px_var(--secondary)]"
-                : undefined
-            }
+                : "text-[var(--dashboard-sidebar-muted)] group-hover:text-[var(--dashboard-sidebar-text)]",
+            )}
           />
           {signal && (
             <span

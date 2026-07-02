@@ -1,13 +1,96 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { IconCircleCheck, IconX, IconArrowRight } from "@tabler/icons-react";
 import Link from "next/link";
 import { comparisonRows } from "@/content/landing";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export function WhyAndishiSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      // Header Animation
+      gsap.fromTo(
+        ".why-header-anim",
+        { opacity: 0, y: 16 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".why-header-anim",
+            start: "top 88%",
+            once: true,
+          },
+        }
+      );
+
+      // Feature matrix desktop Animation
+      gsap.fromTo(
+        ".why-matrix-anim",
+        { opacity: 0, y: 16 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.65,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".why-matrix-anim",
+            start: "top 86%",
+            once: true,
+          },
+        }
+      );
+
+      // Mobile cards Animation
+      gsap.fromTo(
+        ".why-cards-anim",
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.65,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".why-cards-anim",
+            start: "top 88%",
+            once: true,
+          },
+        }
+      );
+
+      // CTA Animation
+      gsap.fromTo(
+        ".why-cta-anim",
+        { opacity: 0, y: 12 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.55,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".why-cta-anim",
+            start: "top 88%",
+            once: true,
+          },
+        }
+      );
+    },
+    { scope: containerRef }
+  );
+
   return (
     <section
+      ref={containerRef}
       id="why-andishi"
       className="relative isolate bg-[color-mix(in_srgb,var(--bg-deep)_46%,var(--bg))] px-5 py-24 sm:px-8 lg:px-10 lg:py-32"
     >
@@ -25,7 +108,7 @@ export function WhyAndishiSection() {
       />
 
       <div className="relative z-[1] mx-auto max-w-[84rem]">
-        <div className="mb-14 flex flex-col items-center text-center">
+        <div className="mb-14 flex flex-col items-center text-center why-header-anim" style={{ willChange: "transform, opacity" }}>
           <p className="label-caps mb-4 flex items-center justify-center gap-3 text-[var(--tertiary)] font-medium">
             <span className="h-px w-7 bg-[var(--tertiary)]" />
             WHY ANDISHI
@@ -41,7 +124,7 @@ export function WhyAndishiSection() {
         </div>
 
         {/* Desktop Feature Matrix (md and up) */}
-        <div className="hidden md:block relative z-10 max-w-6xl mx-auto mt-16">
+        <div className="hidden md:block relative z-10 max-w-6xl mx-auto mt-16 why-matrix-anim" style={{ willChange: "transform, opacity" }}>
           <div className="grid grid-cols-[minmax(200px,1.5fr)_1fr_1fr_1.15fr] gap-x-2">
             {/* Headers */}
             <div className="pb-6 pl-6 flex items-end border-b border-[color-mix(in_srgb,var(--on-surface)_6%,transparent)]">
@@ -127,7 +210,7 @@ export function WhyAndishiSection() {
         </div>
 
         {/* Mobile Card Layout (max-md) */}
-        <div className="md:hidden mt-12 flex flex-col gap-6">
+        <div className="md:hidden mt-12 flex flex-col gap-6 why-cards-anim" style={{ willChange: "transform, opacity" }}>
           {comparisonRows.map((row) => (
             <div
               key={row[0]}
@@ -189,7 +272,7 @@ export function WhyAndishiSection() {
         </div>
 
         {/* CTA */}
-        <div className="mt-16 flex flex-col items-center text-center gap-6">
+        <div className="mt-16 flex flex-col items-center text-center gap-6 why-cta-anim" style={{ willChange: "transform, opacity" }}>
           <p className="body-md max-w-xl text-[var(--on-surface-dim)]">
             Ready to experience a different approach to product engineering?
           </p>

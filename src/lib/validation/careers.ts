@@ -64,3 +64,20 @@ export const updateApplicationStageSchema = z.object({
 export const updateApplicationRatingSchema = z.object({
   rating: z.coerce.number().int().min(1).max(5),
 });
+
+/**
+ * Converts a hired application into a real engineer-network member.
+ * If the applicant isn't already linked to an engineer profile
+ * (application.engineerId), this is also where that profile's core fields
+ * get filled in - hiring is the moment an admin has this information.
+ * A user account is provisioned automatically if one doesn't exist yet.
+ */
+export const hireApplicationSchema = z.object({
+  role: z.string().trim().min(2),
+  domain: z.string().trim().min(2),
+  domainLabel: z.string().trim().min(2),
+  location: z.string().trim().min(2),
+  timezone: z.string().trim().min(1),
+  avatar: z.string().trim().min(1).default(""),
+  avatarColor: z.string().trim().min(1).default("#6366f1"),
+});

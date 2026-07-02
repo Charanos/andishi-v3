@@ -115,10 +115,10 @@ function AvailabilityBadge({ engineer }: { engineer: Engineer }) {
   return (
     <span
       className={cn(
-        "flex items-center gap-1.5 rounded-full border px-3 py-1 backdrop-blur-xl",
+        "flex items-center gap-1.5 rounded-full border px-3 py-1 bg-[var(--surface)] shadow-sm z-10",
         availableNow
-          ? "border-[color-mix(in_srgb,var(--tertiary)_32%,transparent)] bg-[color-mix(in_srgb,var(--bg)_64%,transparent)] text-[var(--on-surface)]"
-          : "border-[color-mix(in_srgb,var(--secondary)_30%,transparent)] bg-[color-mix(in_srgb,var(--bg)_64%,transparent)] text-[var(--on-surface)]",
+          ? "border-[color-mix(in_srgb,var(--tertiary)_32%,transparent)] text-[var(--on-surface)]"
+          : "border-[color-mix(in_srgb,var(--secondary)_30%,transparent)] text-[var(--on-surface)]",
       )}
     >
       <span
@@ -149,11 +149,12 @@ function EngineerCard({
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 28 }}
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ ...cosmicSpring, delay: Math.min(index * 0.04, 0.22) }}
       className="mb-5 break-inside-avoid"
+      style={{ willChange: "transform, opacity" }}
     >
       <Link
         href={`/engineers/${engineer.slug}`}
@@ -176,14 +177,14 @@ function EngineerCard({
           <PatternTexture opacity={0.08} />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
 
-          <span className="absolute left-4 top-4 rounded-lg bg-black/40 px-2.5 py-1 font-mono text-[0.68rem] tracking-tight text-white/80 backdrop-blur-xl">
+          <span className="absolute left-4 top-4 rounded-lg bg-black/60 px-2.5 py-1 font-mono text-[0.68rem] tracking-tight text-white/80 border border-white/10 shadow-sm z-10">
             {formatIndex(index)}
           </span>
-          <span className="absolute right-4 top-4">
+          <span className="absolute right-4 top-4 z-10">
             <AvailabilityBadge engineer={engineer} />
           </span>
 
-          <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
+          <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3 z-10">
             <div className="min-w-0">
               <p className="label-caps mb-2 text-white/70">
                 {engineer.domains.map(domainLabel).join(" / ")}
@@ -193,7 +194,7 @@ function EngineerCard({
               </h2>
             </div>
             {engineer.featured && (
-              <span className="shrink-0 rounded-full border border-white/20 bg-black/40 px-2.5 py-1 font-mono text-[0.64rem] text-white backdrop-blur-xl">
+              <span className="shrink-0 rounded-full border border-white/15 bg-black/60 px-2.5 py-1 font-mono text-[0.64rem] text-white shadow-sm">
                 Featured
               </span>
             )}

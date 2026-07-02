@@ -9,6 +9,8 @@ import { Logo } from "@/components/brand/logo";
 import { siteConfig } from "@/config/site";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
+import { getSessionUserAction } from "@/app/(app)/actions";
+import type { AuthUser } from "@/types/auth";
 
 const menuVariants = {
   hidden: { opacity: 0, height: 0 },
@@ -41,7 +43,41 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [bannerOpen, setBannerOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const user = await getSessionUserAction();
+        setCurrentUser(user);
+        
+        if (user && user.role === "admin") {
+          localStorage.setItem("andishi_admin_sim_logged_in", "true");
+          setIsAdmin(true);
+          window.dispatchEvent(new Event("admin_sim_changed"));
+        } else {
+          localStorage.removeItem("andishi_admin_sim_logged_in");
+          setIsAdmin(false);
+          window.dispatchEvent(new Event("admin_sim_changed"));
+        }
+      } catch (err) {
+        console.error("Failed to fetch session user in Navbar", err);
+      }
+    };
+    fetchUser();
+
+    const checkAdmin = () => {
+      setIsAdmin(localStorage.getItem("andishi_admin_sim_logged_in") === "true");
+    };
+    window.addEventListener("storage", checkAdmin);
+    window.addEventListener("admin_sim_changed", checkAdmin);
+    return () => {
+      window.removeEventListener("storage", checkAdmin);
+      window.removeEventListener("admin_sim_changed", checkAdmin);
+    };
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 48);
@@ -160,31 +196,42 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* Right actions */}
+           {/* Right actions */}
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Link
-              href="/login"
-              className="hidden min-h-10 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-5 py-2.5 text-[0.84rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-[0.98] sm:inline-flex"
-            >
-              Login
-            </Link>
-            <Link
-              href="/start-project"
-              className="hidden min-h-10 items-center gap-2 rounded-full px-5 py-2.5
-                         text-[0.84rem] font-medium text-white transition-all duration-300
-                         hover:-translate-y-px active:scale-[0.98] sm:inline-flex"
-              style={{
-                background: "var(--on-surface)",
-                boxShadow: scrolled
-                  ? "0 16px 36px color-mix(in srgb, var(--bg-deep) 42%, transparent)"
-                  : "0 10px 24px color-mix(in srgb, var(--bg-deep) 28%, transparent)",
-                color: "var(--bg)",
-              }}
-            >
-              Start a Project
-              <IconArrowRight size={14} stroke={2.2} />
-            </Link>
+            {currentUser ? (
+              <Link
+                href={currentUser.role === "admin" ? "/admin" : currentUser.role === "client" ? "/dashboard" : "/dev"}
+                className="hidden min-h-10 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-5 py-2.5 text-[0.84rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-[0.98] sm:inline-flex"
+              >
+                {currentUser.role === "admin" ? "Admin Console" : "Dashboard"}
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="hidden min-h-10 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-5 py-2.5 text-[0.84rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-[0.98] sm:inline-flex"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/start-project"
+                  className="hidden min-h-10 items-center gap-2 rounded-full px-5 py-2.5
+                             text-[0.84rem] font-medium text-white transition-all duration-300
+                             hover:-translate-y-px active:scale-[0.98] sm:inline-flex"
+                  style={{
+                    background: "var(--on-surface)",
+                    boxShadow: scrolled
+                      ? "0 16px 36px color-mix(in srgb, var(--bg-deep) 42%, transparent)"
+                      : "0 10px 24px color-mix(in srgb, var(--bg-deep) 28%, transparent)",
+                    color: "var(--bg)",
+                  }}
+                >
+                  Start a Project
+                  <IconArrowRight size={14} stroke={2.2} />
+                </Link>
+              </>
+            )}
 
             {/* Mobile hamburger */}
             <button
@@ -257,21 +304,33 @@ export function Navbar() {
                 variants={itemVariants}
                 className="mt-4 flex items-center gap-3 pt-4"
               >
-                <Link
-                  href="/login"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex h-11 flex-1 items-center justify-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-5 text-[0.88rem] font-medium text-[var(--on-surface)] transition-all duration-300 hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-[0.98]"
-                >
-                  Login
-                </Link>
-                <Link
-                  href="/start-project"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex h-11 flex-1 items-center justify-center gap-1.5 rounded-full bg-[var(--on-surface)] px-5 text-[0.88rem] font-medium text-[var(--bg)] transition-all duration-300 active:scale-[0.98]"
-                >
-                  Start a Project
-                  <IconArrowRight size={14} stroke={2.2} />
-                </Link>
+                {currentUser ? (
+                  <Link
+                    href={currentUser.role === "admin" ? "/admin" : currentUser.role === "client" ? "/dashboard" : "/dev"}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex h-11 flex-1 items-center justify-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-5 text-[0.88rem] font-medium text-[var(--on-surface)] transition-all duration-300 hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-[0.98]"
+                  >
+                    {currentUser.role === "admin" ? "Admin Console" : "Dashboard"}
+                  </Link>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex h-11 flex-1 items-center justify-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-5 text-[0.88rem] font-medium text-[var(--on-surface)] transition-all duration-300 hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-[0.98]"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href="/start-project"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex h-11 flex-1 items-center justify-center gap-1.5 rounded-full bg-[var(--on-surface)] px-5 text-[0.88rem] font-medium text-[var(--bg)] transition-all duration-300 active:scale-[0.98]"
+                    >
+                      Start a Project
+                      <IconArrowRight size={14} stroke={2.2} />
+                    </Link>
+                  </>
+                )}
               </motion.div>
 
               {/* Graceful Location Display in Mobile Nav */}

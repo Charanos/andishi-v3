@@ -12,11 +12,12 @@ import {
   IconCheck,
   IconDeviceLaptop,
   IconBuilding,
-  IconSettings,
+  IconTrash,
 } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getJobOpenings, saveJobOpening, JobOpening, JobKind, JobStatus } from "@/data/careers";
-import { PublicPageShell, RouteHero, GlassPanel, FinalRouteCta } from "./public-page";
+import { getJobOpenings, saveJobOpening, deleteJobOpening, JobOpening, JobKind, JobStatus } from "@/data/careers";
+import { MarkdownEditor } from "@/components/ui/markdown-editor";
+import { PublicPageShell, RouteHero, GlassPanel } from "./public-page";
 import { cn } from "@/lib/utils";
 
 // Accent glow mapping matching design system
@@ -64,8 +65,26 @@ export function CareersPageExperience() {
 
   // Load openings
   useEffect(() => {
-    // Loaded in state initializer callback
+    const checkAdmin = () => {
+      setIsAdmin(localStorage.getItem("andishi_admin_sim_logged_in") === "true");
+    };
+    checkAdmin();
+    window.addEventListener("storage", checkAdmin);
+    window.addEventListener("admin_sim_changed", checkAdmin);
+    return () => {
+      window.removeEventListener("storage", checkAdmin);
+      window.removeEventListener("admin_sim_changed", checkAdmin);
+    };
   }, []);
+
+  const handleDeleteJob = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (confirm("Are you sure you want to delete this opening?")) {
+      deleteJobOpening(id);
+      reloadOpenings();
+    }
+  };
 
   // Sync state helper
   const reloadOpenings = () => {
@@ -132,42 +151,7 @@ export function CareersPageExperience() {
 
   return (
     <PublicPageShell>
-      {/* Simulation Bar */}
-      <div className="sticky top-20 z-50 w-full bg-[color-mix(in_srgb,var(--surface-container-low)_85%,transparent)] border-b border-[var(--glass-border)] py-2 px-5 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[92rem] items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span
-                className={cn(
-                  "absolute inline-flex h-full w-full animate-ping rounded-full opacity-75",
-                  isAdmin ? "bg-cyan-400" : "bg-purple-400",
-                )}
-              />
-              <span
-                className={cn(
-                  "relative inline-flex h-2 w-2 rounded-full",
-                  isAdmin ? "bg-cyan-500" : "bg-purple-500",
-                )}
-              />
-            </span>
-            <span className="font-mono text-[0.7rem] uppercase tracking-wider text-[var(--on-surface-dim)]">
-              {isAdmin ? "Simulating Recruiter View (Admin Mode)" : "Simulating Candidate View"}
-            </span>
-          </div>
-          <button
-            onClick={() => setIsAdmin(!isAdmin)}
-            className={cn(
-              "flex items-center gap-1.5 rounded-full px-3 py-1 font-mono text-[0.68rem] font-medium tracking-tight border transition-all duration-300",
-              isAdmin
-                ? "bg-[color-mix(in_srgb,var(--secondary)_12%,transparent)] border-[color-mix(in_srgb,var(--secondary)_25%,transparent)] text-[var(--secondary)] shadow-[0_0_12px_rgba(6,182,212,0.15)]"
-                : "border-[var(--glass-border)] hover:bg-[color-mix(in_srgb,var(--on-surface)_6%,transparent)] text-[var(--on-surface-dim)]",
-            )}
-          >
-            <IconSettings size={12} />
-            {isAdmin ? "Switch to Candidate" : "Log In as Admin"}
-          </button>
-        </div>
-      </div>
+
 
       <RouteHero
         eyebrow="Careers & Supply"
@@ -183,7 +167,7 @@ export function CareersPageExperience() {
             <div className="flex flex-wrap items-center gap-3">
               {/* Search input */}
               <div className="relative min-w-[240px] max-md:w-full">
-                <IconSearch className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--on-surface-dim)] opacity-50" />
+                <IconSearch size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--on-surface-dim)] opacity-50" />
                 <input
                   type="text"
                   placeholder="Search openings or skills..."
@@ -268,7 +252,7 @@ export function CareersPageExperience() {
                       className={cn(
                         "relative overflow-hidden flex flex-col justify-between group transition-all duration-300",
                         "md:rounded-[1.35rem] md:border md:border-[var(--glass-border)] md:bg-[color-mix(in_srgb,var(--surface)_38%,transparent)] md:p-6 md:shadow-[0_24px_80px_color-mix(in_srgb,var(--bg-deep)_24%,transparent)] md:backdrop-blur-2xl md:hover:border-[color-mix(in_srgb,var(--on-surface)_25%,transparent)]",
-                        "max-md:border-b max-md:border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:pb-8 max-md:pt-4 max-md:last:border-b-0 max-md:last:pb-0",
+                        "max-md:border-b max-md:border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:pb-12 max-md:pt-4 max-md:mb-6 max-md:last:border-b-0 max-md:last:pb-0 max-md:last:mb-0"
                       )}
                     >
                       {/* Card Content */}
@@ -351,16 +335,27 @@ export function CareersPageExperience() {
 
                         <div className="flex items-center gap-2">
                           {isAdmin && (
-                            <button
-                              onClick={() => {
-                                setEditingJob(job);
-                                setIsCreating(false);
-                              }}
-                              className="grid h-8 w-8 place-items-center rounded-lg border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] hover:text-white hover:border-[var(--on-surface)] transition-all"
-                              aria-label="Edit job details inline"
-                            >
-                              <IconEdit size={14} />
-                            </button>
+                            <div className="absolute top-4 right-4 flex items-center gap-1.5 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-auto">
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setEditingJob(job);
+                                  setIsCreating(false);
+                                }}
+                                className="p-1.5 rounded-lg border border-[var(--glass-border)] bg-[var(--surface-low)] text-[var(--on-surface-dim)] hover:text-[var(--on-surface)] hover:bg-[color-mix(in_srgb,var(--on-surface)_6%,transparent)] transition-all cursor-pointer"
+                                title="Edit Role"
+                              >
+                                <IconEdit size={13} />
+                              </button>
+                              <button
+                                onClick={(e) => handleDeleteJob(job.id, e)}
+                                className="p-1.5 rounded-lg border border-red-500/20 bg-[var(--surface-low)] text-red-500 hover:bg-red-500/10 transition-all cursor-pointer"
+                                title="Delete Role"
+                              >
+                                <IconTrash size={13} />
+                              </button>
+                            </div>
                           )}
                           <Link
                             href={`/careers/${job.slug}`}
@@ -426,7 +421,7 @@ export function CareersPageExperience() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ type: "spring", duration: 0.4 }}
-              className="w-full max-w-2xl overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[var(--surface-container)] p-6 shadow-2xl backdrop-blur-2xl"
+              className="w-full max-w-2xl overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[var(--surface)] p-6 shadow-2xl backdrop-blur-2xl"
             >
               <div className="flex items-center justify-between border-b border-[var(--glass-border)] pb-4 mb-5">
                 <h2 className="title-serif text-[1.45rem] text-[var(--on-surface)]">
@@ -459,7 +454,7 @@ export function CareersPageExperience() {
                     value={editingJob.title}
                     onChange={(e) => setEditingJob({ ...editingJob, title: e.target.value })}
                     placeholder="e.g. Senior AI Systems Engineer"
-                    className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)] transition-all"
+                    className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)] transition-all"
                   />
                 </div>
 
@@ -474,7 +469,7 @@ export function CareersPageExperience() {
                       onChange={(e) =>
                         setEditingJob({ ...editingJob, kind: e.target.value as JobKind })
                       }
-                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
+                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     >
                       <option value="freelance">Freelance Project</option>
                       <option value="internal">Core Studio Hire</option>
@@ -489,7 +484,7 @@ export function CareersPageExperience() {
                     <select
                       value={editingJob.department}
                       onChange={(e) => setEditingJob({ ...editingJob, department: e.target.value })}
-                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
+                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     >
                       <option value="Engineering">Engineering</option>
                       <option value="Design">Design</option>
@@ -508,7 +503,7 @@ export function CareersPageExperience() {
                       value={editingJob.seniority}
                       onChange={(e) => setEditingJob({ ...editingJob, seniority: e.target.value })}
                       placeholder="e.g. Senior / Lead"
-                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
+                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
@@ -525,7 +520,7 @@ export function CareersPageExperience() {
                       value={editingJob.location}
                       onChange={(e) => setEditingJob({ ...editingJob, location: e.target.value })}
                       placeholder="e.g. Nairobi, Kenya"
-                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
+                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     />
                   </div>
 
@@ -538,7 +533,7 @@ export function CareersPageExperience() {
                       onChange={(e) =>
                         setEditingJob({ ...editingJob, remote: e.target.value === "true" })
                       }
-                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
+                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     >
                       <option value="true">Fully Remote</option>
                       <option value="false">On-site (Nairobi)</option>
@@ -554,7 +549,7 @@ export function CareersPageExperience() {
                       onChange={(e) =>
                         setEditingJob({ ...editingJob, status: e.target.value as JobStatus })
                       }
-                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
+                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     >
                       <option value="open">Open (Public)</option>
                       <option value="draft">Draft (Admin Only)</option>
@@ -577,7 +572,7 @@ export function CareersPageExperience() {
                         setEditingJob({ ...editingJob, compensation_note: e.target.value })
                       }
                       placeholder="e.g. $8,000 - $12,000 / mo"
-                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
+                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     />
                   </div>
 
@@ -599,25 +594,19 @@ export function CareersPageExperience() {
                         })
                       }
                       placeholder="e.g. Next.js, Python, OpenAI API"
-                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
+                      className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     />
                   </div>
                 </div>
 
                 {/* Description MD */}
-                <div>
-                  <label className="block text-[0.7rem] font-mono uppercase tracking-wider text-[var(--on-surface-dim)] mb-1">
-                    Job Description (Markdown Allowed)
-                  </label>
-                  <textarea
-                    required
-                    rows={7}
+                <div className="text-left">
+                  <MarkdownEditor
+                    label="Job Description"
                     value={editingJob.description_md}
-                    onChange={(e) =>
-                      setEditingJob({ ...editingJob, description_md: e.target.value })
-                    }
+                    onChange={(val) => setEditingJob({ ...editingJob, description_md: val })}
                     placeholder="## The Role..."
-                    className="w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container-low)] p-3 font-sans text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
+                    rows={7}
                   />
                 </div>
 

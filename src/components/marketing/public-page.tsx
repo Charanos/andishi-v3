@@ -43,7 +43,16 @@ export function RouteHero({
   meta?: ReactNode;
 }) {
   return (
-    <section className="px-5 pb-12 pt-32 sm:px-8 lg:px-10 lg:pb-16 lg:pt-40">
+    <section className="px-5 pb-12 pt-32 sm:px-8 lg:px-10 lg:pb-16 lg:pt-40 relative overflow-hidden">
+      {/* Background geometric outlines representing orbital planes */}
+      <div
+        aria-hidden="true"
+        className="absolute right-[-5%] top-[-10%] h-[24rem] w-[36rem] rounded-[6rem] border border-[color-mix(in_srgb,var(--secondary)_12%,transparent)] opacity-35 pointer-events-none -rotate-12 hidden lg:block"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute right-[-10%] top-[-20%] h-[30rem] w-[30rem] rounded-full border border-[color-mix(in_srgb,var(--tertiary)_8%,transparent)] opacity-25 pointer-events-none rotate-12 hidden lg:block"
+      />
       <div className="mx-auto grid max-w-[92rem] gap-8 border-b border-[var(--glass-border)] pb-10 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,30rem)] lg:items-end lg:pb-14">
         <div>
           <p className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)]">
@@ -127,6 +136,15 @@ export function GlassPanel({
         className,
       )}
     >
+      {/* Decorative orbital glass shapes inside GlassPanel corners */}
+      <div
+        aria-hidden="true"
+        className="absolute -right-4 -bottom-4 h-16 w-24 rounded-[1.2rem] border border-[color-mix(in_srgb,var(--tertiary)_12%,transparent)] rotate-[15deg] pointer-events-none opacity-60 z-0"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute -right-8 -bottom-2 h-20 w-28 rounded-[1.5rem] border border-[color-mix(in_srgb,var(--secondary)_8%,transparent)] rotate-[-10deg] pointer-events-none opacity-50 z-0"
+      />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute bottom-4 right-4 h-24 w-36 opacity-[0.08]"

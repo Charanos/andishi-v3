@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import * as Sentry from "@sentry/nextjs";
-import { revokeSession } from "@/lib/auth/session";
+import { getSession, revokeSession } from "@/lib/auth/session";
 
 export async function signOutAction() {
   return Sentry.withServerActionInstrumentation(
@@ -17,4 +17,9 @@ export async function signOutAction() {
       redirect("/login");
     },
   );
+}
+
+export async function getSessionUserAction() {
+  const session = await getSession();
+  return session ? session.user : null;
 }

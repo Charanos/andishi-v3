@@ -42,10 +42,10 @@ import { adminDashboardMock } from "@/data/dashboard-mock";
 
 const platformMetrics = [
   { icon: IconBriefcase, label: "Active briefs", value: "18", delta: "+2" },
-  { icon: IconGitMerge, label: "Pending matches", value: "5", delta: "-1" },
+  { icon: IconGitMerge, label: "Pending scopes", value: "5", delta: "-1" },
   {
     icon: IconUsersGroup,
-    label: "Active placements",
+    label: "Active builds",
     value: "24",
     delta: "+3",
   },
@@ -79,7 +79,7 @@ const pipelineColumns: PipelineColumn[] = [
   },
   {
     count: 14,
-    title: "Shortlisting",
+    title: "Project Scoping",
     items: [
       {
         avatars: ["KM", "AO"],
@@ -97,7 +97,7 @@ const pipelineColumns: PipelineColumn[] = [
   },
   {
     count: 9,
-    title: "Profiles Sent",
+    title: "Proposals Sent",
     items: [
       {
         avatars: ["AO", "KM", "DM"],
@@ -115,7 +115,7 @@ const pipelineColumns: PipelineColumn[] = [
   },
   {
     count: 6,
-    title: "Intro Scheduled",
+    title: "Discovery Scheduled",
     items: [
       {
         avatars: ["AO"],
@@ -133,21 +133,21 @@ const pipelineColumns: PipelineColumn[] = [
   },
   {
     count: 5,
-    title: "Placement Confirmed",
+    title: "Builds Confirmed",
     items: [
       {
         avatars: ["AO"],
         meta: "Fintech / Series B",
         status: "Confirmed",
         time: "3d ago",
-        title: "CTO for fintech",
+        title: "Fintech Checkout Engine",
       },
       {
         avatars: ["KM"],
         meta: "HealthTech / Series A",
         status: "Confirmed",
         time: "4d ago",
-        title: "Lead engineer",
+        title: "Health Portal Build",
       },
     ],
   },
@@ -204,13 +204,13 @@ export default async function AdminPage() {
     adminDashboardMock.metrics[1],
     adminDashboardMock.metrics[2],
     {
-      label: "Avg Time to Match",
+      label: "Avg Scoping Velocity",
       value: "3.6 days",
       trend: "+0.8 vs last 7 days",
       data: [4.4, 4.1, 3.9, 3.8, 3.6],
     },
     {
-      label: "Engineers Available",
+      label: "Specialists on Bench",
       value: "148",
       trend: "+12 vs last 7 days",
       data: [124, 128, 136, 141, 148],
@@ -367,8 +367,8 @@ export default async function AdminPage() {
 
         <div className="flex min-w-0 flex-col gap-8">
           <SectionHeader
-            description="Real-time availability by domain."
-            title="Talent Supply"
+            description="Real-time delivery bench capacity by domain."
+            title="Squad Capacity"
           />
           <div className="overflow-hidden rounded-[1.15rem] border border-[color-mix(in_srgb,var(--glass-border)_72%,transparent)] bg-[color-mix(in_srgb,var(--surface-high)_22%,transparent)] p-5 shadow-[0_10px_28px_color-mix(in_srgb,var(--bg-deep)_5%,transparent),inset_0_1px_0_color-mix(in_srgb,white_10%,transparent)] backdrop-blur-2xl md:p-6">
             <DashboardDonutChart

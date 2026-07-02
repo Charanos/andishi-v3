@@ -3,9 +3,9 @@
 :root {
   color-scheme: light;
   /* Mapped to Cosmic Light Theme */
-  --bg: #F8F6FF;
-  --bg-deep: #f6fdff;
-  --footer-bg: #f6fdff;
+  --bg: #FFFFFF;
+  --bg-deep: #FAF9FC;
+  --footer-bg: #FAF9FC;
   --surface-low: #ffffff;
   --surface: #FFFFFF;
   --surface-high: #EDE8FF;
@@ -15,20 +15,20 @@
   --on-surface-dim: #282c54;
   --inverse-surface: #160B2F;
   --inverse-on-surface: #F8F6FF;
-  --primary: #19073b;
+  --primary: #160B2F;
   --on-primary: #ffffff;
   --primary-container: rgba(86, 48, 155, 0.12);
-  --on-primary-container: #1a0838;
+  --on-primary-container: #160B2F;
   --primary-fixed: #120633;
   --primary-fixed-dim: #1c0841;
-  --secondary: #2a1058;
+  --secondary: #0284C7;
   --on-secondary: #ffffff;
-  --secondary-container: rgba(42, 16, 88, 0.10);
-  --on-secondary-container: #341369;
-  --tertiary: #341369;
+  --secondary-container: rgba(2, 132, 199, 0.08);
+  --on-secondary-container: #0369A1;
+  --tertiary: #10B981;
   --on-tertiary: #ffffff;
-  --tertiary-container: rgba(52, 19, 105, 0.10);
-  --on-tertiary-container: #472281;
+  --tertiary-container: rgba(16, 185, 129, 0.08);
+  --on-tertiary-container: #047857;
   --outline: rgba(111, 75, 170, 0.14);
   --outline-variant: rgba(26, 16, 48, 0.07);
   --surface-tint: #381a6e;
@@ -59,14 +59,14 @@
   --gradient-brand-hover: linear-gradient(135deg, #412078 0%, #5C4CE0 44%, #4D2A91 100%);
   --cta-shadow: 0 18px 42px color-mix(in srgb, var(--secondary) 24%, transparent), 0 8px 18px color-mix(in srgb, var(--primary) 18%, transparent);
   --section-divider: rgba(86, 48, 155, 0.08);
-  --dashboard-sidebar: rgba(255, 255, 255, 0.96);
-  --dashboard-sidebar-elevated: rgba(248, 246, 255, 0.96);
-  --dashboard-sidebar-hover: rgba(22, 11, 47, 0.075);
-  --dashboard-sidebar-active: rgba(86, 48, 155, 0.14);
+  --dashboard-sidebar: #F8F6FF;
+  --dashboard-sidebar-elevated: #FFFFFF;
+  --dashboard-sidebar-hover: rgba(86, 48, 155, 0.06);
+  --dashboard-sidebar-active: rgba(86, 48, 155, 0.10);
   --dashboard-sidebar-text: #160B2F;
   --dashboard-sidebar-muted: #3A2854;
-  --dashboard-sidebar-faint: rgba(58, 40, 84, 0.72);
-  --dashboard-sidebar-border: rgba(58, 40, 84, 0.17);
+  --dashboard-sidebar-faint: rgba(58, 40, 84, 0.65);
+  --dashboard-sidebar-border: rgba(86, 48, 155, 0.08);
   --dashboard-chart-fill: color-mix(in srgb, var(--secondary) 11%, transparent);
 }
 
@@ -437,4 +437,48 @@ body {
 
 .animate-float-slower {
   animation: float-slower 20s ease-in-out infinite;
+}
+
+/* ── SUBTLE SOFT NEUMORPHISM FOR NESTED GLASS CONTAINERS ── */
+.soft-neumorphic-inner {
+  background-color: var(--surface) !important;
+  border: 1px solid var(--outline-variant) !important;
+  box-shadow:
+    3px 3px 12px rgba(111, 75, 170, 0.05),
+    -3px -3px 12px rgba(255, 255, 255, 0.85),
+    inset 1px 1px 0px rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.dark .soft-neumorphic-inner {
+  background-color: var(--surface) !important;
+  border: 1px solid rgba(255, 255, 255, 0.015) !important;
+  box-shadow:
+    6px 6px 18px rgba(0, 0, 0, 0.55),
+    -4px -4px 14px rgba(234, 230, 255, 0.012),
+    inset 1px 1px 0px rgba(234, 230, 255, 0.02) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ── ORBITAL GEOMETRIC OUTLINES ── */
+.orbital-outline {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.65;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+}
+
+.orbital-outline--cyan {
+  border: 1px solid color-mix(in srgb, var(--secondary) 18%, transparent);
+}
+
+.orbital-outline--violet {
+  border: 1px solid color-mix(in srgb, var(--primary) 22%, transparent);
+}
+
+.orbital-outline--amber {
+  border: 1px solid color-mix(in srgb, var(--tertiary) 18%, transparent);
 }
