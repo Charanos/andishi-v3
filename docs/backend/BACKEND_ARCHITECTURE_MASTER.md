@@ -315,6 +315,32 @@ job_runs            id, job_key, status, started_at, finished_at, error, payload
 idempotency_keys    key text pk, user_id, route, response_hash, created_at
 ```
 
+### 6.10 Extended workflow: internal messaging, scheduling, project completion ✅ implemented July 2, 2026
+
+Not in this document's original module map - added per an explicit request to make the full brief→hire→delivery→completion lifecycle (across admin/dev/client, however an engineer was sourced) genuinely coherent end-to-end, closing gaps a dashboard-component audit surfaced (several admin pages had non-trivial mock data models with no backing table/service).
+
+```
+project_messages    id, project_id, sender_user_id?, body, attachments jsonb?, created_at
+calendar_events     id, title, type(enum), start_at, end_at?, location?, notes?, organizer_user_id,
+                              related_entity_type?, related_entity_id?, created_at, updated_at
+calendar_event_attendees id, event_id, user_id?, external_name?, external_email?, status(enum), created_at
+project_reviews     id, project_id unique, submitted_by_user_id?, rating, feedback?, would_recommend?, created_at, updated_at
+```
+
+**Account provisioning** (`lib/services/identity/provisioning.ts`'s `provisionUserAccount`): the shared core of every "give this person login access" flow, reusing the exact `password_reset_tokens` + `/reset-password` activation mechanism built for guest accounts. `inviteUser` (`POST /api/users/invite`, staff-only, `identity.user.write`) wraps it for admin-initiated invites (a new staff hire, a client contact added outside brief intake); `hireApplication` wraps it for a newly hired careers candidate. Never issues a token for an already-active account.
+
+**Careers → engineer network → delivery, reconciled**: the pre-existing model already cleanly separated *how an engineer enters the roster* (careers hiring, or being added directly) from *how they get staffed onto a specific client's work* (the brief → match → placement pipeline, unchanged). The only real gap was that reaching "hired" on a careers application had zero side effects. `hireApplication` (`POST /api/careers/applications/[id]/hire`) now provisions a user account (if the candidate is brand new) and creates their `engineers` row inline, filling in the profile fields (role/domain/location/timezone) the admin has at hand at the moment of hiring - after which "direct placement" (an admin matching an already-available engineer to a brief) is just the existing, unchanged match/placement flow. `createProjectFromPlacement` (`POST /api/placements/[id]/promote`) is the hire-track's equivalent of `promoteBriefToProject` - it gives a placement the same delivery infrastructure (milestones, messaging, completion) a build-track project gets, using the `projects.placementId` column that already existed for exactly this purpose but was unused until now. Opt-in, not automatic: a placement without a project remains valid (most freelance engagements never need delivery tracking).
+
+**Internal project messaging** (`lib/services/delivery/project-messages.ts`): a running chat thread per project - admin(s), the assigned developer(s), and the client - distinct from `support_cases` (a ticket with a resolution lifecycle). Access is derived entirely from the project's existing `organizationId`/`engineerIds` relations via the pre-existing `resolveProjectAccess` helper; no separate participants table. New `delivery.message.read`/`write` permission keys (delivery_pm gets them automatically via its `keysFor("delivery")` wildcard). Posting notifies every other participant automatically. This is the backend for what the floating support-chat widget and the (currently empty-shell) `/dashboard/messages`/`/dev/messages` pages will eventually read from - frontend wiring is a follow-up, not done in this pass.
+
+**Scheduling** (`lib/services/scheduling/events.ts`): backs the existing calendar-menu mock and the interview/intro-call slots referenced throughout matching and careers. New `scheduling` permission module (`scheduling.event.read`/`write`, granted to recruiter/sales_manager/delivery_pm/support_agent - each coordinates real meetings). Organizing your own calendar (viewing/creating events you're the organizer or an invited attendee of) needs no permission at all - only *staff-wide* calendar visibility and creating events is gated. Attendees can be internal users or external contacts (name+email, e.g. a careers candidate with no account yet) via `calendar_event_attendees`.
+
+**Project completion + private review**: `markProjectCompleted` (`POST /api/projects/[id]/complete`, staff-only) is a dedicated action-route rather than folded into the generic `PATCH /api/projects/[id]` (which predates the service layer and is a broader refactor left for a later pass) - it flips status and notifies every user in the project's client organization to leave feedback. `project_reviews` is deliberately separate from the public `testimonials` table: private, staff+own-org-visible only, one row per project (upserts on resubmission), rejected until the project is actually `completed`.
+
+Verified live across five separate e2e runs (account provisioning + hire-to-placement-to-project: 17 checks; project messaging: 10 checks; scheduling: 15 checks; completion+review: 13 checks) plus one full-chain integration run proving all of it works together in sequence - careers hire → placement → project → 3-way messaging → milestone → invoice → payment → completion → review → scheduled wrap-up call (15 checks, 0 failures) - against real Neon data.
+
+**Explicitly deferred, same pattern as every prior module**: no admin/dev/client dashboard UI reads from any of this yet (all the relevant pages - messaging, scheduler, project team assignment, career-to-hire pipeline - still read mock data per the dashboard audit); wiring them up is the next major phase now that this backend foundation is solid.
+
 ---
 
 ## Part 7 — API design conventions
