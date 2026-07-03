@@ -27,6 +27,14 @@ export const createProjectFromPlacementSchema = z.object({
   leadPmUserId: uuid.optional().nullable(),
 });
 
+// ── Project completion review (private client satisfaction) ─────────
+
+export const submitProjectReviewSchema = z.object({
+  rating: z.coerce.number().int().min(1).max(5),
+  feedback: optionalText,
+  wouldRecommend: z.coerce.boolean().optional().nullable(),
+});
+
 // ── Milestones ──────────────────────────────────────────────────────
 
 export const createMilestoneSchema = z.object({

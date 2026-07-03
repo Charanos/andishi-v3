@@ -1,5 +1,6 @@
 import {
   type AnyPgColumn,
+  boolean,
   index,
   integer,
   pgEnum,
@@ -7,6 +8,7 @@ import {
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 import { engineers } from "@/db/schema/engineers";
@@ -178,3 +180,32 @@ export type TaskDependency = typeof taskDependencies.$inferSelect;
 export type NewTaskDependency = typeof taskDependencies.$inferInsert;
 export type Allocation = typeof allocations.$inferSelect;
 export type NewAllocation = typeof allocations.$inferInsert;
+
+// ── Project completion review (private client satisfaction, distinct ────
+// from the public testimonials table - see project-reviews.ts) ─────────
+
+export const projectReviews = pgTable(
+  "project_reviews",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    submittedByUserId: uuid("submitted_by_user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    rating: integer("rating").notNull(),
+    feedback: text("feedback"),
+    wouldRecommend: boolean("would_recommend"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => ({
+    // One review per project - resubmitting updates it rather than
+    // creating a second row (see submitProjectReview's onConflictDoUpdate).
+    projectIdx: uniqueIndex("project_reviews_project_idx").on(table.projectId),
+  }),
+);
+
+export type ProjectReview = typeof projectReviews.$inferSelect;
+export type NewProjectReview = typeof projectReviews.$inferInsert;

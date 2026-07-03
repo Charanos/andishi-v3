@@ -22,6 +22,7 @@ export const PERMISSION_MODULES = [
   "marketing",
   "cms",
   "support",
+  "scheduling",
   "platform",
 ] as const;
 
@@ -88,6 +89,8 @@ export const PERMISSION_CATALOG: PermissionDefinition[] = [
   perm("delivery", "match", "write", "Propose and progress matches"),
   perm("delivery", "placement", "read", "View placements"),
   perm("delivery", "placement", "write", "Create and update placements"),
+  perm("delivery", "message", "read", "View a project's internal message thread"),
+  perm("delivery", "message", "write", "Post to a project's internal message thread"),
 
   // ── Finance ──────────────────────────────────────────────────────
   perm("finance", "rate", "read", "View bill/pay rate cards"),
@@ -144,6 +147,13 @@ export const PERMISSION_CATALOG: PermissionDefinition[] = [
   perm("support", "case", "write", "Update or resolve a support case"),
   perm("support", "case", "assign", "Assign a support case to an agent"),
   perm("support", "message", "write", "Reply within a support case thread"),
+
+  // ── Scheduling ───────────────────────────────────────────────────
+  // Organizing your own meetings/RSVPing needs no permission (self-scoped -
+  // see lib/services/scheduling/events.ts); these gate staff-wide calendar
+  // visibility and creating events on behalf of the org.
+  perm("scheduling", "event", "read", "View the full scheduling calendar across staff"),
+  perm("scheduling", "event", "write", "Create and manage calendar events (interviews, calls)"),
 
   // ── Platform ─────────────────────────────────────────────────────
   perm("platform", "settings", "read", "View platform settings"),
@@ -213,6 +223,8 @@ export const SYSTEM_ROLES: SystemRoleDefinition[] = [
       "finance.invoice.read",
       // Attribution: which campaign a lead came from.
       "marketing.campaign.read",
+      // Scheduling client calls/intro slots is a routine part of running deals.
+      ...keysFor("scheduling"),
     ],
   },
   {
@@ -255,6 +267,8 @@ export const SYSTEM_ROLES: SystemRoleDefinition[] = [
       "talent.engineer.read",
       // Is this project's client paid up - should work continue?
       "finance.invoice.read",
+      // Scheduling project syncs/client check-ins.
+      ...keysFor("scheduling"),
     ],
   },
   {
@@ -274,6 +288,8 @@ export const SYSTEM_ROLES: SystemRoleDefinition[] = [
       "crm.lead.read",
       // Engineer payment status matters for network retention.
       "finance.payout.read",
+      // Scheduling interviews and intro calls is the core of this role.
+      ...keysFor("scheduling"),
     ],
   },
   {
@@ -317,6 +333,8 @@ export const SYSTEM_ROLES: SystemRoleDefinition[] = [
       // requires being able to look the account up, not just the case.
       "finance.invoice.read",
       "delivery.project.read",
+      // Scheduling support calls with clients/developers.
+      ...keysFor("scheduling"),
     ],
   },
 ];
