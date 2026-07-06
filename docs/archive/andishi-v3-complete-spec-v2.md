@@ -1123,7 +1123,7 @@ CTA:   Book a Call
 
 ### Copy
 
-**Headline:** We build digital products that work.
+**Headline:** We build Software Products that work.
 
 **Subheadline:** For Kenyan and African businesses ready to move from idea to live product - without the missed deadlines, scope creep, or three-month wait.
 
@@ -1195,7 +1195,7 @@ _(Numbers: JetBrains Mono, `--primary` color. Surrounding text: Outfit, `--on-su
 
 **Section label:** THE REAL SITUATION
 
-**Headline:** Building a digital product in Kenya is harder than it should be.
+**Headline:** Building a Software Product in Kenya is harder than it should be.
 
 **Body:**
 You've briefed three agencies. Got three proposals full of jargon. Paid a deposit. Waited six weeks. Got a prototype that missed the point.
@@ -1481,7 +1481,7 @@ We build for the African market because we work in it. We know local payment inf
 ### /llms.txt
 
 ```
-Andishi is a Nairobi-based digital product studio that designs, builds, and ships
+Andishi is a Nairobi-based Software Product studio that designs, builds, and ships
 web applications, e-commerce systems, and custom digital solutions for businesses
 in Kenya and across Africa. Clients include founders, SMEs, and growth-stage
 companies who need a technical partner, not just a vendor. Andishi scopes projects
@@ -1557,7 +1557,7 @@ Disallow: /
   "name": "Andishi",
   "url": "https://andishi.dev",
   "foundingLocation": "Nairobi, Kenya",
-  "description": "Digital product studio building web applications, e-commerce platforms, and digital systems for Kenyan and African businesses.",
+  "description": "Software Product studio building web applications, e-commerce platforms, and digital systems for Kenyan and African businesses.",
   "areaServed": ["Kenya", "East Africa"],
   "serviceType": [
     "Web Application Development",
@@ -1572,11 +1572,11 @@ Disallow: /
 
 ```tsx
 export const metadata = {
-  title: "Andishi - Digital Products Built and Shipped in Nairobi",
+  title: "Andishi - Software Products Built and Shipped in Nairobi",
   description:
     "Andishi builds web products, systems, and digital experiences for Kenyan and African businesses. We scope fast, ship clean, and measure results.",
   openGraph: {
-    title: "Andishi - Digital Products Built and Shipped in Nairobi",
+    title: "Andishi - Software Products Built and Shipped in Nairobi",
     description: "...",
     url: "https://andishi.dev",
     type: "website",
@@ -1618,7 +1618,7 @@ https://andishi.dev/[page]?utm_source=[source]&utm_medium=[medium]&utm_campaign=
 
 ## Week 3 - Borrowed Channels
 
-- Pitch one Kenyan startup/tech podcast - topic: "what it actually takes to build digital products in Kenya"
+- Pitch one Kenyan startup/tech podcast - topic: "what it actually takes to build Software Products in Kenya"
 - Comment on 5 LinkedIn posts from founders in the target segment - add value, no promotion
 - Submit to BetaList or East Africa startup directories (backlink signal)
 

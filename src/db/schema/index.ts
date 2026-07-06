@@ -8,6 +8,7 @@ export * from "@/db/schema/crm";
 export * from "@/db/schema/delivery";
 export * from "@/db/schema/engineers";
 export * from "@/db/schema/finance";
+export * from "@/db/schema/governance";
 export * from "@/db/schema/invoices";
 export * from "@/db/schema/jobs";
 export * from "@/db/schema/marketing";

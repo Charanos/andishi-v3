@@ -10,7 +10,7 @@ All route descriptions, navigation priorities, machine-readable file content, me
 
 ## 1. Current Positioning
 
-Andishi's lead identity is a software development company that designs, builds, and ships digital products for global and local clients. The primary deliverable is working software, not talent supply.
+Andishi's lead identity is a software development company that designs, builds, and ships Software Products for global and local clients. The primary deliverable is working software, not talent supply.
 
 **Primary service lines (ordered by public prominence):**
 

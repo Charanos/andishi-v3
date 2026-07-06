@@ -313,7 +313,15 @@ audit_log           id, actor_user_id?, actor_ip, action, resource_type, resourc
 settings            key text pk, value jsonb, updated_by, updated_at   -- matching params, integration keys(status), feature flags
 job_runs            id, job_key, status, started_at, finished_at, error, payload jsonb  -- observability for background jobs
 idempotency_keys    key text pk, user_id, route, response_hash, created_at
+governance_controls id, title, scope, surface(enum), status(enum: clean|review|exception|scheduled), severity(enum),
+                              actor, owner, policy, next_action, report_cadence, amount_protected, client_visible,
+                              developer_visible, evidence jsonb, image_url?, created_by?, updated_by?, created_at, updated_at
+                              -- ✅ implemented July 6, 2026 (Platform group refinement pass)
 ```
+
+**`governance_controls`** (`src/db/schema/governance.ts`, `src/lib/services/platform/governance.ts`, `platform.governance.read`/`write`) is deliberately **not** the same thing as `audit_log`. `audit_log` is the immutable, system-generated trail of every write across the platform; a governance control is a *mutable policy row* an admin owns and advances through a status lifecycle (e.g. "client invoice and developer payout stay separated by role" — surface: commercial, status: exception → review → clean). Every write to a governance control still goes through `writeAudit()` like any other domain mutation, so "who changed this control and when" lives in `audit_log` same as everywhere else — this table is "what the policy currently is," not the trail of edits to it. Status transitions require a note (enforced client-side in the Audit Reports UI, appended to `evidence`); "overdue" is computed client-side from `updated_at` + `report_cadence`, not stored. Currently `platform.governance.*` is granted to `super_admin` only. See [PLATFORM_GROUP_REFINEMENT_GUIDE.md](../PLATFORM_GROUP_REFINEMENT_GUIDE.md) for the full workflow-design rationale.
+
+**`users` table gained two columns** (`owner text`, `access_notes text`, both nullable) in the same pass, replacing client-side-fabricated `owner`/`accessNotes` fields on the admin User Mgmt page with real, persisted ones. `mfaState`/`risk` fields that had no real backing signal were removed outright rather than left fabricated.
 
 ### 6.10 Extended workflow: internal messaging, scheduling, project completion ✅ implemented July 2, 2026
 
@@ -422,6 +430,7 @@ Sequenced so authorization + service layer exist before modules, PM ships first,
 | **P7 Marketing** ✅ | campaigns, newsletter, campaign_metrics; GA4/analytics ingestion. | Done July 2, 2026 - see §6.7. Campaign ROI aggregate + subscriber list ready for admin UI; homepage newsletter form still needs its fetch call wired (see Part 8's cross-cutting note). |
 | **P8 Support & Notifications** ✅ | support_cases/messages, notifications, prefs; wire floating support chat + notification menu. | Done July 2, 2026 - see §6.8. Ticket-style support done; a separate internal project-messaging system is tracked next (see the dashboard-audit note below Part 12). |
 | **P9 Hardening** | idempotency, rate limiting, background job scheduling, indexes/perf pass, full test coverage of critical flows, provider-integration seams (Stripe/Wise) documented. | Load-sane, observable, tested; provider integration is a config change, not a refactor. |
+| **P10 Admin dashboard UI wiring — Platform group** ✅ | First real instance of the "wiring the UI is a follow-up" work every phase above deferred. Admin User Mgmt + Audit Reports pages converted from client-only mock state onto real endpoints; new `governance_controls` table/service/routes; Settings/Appearance draft+Save model; shared `OperationalDataTable`/`ModalShell`/`ConfirmDialog` component fixes that apply across ~16 admin pages, not just Platform group. | Done July 6, 2026 - see [PLATFORM_GROUP_REFINEMENT_GUIDE.md](../PLATFORM_GROUP_REFINEMENT_GUIDE.md) for the full audit, decisions, and a conventions checklist (§9) for repeating this pass on the remaining nav groups (Network, Finance, Marketing, Support). |
 
 Each phase: schema → migration → services (+authz+audit) → API → validation → tests → replace mock → docs update.
 

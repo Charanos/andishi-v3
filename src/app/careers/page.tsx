@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CareersPageExperience } from "@/components/marketing/careers-page-experience";
+import { fetchPublicOpenings } from "@/lib/api/public-client";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CareersPage() {
-  return <CareersPageExperience />;
+export default async function CareersPage() {
+  const openings = await fetchPublicOpenings();
+  return <CareersPageExperience initialOpenings={openings} />;
 }

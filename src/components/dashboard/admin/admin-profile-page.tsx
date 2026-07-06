@@ -1,293 +1,652 @@
 "use client";
 
-import { forwardRef, useMemo, useRef, useState } from "react";
-import type { FormEvent, ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState, useRef } from "react";
 import {
-  IconBell,
-  IconBrandGithub,
+  IconCalendar,
   IconCheck,
-  IconClock,
   IconDeviceLaptop,
-  IconEdit,
   IconKey,
-  IconLock,
+  IconLogout,
   IconMail,
-  IconMapPin,
-  IconRefresh,
   IconShieldCheck,
-  IconTrash,
   IconUserCircle,
-  IconUsers,
-  IconX,
-  type Icon,
+  IconCamera,
+  IconLoader2,
+  IconClock
 } from "@tabler/icons-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { DashboardPageHeader } from "@/components/dashboard/shared/dashboard-page-header";
+import { StatusBadge } from "@/components/dashboard/shared/status-badge";
+import { EntityDrawer } from "@/components/dashboard/shared/entity-drawer";
 import { ConfirmDialog } from "@/components/dashboard/shared/confirm-dialog";
 import {
-  DashboardBarChart,
-  DashboardDonutChart,
-  DashboardLineChart,
-} from "@/components/dashboard/shared/dashboard-chart";
-import { DashboardPageHeader } from "@/components/dashboard/shared/dashboard-page-header";
-import { EntityDrawer } from "@/components/dashboard/shared/entity-drawer";
-import { KpiCard } from "@/components/dashboard/shared/kpi-card";
-import { StatusBadge } from "@/components/dashboard/shared/status-badge";
-import { SectionDivider } from "@/components/ui/section-divider";
-import { cn } from "@/lib/utils";
+  OperationalDataTable,
+  type OperationalTableColumn,
+} from "@/components/dashboard/shared/operational-data-table";
+import { useToast } from "@/components/dashboard/shared/toast-provider";
+import { AdminPlatformNav } from "@/components/dashboard/admin/admin-platform-nav";
+import type { PublicSession } from "@/lib/services/identity/sessions";
 import type { AuthUser } from "@/types/auth";
 import { roleNames } from "@/types/auth";
 
-type AdminProfileState = {
-  bio: string;
-  escalationEmail: string;
-  location: string;
-  name: string;
-  notificationWindow: string;
-  phone: string;
-  title: string;
-};
+function parseUserAgent(ua: string | null): { browser: string; os: string } {
+  if (!ua) return { browser: "Unknown browser", os: "Unknown device" };
 
-type SecuritySession = {
-  device: string;
-  id: string;
-  ip: string;
-  lastSeen: string;
-  location: string;
-  trusted: boolean;
-};
+  let browser = "Unknown browser";
+  if (/Edg\//.test(ua)) browser = "Edge";
+  else if (/OPR\//.test(ua)) browser = "Opera";
+  else if (/Chrome\//.test(ua)) browser = "Chrome";
+  else if (/Firefox\//.test(ua)) browser = "Firefox";
+  else if (/Safari\//.test(ua)) browser = "Safari";
 
-const profileSeed = {
-  bio: "Owns Andishi admin command, commercial boundaries, talent-network quality, and cross-role operating controls.",
-  escalationEmail: "dennis@andishi.dev",
-  location: "Nairobi, Kenya",
-  notificationWindow: "08:00-19:00 EAT",
-  phone: "+254 700 000 000",
-  title: "Founder / Admin Operator",
-};
+  let os = "Unknown OS";
+  if (/Windows/.test(ua)) os = "Windows";
+  else if (/Mac OS X/.test(ua)) os = "macOS";
+  else if (/Android/.test(ua)) os = "Android";
+  else if (/iPhone|iPad/.test(ua)) os = "iOS";
+  else if (/Linux/.test(ua)) os = "Linux";
 
-const sessionSeed: SecuritySession[] = [
-  { device: "Windows workstation", id: "session-main", ip: "102.68.84.21", lastSeen: "Now", location: "Nairobi", trusted: true },
-  { device: "Chrome mobile", id: "session-mobile", ip: "102.68.84.44", lastSeen: "2h ago", location: "Nairobi", trusted: true },
-  { device: "Vercel preview", id: "session-preview", ip: "34.74.90.12", lastSeen: "Yesterday", location: "Iowa", trusted: false },
-];
+  return { browser, os };
+}
 
-const profileChannels = [
-  { icon: IconMail, label: "Email", value: "Critical finance, identity, and support alerts" },
-  { icon: IconBell, label: "In-app", value: "Brief, pipeline, audit, and content movement" },
-  { icon: IconBrandGithub, label: "Engineering", value: "Deployment, repo, and implementation review signals" },
-];
+function formatDate(value: string | Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
+function timeAgo(value: string | Date) {
+  const diffMs = Date.now() - new Date(value).getTime();
+  const minutes = Math.floor(diffMs / 60_000);
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d ago`;
+  return formatDate(value);
+}
 
 export function AdminProfilePage({ user }: { user: AuthUser }) {
-  const [profile, setProfile] = useState<AdminProfileState>({ ...profileSeed, name: user.name });
-  const [sessions, setSessions] = useState(sessionSeed);
-  const [editOpen, setEditOpen] = useState(false);
-  const [drawerSession, setDrawerSession] = useState<SecuritySession | null>(null);
-  const [confirmSession, setConfirmSession] = useState<SecuritySession | null>(null);
-  const stats = useMemo(() => buildProfileStats(sessions), [sessions]);
+  const router = useRouter();
+  const { notify } = useToast();
 
-  const revokeSession = () => {
-    if (!confirmSession) return;
-    setSessions((current) => current.filter((session) => session.id !== confirmSession.id));
-    setDrawerSession((current) => current?.id === confirmSession.id ? null : current);
-    setConfirmSession(null);
+  // Identity form
+  const [name, setName] = useState(user.name);
+  const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl ?? "");
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Security
+  const [isSendingReset, setIsSendingReset] = useState(false);
+
+  // Sessions
+  const [sessions, setSessions] = useState<PublicSession[]>([]);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [sessionsLoading, setSessionsLoading] = useState(true);
+  const [inspectSession, setInspectSession] = useState<PublicSession | null>(null);
+  const [revokeTarget, setRevokeTarget] = useState<PublicSession | null>(null);
+  const [isRevoking, setIsRevoking] = useState(false);
+  const [isMassRevoking, setIsMassRevoking] = useState(false);
+
+  const handleMassRevoke = async (selectedIds: string[], clearSelection: () => void) => {
+    setIsMassRevoking(true);
+    try {
+      await Promise.all(
+        selectedIds.map(async (id) => {
+          const res = await fetch(`/api/sessions/${id}`, { method: "DELETE" });
+          if (!res.ok) throw new Error(`Failed to revoke ${id}`);
+        })
+      );
+      setSessions((prev) => prev.filter((s) => !selectedIds.includes(s.id)));
+      notify(`Successfully signed out ${selectedIds.length} devices`, "success");
+      clearSelection();
+    } catch {
+      notify("Some devices failed to sign out.", "error");
+    } finally {
+      setIsMassRevoking(false);
+    }
   };
 
-  const trustSession = (session: SecuritySession) => {
-    const updated = { ...session, trusted: true };
-    setSessions((current) => current.map((entry) => entry.id === session.id ? updated : entry));
-    setDrawerSession((current) => current?.id === session.id ? updated : current);
+  useEffect(() => {
+    const loadSessions = async () => {
+      try {
+        const res = await fetch("/api/sessions");
+        if (res.ok) {
+          const data = await res.json();
+          setSessions(data.sessions ?? []);
+          setCurrentSessionId(data.currentSessionId ?? null);
+        } else {
+          notify("Failed to load active sessions", "error");
+        }
+      } catch {
+        notify("Failed to load active sessions", "error");
+      } finally {
+        setSessionsLoading(false);
+      }
+    };
+    loadSessions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const initials = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  const dirty = name.trim() !== user.name || (avatarUrl.trim() || null) !== (user.avatarUrl ?? null);
+
+  const [accountAgeDays] = useState(() =>
+    Math.max(0, Math.floor((Date.now() - new Date(user.createdAt).getTime()) / 86_400_000)),
+  );
+
+  const handleSave = async (event?: React.FormEvent) => {
+    if (event) event.preventDefault();
+    if (!dirty) return;
+
+    setIsSaving(true);
+    try {
+      const res = await fetch(`/api/users/${user.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name.trim(), avatarUrl: avatarUrl.trim() || null }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error ?? "Save failed");
+      }
+
+      notify("Profile updated", "success");
+      router.refresh();
+    } catch (err) {
+      notify(err instanceof Error ? err.message : "Failed to update profile", "error");
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  const handleAvatarUploadSuccess = async (url: string) => {
+    setAvatarUrl(url);
+    try {
+      const res = await fetch(`/api/users/${user.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ avatarUrl: url.trim() }),
+      });
+
+      if (!res.ok) throw new Error("Failed to save avatar URL to profile");
+      notify("Profile picture updated", "success");
+      router.refresh();
+    } catch {
+      notify("Avatar uploaded but failed to save to profile.", "error");
+    }
+  };
+
+  const handleSendResetLink = async () => {
+    setIsSendingReset(true);
+    try {
+      await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: user.email }),
+      });
+      notify(`Password reset link sent to ${user.email}`, "success");
+    } catch {
+      notify("Failed to send reset link", "error");
+    } finally {
+      setIsSendingReset(false);
+    }
+  };
+
+  const handleRevoke = async () => {
+    if (!revokeTarget) return;
+    setIsRevoking(true);
+    try {
+      const res = await fetch(`/api/sessions/${revokeTarget.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error ?? "Failed to revoke session");
+      }
+      setSessions((prev) => prev.filter((s) => s.id !== revokeTarget.id));
+      notify("Device signed out", "success");
+    } catch (err) {
+      notify(err instanceof Error ? err.message : "Failed to revoke session", "error");
+    } finally {
+      setIsRevoking(false);
+      setRevokeTarget(null);
+      setInspectSession(null);
+    }
+  };
+
+  const sessionColumns: OperationalTableColumn<PublicSession>[] = [
+    {
+      key: "device",
+      label: "Device",
+      priority: true,
+      render: (s) => {
+        const { browser, os } = parseUserAgent(s.userAgent);
+        return (
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)]">
+              <IconDeviceLaptop size={15} />
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-[0.86rem] font-medium text-[var(--on-surface)]">
+                {browser} on {os}
+              </p>
+              <p className="truncate text-[0.72rem] text-[var(--on-surface-dim)]">
+                {s.ipAddress ?? "Unknown IP"}
+              </p>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      key: "status",
+      label: "Status",
+      render: (s) =>
+        s.id === currentSessionId ? (
+          <StatusBadge label="This device" tone="active" />
+        ) : (
+          <StatusBadge label="Other device" tone="neutral" />
+        ),
+    },
+    {
+      key: "createdAt",
+      label: "Signed in",
+      mono: true,
+      hideOnMobile: true,
+      render: (s) => timeAgo(s.createdAt),
+    },
+    {
+      key: "actions",
+      label: "",
+      align: "right",
+      render: (s) =>
+        s.id === currentSessionId ? null : (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setRevokeTarget(s);
+            }}
+            className="inline-flex h-8 cursor-pointer items-center gap-1.5 rounded-lg border border-red-500/25 bg-red-500/10 px-2.5 text-[0.72rem] font-medium text-red-400 transition-all duration-200 hover:scale-105 hover:bg-red-500/20"
+          >
+            <IconLogout size={13} />
+            Sign out
+          </button>
+        ),
+    },
+  ];
 
   return (
     <div className="grid min-w-0 gap-9 py-10 md:gap-10 lg:gap-12 lg:py-12">
       <DashboardPageHeader
         className="mb-0"
-        title="Admin profile"
-        description="Control the admin identity, escalation routes, notification preferences, security posture, and operator context attached to Andishi command actions."
+        title="Super Admin Profile"
+        description="Manage your platform identity, security settings, and active session footprint."
         status={<StatusBadge label={roleNames[user.role]} tone="active" />}
-        actions={
-          <>
-            <button type="button" onClick={() => setSessions((current) => current.map((session) => ({ ...session, lastSeen: session.id === "session-main" ? "Now" : session.lastSeen })))} className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-full border border-[var(--glass-border)] px-4 text-[0.86rem] font-medium text-[var(--on-surface)] hover:bg-[var(--glass-bg)]">
-              <IconRefresh size={15} stroke={1.8} />
-              Refresh sessions
-            </button>
-            <button type="button" onClick={() => setEditOpen(true)} className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-full bg-[var(--on-surface)] px-4 text-[0.86rem] font-medium text-[var(--bg)]">
-              <IconEdit size={15} stroke={1.8} />
-              Edit profile
-            </button>
-          </>
-        }
       />
 
-      <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        <KpiCard data={[70, 74, 79, 84, stats.securityScore]} icon={IconShieldCheck} label="Security posture" trend={`${stats.untrusted} sessions need review`} value={`${stats.securityScore}%`} />
-        <KpiCard chart="bar" data={[1, 1, 2, 2, sessions.length]} icon={IconDeviceLaptop} label="Active sessions" trend={`${stats.trusted} trusted devices`} value={String(sessions.length)} />
-        <KpiCard data={[60, 68, 76, 82, 94]} icon={IconBell} label="Routing readiness" trend={profile.notificationWindow} value="94%" />
-        <KpiCard chart="bar" data={[3, 4, 5, 5, 6]} icon={IconUsers} label="Admin scope" trend="Full command access" value="6" />
-      </section>
+      <AdminPlatformNav />
 
-      <section className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_minmax(22rem,26rem)]">
-        <ProfileCommandRoom profile={profile} user={user} />
-        <ProfileRoutingPanel profile={profile} />
-      </section>
+      <div className="grid gap-6 lg:grid-cols-[22rem_minmax(0,1fr)] items-start">
+        {/* Left Column: Profile Card & Security Overview */}
+        <div className="grid gap-6">
+          <aside className="rounded-[1.35rem] border border-[var(--glass-border)] bg-[var(--surface)] overflow-hidden shadow-[0_18px_48px_color-mix(in_srgb,var(--bg-deep)_6%,transparent)] relative">
+            <div className="h-24 bg-[var(--primary)] border-b border-[var(--glass-border)]"></div>
+            <div className="px-6 pb-6 relative">
+              <div className="flex justify-center -mt-12 mb-4">
+                <AvatarUpload 
+                  initials={initials} 
+                  avatarUrl={avatarUrl} 
+                  onUploadSuccess={handleAvatarUploadSuccess} 
+                  notify={notify}
+                />
+              </div>
+              <div className="text-center">
+                <h2 className="text-[1.2rem] font-medium text-[var(--on-surface)] title-serif">{name}</h2>
+                <p className="text-[0.85rem] text-[var(--on-surface-dim)] mt-1">{user.email}</p>
+                <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 py-1">
+                   <IconShieldCheck size={14} className="text-[var(--primary)]" />
+                   <span className="text-[0.75rem] font-medium text-[var(--on-surface)]">Full Platform Control</span>
+                </div>
+              </div>
+              
+              <div className="mt-8 grid grid-cols-2 gap-4 border-t border-[var(--glass-border)] pt-6">
+                 <div className="text-center">
+                    <p className="text-[0.68rem] uppercase tracking-[0.12em] text-[var(--on-surface-dim)]">Account Age</p>
+                    <p className="mt-1.5 font-mono text-[1.1rem] text-[var(--on-surface)]">{accountAgeDays}d</p>
+                 </div>
+                 <div className="text-center">
+                    <p className="text-[0.68rem] uppercase tracking-[0.12em] text-[var(--on-surface-dim)]">Sessions</p>
+                    <p className="mt-1.5 font-mono text-[1.1rem] text-[var(--on-surface)]">{sessions.length}</p>
+                 </div>
+              </div>
+            </div>
+          </aside>
 
-      <SectionDivider />
+          {/* Security sidebar */}
+          <aside className="rounded-[1.35rem] border border-[var(--glass-border)] bg-[var(--surface)] p-6 shadow-[0_18px_48px_color-mix(in_srgb,var(--bg-deep)_6%,transparent)]">
+            <div className="flex items-center gap-2 mb-5">
+              <IconShieldCheck size={18} className="text-[var(--primary)]" />
+              <h2 className="text-[1.02rem] font-medium text-[var(--on-surface)]">Security Action</h2>
+            </div>
 
-      <section className="grid gap-6 2xl:grid-cols-[minmax(0,1fr)_24rem]">
-        <SecuritySessions sessions={sessions} onInspect={setDrawerSession} onRevoke={setConfirmSession} onTrust={trustSession} />
-        <SecurityPanel stats={stats} />
-      </section>
+            <div className="grid gap-3">
+              <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-4">
+                <p className="text-[0.86rem] font-medium text-[var(--on-surface)]">Password Reset</p>
+                <p className="mt-1 text-[0.78rem] leading-relaxed text-[var(--on-surface-dim)]">
+                  Send yourself a secure link to change your password.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleSendResetLink}
+                  disabled={isSendingReset}
+                  className="mt-3 inline-flex h-9 w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-[var(--glass-border)] px-4 text-[0.8rem] font-medium text-[var(--on-surface)] transition-colors hover:bg-[color-mix(in_srgb,var(--on-surface)_6%,transparent)] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isSendingReset ? (
+                    <IconLoader2 size={14} className="animate-spin" />
+                  ) : (
+                    <IconKey size={14} stroke={1.8} />
+                  )}
+                  {isSendingReset ? "Sending…" : "Send reset link"}
+                </button>
+              </div>
+            </div>
+          </aside>
+        </div>
 
-      <section className="grid gap-6 2xl:grid-cols-[minmax(0,1fr)_24rem]">
-        <ChartPanel title="Admin activity posture" description="Security, notifications, and command readiness over the current operating cycle." value={`${stats.securityScore}%`}>
-          <DashboardLineChart data={[64, 70, 73, 79, 84, stats.securityScore]} height={300} labels={["Mon", "Tue", "Wed", "Thu", "Fri", "Now"]} variant="area" />
-        </ChartPanel>
-        <ChartPanel title="Profile controls" description="Distribution across identity, notification, security, and command settings." value="4 domains">
-          <DashboardDonutChart data={[{ label: "Identity", value: 3, tone: "secondary" }, { label: "Security", value: 4, tone: "primary" }, { label: "Routing", value: 3, tone: "success" }, { label: "Command", value: 2, tone: "muted" }]} height={210} />
-        </ChartPanel>
-      </section>
+        {/* Right Column: Identity Form & Sessions Table */}
+        <div className="grid gap-6">
+          <form
+            onSubmit={handleSave}
+            className="rounded-[1.35rem] border border-[var(--glass-border)] bg-[var(--surface)] p-6 shadow-[0_18px_48px_color-mix(in_srgb,var(--bg-deep)_6%,transparent)]"
+          >
+            <div className="flex items-center gap-2 mb-6">
+              <IconUserCircle size={18} className="text-[var(--primary)]" />
+              <h2 className="text-[1.02rem] font-medium text-[var(--on-surface)]">Identity Details</h2>
+            </div>
 
-      <EditProfileModal onClose={() => setEditOpen(false)} onSubmit={(next) => { setProfile(next); setEditOpen(false); }} open={editOpen} profile={profile} />
+            <div className="grid gap-5 max-w-xl">
+              <label className="grid gap-2">
+                <span className="text-[0.72rem] uppercase tracking-[0.12em] text-[var(--on-surface-dim)]">
+                  Full name
+                </span>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  minLength={2}
+                  className="h-11 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 text-[0.9rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)] transition-colors"
+                />
+              </label>
 
-      <EntityDrawer onClose={() => setDrawerSession(null)} open={Boolean(drawerSession)} title={drawerSession?.device ?? "Session detail"}>
-        {drawerSession && <SessionDrawer session={drawerSession} onRevoke={() => setConfirmSession(drawerSession)} onTrust={() => trustSession(drawerSession)} />}
+              <div className="grid gap-2">
+                <span className="text-[0.72rem] uppercase tracking-[0.12em] text-[var(--on-surface-dim)]">
+                  Email address
+                </span>
+                <div className="flex h-11 items-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--glass-bg)_60%,transparent)] px-3 text-[0.9rem] text-[var(--on-surface-dim)]">
+                  <IconMail size={15} />
+                  {user.email}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end border-t border-[var(--glass-border)] pt-5">
+              <button
+                type="submit"
+                disabled={!dirty || isSaving}
+                className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-full bg-[var(--on-surface)] px-5 text-[0.86rem] font-medium text-[var(--bg)] transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isSaving ? (
+                  <IconLoader2 size={15} className="animate-spin" />
+                ) : (
+                  <IconCheck size={15} stroke={1.8} />
+                )}
+                {isSaving ? "Saving…" : "Save changes"}
+              </button>
+            </div>
+          </form>
+
+          {/* Active sessions */}
+          <OperationalDataTable
+            columns={sessionColumns}
+            rows={sessions}
+            title="Active sessions"
+            description="Devices currently signed in to your account. Sign out anything you don't recognize."
+            empty={sessionsLoading ? "Loading sessions…" : "No active sessions."}
+            onRowSelect={setInspectSession}
+            selectable={true}
+            pageSize={5}
+            bulkActions={(selectedIds, clearSelection) => (
+              <button
+                type="button"
+                onClick={() => handleMassRevoke(selectedIds, clearSelection)}
+                disabled={isMassRevoking}
+                className="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded-full border border-red-500/25 bg-red-500/10 px-4 text-[0.8rem] font-medium text-red-400 transition-colors hover:bg-red-500/20 disabled:opacity-50"
+              >
+                {isMassRevoking ? <IconLoader2 size={14} className="animate-spin" /> : <IconLogout size={14} stroke={1.8} />}
+                Sign out {selectedIds.length} device{selectedIds.length > 1 ? "s" : ""}
+              </button>
+            )}
+          />
+        </div>
+      </div>
+
+      <EntityDrawer
+        open={Boolean(inspectSession)}
+        onClose={() => setInspectSession(null)}
+        title="Session Detail"
+      >
+        {inspectSession && (
+          <div className="grid gap-6">
+            <section className="relative overflow-hidden rounded-[1.35rem] border border-[var(--glass-border)] bg-[var(--surface)] p-6 text-center shadow-[0_18px_48px_color-mix(in_srgb,var(--bg-deep)_6%,transparent)]">
+              <div className="absolute inset-0 bg-gradient-to-br from-[var(--secondary)]/10 to-transparent pointer-events-none" />
+              {(() => {
+                const { browser, os } = parseUserAgent(inspectSession.userAgent);
+                const isCurrent = inspectSession.id === currentSessionId;
+                return (
+                  <div className="relative z-10 flex flex-col items-center">
+                    <div className="mb-4 grid h-16 w-16 place-items-center rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] shadow-sm">
+                      <IconDeviceLaptop size={32} stroke={1.2} className="text-[var(--on-surface)]" />
+                    </div>
+                    <StatusBadge
+                      label={isCurrent ? "Current Session" : "Other Device"}
+                      tone={isCurrent ? "active" : "neutral"}
+                    />
+                    <h2 className="title-serif mt-4 text-[1.4rem] font-medium text-[var(--on-surface)]">
+                      {browser} on {os}
+                    </h2>
+                    <div className="mt-3 flex items-center justify-center gap-2 text-[0.85rem] text-[var(--on-surface-dim)]">
+                      <span className="h-2 w-2 rounded-full bg-green-500" />
+                      {inspectSession.ipAddress ?? "Unknown IP"}
+                    </div>
+                  </div>
+                );
+              })()}
+            </section>
+            
+            <section className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-4 shadow-sm">
+                <div className="mb-1 flex items-center gap-2 text-[var(--on-surface-dim)]">
+                  <IconCalendar size={14} stroke={1.8} />
+                  <p className="text-[0.68rem] uppercase tracking-[0.12em]">Signed In</p>
+                </div>
+                <p className="font-mono text-[0.9rem] text-[var(--on-surface)]">
+                  {formatDate(inspectSession.createdAt)}
+                </p>
+              </div>
+              <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-4 shadow-sm">
+                <div className="mb-1 flex items-center gap-2 text-[var(--on-surface-dim)]">
+                  <IconClock size={14} stroke={1.8} />
+                  <p className="text-[0.68rem] uppercase tracking-[0.12em]">Expires</p>
+                </div>
+                <p className="font-mono text-[0.9rem] text-[var(--on-surface)]">
+                  {formatDate(inspectSession.expiresAt)}
+                </p>
+              </div>
+            </section>
+
+            {inspectSession.id !== currentSessionId && (
+              <div className="mt-4 border-t border-[var(--glass-border)] pt-6">
+                <button
+                  type="button"
+                  onClick={() => setRevokeTarget(inspectSession)}
+                  className="inline-flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-red-500/25 bg-red-500/10 px-4 text-[0.9rem] font-medium text-red-400 transition-colors hover:bg-red-500/20 hover:scale-[1.02]"
+                >
+                  <IconLogout size={16} stroke={1.8} />
+                  Revoke Device Access
+                </button>
+                <p className="mt-3 text-center text-[0.75rem] text-[var(--on-surface-dim)] leading-relaxed">
+                  This action will immediately terminate the session. The user will be logged out on this device.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </EntityDrawer>
 
-      <ConfirmDialog cancelLabel="Keep session" confirmLabel="Revoke session" description={`Revoke ${confirmSession?.device ?? "this session"} from the active admin profile.`} onCancel={() => setConfirmSession(null)} onConfirm={revokeSession} open={Boolean(confirmSession)} title="Revoke admin session?" />
+      <ConfirmDialog
+        open={Boolean(revokeTarget)}
+        title="Sign out this device?"
+        description="This immediately ends that session. The device will need to sign in again to regain access."
+        confirmLabel={isRevoking ? "Signing out…" : "Sign out device"}
+        onCancel={() => setRevokeTarget(null)}
+        onConfirm={handleRevoke}
+      />
     </div>
   );
 }
 
-function ProfileCommandRoom({ profile, user }: { profile: AdminProfileState; user: AuthUser }) {
-  const initials = profile.name.split(/\s+/).filter(Boolean).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
-  return (
-    <section className="overflow-hidden rounded-[1.6rem] border border-[var(--glass-border)] bg-[linear-gradient(145deg,color-mix(in_srgb,var(--surface-high)_22%,var(--surface)),var(--surface))] shadow-[0_22px_70px_color-mix(in_srgb,var(--bg-deep)_10%,transparent)]">
-      <div className="grid gap-6 p-5 sm:p-6 lg:grid-cols-[11rem_minmax(0,1fr)]">
-        <div className="grid place-items-center rounded-[1.35rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-5">
-          <span className="grid h-24 w-24 place-items-center rounded-full bg-[var(--on-surface)] font-mono text-[1.6rem] text-[var(--bg)]">{initials}</span>
-          <StatusBadge label="Active admin" tone="active" />
-        </div>
-        <div className="min-w-0">
-          <p className="label-caps text-[var(--primary)]">Operator identity</p>
-          <h2 className="title-serif mt-3 text-[1.55rem] font-medium leading-tight text-[var(--on-surface)]">{profile.name}</h2>
-          <p className="mt-1 text-[0.96rem] text-[var(--on-surface-dim)]">{profile.title}</p>
-          <p className="mt-4 max-w-3xl text-[0.92rem] leading-relaxed text-[var(--on-surface-dim)]">{profile.bio}</p>
-          <div className="mt-6 grid gap-3 sm:grid-cols-3"><InfoTile label="Email" value={user.email} /><InfoTile label="Location" value={profile.location} /><InfoTile label="Created" value={formatDate(user.createdAt)} /></div>
-        </div>
-      </div>
-      <div className="grid border-t border-[var(--glass-border)] md:grid-cols-3">
-        <BoundaryTile icon={IconLock} label="Commercial access" value="Full client invoice, developer payout, margin, reserve, and collection context." />
-        <BoundaryTile icon={IconUserCircle} label="Identity access" value="User invites, role changes, auth intake, and access review controls." />
-        <BoundaryTile icon={IconShieldCheck} label="Governance access" value="Audit reports, settings policy, support escalations, and proof controls." />
-      </div>
-    </section>
-  );
-}
+// ----------------------------------------------------------------------
+// Avatar Upload Component
+// ----------------------------------------------------------------------
+function AvatarUpload({
+  initials,
+  avatarUrl,
+  onUploadSuccess,
+  notify,
+}: {
+  initials: string;
+  avatarUrl: string;
+  onUploadSuccess: (url: string) => void;
+  notify: (msg: string, type: "success" | "error") => void;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-function ProfileRoutingPanel({ profile }: { profile: AdminProfileState }) {
-  return (
-    <aside className="rounded-[1.6rem] border border-[var(--glass-border)] bg-[var(--surface)] p-5 shadow-[0_18px_48px_color-mix(in_srgb,var(--bg-deep)_7%,transparent)] sm:p-6">
-      <SectionHeader eyebrow="Routing" title="Escalation profile" description="Critical admin signals route through these account-level controls before they become action queues." />
-      <div className="mt-5 grid gap-3">
-        <ContextTile icon={IconMail} label="Escalation email" value={profile.escalationEmail} />
-        <ContextTile icon={IconClock} label="Coverage window" value={profile.notificationWindow} />
-        <ContextTile icon={IconMapPin} label="Operating base" value={profile.location} />
-      </div>
-      <div className="mt-5 grid gap-3">{profileChannels.map((channel) => <ContextTile key={channel.label} icon={channel.icon} label={channel.label} value={channel.value} />)}</div>
-    </aside>
-  );
-}
+  const displayUrl = previewUrl || avatarUrl;
 
-function SecuritySessions({ onInspect, onRevoke, onTrust, sessions }: { onInspect: (session: SecuritySession) => void; onRevoke: (session: SecuritySession) => void; onTrust: (session: SecuritySession) => void; sessions: SecuritySession[] }) {
-  return (
-    <section className="rounded-[1.35rem] border border-[var(--glass-border)] bg-[var(--surface)] p-5 shadow-[0_18px_48px_color-mix(in_srgb,var(--bg-deep)_6%,transparent)] sm:p-6">
-      <SectionHeader eyebrow="Security" title="Active admin sessions" description="Review devices with privileged admin access and revoke anything that should not retain command permissions." />
-      <div className="mt-5 grid gap-3">
-        {sessions.map((session) => (
-          <article key={session.id} className="grid gap-4 rounded-[1.25rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2"><StatusBadge label={session.trusted ? "Trusted" : "Review"} tone={session.trusted ? "active" : "overdue"} /><span className="rounded-full border border-[var(--glass-border)] px-2.5 py-1 font-mono text-[0.68rem] text-[var(--on-surface-dim)]">{session.lastSeen}</span></div>
-              <h3 className="mt-3 text-[0.98rem] font-medium text-[var(--on-surface)]">{session.device}</h3>
-              <p className="mt-1 text-[0.82rem] text-[var(--on-surface-dim)]">{session.location} / {session.ip}</p>
-            </div>
-            <div className="flex flex-wrap gap-2"><ActionButton icon={IconDeviceLaptop} onClick={() => onInspect(session)}>Inspect</ActionButton>{!session.trusted && <ActionButton icon={IconCheck} onClick={() => onTrust(session)}>Trust</ActionButton>}<ActionButton danger icon={IconTrash} onClick={() => onRevoke(session)}>Revoke</ActionButton></div>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
+  const handleFile = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      notify("Only image files are allowed", "error");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      notify("Image must be smaller than 5MB", "error");
+      return;
+    }
 
-function SecurityPanel({ stats }: { stats: ReturnType<typeof buildProfileStats> }) {
-  return (
-    <aside className="rounded-[1.35rem] border border-[var(--glass-border)] bg-[var(--surface)] p-5 shadow-[0_18px_48px_color-mix(in_srgb,var(--bg-deep)_6%,transparent)] sm:p-6">
-      <SectionHeader eyebrow="Controls" title="Security posture" description="MFA, trusted device coverage, and route discipline for admin command." />
-      <div className="mt-5 grid gap-3"><ContextTile icon={IconKey} label="MFA" value="Enabled" /><ContextTile icon={IconDeviceLaptop} label="Trusted devices" value={`${stats.trusted} / ${stats.total}`} /><ContextTile icon={IconShieldCheck} label="Route guard" value="Admin-only" /></div>
-      <div className="mt-5"><DashboardBarChart data={[stats.trusted, stats.untrusted, stats.total]} height={180} labels={["Trusted", "Review", "Total"]} /></div>
-    </aside>
-  );
-}
+    setIsUploading(true);
+    setPreviewUrl(URL.createObjectURL(file));
 
-function SessionDrawer({ onRevoke, onTrust, session }: { onRevoke: () => void; onTrust: () => void; session: SecuritySession }) {
-  return <div className="grid gap-5"><section className="rounded-[1.35rem] border border-[var(--glass-border)] bg-[var(--surface)] p-5"><div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between"><div><StatusBadge label={session.trusted ? "Trusted" : "Needs review"} tone={session.trusted ? "active" : "overdue"} /><h2 className="title-serif mt-3 text-[1.25rem] font-medium text-[var(--on-surface)]">{session.device}</h2><p className="mt-2 text-[0.9rem] text-[var(--on-surface-dim)]">{session.location} / {session.ip}</p></div><div className="flex flex-wrap gap-2">{!session.trusted && <ActionButton icon={IconCheck} onClick={onTrust}>Trust device</ActionButton>}<ActionButton danger icon={IconTrash} onClick={onRevoke}>Revoke</ActionButton></div></div></section><section className="grid gap-4 md:grid-cols-3"><InfoTile label="Last seen" value={session.lastSeen} /><InfoTile label="Location" value={session.location} /><InfoTile label="IP address" value={session.ip} /></section></div>;
-}
+    const formData = new FormData();
+    formData.append("file", file);
 
-function EditProfileModal({ onClose, onSubmit, open, profile }: { onClose: () => void; onSubmit: (profile: AdminProfileState) => void; open: boolean; profile: AdminProfileState }) {
-  const firstInputRef = useRef<HTMLInputElement>(null);
-  if (!open) return null;
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    onSubmit({ bio: String(form.get("bio") ?? profile.bio), escalationEmail: String(form.get("escalationEmail") ?? profile.escalationEmail), location: String(form.get("location") ?? profile.location), name: String(form.get("name") ?? profile.name), notificationWindow: String(form.get("notificationWindow") ?? profile.notificationWindow), phone: String(form.get("phone") ?? profile.phone), title: String(form.get("title") ?? profile.title) });
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+      const data = await res.json();
+      if (data.url) {
+         onUploadSuccess(data.url);
+      }
+    } catch {
+      notify("Failed to update profile", "error");
+      setPreviewUrl(null);
+    } finally {
+      setIsUploading(false);
+    }
   };
-  return <ModalShell onClose={onClose}><form onSubmit={submit} className="w-full max-w-3xl rounded-[1.65rem] border border-[var(--glass-border)] bg-[var(--surface)] p-5 shadow-[0_28px_100px_color-mix(in_srgb,var(--bg-deep)_44%,transparent)] sm:p-6"><ModalHeader title="Edit admin profile" onClose={onClose} /><div className="mt-6 grid gap-4 border-t border-[var(--glass-border)] pt-6 sm:grid-cols-2"><FormInput ref={firstInputRef} defaultValue={profile.name} label="Name" name="name" /><FormInput defaultValue={profile.title} label="Title" name="title" /><FormInput defaultValue={profile.escalationEmail} label="Escalation email" name="escalationEmail" /><FormInput defaultValue={profile.phone} label="Phone" name="phone" /><FormInput defaultValue={profile.location} label="Location" name="location" /><FormInput defaultValue={profile.notificationWindow} label="Notification window" name="notificationWindow" /><label className="grid gap-2 sm:col-span-2"><span className="text-[0.72rem] uppercase tracking-[0.12em] text-[var(--on-surface-dim)]">Bio</span><textarea name="bio" defaultValue={profile.bio} rows={4} className="resize-none rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 py-3 text-[0.9rem] text-[var(--on-surface)] outline-none" /></label></div><ModalActions onClose={onClose} submitLabel="Save profile" /></form></ModalShell>;
-}
 
-function ChartPanel({ children, description, title, value }: { children: ReactNode; description: string; title: string; value: string }) {
-  return <article className="rounded-[1.35rem] border border-[var(--glass-border)] bg-[var(--surface)] p-5 shadow-[0_18px_48px_color-mix(in_srgb,var(--bg-deep)_6%,transparent)]"><div className="flex items-start justify-between gap-4"><div><h2 className="title-serif text-[1rem] font-medium text-[var(--on-surface)]">{title}</h2><p className="mt-2 text-[0.86rem] leading-relaxed text-[var(--on-surface-dim)]">{description}</p></div><span className="rounded-full border border-[var(--glass-border)] px-3 py-1.5 font-mono text-[0.72rem] text-[var(--on-surface)]">{value}</span></div><div className="mt-5">{children}</div></article>;
-}
+  return (
+    <div
+      className="relative flex h-24 w-24 shrink-0 items-center justify-center rounded-full border-[3px] border-[var(--surface)] bg-[var(--surface)] shadow-lg"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+      onDragLeave={() => setIsDragging(false)}
+      onDrop={(e) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const file = e.dataTransfer.files?.[0];
+        if (file) handleFile(file);
+      }}
+    >
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) handleFile(file);
+          if (fileInputRef.current) fileInputRef.current.value = "";
+        }}
+        accept="image/*"
+        className="hidden"
+      />
 
-function BoundaryTile({ icon: Icon, label, value }: { icon: Icon; label: string; value: string }) {
-  return <div className="grid gap-3 border-b border-[var(--glass-border)] p-4 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0"><span className="grid h-10 w-10 place-items-center rounded-xl border border-[color-mix(in_srgb,var(--secondary)_24%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_8%,transparent)] text-[var(--secondary)]"><Icon size={18} stroke={1.7} /></span><div><p className="text-[0.84rem] font-medium text-[var(--on-surface)]">{label}</p><p className="mt-1.5 text-[0.78rem] leading-relaxed text-[var(--on-surface-dim)]">{value}</p></div></div>;
-}
+      <div className="h-full w-full overflow-hidden rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] relative">
+        {displayUrl && !hasError ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={displayUrl}
+            alt="Profile Avatar"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out"
+            onError={() => setHasError(true)}
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-[var(--on-surface)] text-[1.4rem] font-medium font-mono text-[var(--bg)]">
+            {initials}
+          </div>
+        )}
+      </div>
 
-function ContextTile({ icon: Icon, label, value }: { icon: Icon; label: string; value: string }) {
-  return <div className="grid grid-cols-[2.25rem_minmax(0,1fr)] gap-3 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-3"><span className="grid h-9 w-9 place-items-center rounded-xl border border-[color-mix(in_srgb,var(--secondary)_24%,transparent)] text-[var(--secondary)]"><Icon size={16} stroke={1.7} /></span><div className="min-w-0"><p className="text-[0.84rem] font-medium text-[var(--on-surface)]">{label}</p><p className="mt-1 truncate font-mono text-[0.78rem] text-[var(--on-surface-dim)]">{value}</p></div></div>;
-}
-
-function InfoTile({ label, value }: { label: string; value: string }) {
-  return <div className="min-w-0 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-3"><p className="text-[0.68rem] uppercase tracking-[0.12em] text-[var(--on-surface-dim)]">{label}</p><p className="mt-1.5 truncate font-mono text-[0.9rem] text-[var(--on-surface)]">{value}</p></div>;
-}
-
-function SectionHeader({ description, eyebrow, title }: { description: string; eyebrow: string; title: string }) {
-  return <div><p className="label-caps text-[var(--primary)]">{eyebrow}</p><h2 className="title-serif mt-2 text-[clamp(1.48rem,2vw,1.9rem)] font-medium text-[var(--on-surface)]">{title}</h2><p className="mt-2 max-w-2xl text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">{description}</p></div>;
-}
-
-function ActionButton({ children, danger = false, icon: Icon, onClick }: { children: ReactNode; danger?: boolean; icon: Icon; onClick?: () => void }) {
-  return <button type="button" disabled={!onClick} onClick={onClick} className={cn("inline-flex min-h-9 cursor-pointer items-center justify-center gap-1.5 rounded-full border px-3 text-[0.76rem] font-medium transition-colors duration-300 disabled:cursor-not-allowed disabled:opacity-50", danger ? "border-[color-mix(in_srgb,var(--error)_30%,transparent)] text-[var(--error)] hover:bg-[color-mix(in_srgb,var(--error)_8%,transparent)]" : "border-[var(--glass-border)] text-[var(--on-surface-dim)] hover:text-[var(--on-surface)]")}><Icon size={13} stroke={1.8} />{children}</button>;
-}
-
-function buildProfileStats(sessions: SecuritySession[]) {
-  const trusted = sessions.filter((session) => session.trusted).length;
-  const untrusted = sessions.length - trusted;
-  return { securityScore: Math.max(0, 96 - untrusted * 12), total: sessions.length, trusted, untrusted };
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(value));
-}
-
-function ModalShell({ children, onClose }: { children: ReactNode; onClose: () => void }) {
-  return <div className="fixed inset-0 z-[90] grid place-items-center bg-[color-mix(in_srgb,var(--bg-deep)_74%,transparent)] px-4 py-6 backdrop-blur-xl" role="dialog" aria-modal="true" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>{children}</div>;
-}
-
-function ModalHeader({ onClose, title }: { onClose: () => void; title: string }) {
-  return <div className="flex items-start justify-between gap-4"><div><p className="label-caps text-[var(--primary)]">Admin identity</p><h2 className="title-serif mt-2 text-[1.2rem] font-medium text-[var(--on-surface)]">{title}</h2></div><button type="button" onClick={onClose} className="grid h-10 w-10 cursor-pointer place-items-center rounded-full border border-[var(--glass-border)] text-[var(--on-surface-dim)] hover:text-[var(--on-surface)]" aria-label="Close modal"><IconX size={18} stroke={1.6} /></button></div>;
-}
-
-const FormInput = forwardRef<HTMLInputElement, { defaultValue?: string; label: string; name: string }>(function FormInput({ defaultValue, label, name }, ref) {
-  return <label className="grid gap-2"><span className="text-[0.72rem] uppercase tracking-[0.12em] text-[var(--on-surface-dim)]">{label}</span><input ref={ref} name={name} defaultValue={defaultValue} className="h-11 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 text-[0.9rem] text-[var(--on-surface)] outline-none" /></label>;
-});
-
-function ModalActions({ onClose, submitLabel }: { onClose: () => void; submitLabel: string }) {
-  return <div className="mt-6 flex flex-col-reverse gap-2 border-t border-[var(--glass-border)] pt-5 sm:flex-row sm:justify-end"><button type="button" onClick={onClose} className="min-h-10 cursor-pointer rounded-full border border-[var(--glass-border)] px-5 text-[0.9rem] font-medium text-[var(--on-surface-dim)] hover:text-[var(--on-surface)]">Cancel</button><button type="submit" className="min-h-10 cursor-pointer rounded-full bg-[var(--on-surface)] px-5 text-[0.9rem] font-medium text-[var(--bg)]">{submitLabel}</button></div>;
+      <AnimatePresence>
+        {(isHovered || isDragging || isUploading) && (
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => !isUploading && fileInputRef.current?.click()}
+            className={`absolute inset-0 z-10 flex cursor-pointer flex-col items-center justify-center rounded-full transition-colors duration-300 ${
+              isDragging ? "bg-[var(--primary)]/80" : "bg-black/60 backdrop-blur-[2px]"
+            }`}
+          >
+            {isUploading ? (
+              <IconLoader2 size={24} className="text-white animate-spin" />
+            ) : (
+              <IconCamera size={24} stroke={1.5} className="text-white mb-1" />
+            )}
+          </motion.button>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 }

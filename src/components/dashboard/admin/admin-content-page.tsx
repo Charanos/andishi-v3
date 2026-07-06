@@ -37,10 +37,14 @@ import {
   type OperationalTableColumn,
 } from "@/components/dashboard/shared/operational-data-table";
 import { StatusBadge } from "@/components/dashboard/shared/status-badge";
+import { useToast } from "@/components/dashboard/shared/toast-provider";
 import { SectionDivider } from "@/components/ui/section-divider";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { BlogPost, getBlogPosts, saveBlogPost, deleteBlogPost } from "@/data/blog";
+import type { BlogPost } from "@/data/blog";
+import { mapBlogPostRow } from "@/lib/blog-mapper";
+
+type AdminBlogPost = BlogPost & { dbId: string };
 
 type ContentStatus = "idea" | "draft" | "review" | "scheduled" | "published" | "refresh";
 type ContentType = "case_study" | "engineer_story" | "hiring_guide" | "proof_asset" | "social";
@@ -231,30 +235,43 @@ export function AdminContentPage() {
   const [activeTab, setActiveTab] = useState<"proof" | "blogs">("proof");
 
   // Blogs Management State
-  const [blogPostsState, setBlogPostsState] = useState<BlogPost[]>(() => {
-    if (typeof window === "undefined") return [];
-    return getBlogPosts();
-  });
+  const [blogPostsState, setBlogPostsState] = useState<AdminBlogPost[]>([]);
+  const [blogLoading, setBlogLoading] = useState(true);
   const [blogSearch, setBlogSearch] = useState("");
   const [blogCategoryFilter, setBlogCategoryFilter] = useState<string>("all");
   const [blogStatusFilter, setBlogStatusFilter] = useState<string>("all");
+  const { notify } = useToast();
 
   const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
   const [isNewBlog, setIsNewBlog] = useState(false);
-  const [blogModalOpen, setBlogModalOpen] = useState(false);
 
   const [deleteBlogConfirmOpen, setDeleteBlogConfirmOpen] = useState(false);
   const [blogToDelete, setBlogToDelete] = useState<string | null>(null);
-
-  const loadBlogPosts = () => {
-    setBlogPostsState(getBlogPosts());
-  };
+  const [isDeletingBlog, setIsDeletingBlog] = useState(false);
 
   useEffect(() => {
-    window.addEventListener("blog_posts_updated", loadBlogPosts);
-    return () => {
-      window.removeEventListener("blog_posts_updated", loadBlogPosts);
+    const loadBlogPosts = async () => {
+      try {
+        const res = await fetch("/api/blog?all=true");
+        if (res.ok) {
+          const data = await res.json();
+          setBlogPostsState(
+            (data.posts ?? []).map((row: Parameters<typeof mapBlogPostRow>[0]) => ({
+              ...mapBlogPostRow(row),
+              dbId: row.id,
+            })),
+          );
+        } else {
+          notify("Failed to load blog posts", "error");
+        }
+      } catch {
+        notify("Failed to load blog posts", "error");
+      } finally {
+        setBlogLoading(false);
+      }
     };
+    loadBlogPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCreateBlog = () => {
@@ -273,13 +290,11 @@ export function AdminContentPage() {
       status: "published",
     });
     setIsNewBlog(true);
-    setBlogModalOpen(true);
   };
 
   const handleEditBlog = (post: BlogPost) => {
     setEditingBlogPost({ ...post });
     setIsNewBlog(false);
-    setBlogModalOpen(true);
   };
 
   const handleDeleteBlogClick = (slug: string) => {
@@ -287,18 +302,75 @@ export function AdminContentPage() {
     setDeleteBlogConfirmOpen(true);
   };
 
-  const confirmDeleteBlog = () => {
-    if (blogToDelete) {
-      deleteBlogPost(blogToDelete);
+  const confirmDeleteBlog = async () => {
+    if (!blogToDelete) return;
+    const target = blogPostsState.find((p) => p.slug === blogToDelete);
+    if (!target) return;
+
+    setIsDeletingBlog(true);
+    try {
+      const res = await fetch(`/api/blog/posts/${target.dbId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Delete failed");
+      setBlogPostsState((prev) => prev.filter((p) => p.slug !== blogToDelete));
+      notify("Blog post deleted", "success");
+    } catch {
+      notify("Failed to delete blog post", "error");
+    } finally {
+      setIsDeletingBlog(false);
       setDeleteBlogConfirmOpen(false);
       setBlogToDelete(null);
     }
   };
 
-  const saveBlogForm = (post: BlogPost) => {
-    saveBlogPost(post);
-    setBlogModalOpen(false);
-    setEditingBlogPost(null);
+  const saveBlogForm = async (post: BlogPost) => {
+    const payload = {
+      slug: post.slug,
+      title: post.title,
+      category: post.category,
+      excerpt: post.excerpt,
+      coverImage: post.coverImage,
+      authorName: post.author.name,
+      authorRole: post.author.role,
+      authorAvatarUrl: post.author.avatarUrl,
+      datePublished: post.datePublished,
+      dateModified: new Date().toISOString().split("T")[0],
+      readTime: post.readTime,
+      featured: post.featured,
+      body: post.body,
+      status: post.status,
+    };
+
+    try {
+      let savedRow: Parameters<typeof mapBlogPostRow>[0];
+      if (isNewBlog) {
+        const res = await fetch("/api/blog", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("Create failed");
+        savedRow = (await res.json()).post;
+      } else {
+        const existing = blogPostsState.find((p) => p.slug === (editingBlogPost?.slug ?? post.slug));
+        if (!existing) throw new Error("Post not found");
+        const res = await fetch(`/api/blog/posts/${existing.dbId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("Update failed");
+        savedRow = (await res.json()).post;
+      }
+
+      const saved: AdminBlogPost = { ...mapBlogPostRow(savedRow), dbId: savedRow.id };
+      setBlogPostsState((prev) =>
+        isNewBlog ? [...prev, saved] : prev.map((p) => (p.dbId === saved.dbId ? saved : p)),
+      );
+      setEditingBlogPost(null);
+      notify(isNewBlog ? "Blog post created" : "Blog post updated", "success");
+    } catch {
+      notify("Failed to save blog post", "error");
+    }
   };
 
   const filteredBlogs = useMemo(() => {
@@ -400,6 +472,36 @@ export function AdminContentPage() {
           ) : (
             <span className="text-[var(--on-surface-dim)] opacity-55">No</span>
           ),
+      },
+      {
+        key: "actions",
+        label: "Actions",
+        render: (post) => (
+          <div className="flex items-center justify-end gap-1.5">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditBlog(post);
+              }}
+              className="grid h-8 w-8 cursor-pointer place-items-center rounded-lg border border-[var(--glass-border)] bg-white/5 text-[var(--on-surface-dim)] transition-all duration-200 hover:scale-105 hover:bg-white/10 hover:text-[var(--on-surface)] active:scale-95"
+              title="Edit post"
+            >
+              <IconEdit size={14} />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteBlogClick(post.slug);
+              }}
+              className="grid h-8 w-8 cursor-pointer place-items-center rounded-lg border border-red-500/25 bg-red-500/10 text-red-400 transition-all duration-200 hover:scale-105 hover:bg-red-500/20 active:scale-95"
+              title="Delete post"
+            >
+              <IconTrash size={14} />
+            </button>
+          </div>
+        ),
       },
     ],
     [],
@@ -799,7 +901,7 @@ export function AdminContentPage() {
               data={[2, 3, 4, 4, blogStats.total]}
               icon={IconBook}
               label="Total Posts"
-              trend="Synced with LocalStorage"
+              trend="Live from database"
               value={String(blogStats.total)}
             />
             <KpiCard
@@ -883,7 +985,7 @@ export function AdminContentPage() {
             <OperationalDataTable
               columns={blogColumns}
               description="Blogs register containing post tags, publication status, featured flag, and author metadata."
-              empty="No blog posts match."
+              empty={blogLoading ? "Loading blog posts…" : "No blog posts match."}
               onRowSelect={(post) => {
                 handleEditBlog(post);
               }}
@@ -897,15 +999,14 @@ export function AdminContentPage() {
             post={editingBlogPost}
             isNew={isNewBlog}
             onClose={() => {
-              setBlogModalOpen(false);
               setEditingBlogPost(null);
             }}
             onSubmit={saveBlogForm}
           />
 
           <ConfirmDialog
-            confirmLabel="Delete article"
-            description={`This permanently deletes the article "${blogPostsState.find((p) => p.slug === blogToDelete)?.title || ""}" from LocalStorage.`}
+            confirmLabel={isDeletingBlog ? "Deleting…" : "Delete article"}
+            description={`This permanently deletes the article "${blogPostsState.find((p) => p.slug === blogToDelete)?.title || ""}" and removes it from the public blog.`}
             onCancel={() => setDeleteBlogConfirmOpen(false)}
             onConfirm={confirmDeleteBlog}
             open={deleteBlogConfirmOpen}

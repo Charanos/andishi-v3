@@ -3,13 +3,20 @@ import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PublicPageShell, RouteHero, SectionBlock } from "@/components/marketing/public-page";
 import { PostCard } from "@/components/marketing/post-card";
-import { blogPosts, categoryFromSlug, categorySlug } from "@/data/blog";
+import { blogCategories, categorySlug } from "@/data/blog";
+import { fetchPublicBlogPosts } from "@/lib/api/public-client";
 import { siteConfig } from "@/config/site";
 
 type Props = { params: Promise<{ slug: string }> };
 
+function categoryFromSlug(slug: string) {
+  return blogCategories.find((category) => category !== "All" && categorySlug(category) === slug);
+}
+
 export function generateStaticParams() {
-  return [...new Set(blogPosts.map((post) => categorySlug(post.category)))].map((slug) => ({ slug }));
+  return blogCategories.filter((category) => category !== "All").map((category) => ({
+    slug: categorySlug(category),
+  }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -27,7 +34,7 @@ export default async function BlogCategoryPage({ params }: Props) {
   const category = categoryFromSlug(slug);
   if (!category) notFound();
 
-  const posts = blogPosts.filter((post) => post.category === category);
+  const posts = await fetchPublicBlogPosts({ category });
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

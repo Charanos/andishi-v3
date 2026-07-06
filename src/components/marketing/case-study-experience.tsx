@@ -8,7 +8,6 @@ import {
   IconArrowRight,
   IconCalendar,
   IconMapPin,
-  IconQuote,
 } from "@tabler/icons-react";
 import type { WorkProject } from "@/content/work";
 import { FinalCtaArtwork } from "@/components/ui/final-cta-artwork";
@@ -214,7 +213,7 @@ export function CaseStudyExperience({
                   </p>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4">
-                  {project.metrics.map((metric, i) => (
+                  {project.metrics.map((metric) => (
                     <div
                       key={metric.label}
                       className="border-b border-r border-[var(--glass-border)] px-5 py-5 [&:nth-child(2n)]:border-r-0 sm:[&:nth-child(2n)]:border-r sm:[&:nth-child(4n)]:border-r-0 last:border-b-0 [&:nth-last-child(-n+2)]:border-b-0 sm:[&:nth-last-child(-n+2)]:border-b sm:last:border-b-0 sm:[&:nth-last-child(-n+1)]:border-b-0"

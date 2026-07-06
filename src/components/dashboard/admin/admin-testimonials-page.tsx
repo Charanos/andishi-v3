@@ -12,45 +12,72 @@ import {
   IconArchive,
   IconRefresh,
 } from "@tabler/icons-react";
-import {
-  Testimonial,
-  getTestimonials,
-  saveTestimonial,
-  deleteTestimonial,
-} from "@/data/testimonials";
+import type { Testimonial } from "@/db/schema/testimonials";
 import { DashboardPageHeader } from "@/components/dashboard/shared/dashboard-page-header";
 import { KpiCard } from "@/components/dashboard/shared/kpi-card";
 import { StatusBadge } from "@/components/dashboard/shared/status-badge";
 import { ConfirmDialog } from "@/components/dashboard/shared/confirm-dialog";
+import { useToast } from "@/components/dashboard/shared/toast-provider";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
+type TestimonialDraft = Omit<Testimonial, "createdAt" | "updatedAt" | "projectId" | "organizationId" | "engineerId">;
+
+function toDraft(t?: Testimonial): TestimonialDraft {
+  return {
+    id: t?.id ?? "",
+    authorName: t?.authorName ?? "",
+    authorRole: t?.authorRole ?? "",
+    content: t?.content ?? "",
+    avatarUrl:
+      t?.avatarUrl ??
+      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80",
+    projectUrl: t?.projectUrl ?? null,
+    rating: t?.rating ?? 5,
+    date: t?.date ?? new Date().toISOString().split("T")[0],
+    status: t?.status ?? "active",
+    featured: t?.featured ?? false,
+    order: t?.order ?? 0,
+  };
+}
+
 export function AdminTestimonialsPage() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(() => {
-    if (typeof window === "undefined") return [];
-    return getTestimonials();
-  });
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [ratingFilter, setRatingFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const { notify } = useToast();
 
   // Modals state
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<Testimonial | null>(null);
+  const [editingItem, setEditingItem] = useState<TestimonialDraft | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Deletion confirm state
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    const handleUpdate = () => {
-      setTestimonials(getTestimonials());
+    const loadTestimonials = async () => {
+      try {
+        const res = await fetch("/api/testimonials?all=true");
+        if (res.ok) {
+          const data = await res.json();
+          setTestimonials(data.testimonials ?? []);
+        } else {
+          notify("Failed to load testimonials", "error");
+        }
+      } catch {
+        notify("Failed to load testimonials", "error");
+      } finally {
+        setIsLoading(false);
+      }
     };
-    window.addEventListener("testimonials_updated", handleUpdate);
-    return () => {
-      window.removeEventListener("testimonials_updated", handleUpdate);
-    };
+    loadTestimonials();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // KPIs Calculations
@@ -82,33 +109,37 @@ export function AdminTestimonialsPage() {
 
   // Actions
   const handleAddNew = () => {
-    setEditingItem({
-      id: `test-${Date.now()}`,
-      authorName: "",
-      authorRole: "",
-      content: "",
-      avatarUrl:
-        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80",
-      rating: 5,
-      date: new Date().toISOString().split("T")[0],
-      status: "active",
-    });
+    setEditingItem(toDraft());
     setIsNew(true);
     setModalOpen(true);
   };
 
   const handleEdit = (t: Testimonial) => {
-    setEditingItem({ ...t });
+    setEditingItem(toDraft(t));
     setIsNew(false);
     setModalOpen(true);
   };
 
-  const handleToggleStatus = (t: Testimonial) => {
-    const updated = {
-      ...t,
-      status: t.status === "active" ? ("archived" as const) : ("active" as const),
-    };
-    saveTestimonial(updated);
+  const patchTestimonial = async (id: string, payload: Record<string, unknown>) => {
+    const res = await fetch(`/api/testimonials/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error("Update failed");
+    const data = await res.json();
+    return data.testimonial as Testimonial;
+  };
+
+  const handleToggleStatus = async (t: Testimonial) => {
+    const nextStatus = t.status === "active" ? "archived" : "active";
+    try {
+      const updated = await patchTestimonial(t.id, { status: nextStatus });
+      setTestimonials((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
+      notify(nextStatus === "active" ? "Testimonial restored" : "Testimonial archived", "success");
+    } catch {
+      notify("Failed to update status", "error");
+    }
   };
 
   const handleDeleteRequest = (id: string) => {
@@ -116,20 +147,65 @@ export function AdminTestimonialsPage() {
     setDeleteConfirmOpen(true);
   };
 
-  const handleDeleteConfirm = () => {
-    if (itemToDelete) {
-      deleteTestimonial(itemToDelete);
+  const handleDeleteConfirm = async () => {
+    if (!itemToDelete) return;
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/testimonials/${itemToDelete}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Delete failed");
+      setTestimonials((prev) => prev.filter((item) => item.id !== itemToDelete));
+      notify("Testimonial deleted", "success");
+    } catch {
+      notify("Failed to delete testimonial", "error");
+    } finally {
+      setIsDeleting(false);
       setDeleteConfirmOpen(false);
       setItemToDelete(null);
     }
   };
 
-  const handleSaveSubmit = (e: React.FormEvent) => {
+  const handleSaveSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editingItem) {
-      saveTestimonial(editingItem);
+    if (!editingItem) return;
+
+    const payload = {
+      authorName: editingItem.authorName,
+      authorRole: editingItem.authorRole,
+      content: editingItem.content,
+      avatarUrl: editingItem.avatarUrl,
+      projectUrl: editingItem.projectUrl,
+      rating: editingItem.rating,
+      date: editingItem.date,
+      status: editingItem.status,
+      featured: editingItem.featured,
+      order: editingItem.order,
+    };
+
+    setIsSaving(true);
+    try {
+      let saved: Testimonial;
+      if (isNew) {
+        const res = await fetch("/api/testimonials", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("Create failed");
+        saved = (await res.json()).testimonial;
+      } else {
+        saved = await patchTestimonial(editingItem.id, payload);
+      }
+
+      setTestimonials((prev) =>
+        isNew ? [...prev, saved] : prev.map((item) => (item.id === saved.id ? saved : item)),
+      );
       setModalOpen(false);
       setEditingItem(null);
+      notify(isNew ? "Testimonial added" : "Testimonial updated", "success");
+    } catch {
+      notify("Failed to save testimonial", "error");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -155,7 +231,7 @@ export function AdminTestimonialsPage() {
         actions={
           <button
             onClick={handleAddNew}
-            className="flex h-10 items-center gap-2 rounded-xl bg-[var(--primary)] px-4 font-mono text-[0.72rem] uppercase tracking-wider text-black transition-all hover:opacity-90 hover:scale-[1.01]"
+            className="flex h-10 items-center gap-2 rounded-xl bg-[var(--primary)] px-4 font-mono text-[0.72rem] uppercase tracking-wider text-[var(--on-primary)] transition-all hover:opacity-90 hover:scale-[1.01] cursor-pointer"
           >
             <IconPlus size={16} /> Add Testimonial
           </button>
@@ -164,7 +240,7 @@ export function AdminTestimonialsPage() {
 
       {/* KPI Metric Strip */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <KpiCard label="Total Reviews" value={String(kpiStats.total)} trend="All seeded items" />
+        <KpiCard label="Total Reviews" value={String(kpiStats.total)} trend="Live from database" />
         <KpiCard label="Average Rating" value={`${kpiStats.avg} ★`} trend="Score out of 5" />
         <KpiCard
           label="Active Slider Reviews"
@@ -203,12 +279,20 @@ export function AdminTestimonialsPage() {
             <select
               value={ratingFilter}
               onChange={(e) => setRatingFilter(e.target.value)}
-              className="h-9 rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container)] px-3 text-[0.74rem] text-[var(--on-surface)] focus:outline-none"
+              className="h-9 cursor-pointer rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container)] px-3 text-[0.74rem] text-[var(--on-surface)] focus:outline-none"
             >
-              <option value="all">All Stars</option>
-              <option value="5">5 Stars</option>
-              <option value="4">4 Stars</option>
-              <option value="3">3 Stars</option>
+              <option value="all" className="bg-[var(--surface)] text-[var(--on-surface)]">
+                All Stars
+              </option>
+              <option value="5" className="bg-[var(--surface)] text-[var(--on-surface)]">
+                5 Stars
+              </option>
+              <option value="4" className="bg-[var(--surface)] text-[var(--on-surface)]">
+                4 Stars
+              </option>
+              <option value="3" className="bg-[var(--surface)] text-[var(--on-surface)]">
+                3 Stars
+              </option>
             </select>
           </div>
 
@@ -220,11 +304,17 @@ export function AdminTestimonialsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="h-9 rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container)] px-3 text-[0.74rem] text-[var(--on-surface)] focus:outline-none"
+              className="h-9 cursor-pointer rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container)] px-3 text-[0.74rem] text-[var(--on-surface)] focus:outline-none"
             >
-              <option value="all">All</option>
-              <option value="active">Active Only</option>
-              <option value="archived">Archived Only</option>
+              <option value="all" className="bg-[var(--surface)] text-[var(--on-surface)]">
+                All
+              </option>
+              <option value="active" className="bg-[var(--surface)] text-[var(--on-surface)]">
+                Active Only
+              </option>
+              <option value="archived" className="bg-[var(--surface)] text-[var(--on-surface)]">
+                Archived Only
+              </option>
             </select>
           </div>
         </div>
@@ -245,7 +335,13 @@ export function AdminTestimonialsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--glass-border)] text-[0.8rem] text-[var(--on-surface)]">
-              {filtered.length === 0 ? (
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} className="p-8 text-center text-[var(--on-surface-dim)]">
+                    <div className="mx-auto h-5 w-5 animate-spin rounded-full border-2 border-[var(--primary)] border-t-transparent" />
+                  </td>
+                </tr>
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td
                     colSpan={6}
@@ -307,14 +403,14 @@ export function AdminTestimonialsPage() {
                       <div className="flex justify-end gap-1.5">
                         <button
                           onClick={() => handleEdit(item)}
-                          className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--glass-border)] bg-white/5 text-[var(--on-surface-dim)] hover:bg-white/10 transition-colors"
+                          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-[var(--glass-border)] bg-white/5 text-[var(--on-surface-dim)] transition-all duration-200 hover:scale-105 hover:bg-white/10 hover:text-[var(--on-surface)] active:scale-95"
                           title="Edit"
                         >
                           <IconEdit size={14} />
                         </button>
                         <button
                           onClick={() => handleToggleStatus(item)}
-                          className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--glass-border)] bg-white/5 text-[var(--on-surface-dim)] hover:bg-white/10 transition-colors"
+                          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-[var(--glass-border)] bg-white/5 text-[var(--on-surface-dim)] transition-all duration-200 hover:scale-105 hover:bg-white/10 hover:text-[var(--on-surface)] active:scale-95"
                           title={item.status === "active" ? "Archive" : "Restore"}
                         >
                           {item.status === "active" ? (
@@ -325,7 +421,7 @@ export function AdminTestimonialsPage() {
                         </button>
                         <button
                           onClick={() => handleDeleteRequest(item.id)}
-                          className="flex h-8 w-8 items-center justify-center rounded-lg border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
+                          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-red-500/25 bg-red-500/10 text-red-400 transition-all duration-200 hover:scale-105 hover:bg-red-500/20 active:scale-95"
                           title="Delete"
                         >
                           <IconTrash size={14} />
@@ -350,7 +446,7 @@ export function AdminTestimonialsPage() {
               </h3>
               <button
                 onClick={() => setModalOpen(false)}
-                className="text-[var(--on-surface-dim)] hover:text-[var(--on-surface)]"
+                className="cursor-pointer text-[var(--on-surface-dim)] hover:text-[var(--on-surface)]"
               >
                 <IconX size={18} />
               </button>
@@ -411,7 +507,7 @@ export function AdminTestimonialsPage() {
                         rating: parseInt(e.target.value),
                       })
                     }
-                    className="w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container)] px-3 py-2 text-[0.8rem] text-[var(--on-surface)] focus:outline-none"
+                    className="w-full cursor-pointer rounded-xl border border-[var(--glass-border)] bg-[var(--surface-container)] px-3 py-2 text-[0.8rem] text-[var(--on-surface)] focus:outline-none"
                   >
                     {[5, 4, 3, 2, 1].map((n) => (
                       <option
@@ -440,6 +536,18 @@ export function AdminTestimonialsPage() {
               </div>
 
               <div>
+                <label className="flex items-center gap-2 text-[0.74rem] text-[var(--on-surface)] cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={editingItem.featured}
+                    onChange={(e) => setEditingItem({ ...editingItem, featured: e.target.checked })}
+                    className="cursor-pointer rounded border-[var(--glass-border)]"
+                  />
+                  Feature this review prominently
+                </label>
+              </div>
+
+              <div>
                 <label className="block text-[0.68rem] font-mono uppercase tracking-wider text-[var(--on-surface-dim)] mb-1">
                   Testimonial content
                 </label>
@@ -457,15 +565,22 @@ export function AdminTestimonialsPage() {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="rounded-full border border-[var(--glass-border)] bg-transparent px-4 py-2 text-[0.74rem] font-mono uppercase tracking-wider text-[var(--on-surface-dim)] hover:bg-white/5 transition-colors"
+                  disabled={isSaving}
+                  className="cursor-pointer rounded-full border border-[var(--glass-border)] bg-transparent px-4 py-2 text-[0.74rem] font-mono uppercase tracking-wider text-[var(--on-surface-dim)] hover:bg-white/5 transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex items-center gap-1 rounded-full bg-[var(--on-surface)] px-5 py-2 text-[0.74rem] font-mono uppercase tracking-wider text-[var(--bg)] hover:opacity-90 transition-opacity"
+                  disabled={isSaving}
+                  className="flex cursor-pointer items-center gap-1 rounded-full bg-[var(--on-surface)] px-5 py-2 text-[0.74rem] font-mono uppercase tracking-wider text-[var(--bg)] hover:opacity-90 transition-opacity disabled:opacity-70"
                 >
-                  <IconCheck size={12} /> Save Review
+                  {isSaving ? (
+                    <span className="h-3 w-3 animate-spin rounded-full border-2 border-[var(--bg)] border-t-transparent" />
+                  ) : (
+                    <IconCheck size={12} />
+                  )}
+                  {isSaving ? "Saving…" : "Save Review"}
                 </button>
               </div>
             </form>
@@ -478,7 +593,7 @@ export function AdminTestimonialsPage() {
         open={deleteConfirmOpen}
         title="Delete Testimonial"
         description="Are you sure you want to permanently delete this testimonial? This action cannot be undone."
-        confirmLabel="Delete Testimonial"
+        confirmLabel={isDeleting ? "Deleting…" : "Delete Testimonial"}
         cancelLabel="Cancel"
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteConfirmOpen(false)}

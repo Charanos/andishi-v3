@@ -228,7 +228,7 @@ export function ServicesMarquee() {
                     ref={(el) => {
                       countersRef.current[i] = el;
                     }}
-                    className="text-5xl md:text-6xl max-sm:text-4xl font-light"
+                    className="text-5xl md:text-6xl max-sm:text-4xl"
                   >
                     0
                   </span>

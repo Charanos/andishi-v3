@@ -344,7 +344,7 @@ function ShortlistDeck() {
               sizes="(min-width: 1280px) 20rem, 82vw"
               className="object-cover brightness-[0.82] saturate-[0.9]"
             />
-            <div className="absolute inset-0 bg-[linear-gradient(to_top,color-mix(in_srgb,var(--bg)_88%,transparent),transparent_65%)]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
             <span className="absolute right-3 top-3 rounded-full border border-[color-mix(in_srgb,var(--tertiary)_28%,transparent)] bg-[color-mix(in_srgb,var(--bg)_66%,transparent)] px-3 py-1 font-mono text-[0.7rem] text-[var(--tertiary)] backdrop-blur-xl">
               {engineer.fit}
             </span>
@@ -646,7 +646,7 @@ function DecisionRoom() {
             sizes="(min-width: 1024px) 40vw, 100vw"
             className="object-cover brightness-[0.75] saturate-[0.9]"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(to_top,var(--bg)_0%,color-mix(in_srgb,var(--bg)_74%,transparent)_34%,transparent_72%)]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
           <div className="absolute inset-x-4 bottom-4 rounded-2xl border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_66%,transparent)] p-4 backdrop-blur-xl">
             <p className="label-caps mb-3 text-[var(--secondary)]">Week one</p>
             <div className="grid gap-3 sm:grid-cols-3">

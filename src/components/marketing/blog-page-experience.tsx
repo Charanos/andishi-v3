@@ -6,7 +6,8 @@ import Link from "next/link";
 import { IconArrowRight } from "@tabler/icons-react";
 import { PublicPageShell, RouteHero, SectionBlock } from "@/components/marketing/public-page";
 import { PostCard } from "@/components/marketing/post-card";
-import { BlogPost, getBlogPosts, blogCategories, categorySlug } from "@/data/blog";
+import { BlogPost, blogCategories, categorySlug } from "@/data/blog";
+import { mapBlogPostRow } from "@/lib/blog-mapper";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -15,30 +16,35 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-export function BlogPageExperience() {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [mounted, setMounted] = useState(false);
+interface BlogPageExperienceProps {
+  /** Pre-fetched server-side data to prevent empty flash on initial render. */
+  initialPosts?: BlogPost[];
+}
+
+export function BlogPageExperience({ initialPosts = [] }: BlogPageExperienceProps) {
+  const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
+  const [mounted, setMounted] = useState(initialPosts.length > 0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 6;
 
   useEffect(() => {
-    // Client-side initialization to avoid hydration mismatch (deferred asynchronously to prevent cascading renders)
-    const frameId = requestAnimationFrame(() => {
-      setPosts(getBlogPosts().filter((p) => p.status === "published"));
-      setMounted(true);
-    });
-
-    const loadPosts = () => {
-      setPosts(getBlogPosts().filter((p) => p.status === "published"));
+    const loadPosts = async () => {
+      try {
+        const res = await fetch("/api/blog");
+        if (res.ok) {
+          const data = await res.json();
+          setPosts((data.posts ?? []).map(mapBlogPostRow));
+        }
+      } catch {
+        // Keep initialPosts if fetch fails
+      } finally {
+        setMounted(true);
+      }
     };
 
-    window.addEventListener("blog_posts_updated", loadPosts);
-    return () => {
-      cancelAnimationFrame(frameId);
-      window.removeEventListener("blog_posts_updated", loadPosts);
-    };
+    loadPosts();
   }, []);
 
   useGSAP(
@@ -144,7 +150,7 @@ export function BlogPageExperience() {
               <h2 className="title-serif my-8 text-[clamp(1.95rem,4vw,3rem)] font-normal leading-[1.1] tracking-tight text-[var(--on-surface)]">
                 {featured.title}
               </h2>
-              <p className="body-md my-8 text-[var(--on-surface-dim)] font-light leading-relaxed">
+              <p className="body-md my-8 text-[var(--on-surface-dim)] leading-relaxed">
                 {featured.excerpt}
               </p>
               <p className="mt-7 inline-flex items-center gap-2 text-[0.95rem] font-medium text-[var(--secondary)]">

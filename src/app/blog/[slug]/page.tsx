@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { blogPosts, getPost } from "@/data/blog";
-import { siteConfig } from "@/config/site";
+import { blogPosts } from "@/data/blog";
+import { fetchPublicBlogPost } from "@/lib/api/public-client";
 import { BlogPostDetailExperience } from "@/components/marketing/blog-post-detail-experience";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -11,7 +11,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = await fetchPublicBlogPost(slug);
   if (!post) return {};
 
   return {
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = await fetchPublicBlogPost(slug);
 
   return <BlogPostDetailExperience slug={slug} initialPost={post} />;
 }

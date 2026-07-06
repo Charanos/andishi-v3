@@ -1,6 +1,6 @@
 # Andishi v3 Progress Tracker
 
-Last updated: June 29, 2026
+Last updated: July 6, 2026
 
 ## Project Status ✅
 
@@ -9,6 +9,8 @@ The project has transitioned from a talent supply service to a **software develo
 - **Phase A - Backend Architecture Revamp**: Complete. We have updated schemas, validation libraries, public API endpoints for inquiry intake and portfolio retrieval, email templates, and executed Neon DB migrations successfully.
 - **Phase B - Frontend Pivot & Docs Updates**: Complete. All navigation configurations, public marketing landing pages, dynamic services sub-pages, sitemap, capability pages, onboarding forms, and type-checks are now functional.
 - **Phase C - Contact & Communication Overhaul**: Complete. General inquiries API, map integrations, collapsible coordinates banner, branded WhatsApp FAB, and typography pivot to Nunito are fully implemented.
+
+This tracker covers the public marketing site pivot (Phases A-C). The much larger internal admin/dev/client dashboard and ERP backend build (RBAC, finance ledger, CRM, CMS, careers, delivery/PM, support, scheduling, and the ongoing admin-dashboard-UI wiring pass) is tracked separately in [docs/backend/BACKEND_ARCHITECTURE_MASTER.md](backend/BACKEND_ARCHITECTURE_MASTER.md) (Part 12's phased roadmap) - see that doc for current status on the backend/dashboard side, and [docs/PLATFORM_GROUP_REFINEMENT_GUIDE.md](PLATFORM_GROUP_REFINEMENT_GUIDE.md) for the most recent admin-dashboard refinement pass (Platform nav group: User Mgmt, Audit Reports, Profile, Settings - real backend wiring, a new governance-controls feature, and fixes to shared components used across ~16 admin pages).
 
 ---
 

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
@@ -12,6 +13,7 @@ import {
   IconDots,
   IconGridDots,
   IconLogout,
+  IconPin,
   IconSettings,
   IconShieldCheck,
   IconX,
@@ -21,7 +23,8 @@ import { signOutAction } from "@/app/(app)/actions";
 import { Logo } from "@/components/brand/logo";
 import { CommandMenu } from "@/components/dashboard/shell/command-menu";
 import { useDashboardShell } from "@/components/dashboard/shell/app-shell";
-import { roleNav, type DashboardNavItem } from "@/data/dashboard";
+import { useAppearance } from "@/components/dashboard/shared/appearance-provider";
+import { roleNav, pinnedChats, type DashboardNavItem } from "@/data/dashboard";
 import { cn } from "@/lib/utils";
 import type { AuthUser } from "@/types/auth";
 
@@ -64,7 +67,15 @@ const roleMeta: Record<AuthUser["role"], RoleMeta> = {
   },
 };
 
-export function RoleSidebar({ user }: { user: AuthUser }) {
+export function RoleSidebar({
+  user,
+  activeChatId,
+  onOpenChat,
+}: {
+  user: AuthUser;
+  activeChatId?: string | null;
+  onOpenChat?: (chatId: string) => void;
+}) {
   const pathname = usePathname();
   const {
     closeMobileNav,
@@ -76,6 +87,7 @@ export function RoleSidebar({ user }: { user: AuthUser }) {
   const role = user.role;
   const items = roleNav[role];
   const meta = roleMeta[role];
+  const { appearance } = useAppearance();
 
   useEffect(() => {
     closeMobileNav();
@@ -95,12 +107,13 @@ export function RoleSidebar({ user }: { user: AuthUser }) {
   return (
     <>
       <aside
+        data-sidebar-theme={appearance.sidebarTheme}
         className={cn(
-          "fixed left-0 top-0 z-50 hidden h-svh shrink-0 flex-col overflow-visible border-r border-[var(--dashboard-sidebar-border)] bg-[var(--dashboard-sidebar)] text-[var(--dashboard-sidebar-text)] transition-[width] duration-300 ease-out lg:flex",
+          "dashboard-sidebar-root fixed left-0 top-0 z-50 hidden h-svh shrink-0 flex-col overflow-visible border-r border-[var(--dashboard-sidebar-border)] bg-[var(--dashboard-sidebar)] text-[var(--dashboard-sidebar-text)] transition-[background-color,backdrop-filter,width] duration-300 ease-out lg:flex",
           collapsed ? "w-[5.7rem]" : "w-[17.5rem]",
         )}
       >
-        {/* <SidebarAtmosphere color={meta.gradientColor} /> */}
+        {appearance.sidebarTheme === "cosmic" && <SidebarAtmosphere color={meta.gradientColor} />}
         <button
           type="button"
           onClick={toggleCollapsed}
@@ -120,6 +133,8 @@ export function RoleSidebar({ user }: { user: AuthUser }) {
           pathname={pathname}
           role={role}
           user={user}
+          activeChatId={activeChatId}
+          onOpenChat={onOpenChat}
         />
       </aside>
 
@@ -154,13 +169,15 @@ export function RoleSidebar({ user }: { user: AuthUser }) {
               role={role}
               showSearch
               user={user}
+              activeChatId={activeChatId}
+              onOpenChat={onOpenChat}
             />
           </aside>
         </div>
       )}
 
       <MobileBottomNav
-        items={items.slice(0, 5)}
+        items={items.filter((item) => item.primary)}
         onOpen={openMobileNav}
         pathname={pathname}
       />
@@ -176,6 +193,8 @@ function SidebarContent({
   role,
   showSearch = false,
   user,
+  activeChatId,
+  onOpenChat,
 }: {
   collapsed: boolean;
   items: DashboardNavItem[];
@@ -184,6 +203,8 @@ function SidebarContent({
   role: AuthUser["role"];
   showSearch?: boolean;
   user: AuthUser;
+  activeChatId?: string | null;
+  onOpenChat?: (chatId: string) => void;
 }) {
   const initials = getInitials(user.name);
   const { overviewItem, otherItems } = useMemo(() => {
@@ -205,6 +226,14 @@ function SidebarContent({
     undefined,
   );
   const [menuOpen, setMenuOpen] = useState(false);
+  // Adjust-during-render reset (not an effect) - AppShell persists across
+  // in-section navigation, so without this, clicking "Settings"/"Sign out"
+  // would leave the dropdown floating open over the destination page.
+  const [menuPathname, setMenuPathname] = useState(pathname);
+  if (menuPathname !== pathname) {
+    setMenuPathname(pathname);
+    if (menuOpen) setMenuOpen(false);
+  }
   const menuRef = useRef<HTMLDivElement>(null);
   const RoleIcon = meta.icon;
   const openGroup =
@@ -314,7 +343,11 @@ function SidebarContent({
       )}
 
       {collapsed ? (
-        <CollapsedNav items={items} pathname={pathname} role={role} />
+        <CollapsedNav
+          items={items}
+          pathname={pathname}
+          role={role}
+        />
       ) : (
         <ExpandedNav
           overviewItem={overviewItem}
@@ -325,6 +358,21 @@ function SidebarContent({
           role={role}
         />
       )}
+
+      {/* Pinned Chats positioned at the bottom above the profile badge */}
+      {collapsed ? (
+        <div className="mt-auto pt-2">
+          <SidebarSeparator className="my-2.5 mx-auto w-6" />
+          <CollapsedPinnedChats activeChatId={activeChatId} onOpenChat={onOpenChat} />
+        </div>
+      ) : (
+        <div className="mt-auto pt-3">
+          <SidebarSeparator className="my-2.5" />
+          <PinnedChatsSection activeChatId={activeChatId} onOpenChat={onOpenChat} />
+        </div>
+      )}
+
+      <SidebarSeparator className="my-3" />
 
       <MissionBadge
         collapsed={collapsed}
@@ -519,59 +567,97 @@ function CollapsedNav({
   pathname: string;
   role: AuthUser["role"];
 }) {
+  // Mirrors ExpandedNav's split: Overview stands alone, everything else is
+  // grouped (visually, via a thin rule between clusters) so the icon rail
+  // reads as the same information structure as the expanded sidebar.
+  const { overviewItem, grouped } = useMemo(() => {
+    const overview = items.find((item) => item.label === "Overview");
+    const others = items.filter((item) => item.label !== "Overview");
+    return { overviewItem: overview, grouped: groupItems(others) };
+  }, [items]);
+
   return (
     <nav
-      className="flex-1 space-y-1 overflow-hidden"
+      className="flex-1 space-y-1 overflow-y-auto overflow-x-hidden pb-1"
       aria-label="Main navigation"
     >
-      {items.map((item) => {
-        const active = isItemActive(item, pathname);
-        const Icon = item.icon;
-        const signal = getNavSignal(item, role);
-
-        return (
-          <Link
-            key={`${item.href}-${item.label}-collapsed`}
-            href={item.href}
-            title={item.label}
-            aria-label={item.label}
-            aria-current={active ? "page" : undefined}
-            className={cn(
-              "group relative mx-auto grid h-10 w-10 cursor-pointer place-items-center rounded-xl transition-colors duration-200",
-              active
-                ? "bg-[var(--dashboard-sidebar-active)] text-[var(--dashboard-sidebar-text)]"
-                : "text-[var(--dashboard-sidebar-muted)] hover:bg-[var(--dashboard-sidebar-hover)] hover:text-[var(--dashboard-sidebar-text)]",
-            )}
-          >
-            {active && (
-              <span
-                className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-[var(--secondary)]"
-                style={{ boxShadow: "0 0 8px var(--secondary)" }}
-              />
-            )}
-            <Icon
-              size={17}
-              stroke={active ? 2 : 1.5}
-              className={cn(
-                "transition-transform duration-200 group-hover:translate-x-0.5",
-                active &&
-                  "text-[var(--secondary)] drop-shadow-[0_0_7px_var(--secondary)]",
-              )}
+      {overviewItem && (
+        <>
+          <CollapsedNavLink item={overviewItem} pathname={pathname} role={role} />
+          <SidebarSeparator className="my-2 mx-auto w-6" />
+        </>
+      )}
+      {grouped.map(([group, groupItems], groupIndex) => (
+        <div
+          key={group}
+          className={cn(
+            "space-y-1",
+            groupIndex > 0 && "mt-2 border-t border-[var(--dashboard-sidebar-border)]/40 pt-2",
+          )}
+        >
+          {groupItems.map((item) => (
+            <CollapsedNavLink
+              key={`${item.href}-${item.label}-collapsed`}
+              item={item}
+              pathname={pathname}
+              role={role}
             />
-            {(active || signal) && (
-              <span
-                className={cn(
-                  "absolute right-2 top-2 rounded-full",
-                  active
-                    ? "h-1.5 w-1.5 bg-[var(--secondary)]"
-                    : "h-1.5 w-1.5 bg-[var(--tertiary)]",
-                )}
-              />
-            )}
-          </Link>
-        );
-      })}
+          ))}
+        </div>
+      ))}
     </nav>
+  );
+}
+
+function CollapsedNavLink({
+  item,
+  pathname,
+  role,
+}: {
+  item: DashboardNavItem;
+  pathname: string;
+  role: AuthUser["role"];
+}) {
+  const active = isItemActive(item, pathname);
+  const Icon = item.icon;
+  const signal = getNavSignal(item, role);
+
+  return (
+    <Link
+      href={item.href}
+      title={item.label}
+      aria-label={item.label}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "group relative mx-auto grid h-10 w-10 cursor-pointer place-items-center rounded-xl transition-colors duration-200",
+        active
+          ? "bg-[var(--dashboard-sidebar-active)] text-[var(--dashboard-sidebar-text)]"
+          : "text-[var(--dashboard-sidebar-muted)] hover:bg-[var(--dashboard-sidebar-hover)] hover:text-[var(--dashboard-sidebar-text)]",
+      )}
+    >
+      {active && (
+        <span
+          className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-[var(--secondary)]"
+          style={{ boxShadow: "0 0 8px var(--secondary)" }}
+        />
+      )}
+      <Icon
+        size={17}
+        stroke={active ? 2 : 1.5}
+        className={cn(
+          "transition-transform duration-200 group-hover:translate-x-0.5",
+          active && "text-[var(--secondary)] drop-shadow-[0_0_7px_var(--secondary)]",
+        )}
+      />
+      {(active || signal) && (
+        <span
+          className={cn(
+            "absolute right-2 top-2 rounded-full",
+            active ? "h-1.5 w-1.5 bg-[var(--secondary)]" : "h-1.5 w-1.5 bg-[var(--tertiary)]",
+          )}
+        />
+      )}
+    </Link>
   );
 }
 
@@ -598,32 +684,52 @@ function MissionBadge({
     <div className="mt-4 shrink-0">
       {collapsed ? (
         <div className="flex justify-center">
-          <span
-            className="relative grid h-10 w-10 place-items-center rounded-full bg-[var(--secondary)] font-mono text-[0.72rem] text-[var(--on-secondary)]"
+          <div
+            className="relative"
             aria-label={user.name}
             title={`${user.name} - ${meta.subtitle}`}
           >
-            {initials}
+            <span className="relative grid h-10 w-10 place-items-center rounded-full bg-[var(--secondary)] font-mono text-[0.72rem] text-[var(--on-secondary)] overflow-hidden">
+              {user.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt={user.name}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span>{initials}</span>
+              )}
+            </span>
             <span
               className={cn(
-                "absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[var(--dashboard-sidebar)]",
+                "absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-[2px] border-[var(--dashboard-sidebar)]",
                 meta.pulseClassName,
               )}
             />
-          </span>
+          </div>
         </div>
       ) : (
         <div className="rounded-2xl border border-[var(--dashboard-sidebar-border)] bg-[var(--dashboard-sidebar-elevated)] p-3">
           <div className="flex items-start gap-3">
-            <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--secondary)] font-mono text-[0.74rem] text-[var(--on-secondary)]">
-              {initials}
+            <div className="relative shrink-0">
+              <span className="relative grid h-10 w-10 place-items-center rounded-full bg-[var(--secondary)] font-mono text-[0.74rem] text-[var(--on-secondary)] overflow-hidden">
+                {user.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt={user.name}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span>{initials}</span>
+                )}
+              </span>
               <span
                 className={cn(
-                  "absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[var(--dashboard-sidebar-elevated)]",
+                  "absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-[2px] border-[var(--dashboard-sidebar-elevated)]",
                   meta.pulseClassName,
                 )}
               />
-            </span>
+            </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-[0.84rem] font-medium text-[var(--dashboard-sidebar-text)]">
                 {user.name}
@@ -814,4 +920,105 @@ function settingsHref(role: AuthUser["role"]) {
   if (role === "admin") return "/admin/settings";
   if (role === "client") return "/dashboard/settings";
   return "/dev/settings";
+}
+
+function PinnedChatsSection({
+  activeChatId,
+  onOpenChat,
+}: {
+  activeChatId?: string | null;
+  onOpenChat?: (chatId: string) => void;
+}) {
+  return (
+    <div className="w-full">
+      <div className="flex items-center justify-between px-3 mb-2">
+        <span className="label-caps text-[0.68rem] tracking-[0.18em] text-[var(--dashboard-sidebar-faint)] font-medium">
+          PINNED CHATS
+        </span>
+        <IconPin size={11} className="text-[var(--dashboard-sidebar-faint)] opacity-60" />
+      </div>
+      <div className="space-y-1">
+        {pinnedChats.map((chat) => {
+          const active = activeChatId === chat.id;
+          return (
+            <button
+              key={chat.id}
+              type="button"
+              onClick={() => onOpenChat?.(chat.id)}
+              className={cn(
+                "group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2 text-left text-[0.82rem] font-medium border transition-all duration-200",
+                active
+                  ? "bg-[var(--dashboard-sidebar-active)] text-[var(--dashboard-sidebar-text)] border-[color-mix(in_srgb,var(--secondary)_15%,transparent)] shadow-[inset_0_1px_0_color-mix(in_srgb,var(--secondary)_10%,transparent)]"
+                  : "text-[var(--dashboard-sidebar-muted)] border-transparent hover:bg-[var(--dashboard-sidebar-hover)] hover:text-[var(--dashboard-sidebar-text)]"
+              )}
+            >
+              <div className="relative flex h-7 w-7 shrink-0 items-center justify-center">
+                <img
+                  src={chat.avatar}
+                  alt={chat.name}
+                  className="h-7 w-7 rounded-full object-cover ring-1 ring-[var(--dashboard-sidebar-border)]"
+                />
+                <span className={cn(
+                  "absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full ring-[1.5px] ring-[var(--dashboard-sidebar)]", 
+                  chat.id === "chat-support" ? "bg-[var(--tertiary)]" : chat.id === "chat-project" ? "bg-[var(--secondary)]" : "bg-[var(--primary)]"
+                )} />
+              </div>
+              <span className="flex-1 truncate font-medium text-[var(--dashboard-sidebar-text)]">{chat.name}</span>
+              {chat.unread > 0 && (
+                <span className="grid h-4.5 min-w-[1.125rem] place-items-center rounded-full bg-[var(--tertiary)] px-1.5 font-mono text-[0.6rem] font-medium text-[var(--bg-deep)]">
+                  {chat.unread}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function CollapsedPinnedChats({
+  activeChatId,
+  onOpenChat,
+}: {
+  activeChatId?: string | null;
+  onOpenChat?: (chatId: string) => void;
+}) {
+  return (
+    <div className="mt-3 space-y-2">
+      {pinnedChats.map((chat) => {
+        const active = activeChatId === chat.id;
+        return (
+          <button
+            key={chat.id}
+            type="button"
+            onClick={() => onOpenChat?.(chat.id)}
+            title={chat.name}
+            className={cn(
+              "relative mx-auto flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-all duration-200 border",
+              active
+                ? "bg-[var(--dashboard-sidebar-active)] border-[color-mix(in_srgb,var(--secondary)_15%,transparent)]"
+                : "bg-[var(--dashboard-sidebar-elevated)] border-[var(--dashboard-sidebar-border)] hover:bg-[var(--dashboard-sidebar-hover)]"
+            )}
+          >
+            <img
+              src={chat.avatar}
+              alt={chat.name}
+              className="h-6 w-6 rounded-full object-cover"
+            />
+            <span className={cn(
+              "absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full ring-[1.5px] ring-[var(--dashboard-sidebar-elevated)] transition-colors duration-200 group-hover:ring-[var(--dashboard-sidebar-hover)]", 
+              active && "ring-[var(--dashboard-sidebar-active)]",
+              chat.id === "chat-support" ? "bg-[var(--tertiary)]" : chat.id === "chat-project" ? "bg-[var(--secondary)]" : "bg-[var(--primary)]"
+            )} />
+            {chat.unread > 0 && (
+              <span className="absolute -right-1.5 -top-1.5 grid h-3.5 w-3.5 place-items-center rounded-full bg-[var(--tertiary)] font-mono text-[0.55rem] font-medium text-[var(--bg-deep)]">
+                {chat.unread}
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
 }

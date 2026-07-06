@@ -26,7 +26,7 @@ import { workProjects, type WorkProject } from "@/content/work";
 import { CustomCursorRegion } from "@/components/ui/custom-cursor-region";
 import { cosmicSpring } from "@/lib/motion";
 import { cn } from "@/lib/utils";
-import type { PublicProject } from "@/types/entities";
+import { mapApiProjectToWorkProject } from "@/lib/work-mapper";
 
 function getMetricColor(tone: WorkProject["metrics"][number]["tone"]) {
   if (tone === "cyan") return "var(--secondary)";
@@ -81,31 +81,6 @@ const verticalFilters = [
   { label: "SaaS", value: "saas" },
   { label: "Retail / Commerce", value: "retail" },
 ] as const;
-
-function mapApiProjectToWorkProject(apiProj: PublicProject): WorkProject {
-  return {
-    id: apiProj.id,
-    sector: apiProj.vertical || "saas",
-    sectorLabel: ((apiProj.serviceType ? apiProj.serviceType.replace("-", " ") : "") + " / " + (apiProj.vertical || "")).toUpperCase(),
-    title: apiProj.title,
-    shortTitle: apiProj.title,
-    description: apiProj.challenge || "",
-    challenge: apiProj.challenge || "",
-    solution: apiProj.solution || "",
-    image: apiProj.coverImageUrl || "/images/project1.webp",
-    status: apiProj.status === "completed" ? "Live" : apiProj.status === "active" ? "Beta" : "Shipped",
-    metric: apiProj.outcome || "",
-    metricLabel: apiProj.outcomeLabel || "",
-    timeline: apiProj.targetDate || "Flexible",
-    location: apiProj.clientName || "Global-ready",
-    featured: apiProj.featuredOrder !== undefined && apiProj.featuredOrder !== null,
-    imageHeight: "mid",
-    tags: apiProj.stackTags || [],
-    metrics: [
-      { value: apiProj.outcome || "", label: apiProj.outcomeLabel || "", tone: "success" }
-    ]
-  };
-}
 
 // Custom Dropdown Component
 function FilterDropdown({

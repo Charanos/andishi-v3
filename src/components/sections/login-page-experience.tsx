@@ -5,7 +5,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   IconArrowRight,
-  IconBrandGoogle,
   IconCheck,
   IconEye,
   IconEyeOff,
@@ -296,22 +295,6 @@ export function LoginPageExperience({
                       </>
                     )}
                   </Button>
-
-                  <div className="flex items-center gap-3">
-                    <span className="h-px flex-1 bg-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] dark:bg-[var(--glass-border)]" />
-                    <span className="text-[0.7rem] font-medium uppercase tracking-[0.08em] text-[color-mix(in_srgb,var(--on-surface-dim)_82%,var(--on-surface))] dark:text-[color-mix(in_srgb,var(--on-surface-dim)_50%,transparent)]">
-                      or
-                    </span>
-                    <span className="h-px flex-1 bg-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] dark:bg-[var(--glass-border)]" />
-                  </div>
-
-                  <button
-                    type="button"
-                    className={`inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border px-4 text-[0.9rem] text-[var(--on-surface-dim)] transition-all duration-300 hover:border-[color-mix(in_srgb,var(--primary)_34%,transparent)] hover:bg-[color-mix(in_srgb,var(--primary)_7%,var(--surface)_93%)] hover:text-[var(--on-surface)] dark:hover:bg-[color-mix(in_srgb,var(--primary)_7%,transparent)] ${controlSurfaceClass}`}
-                  >
-                    <IconBrandGoogle size={16} stroke={1.7} />
-                    Continue with Google
-                  </button>
                 </div>
               )}
             </form>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { BlogPageExperience } from "@/components/marketing/blog-page-experience";
+import { fetchPublicBlogPosts } from "@/lib/api/public-client";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -31,10 +32,11 @@ const breadcrumbSchema = {
   ],
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const posts = await fetchPublicBlogPosts();
   return (
     <>
-      <BlogPageExperience />
+      <BlogPageExperience initialPosts={posts} />
       <JsonLd id="blog-schema" data={blogSchema} />
       <JsonLd id="blog-breadcrumb-schema" data={breadcrumbSchema} />
     </>

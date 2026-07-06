@@ -334,95 +334,43 @@ export const demoActivity = [
   },
 ] as const;
 
-export const adminDashboardMock = {
-  metrics: [
-    {
-      label: "Briefs in Pipeline",
-      value: "12",
-      trend: "2 need review today",
-      data: [6, 7, 8, 8, 10, 11, 12],
+/**
+ * Backend-aligned mock data for the admin overview page
+ * (admin-overview-page.tsx). Every number here maps to a real, already-
+ * built read path (getFinanceSummary, briefs/deals/engineers counts,
+ * activity_events) - see the KPI mapping table in the overview overhaul
+ * guide. Still mock, not wired to the API, but shaped so wiring later is
+ * a drop-in rather than a reshape.
+ */
+export const adminOverviewMock = {
+  kpis: {
+    revenueInFlight: {
+      label: "Revenue in Flight (MTD)",
+      value: "$186.4K",
+      trend: "+22% vs last month",
+      data: [124, 138, 145, 152, 168, 179, 186],
     },
-    {
-      label: "Active Proposals",
-      value: "8",
-      trend: "4 client reviewing",
-      data: [2, 3, 4, 5, 5, 7, 8],
+    activeBriefs: {
+      label: "Active Briefs",
+      value: "22",
+      trend: "6 need review this week",
+      data: [14, 16, 18, 19, 20, 21, 22],
     },
-    {
-      label: "Active Project Builds",
-      value: "5",
-      trend: "1 starts next week",
-      data: [1, 2, 3, 3, 4, 5, 5],
+    pipelineValue: {
+      label: "Pipeline Value",
+      value: "$412K",
+      trend: "9 deals in active stages",
+      data: [280, 310, 340, 365, 390, 400, 412],
     },
-    {
-      label: "Revenue in Flight",
-      value: "$42k",
-      trend: "$7.8k awaiting payment",
-      data: [14, 18, 23, 25, 31, 36, 42],
+    vettedEngineers: {
+      label: "Vetted Engineers Available",
+      value: "31",
+      trend: "22 available now, 9 ramping soon",
+      data: [24, 26, 27, 28, 29, 30, 31],
     },
-  ],
-  pipeline: [
-    {
-      title: "New Briefs",
-      count: 3,
-      items: [
-        {
-          title: "AI workflow",
-          meta: "Kijani Analytics",
-          status: "Submitted",
-          owner: "Ops review",
-        },
-        {
-          title: "Backend API",
-          meta: "Health SaaS",
-          status: "Under Review",
-          owner: "Dennis",
-        },
-      ],
-    },
-    {
-      title: "Project Scoping",
-      count: 4,
-      items: [
-        {
-          title: "Payments reconciliation",
-          meta: "Commerce scale-up",
-          status: "Matching",
-          owner: "Talent",
-        },
-        {
-          title: "AWS migration",
-          meta: "B2B SaaS",
-          status: "Matching",
-          owner: "Cloud bench",
-        },
-      ],
-    },
-    {
-      title: "Proposals Sent",
-      count: 3,
-      items: [
-        {
-          title: "Amina / AI support",
-          meta: "Build proposal",
-          status: "Client Reviewing",
-          owner: "Maya",
-        },
-      ],
-    },
-    {
-      title: "Builds Confirmed",
-      count: 2,
-      items: [
-        {
-          title: "AI support workflow",
-          meta: "12 milestones",
-          status: "Active",
-          owner: "Amina",
-        },
-      ],
-    },
-  ],
+  },
+  // "Live Builds" (projects.status = 'active') over the last 10 weeks.
+  activeProjectsTrend: [18, 20, 19, 23, 24, 27, 29, 31, 33, 35],
   priorityBriefs: [
     {
       client: "Kijani Analytics",
@@ -432,37 +380,58 @@ export const adminDashboardMock = {
       owner: "Dennis",
     },
     {
-      client: "Commerce scale-up",
+      client: "Commerce Scale-Up",
       brief: "B2B SaaS Payments Reconciliation Engine",
       status: "Under Review",
       sla: "24h review",
       owner: "Talent",
     },
     {
-      client: "Cloud audit",
+      client: "Cloudify Inc",
       brief: "Enterprise AWS Infrastructure Migration",
       status: "Submitted",
       sla: "Needs triage",
       owner: "Unassigned",
     },
+    {
+      client: "MedLink",
+      brief: "Mobile Lead for Patient App Rebuild",
+      status: "Shortlisted",
+      sla: "2 days left",
+      owner: "Maya",
+    },
+    {
+      client: "OperateHQ",
+      brief: "Senior Full-Stack for B2B SaaS Rebuild",
+      status: "Scoping",
+      sla: "On track",
+      owner: "Dennis",
+    },
   ],
+  // engineers.availability enum directly - available/soon totals feed the
+  // "Vetted Engineers Available" KPI above (22 + 9 = 31).
   supplyHealth: [
     { label: "AI & Data Solutions", available: 6, engaged: 3, soon: 2 },
     { label: "Fullstack SaaS", available: 9, engaged: 7, soon: 4 },
     { label: "Cloud Platforms", available: 4, engaged: 2, soon: 1 },
     { label: "API Integrations", available: 3, engaged: 1, soon: 2 },
   ],
+  // Shaped like real emitActivityEvent descriptions already used across
+  // the backend this session (brief_promoted_to_project, milestone_approved,
+  // application_hired, invoice_paid, project_review_submitted).
   activity: [
-    { time: "10m", label: "Amina assigned to AI Support Workflow scope", detail: "Scoping" },
-    { time: "1h", label: "Kijani confirmed discovery kick-off slots", detail: "Proposal" },
-    { time: "3h", label: "Payments reconciliation brief moved to scoping", detail: "Ops" },
-    { time: "Yesterday", label: "Invoice AND-2026-0001 issued", detail: "$7.8k" },
+    { time: "10m", label: 'Brief "Production AI Support Workflow Integration" moved to Matching', detail: "Briefs" },
+    { time: "42m", label: 'Milestone "Evaluation dashboard" approved', detail: "AI Support Workflow" },
+    { time: "1h", label: "Kwame Asante was hired and added to the engineer network", detail: "Careers" },
+    { time: "3h", label: "Invoice AND-2026-0042 marked paid ($7,800)", detail: "Finance" },
+    { time: "Yesterday", label: '"Payments Reconciliation Engine" started as a project', detail: "Delivery" },
+    { time: "2 days ago", label: 'Client feedback received for "AWS Infrastructure Migration"', detail: "Review" },
   ],
 } as const;
 
 export const dashboardDemoData = {
   activity: demoActivity,
-  admin: adminDashboardMock,
+  admin: adminOverviewMock,
   briefs: demoBriefs,
   engineers: demoEngineers,
   invoices: demoInvoices,

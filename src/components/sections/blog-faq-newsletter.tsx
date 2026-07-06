@@ -17,9 +17,13 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TestimonialsMarquee } from "./testimonials-marquee";
-import { BlogPost, getBlogPosts, saveBlogPost, deleteBlogPost } from "@/data/blog";
+import type { BlogPost } from "@/data/blog";
+import type { Testimonial } from "./testimonials-marquee";
+import { mapBlogPostRow } from "@/lib/blog-mapper";
 import { MarkdownEditor } from "@/components/ui/markdown-editor";
 import { cn } from "@/lib/utils";
+import { ConfirmDialog } from "@/components/dashboard/shared/confirm-dialog";
+import { useToast } from "@/components/dashboard/shared/toast-provider";
 
 
 
@@ -119,7 +123,7 @@ function ArticleCard({
         </h3>
         <p
           className={cn(
-            "leading-[1.75] text-[var(--on-surface-dim)] font-light",
+            "leading-[1.75] text-[var(--on-surface-dim)]",
             article.featured ? "text-[1.05rem]" : "text-[0.92rem] line-clamp-3",
           )}
         >
@@ -179,14 +183,14 @@ function ArticleCard({
         <div className="absolute top-4 right-4 flex items-center gap-1.5 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-auto">
           <button
             onClick={(e) => onEdit(article, e)}
-            className="p-1.5 rounded-lg border border-[var(--glass-border)] bg-[var(--surface-low)] text-[var(--on-surface-dim)] hover:text-[var(--on-surface)] hover:bg-[color-mix(in_srgb,var(--on-surface)_6%,transparent)] transition-all cursor-pointer"
+            className="p-1.5 rounded-lg border border-[var(--glass-border)] bg-[var(--surface-low)] text-[var(--on-surface-dim)] shadow-sm backdrop-blur-md transition-all duration-200 hover:scale-105 hover:text-[var(--on-surface)] hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-95 cursor-pointer"
             title="Edit Post"
           >
             <IconEdit size={13} />
           </button>
           <button
             onClick={(e) => onDelete(article.slug, e)}
-            className="p-1.5 rounded-lg border border-red-500/20 bg-[var(--surface-low)] text-red-500 hover:bg-red-500/10 transition-all cursor-pointer"
+            className="p-1.5 rounded-lg border border-red-500/25 bg-[var(--surface-low)] text-red-500 shadow-sm backdrop-blur-md transition-all duration-200 hover:scale-105 hover:bg-red-500/15 active:scale-95 cursor-pointer"
             title="Delete Post"
           >
             <IconTrash size={13} />
@@ -197,23 +201,44 @@ function ArticleCard({
   );
 }
 
-function BlogSection() {
-  const [posts, setPosts] = useState<BlogPost[]>(() => {
-    if (typeof window === "undefined") return [];
-    return getBlogPosts().filter((p) => p.status === "published");
-  });
+function BlogSection({
+  initialPosts = [],
+  initialTestimonials = [],
+}: {
+  initialPosts?: BlogPost[];
+  initialTestimonials?: Testimonial[];
+}) {
+  const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
+  const [isLoading, setIsLoading] = useState(initialPosts.length === 0);
   const [isAdmin, setIsAdmin] = useState(false);
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [deletingPostSlug, setDeletingPostSlug] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { notify } = useToast();
   const container = useRef<HTMLElement>(null);
 
-  const refreshPosts = () => {
-    setPosts(getBlogPosts().filter((p) => p.status === "published"));
-  };
-
   useEffect(() => {
-    window.addEventListener("blog_posts_updated", refreshPosts);
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch("/api/blog");
+        if (res.ok) {
+          const data = await res.json();
+          const published = (data.posts ?? [])
+            .map(mapBlogPostRow)
+            .filter((p: BlogPost) => p.status === "published");
+          setPosts(published);
+        }
+      } catch {
+        // Keep initialPosts if fetch fails
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPosts();
 
     const checkAdmin = () => {
       setIsAdmin(localStorage.getItem("andishi_admin_sim_logged_in") === "true");
@@ -223,7 +248,6 @@ function BlogSection() {
     window.addEventListener("admin_sim_changed", checkAdmin);
 
     return () => {
-      window.removeEventListener("blog_posts_updated", refreshPosts);
       window.removeEventListener("storage", checkAdmin);
       window.removeEventListener("admin_sim_changed", checkAdmin);
     };
@@ -284,34 +308,95 @@ function BlogSection() {
   const handleDeleteInline = (slug: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (confirm("Are you sure you want to delete this blog post?")) {
-      deleteBlogPost(slug);
+    setDeletingPostSlug(slug);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingPostSlug) return;
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/blog/${deletingPostSlug}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Delete failed");
+      setPosts((prev) => prev.filter((p) => p.slug !== deletingPostSlug));
+      notify("Blog post deleted", "success");
+    } catch {
+      notify("Failed to delete post", "error");
+    } finally {
+      setIsDeleting(false);
+      setDeletingPostSlug(null);
     }
   };
 
-  const handleModalSubmit = (e: React.FormEvent) => {
+  const handleModalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingPost) return;
 
     if (!editingPost.title || !editingPost.excerpt) {
-      alert("Title and Excerpt are required.");
+      notify("Title and excerpt are required", "error");
       return;
     }
 
     // Generate slug if new
-    const payload = isNew
-      ? {
-          ...editingPost,
-          slug: editingPost.title
-            .toLowerCase()
-            .replace(/[^\w\s-]/g, "")
-            .replace(/\s+/g, "-"),
-        }
-      : editingPost;
+    const slug = isNew
+      ? editingPost.title
+          .toLowerCase()
+          .replace(/[^\w\s-]/g, "")
+          .replace(/\s+/g, "-")
+      : editingPost.slug;
 
-    saveBlogPost(payload);
-    setModalOpen(false);
-    setEditingPost(null);
+    const payload = {
+      slug,
+      title: editingPost.title,
+      category: editingPost.category,
+      excerpt: editingPost.excerpt,
+      coverImage: editingPost.coverImage,
+      authorName: editingPost.author?.name ?? "Andishi Team",
+      authorRole: editingPost.author?.role ?? "Engineering Notes",
+      authorAvatarUrl: editingPost.author?.avatarUrl ?? "/logo.svg",
+      datePublished: editingPost.datePublished,
+      dateModified: new Date().toISOString().split("T")[0],
+      readTime: editingPost.readTime,
+      featured: editingPost.featured,
+      body: editingPost.body,
+      status: editingPost.status,
+    };
+
+    setIsSaving(true);
+    try {
+      let res: Response;
+      if (isNew) {
+        res = await fetch("/api/blog", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        res = await fetch(`/api/blog/${slug}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error ?? "Save failed");
+      }
+
+      const data = await res.json();
+      const saved: BlogPost = mapBlogPostRow(data.post);
+
+      setPosts((prev) =>
+        isNew ? [...prev, saved] : prev.map((p) => (p.slug === slug ? saved : p)),
+      );
+      setModalOpen(false);
+      setEditingPost(null);
+      notify(isNew ? "Blog post published" : "Blog post updated", "success");
+    } catch (err) {
+      notify(err instanceof Error ? err.message : "Save failed", "error");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Sort: Featured first, then by date desc
@@ -324,6 +409,10 @@ function BlogSection() {
   // Limit homepage blog showcase to at most 3 articles
   const displayPosts = sortedPosts.slice(0, 3);
 
+  if (!isLoading && displayPosts.length === 0 && !isAdmin) {
+    return null; // Hide blog section entirely when no posts and not admin
+  }
+
   return (
     <section
       ref={container}
@@ -334,7 +423,7 @@ function BlogSection() {
         className="pointer-events-none absolute inset-0 opacity-[0.08]"
         style={textureStyle}
       />
-      <TestimonialsMarquee />
+      <TestimonialsMarquee initialTestimonials={initialTestimonials} />
 
       <div className="relative z-[1] mt-16 px-5 sm:mt-24 sm:px-8 lg:mt-28 lg:px-10">
         <div className="mx-auto max-w-[92rem]">
@@ -353,7 +442,7 @@ function BlogSection() {
             {isAdmin && (
               <button
                 onClick={handleCreateInline}
-                className="flex h-10 items-center gap-2 rounded-xl bg-[var(--primary)] px-4 font-mono text-[0.72rem] uppercase tracking-wider text-black transition-all hover:opacity-90 hover:scale-[1.01] cursor-pointer shrink-0 ml-4 max-md:hidden"
+                className="flex h-10 items-center gap-2 rounded-xl bg-[var(--primary)] px-4 font-mono text-[0.72rem] uppercase tracking-wider text-[var(--on-primary)] transition-all hover:opacity-90 hover:scale-[1.01] cursor-pointer shrink-0 ml-4 max-md:hidden"
               >
                 <IconPlus size={16} /> Create Article
               </button>
@@ -614,15 +703,29 @@ function BlogSection() {
                 </button>
                 <button
                   type="submit"
-                  className="flex items-center gap-1 rounded-full bg-[var(--on-surface)] px-5 py-2 text-[0.74rem] font-mono uppercase tracking-wider text-[var(--bg)] hover:opacity-90 transition-opacity cursor-pointer"
+                  disabled={isSaving}
+                  className="flex items-center gap-1 rounded-full bg-[var(--on-surface)] px-5 py-2 text-[0.74rem] font-mono uppercase tracking-wider text-[var(--bg)] hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-70"
                 >
-                  <IconCheck size={12} /> Save Post
+                  {isSaving ? (
+                    <span className="h-3 w-3 animate-spin rounded-full border-2 border-[var(--bg)] border-t-transparent" />
+                  ) : (
+                    <IconCheck size={12} />
+                  )}
+                  {isSaving ? "Saving…" : "Save Post"}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={deletingPostSlug !== null}
+        title="Delete Blog Post?"
+        description="This action is permanent and will remove this blog post from the directory. Public readers will no longer see this case study / article on the blog archive."
+        confirmLabel={isDeleting ? "Deleting…" : "Permanently Delete"}
+        onCancel={() => setDeletingPostSlug(null)}
+        onConfirm={handleDeleteConfirm}
+      />
     </section>
   );
 }
@@ -632,6 +735,7 @@ function FaqNewsletterSection() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const container = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -676,7 +780,7 @@ function FaqNewsletterSection() {
     { scope: container },
   );
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!email.includes("@")) {
@@ -685,7 +789,25 @@ function FaqNewsletterSection() {
     }
 
     setError("");
-    setSubscribed(true);
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error ?? "Subscription failed");
+      }
+
+      setSubscribed(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Subscription failed. Try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -847,14 +969,21 @@ function FaqNewsletterSection() {
                     />
                     <button
                       type="submit"
-                      className="group flex shrink-0 items-center justify-center gap-2 rounded-full bg-[var(--on-surface)] px-6 py-3 font-medium text-[var(--bg)] transition-transform hover:scale-[1.02]"
+                      disabled={isSubmitting}
+                      className="group flex shrink-0 items-center justify-center gap-2 rounded-full bg-[var(--on-surface)] px-6 py-3 font-medium text-[var(--bg)] transition-transform hover:scale-[1.02] disabled:opacity-60"
                     >
-                      Subscribe
-                      <IconArrowRight
-                        size={16}
-                        stroke={2}
-                        className="transition-transform group-hover:translate-x-1"
-                      />
+                      {isSubmitting ? (
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--bg)] border-t-transparent" />
+                      ) : (
+                        <>
+                          Subscribe
+                          <IconArrowRight
+                            size={16}
+                            stroke={2}
+                            className="transition-transform group-hover:translate-x-1"
+                          />
+                        </>
+                      )}
                     </button>
                   </div>
                   {error && (
@@ -886,10 +1015,19 @@ function FaqNewsletterSection() {
   );
 }
 
-export function BlogAndFaqNewsletter() {
+interface BlogAndFaqNewsletterProps {
+  /** Pre-fetched server-side data to prevent empty flash on initial render. */
+  initialPosts?: BlogPost[];
+  initialTestimonials?: Testimonial[];
+}
+
+export function BlogAndFaqNewsletter({
+  initialPosts = [],
+  initialTestimonials = [],
+}: BlogAndFaqNewsletterProps = {}) {
   return (
     <>
-      <BlogSection />
+      <BlogSection initialPosts={initialPosts} initialTestimonials={initialTestimonials} />
       <FaqNewsletterSection />
     </>
   );

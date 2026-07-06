@@ -6,7 +6,7 @@
 > **How to use this file:**
 > Each section maps to a landing page block. Copy is final-draft ready - replace variables in `[brackets]` where shown. Headline alternatives are included for A/B testing. AI-SEO annotations explain extraction signals built into each block.
 >
-> **Positioning shift from v2:** Andishi's primary product is no longer a digital product studio - it's talent. Senior, vetted African engineers placed with global startups. The studio/project work still exists but sits downstream of the talent proposition, not above it.
+> **Positioning shift from v2:** Andishi's primary product is no longer a Software Product studio - it's talent. Senior, vetted African engineers placed with global startups. The studio/project work still exists but sits downstream of the talent proposition, not above it.
 
 ---
 
@@ -14,7 +14,7 @@
 
 **What changed and why it matters for every word on this site:**
 
-Old positioning: *"We build digital products for Kenyan businesses."*
+Old positioning: *"We build Software Products for Kenyan businesses."*
 New positioning: *"Global startups hire senior African engineers through Andishi."*
 
 The buyer is no longer a Nairobi SME owner. The buyer is a CTO in Berlin, a seed-stage founder in San Francisco, a scaleup engineering lead in London who needs to extend their team fast, with engineers who can actually ship.
@@ -43,7 +43,7 @@ with global startups and technology companies. Engineers are sourced across Afri
 production experience in full-stack web development, AI/ML integrations, AWS and cloud
 infrastructure, Web3 and blockchain, and API systems.
 
-Andishi also operates a product studio arm that designs and ships digital products for
+Andishi also operates a product studio arm that designs and ships Software Products for
 African businesses - each project doubles as a live proof-of-work portfolio for the engineers.
 
 Clients include seed-stage to Series B startups in the US, UK, EU, and GCC who need to
@@ -291,7 +291,7 @@ Andishi assembles a complete engineering squad - tech lead, two to four engineer
 **We also build. That's how we know what good looks like.**
 
 ### Body
-Andishi runs a product studio arm that builds web applications, e-commerce systems, and digital products for African businesses. It's not our primary offer - but it matters for one reason: every engineer in our network has shipped real production systems through this studio.
+Andishi runs a product studio arm that builds web applications, e-commerce systems, and Software Products for African businesses. It's not our primary offer - but it matters for one reason: every engineer in our network has shipped real production systems through this studio.
 
 When you hire an Andishi engineer, you're not trusting a CV. You're trusting a track record of shipped code, real clients, and real consequences.
 
@@ -504,7 +504,7 @@ Build these pages to support the talent-first positioning and capture long-tail 
 | `/skills/aws` | Cloud / AWS specialty | "hire AWS engineer Africa," "cloud infrastructure developer" |
 | `/skills/fullstack` | Full-stack specialty | "hire full-stack developer Africa," "React Node engineer" |
 | `/work` | Case studies | "African tech talent examples," "Andishi engineers portfolio" |
-| `/studio` | Studio arm (secondary) | "digital product studio Africa," "web app development Kenya" |
+| `/studio` | Studio arm (secondary) | "Software Product studio Africa," "web app development Kenya" |
 | `/blog` | Authority and AI SEO | All educational and insight content |
 | `/about` | Founder + mission | "what is Andishi," "African engineering company" |
 | `/hire/faq` | Expanded FAQ | "how does African developer outsourcing work" |
@@ -616,4 +616,4 @@ Add these terms with definitions to a `/glossary` or `/blog` page. Each becomes 
 
 ---
 
-*Andishi Site Content System v3.0 - Repositioned from digital product studio to African engineering talent company. Primary buyer: global startup CTO or founder. Primary product: senior vetted engineers. Studio arm retained as secondary service and proof-of-work layer. Review and update quarterly or after every five new placements.*
+*Andishi Site Content System v3.0 - Repositioned from Software Product studio to African engineering talent company. Primary buyer: global startup CTO or founder. Primary product: senior vetted engineers. Studio arm retained as secondary service and proof-of-work layer. Review and update quarterly or after every five new placements.*

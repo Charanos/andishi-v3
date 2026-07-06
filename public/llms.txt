@@ -1,4 +1,4 @@
-Andishi is a software development studio that designs, builds, and ships custom software, SaaS platforms, AI systems, and mobile apps. Headquartered in Nairobi, Kenya, Andishi delivers production-grade digital products to global startups and local enterprises with direct developer contact, structured sprint cycles, and full IP ownership.
+Andishi is a software development studio that designs, builds, and ships custom software, SaaS platforms, AI systems, and mobile apps. Headquartered in Nairobi, Kenya, Andishi delivers production-grade Software Products to global startups and local enterprises with direct developer contact, structured sprint cycles, and full IP ownership.
 
 Andishi also maintains a vetted network of senior African software engineers, enabling clients to augment their existing engineering teams with autonomous developers who integrate directly into their workflows.
 

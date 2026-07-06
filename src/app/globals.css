@@ -86,7 +86,7 @@
   --inverse-surface: #F4EEFF;
   --inverse-on-surface: #07050F;
   --primary: #D8C8FF;
-  --on-primary: #ffffff;
+  --on-primary: #160B2F;
   --primary-container: rgba(216, 200, 255, 0.16);
   --on-primary-container: #F2ECFF;
   --primary-fixed: #D8C8FF;
@@ -481,4 +481,38 @@ body {
 
 .orbital-outline--amber {
   border: 1px solid color-mix(in srgb, var(--tertiary) 18%, transparent);
+}
+
+/* ── SELECT OPTION COLORS FOR DUAL THEME COMPATIBILITY ── */
+select option {
+  background-color: var(--surface, #131122) !important;
+  color: var(--on-surface, #e3e1e9) !important;
+}
+
+/* Ensure all clickable items get cursor-pointer */
+a, button, select, input[type="submit"], input[type="button"], [role="button"], [role="switch"], [role="tab"], .cursor-pointer {
+  cursor: pointer !important;
+}
+
+/* ── DASHBOARD SHELL APPEARANCE VARIANTS ──
+   Driven by data-sidebar-theme / data-topnav-theme, set by RoleSidebar and
+   DashboardTopNav from the persisted appearance settings (Settings > Appearance).
+   "solid" is the structural default and needs no override below. */
+.dashboard-sidebar-root[data-sidebar-theme="glass"],
+.dashboard-sidebar-root[data-sidebar-theme="cosmic"] {
+  background: color-mix(in srgb, var(--dashboard-sidebar) 68%, transparent);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+}
+
+.dashboard-topnav-pill[data-topnav-theme="solid"] {
+  background: var(--surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.dashboard-topnav-pill[data-topnav-theme="transparent"] {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
 }

@@ -3,6 +3,7 @@ import { Cormorant_Garamond, JetBrains_Mono, Nunito } from "next/font/google";
 import Script from "next/script";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SiteChrome } from "@/components/layout/site-chrome";
+import { ToastProvider } from "@/components/dashboard/shared/toast-provider";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
 
@@ -83,7 +84,9 @@ export default function RootLayout({
     >
       <body className="min-h-full">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <SiteChrome>{children}</SiteChrome>
+          <ToastProvider>
+            <SiteChrome>{children}</SiteChrome>
+          </ToastProvider>
         </ThemeProvider>
         <Script
           id="organization-schema"

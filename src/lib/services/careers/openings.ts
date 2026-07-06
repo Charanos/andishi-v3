@@ -168,3 +168,33 @@ export const publishJobOpening = (ctx: CallerContext, id: string) =>
   transitionOpeningStatus(ctx, id, "open");
 export const closeJobOpening = (ctx: CallerContext, id: string) =>
   transitionOpeningStatus(ctx, id, "closed");
+
+export async function deleteJobOpening(ctx: CallerContext, id: string) {
+  const { session, requestId, actorIp } = ctx;
+
+  if (session.user.role !== "admin") {
+    throw new ForbiddenError("Only Andishi staff can delete job openings.");
+  }
+  await authorize(session, "careers.job.write");
+
+  const [existing] = await getDb()
+    .select()
+    .from(jobOpenings)
+    .where(eq(jobOpenings.id, id))
+    .limit(1);
+  if (!existing) throw new NotFoundError("Job opening not found.");
+
+  await getDb().delete(jobOpenings).where(eq(jobOpenings.id, id));
+
+  await writeAudit({
+    actorUserId: session.user.id,
+    actorIp,
+    action: "careers.job.write",
+    resourceType: "job_opening",
+    resourceId: id,
+    before: existing,
+    requestId,
+  });
+
+  return existing;
+}

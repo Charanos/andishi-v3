@@ -1,43 +1,71 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { IconStar, IconEdit, IconTrash, IconPlus, IconX, IconCheck } from "@tabler/icons-react";
+import { IconStar, IconEdit, IconTrash, IconPlus, IconX, IconCheck, IconMessageCircle } from "@tabler/icons-react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import {
-  Testimonial,
-  getTestimonials,
-  saveTestimonial,
-  deleteTestimonial,
-} from "@/data/testimonials";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { ConfirmDialog } from "@/components/dashboard/shared/confirm-dialog";
+import { useToast } from "@/components/dashboard/shared/toast-provider";
 
-export function TestimonialsMarquee() {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [mounted, setMounted] = useState(false);
+// Testimonial type matching the DB row
+export interface Testimonial {
+  id: string;
+  authorName: string;
+  authorRole: string;
+  content: string;
+  avatarUrl: string;
+  projectUrl?: string | null;
+  rating: number;
+  date: string;
+  status: "active" | "archived";
+  featured?: boolean;
+  order?: number;
+}
+
+interface TestimonialsMarqueeProps {
+  /** Pre-fetched server-side data to prevent empty flash on initial render. */
+  initialTestimonials?: Testimonial[];
+}
+
+export function TestimonialsMarquee({ initialTestimonials = [] }: TestimonialsMarqueeProps) {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(initialTestimonials);
+  const [mounted, setMounted] = useState(initialTestimonials.length > 0);
   const [isAdmin, setIsAdmin] = useState(false);
   const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [deletingTestimonialId, setDeletingTestimonialId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { notify } = useToast();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
 
+  // Refresh from real API on mount (client-side revalidation)
   useEffect(() => {
-    // Client-side initialization to avoid hydration mismatch (deferred asynchronously)
-    const frameId = requestAnimationFrame(() => {
-      setTestimonials(getTestimonials().filter((t) => t.status !== "archived"));
+    const fetchTestimonials = async () => {
+      try {
+        const res = await fetch("/api/testimonials");
+        if (res.ok) {
+          const data = await res.json();
+          const active = (data.testimonials ?? []).filter(
+            (t: Testimonial) => t.status !== "archived",
+          );
+          setTestimonials(active);
+        }
+      } catch {
+        // Keep initialTestimonials if fetch fails
+      }
       setMounted(true);
-    });
-
-    const handleUpdate = () => {
-      setTestimonials(getTestimonials().filter((t) => t.status !== "archived"));
     };
-    window.addEventListener("testimonials_updated", handleUpdate);
 
-    // Sync admin login status
+    fetchTestimonials();
+
+    // Admin status check
     const checkAdmin = () => {
       setIsAdmin(localStorage.getItem("andishi_admin_sim_logged_in") === "true");
     };
@@ -46,8 +74,6 @@ export function TestimonialsMarquee() {
     window.addEventListener("admin_sim_changed", checkAdmin);
 
     return () => {
-      cancelAnimationFrame(frameId);
-      window.removeEventListener("testimonials_updated", handleUpdate);
       window.removeEventListener("storage", checkAdmin);
       window.removeEventListener("admin_sim_changed", checkAdmin);
     };
@@ -122,24 +148,91 @@ export function TestimonialsMarquee() {
   const handleDeleteInline = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    if (confirm("Are you sure you want to delete this testimonial?")) {
-      deleteTestimonial(id);
+    setDeletingTestimonialId(id);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingTestimonialId) return;
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/testimonials/${deletingTestimonialId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Delete failed");
+      setTestimonials((prev) => prev.filter((t) => t.id !== deletingTestimonialId));
+      notify("Testimonial deleted", "success");
+    } catch {
+      notify("Failed to delete testimonial", "error");
+    } finally {
+      setIsDeleting(false);
+      setDeletingTestimonialId(null);
     }
   };
 
-  // Submit Modal Save
-  const handleSaveSubmit = (e: React.FormEvent) => {
+  // Submit Modal Save — calls real API
+  const handleSaveSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingTestimonial) return;
 
     if (!editingTestimonial.authorName || !editingTestimonial.content) {
-      alert("Name and Content are required.");
+      notify("Name and content are required", "error");
       return;
     }
 
-    saveTestimonial(editingTestimonial);
-    setModalOpen(false);
-    setEditingTestimonial(null);
+    setIsSaving(true);
+    try {
+      let res: Response;
+      if (isNew) {
+        res = await fetch("/api/testimonials", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            authorName: editingTestimonial.authorName,
+            authorRole: editingTestimonial.authorRole,
+            content: editingTestimonial.content,
+            avatarUrl: editingTestimonial.avatarUrl,
+            projectUrl: editingTestimonial.projectUrl ?? null,
+            rating: editingTestimonial.rating,
+            date: editingTestimonial.date,
+            status: editingTestimonial.status,
+          }),
+        });
+      } else {
+        res = await fetch(`/api/testimonials/${editingTestimonial.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            authorName: editingTestimonial.authorName,
+            authorRole: editingTestimonial.authorRole,
+            content: editingTestimonial.content,
+            avatarUrl: editingTestimonial.avatarUrl,
+            projectUrl: editingTestimonial.projectUrl ?? null,
+            rating: editingTestimonial.rating,
+            date: editingTestimonial.date,
+            status: editingTestimonial.status,
+          }),
+        });
+      }
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error ?? "Save failed");
+      }
+
+      const data = await res.json();
+      const saved: Testimonial = data.testimonial;
+
+      setTestimonials((prev) =>
+        isNew
+          ? [...prev, saved]
+          : prev.map((t) => (t.id === saved.id ? saved : t)),
+      );
+      setModalOpen(false);
+      setEditingTestimonial(null);
+      notify(isNew ? "Testimonial added" : "Testimonial updated", "success");
+    } catch (err) {
+      notify(err instanceof Error ? err.message : "Save failed", "error");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Render Star Indicators
@@ -180,6 +273,26 @@ export function TestimonialsMarquee() {
       </div>
 
       {/* Marquee viewport slider */}
+      {testimonials.length === 0 && mounted ? (
+        <div className="relative overflow-hidden border-y border-[var(--glass-border)] py-16 bg-[color-mix(in_srgb,var(--bg-deep)_34%,transparent)]">
+          <div className="flex flex-col items-center justify-center gap-4 text-center px-5">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)]">
+              <IconMessageCircle size={24} strokeWidth={1.5} />
+            </div>
+            <p className="text-[0.88rem] text-[var(--on-surface-dim)]">
+              Client testimonials will appear here.
+            </p>
+            {isAdmin && (
+              <button
+                onClick={handleAddInline}
+                className="flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-4 py-2 text-[0.72rem] font-mono uppercase tracking-wider text-emerald-400 hover:bg-emerald-500/10 transition-colors cursor-pointer"
+              >
+                <IconPlus size={13} /> Add first testimonial
+              </button>
+            )}
+          </div>
+        </div>
+      ) : (
       <div
         className="relative overflow-hidden border-y border-[var(--glass-border)] py-8 bg-[color-mix(in_srgb,var(--bg-deep)_34%,transparent)]"
         onMouseEnter={handleMouseEnter}
@@ -232,17 +345,17 @@ export function TestimonialsMarquee() {
 
               {/* Inline Administrator actions overlays */}
               {isAdmin && (
-                <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300">
+                <div className="absolute top-3 right-3 flex items-center gap-1.5 opacity-0 group-hover/card:opacity-100 transition-all duration-300">
                   <button
                     onClick={(e) => handleEditInline(item, e)}
-                    className="p-1.5 rounded-lg border border-white/10 bg-black/40 text-[var(--on-surface)] hover:bg-white/10 transition-colors"
+                    className="p-1.5 rounded-lg border border-[var(--glass-border)] bg-[var(--surface-low)] text-[var(--on-surface-dim)] shadow-sm backdrop-blur-md transition-all duration-200 hover:scale-105 hover:border-[color-mix(in_srgb,var(--on-surface)_20%,transparent)] hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] hover:text-[var(--on-surface)] active:scale-95"
                     title="Edit Review"
                   >
                     <IconEdit size={12} />
                   </button>
                   <button
                     onClick={(e) => handleDeleteInline(item.id, e)}
-                    className="p-1.5 rounded-lg border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
+                    className="p-1.5 rounded-lg border border-red-500/25 bg-[var(--surface-low)] text-red-500 shadow-sm backdrop-blur-md transition-all duration-200 hover:scale-105 hover:bg-red-500/15 active:scale-95"
                     title="Delete Review"
                   >
                     <IconTrash size={12} />
@@ -253,6 +366,7 @@ export function TestimonialsMarquee() {
           ))}
         </div>
       </div>
+      )}
 
       {/* Testimonials Inline Edit Modal */}
       {modalOpen && editingTestimonial && (
@@ -381,21 +495,36 @@ export function TestimonialsMarquee() {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="rounded-full border border-[var(--glass-border)] bg-transparent px-4 py-2 text-[0.74rem] font-mono uppercase tracking-wider text-[var(--on-surface-dim)] hover:bg-white/5 transition-colors"
+                  disabled={isSaving}
+                  className="rounded-full border border-[var(--glass-border)] bg-transparent px-4 py-2 text-[0.74rem] font-mono uppercase tracking-wider text-[var(--on-surface-dim)] hover:bg-white/5 transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex items-center gap-1 rounded-full bg-[var(--on-surface)] px-5 py-2 text-[0.74rem] font-mono uppercase tracking-wider text-[var(--bg)] hover:opacity-90 transition-opacity"
+                  disabled={isSaving}
+                  className="flex items-center gap-1.5 rounded-full bg-[var(--on-surface)] px-5 py-2 text-[0.74rem] font-mono uppercase tracking-wider text-[var(--bg)] hover:opacity-90 transition-opacity disabled:opacity-70"
                 >
-                  <IconCheck size={12} /> Save Review
+                  {isSaving ? (
+                    <svg className="animate-spin" width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><circle cx="12" cy="12" r="10" strokeOpacity={0.25}/><path d="M12 2a10 10 0 0 1 10 10" /></svg>
+                  ) : (
+                    <IconCheck size={12} />
+                  )}
+                  {isSaving ? "Saving…" : "Save Review"}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={deletingTestimonialId !== null}
+        title="Delete Testimonial?"
+        description="This action is permanent and will remove this testimonial review from the marquee slider. Public visitors will no longer see this review on the landing page."
+        confirmLabel={isDeleting ? "Deleting…" : "Permanently Delete"}
+        onCancel={() => setDeletingTestimonialId(null)}
+        onConfirm={handleDeleteConfirm}
+      />
     </div>
   );
 }

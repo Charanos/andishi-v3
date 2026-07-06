@@ -19,6 +19,8 @@ All UI design and layout implementations must follow the design rules specified 
 ### The Light/Dark Mode Color Pivot
 We have established a clear visual pivot for light and dark modes in [src/app/globals.css](file:///c:/Users/user/OneDrive/Documents/andishi-v3-main/src/app/globals.css):
 * **Stellar Light Mode (Decyanized):**
+  - **Background Swap:** The dashboard sidebar uses a subtle hueish purple background (`bg-[var(--dashboard-sidebar)]` / `--dashboard-sidebar`), while the main dashboard canvas is clean and elevated to structure depth.
+  - **KPI Cards Color Balance:** Avoid saturation or over-utilization of deep purple fills in metrics blocks. KPI cards should feel clean, minimal, and editorial.
   - **No Cyan or Green Accents:** All tags, eyebrows, badges, active components, and accents have been stripped of cyan and green.
   - **Theme Colors:** `--primary` (`#19073b`), `--secondary` (`#2a1058`), and `--tertiary` (`#341369`) are mapped strictly to deep purple and violet shades.
   - **Gradients:** `--gradient-brand` is defined as a purely purple/violet gradient terminating in `#56309B`.
@@ -27,11 +29,15 @@ We have established a clear visual pivot for light and dark modes in [src/app/gl
   - **Success / Status Markers:** Emerald green (`var(--tertiary)`: `#10B981`) is reserved exclusively for timelines, status cards, and complete markers.
 
 ### Typography Constraints (Strict Rules)
-- **Zero Bold Weight:** Never use `font-bold` or `font-semibold` anywhere in the codebase. Emphasis is created strictly through spacing, scale, hierarchy, or subtle color transitions.
+- **Zero Bold Weight:** Never use `font-bold` or `font-semibold` anywhere in navigation lists, page header labels, account user dropdowns, sidebar badges, or chat dialog boxes. All typography follows the Nunito medium (500) and normal (400) hierarchy system. Emphasis is created strictly through spacing, scale, hierarchy, or subtle color transitions.
 - **Font Pairing:** Use **Outfit** (weight 400 for body, 500 for navigation/labels) for standard copy and controls. Use **Cormorant Garamond** (via the `.title-serif` helper) for page titles, headlines, and major sections.
 - **Numeric Data:** Use `font-mono` (**JetBrains Mono**) strictly for IDs, monetary figures, timestamps, percentages, and metrics.
 
-### Layout & Glassmorphism Rules
+### Layout, Sidebar Pinned Chats & Floating Chat Spec
+- **Pinned Sidebar Chats (Bottom Aligned):** Pinned chats (Support Desk, Alpha Project Chat, Team Sync) reside at the very bottom of the sidebar, right above the user profile badge (`MissionBadge`), separated by linear-gradient dividers.
+  - They render circular photo avatars matching those in the floating panel, alongside dynamic active indicator status dots and unread counter tags.
+- **Floating Chat Dialog (Compact & Scroll-Free):** The dialog drawer is restricted to a narrow, sleek `w-80` width card layout. Messages use `flex flex-col gap-2.5` (avoiding grid containers) and are aligned using `self-start` (others) and `self-end` (self) to wrap text natively without introducing horizontal scrollbars.
+  - The chat remains accessible for all dashboard roles (Admin, Client, Developer). Logged-in admin user avatars (e.g. Dennis Munge) default to a male professional business photo if empty and reflect in both the top bar switcher and sidebar badge.
 - **Layered Glassmorphism:** Use variable backdrop-blur (30px to 60px) and a subtle 1px border (`var(--glass-border)`) to simulate transparency. Solid fills are prohibited.
 - **Native Layouts (No Performance Jank):** GSAP / ScrollTrigger scroll-jacking or heavy JS layout recalculations for layout headers and footers are strictly prohibited. Utilize native CSS (`sticky`, `absolute` positioning, native scrolling) for overlays and text placements.
 - **Gutters & Content Widths:**

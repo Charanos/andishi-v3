@@ -53,7 +53,12 @@ export async function PUT(req: NextRequest, context: { params: Promise<{ id: str
 
   const hasProfileFields = "name" in body || "avatarUrl" in body;
   const hasAccessFields =
-    "status" in body || "role" in body || "organizationId" in body || "engineerId" in body;
+    "status" in body ||
+    "role" in body ||
+    "organizationId" in body ||
+    "engineerId" in body ||
+    "owner" in body ||
+    "accessNotes" in body;
 
   if (!hasProfileFields && !hasAccessFields) {
     return jsonError("No updatable fields provided.", 400);

@@ -10,4 +10,11 @@ export const siteConfig = {
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
   ],
+  // TODO: replace with Andishi's real social profile URLs before shipping -
+  // these are intentionally left blank rather than guessed.
+  social: {
+    linkedin: "",
+    x: "",
+    github: "",
+  },
 };

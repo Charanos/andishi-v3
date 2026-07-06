@@ -409,13 +409,13 @@ export function StartProjectExperience() {
                     >
                       <span
                         className={cn(
-                          "mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-md border text-transparent",
+                          "mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-md border transition-all duration-200",
                           services.includes(title)
-                            ? "border-[var(--primary)] bg-[color-mix(in_srgb,var(--primary)_16%,var(--surface)_84%)] text-[var(--primary)] dark:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]"
-                            : "border-[color-mix(in_srgb,var(--on-surface)_22%,transparent)] dark:border-[var(--glass-border)]",
+                            ? "border-[var(--primary)] bg-[var(--primary)] text-[var(--on-primary)] shadow-[0_0_0_3px_color-mix(in_srgb,var(--primary)_20%,transparent)]"
+                            : "border-[color-mix(in_srgb,var(--on-surface)_22%,transparent)] text-transparent dark:border-[var(--glass-border)]",
                         )}
                       >
-                        <IconCheck size={12} stroke={2.4} />
+                        <IconCheck size={12} stroke={2.8} />
                       </span>
                       <span>
                         <span className="block text-[0.9rem] font-medium text-[var(--on-surface)]">
@@ -472,16 +472,22 @@ export function StartProjectExperience() {
                         className={cn(
                           "flex h-12 items-center gap-3 rounded-xl border px-4 text-left transition-all duration-300",
                           budget === item
-                            ? "border-[color-mix(in_srgb,var(--primary)_54%,transparent)] bg-[color-mix(in_srgb,var(--primary)_14%,var(--surface)_86%)] text-[var(--primary)] dark:border-[color-mix(in_srgb,var(--primary)_32%,transparent)] dark:bg-[color-mix(in_srgb,var(--primary)_10%,transparent)]"
+                            ? "border-[var(--primary)] bg-[color-mix(in_srgb,var(--primary)_14%,var(--surface)_86%)] text-[var(--on-surface)] shadow-[0_8px_24px_color-mix(in_srgb,var(--primary)_16%,transparent)] dark:bg-[color-mix(in_srgb,var(--primary)_10%,transparent)]"
                             : `${controlSurfaceClass} text-[var(--on-surface-dim)] hover:text-[var(--on-surface)]`,
                         )}
                       >
                         <span
                           className={cn(
-                            "h-2.5 w-2.5 rounded-full border border-current",
-                            budget === item && "bg-current",
+                            "grid h-4 w-4 shrink-0 place-items-center rounded-full border-2",
+                            budget === item
+                              ? "border-[var(--primary)] bg-[var(--primary)]"
+                              : "border-[color-mix(in_srgb,var(--on-surface)_28%,transparent)]",
                           )}
-                        />
+                        >
+                          {budget === item && (
+                            <span className="h-1.5 w-1.5 rounded-full bg-[var(--on-primary)]" />
+                          )}
+                        </span>
                         <span className="font-mono text-[0.8rem] tracking-tight">{item}</span>
                       </button>
                     ))}
@@ -575,13 +581,13 @@ export function StartProjectExperience() {
                 >
                   <span
                     className={cn(
-                      "mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-md border text-transparent",
+                      "mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-md border transition-all duration-200",
                       agreed
-                        ? "border-[color-mix(in_srgb,var(--tertiary)_46%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_14%,var(--surface)_86%)] text-[var(--tertiary)] dark:border-[color-mix(in_srgb,var(--tertiary)_36%,transparent)] dark:bg-[color-mix(in_srgb,var(--tertiary)_12%,transparent)]"
-                        : "border-[color-mix(in_srgb,var(--on-surface)_22%,transparent)] dark:border-[var(--glass-border)]",
+                        ? "border-[var(--tertiary)] bg-[var(--tertiary)] text-[var(--on-tertiary)] shadow-[0_0_0_3px_color-mix(in_srgb,var(--tertiary)_20%,transparent)]"
+                        : "border-[color-mix(in_srgb,var(--on-surface)_22%,transparent)] text-transparent dark:border-[var(--glass-border)]",
                     )}
                   >
-                    <IconCheck size={12} stroke={2.4} />
+                    <IconCheck size={12} stroke={2.8} />
                   </span>
                   <span className="text-[0.88rem] leading-relaxed text-[var(--on-surface-dim)]">
                     I confirm this brief is accurate and understand the scoping call is free and
@@ -768,9 +774,13 @@ function SelectField({
         onChange={(event) => onChange(event.target.value)}
         className={`h-12 rounded-xl border px-4 text-[1rem] text-[var(--on-surface)] outline-none backdrop-blur-xl transition-all duration-300 ${controlSurfaceClass} ${controlFocusClass}`}
       >
-        <option value="">Select one...</option>
+        <option value="" className="bg-[var(--surface)] text-[var(--on-surface)]">
+          Select one...
+        </option>
         {options.map((option) => (
-          <option key={option}>{option}</option>
+          <option key={option} className="bg-[var(--surface)] text-[var(--on-surface)]">
+            {option}
+          </option>
         ))}
       </select>
     </label>
@@ -801,12 +811,17 @@ function PickerGroup({
             onClick={() => onSelect(value)}
             aria-pressed={selected === value}
             className={cn(
-              "flex min-h-14 flex-col items-center justify-center rounded-xl border px-3 py-2 text-center transition-all duration-300",
+              "relative flex min-h-14 flex-col items-center justify-center rounded-xl border px-3 py-2 text-center transition-all duration-300",
               selected === value
-                ? "border-[color-mix(in_srgb,var(--primary)_54%,transparent)] bg-[color-mix(in_srgb,var(--primary)_14%,var(--surface)_86%)] shadow-[0_12px_32px_color-mix(in_srgb,var(--primary)_10%,transparent)] dark:border-[color-mix(in_srgb,var(--primary)_32%,transparent)] dark:bg-[color-mix(in_srgb,var(--primary)_10%,transparent)]"
+                ? "border-[var(--primary)] bg-[color-mix(in_srgb,var(--primary)_14%,var(--surface)_86%)] shadow-[0_12px_32px_color-mix(in_srgb,var(--primary)_16%,transparent)] dark:bg-[color-mix(in_srgb,var(--primary)_12%,transparent)]"
                 : `${controlSurfaceClass} hover:border-[color-mix(in_srgb,var(--primary)_34%,transparent)]`,
             )}
           >
+            {selected === value && (
+              <span className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full bg-[var(--primary)] text-[var(--on-primary)] shadow-[0_2px_8px_color-mix(in_srgb,var(--primary)_40%,transparent)]">
+                <IconCheck size={12} stroke={3} />
+              </span>
+            )}
             <span className="font-mono text-[0.84rem] tracking-tight text-[var(--on-surface)]">
               {value}
             </span>

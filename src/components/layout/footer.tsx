@@ -1,8 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { IconBrandGithub, IconBrandLinkedin, IconBrandX } from "@tabler/icons-react";
 import { Logo } from "@/components/brand/logo";
+import { siteConfig } from "@/config/site";
 import { useEffect, useState } from "react";
+
+const socialLinks = [
+  { label: "LinkedIn", href: siteConfig.social.linkedin || "#", icon: IconBrandLinkedin },
+  { label: "X (Twitter)", href: siteConfig.social.x || "#", icon: IconBrandX },
+  { label: "GitHub", href: siteConfig.social.github || "#", icon: IconBrandGithub },
+];
 
 const columns = [
   {
@@ -71,7 +79,7 @@ function Clock() {
   }, []);
 
   return (
-    <div className="flex items-center gap-2.5 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[color-mix(in_srgb,var(--on-surface)_20%,transparent)] px-4 py-2 backdrop-blur-md transition-colors hover:bg-[color-mix(in_srgb,var(--on-surface)_5%,transparent)]">
+    <div className="flex items-center gap-2.5 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[color-mix(in_srgb,var(--on-surface)_5%,transparent)] px-4 py-2 backdrop-blur-md transition-colors hover:bg-[color-mix(in_srgb,var(--on-surface)_20%,transparent)]">
       <span className="relative flex h-2 w-2">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
         <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
@@ -126,6 +134,20 @@ export function Footer() {
                 Operating globally from Nairobi, Kenya. We design, engineer, and scale software
                 products that demand precision.
               </p>
+              <div className="mt-6 flex items-center gap-3">
+                {socialLinks.map(({ label, href, icon: Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_14%,transparent)] text-[var(--on-surface-dim)] transition-all duration-300 hover:border-[color-mix(in_srgb,var(--on-surface)_32%,transparent)] hover:text-[var(--on-surface)] hover:-translate-y-0.5"
+                  >
+                    <Icon size={16} stroke={1.7} />
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
 

@@ -71,7 +71,7 @@ export function NotificationMenu({ user }: { user: AuthUser }) {
   };
 
   return (
-    <details ref={popoverRef} className="group relative">
+    <details ref={popoverRef} name="dashboard-topbar-menu" className="group relative">
       <summary
         className="relative grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full border border-[var(--glass-border)] text-[var(--on-surface-dim)] transition-colors duration-300 hover:text-[var(--on-surface)]"
         aria-label="Notifications"

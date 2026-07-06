@@ -13,6 +13,8 @@ import { NotificationMenu } from "@/components/dashboard/shell/notification-menu
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
 import type { AuthUser } from "@/types/auth";
+import { useDashboardShell } from "@/components/dashboard/shell/app-shell";
+import { useAppearance } from "@/components/dashboard/shared/appearance-provider";
 
 const routeLabels: Record<string, string> = {
   "/admin": "Overview",
@@ -73,6 +75,8 @@ export function DashboardTopNav({
 }) {
   const pathname = usePathname();
   const scrolled = useScrolled(20);
+  const { hasModalOpen } = useDashboardShell();
+  const { appearance } = useAppearance();
   const page = useMemo(
     () => getDashboardPage(pathname, user.role),
     [pathname, user.role],
@@ -81,12 +85,16 @@ export function DashboardTopNav({
   return (
     <header
       aria-label="Dashboard top navigation"
-      className="sticky top-0 z-40 px-4 pt-4 sm:px-6 lg:px-8"
+      className={cn(
+        "sticky top-0 z-40 px-4 pt-4 sm:px-6 lg:px-8 transition-all duration-300",
+        hasModalOpen ? "opacity-0 pointer-events-none -translate-y-4" : "opacity-100 translate-y-0"
+      )}
     >
       <div
+        data-topnav-theme={appearance.topNavTheme}
         className={cn(
-          "mx-auto flex w-full max-w-[92rem] items-center gap-3 rounded-[1.35rem] border p-2 backdrop-blur-2xl sm:p-2.5",
-          "transition-[background-color,border-color,box-shadow] duration-300",
+          "dashboard-topnav-pill mx-auto flex w-full max-w-[92rem] items-center gap-3 rounded-[1.35rem] border p-2 backdrop-blur-2xl sm:p-2.5",
+          "transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300",
           scrolled
             ? "border-[color-mix(in_srgb,var(--glass-border)_75%,transparent)] bg-[color-mix(in_srgb,var(--surface)_93%,transparent)] shadow-[0_16px_44px_color-mix(in_srgb,var(--bg-deep)_12%,transparent)]"
             : "border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_88%,transparent)] shadow-[0_10px_30px_color-mix(in_srgb,var(--bg-deep)_6%,transparent)]",

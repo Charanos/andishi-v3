@@ -62,7 +62,7 @@ export function HeroSection() {
               variants={fadeUp}
               className="title-serif m-0 max-w-[19ch] text-[clamp(3rem,7.4vw,5.65rem)] font-normal leading-[0.98] tracking-tighter text-[var(--on-surface)] max-[899px]:max-w-[16ch] max-[899px]:text-[clamp(2.85rem,10vw,3.55rem)] max-[560px]:text-[clamp(2.55rem,11vw,3.2rem)]"
             >
-              Digital products engineered from concept to launch.
+              Software products engineered from concept to launch.
             </motion.h1>
 
             <motion.p
@@ -106,6 +106,7 @@ export function HeroSection() {
                   className="h-auto w-full object-cover aspect-[16/10] object-top"
                   priority
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
                 <div className="absolute inset-0 rounded-[1.35rem] ring-1 ring-inset ring-[color-mix(in_srgb,white_10%,transparent)]" />
               </div>
 
@@ -118,6 +119,7 @@ export function HeroSection() {
                   height={750}
                   className="h-auto w-full object-cover aspect-[16/10] object-top"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
                 <div className="absolute inset-0 rounded-[1.35rem] ring-1 ring-inset ring-[color-mix(in_srgb,white_10%,transparent)]" />
               </div>
 
@@ -130,6 +132,7 @@ export function HeroSection() {
                   height={800}
                   className="h-auto w-full object-cover aspect-[3/4] object-top"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
                 <div className="absolute inset-0 rounded-[1.35rem] ring-1 ring-inset ring-[color-mix(in_srgb,white_10%,transparent)]" />
               </div>
 

@@ -11,6 +11,8 @@ export type AdminAuthIntakeRecord = {
   emailVerified: boolean;
   organizationId: string | null;
   engineerId: string | null;
+  owner: string | null;
+  accessNotes: string | null;
   createdAt: string;
   lastLoginAt: string | null;
 };
@@ -27,6 +29,8 @@ export async function getAdminAuthIntake(limit = 12): Promise<AdminAuthIntakeRec
       emailVerified: users.emailVerified,
       organizationId: users.organizationId,
       engineerId: users.engineerId,
+      owner: users.owner,
+      accessNotes: users.accessNotes,
       createdAt: users.createdAt,
       lastLoginAt: users.lastLoginAt,
     })

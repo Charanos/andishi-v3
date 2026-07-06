@@ -12,18 +12,19 @@ type CalendarEvent = {
   type: string;
 };
 
-const seedEvents: Record<AuthUser["role"], CalendarEvent[]> = {
+/** Seed events relative to "today" (offsets in days) so the widget shows sensible upcoming items whenever it's viewed. */
+const seedEventOffsets: Record<AuthUser["role"], Array<Omit<CalendarEvent, "date"> & { offsetDays: number }>> = {
   admin: [
-    { date: "2026-05-26", time: "10:30", title: "Review Kijani shortlist", type: "Review" },
-    { date: "2026-05-27", time: "14:00", title: "Intro slot with Amina", type: "Intro" },
+    { offsetDays: 0, time: "10:30", title: "Review Kijani shortlist", type: "Review" },
+    { offsetDays: 1, time: "14:00", title: "Intro slot with Amina", type: "Intro" },
   ],
   client: [
-    { date: "2026-05-26", time: "11:00", title: "Review prepared profiles", type: "Review" },
-    { date: "2026-05-28", time: "15:30", title: "Intro with senior AI engineer", type: "Intro" },
+    { offsetDays: 0, time: "11:00", title: "Review prepared profiles", type: "Review" },
+    { offsetDays: 2, time: "15:30", title: "Intro with senior AI engineer", type: "Intro" },
   ],
   developer: [
-    { date: "2026-05-26", time: "17:00", title: "Submit timesheet evidence", type: "Delivery" },
-    { date: "2026-05-29", time: "09:30", title: "Milestone sync", type: "Project" },
+    { offsetDays: 0, time: "17:00", title: "Submit timesheet evidence", type: "Delivery" },
+    { offsetDays: 3, time: "09:30", title: "Milestone sync", type: "Project" },
   ],
 };
 
@@ -35,11 +36,22 @@ const eventTypes: Record<AuthUser["role"], string[]> = {
 
 export function DashboardCalendarMenu({ role }: { role: AuthUser["role"] }) {
   const popoverRef = useDetailsPopover();
-  const today = new Date(2026, 4, 26);
+  const [today] = useState(() => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    return now;
+  });
+  const todayIso = useMemo(() => toDateInput(today), [today]);
   const [cursor, setCursor] = useState(new Date(today));
-  const [events, setEvents] = useState<CalendarEvent[]>(seedEvents[role]);
+  const [events, setEvents] = useState<CalendarEvent[]>(() =>
+    seedEventOffsets[role].map(({ offsetDays, ...rest }) => {
+      const date = new Date(today);
+      date.setDate(date.getDate() + offsetDays);
+      return { ...rest, date: toDateInput(date) };
+    }),
+  );
   const [form, setForm] = useState<CalendarEvent>({
-    date: "2026-05-26",
+    date: todayIso,
     time: "09:00",
     title: "",
     type: eventTypes[role][0] ?? "Review",
@@ -58,7 +70,11 @@ export function DashboardCalendarMenu({ role }: { role: AuthUser["role"] }) {
   };
 
   return (
-    <details ref={popoverRef} className="group relative hidden xl:block">
+    <details
+      ref={popoverRef}
+      name="dashboard-topbar-menu"
+      className="group relative hidden xl:block"
+    >
       <summary className="flex h-10 cursor-pointer list-none items-center gap-2 rounded-full border border-[var(--glass-border)] px-3 text-[0.72rem] text-[var(--on-surface-dim)] transition-colors duration-300 hover:text-[var(--on-surface)]">
         <IconCalendarTime size={14} stroke={1.6} />
         <span className="font-mono">{displayDate}</span>
@@ -92,19 +108,24 @@ export function DashboardCalendarMenu({ role }: { role: AuthUser["role"] }) {
           {days.map((day) => {
             const iso = toDateInput(day.date);
             const hasEvent = events.some((event) => event.date === iso);
-            const active = iso === "2026-05-26";
+            const isSelected = iso === form.date;
+            const isToday = iso === todayIso;
 
             return (
               <button
                 key={iso}
                 type="button"
+                aria-current={isToday ? "date" : undefined}
+                aria-pressed={isSelected}
                 onClick={() => setForm((current) => ({ ...current, date: iso }))}
                 className={[
                   "relative grid h-8 cursor-pointer place-items-center rounded-lg font-mono text-[0.72rem] transition-colors duration-300",
                   day.inMonth ? "text-[var(--on-surface)]" : "text-[color-mix(in_srgb,var(--on-surface-dim)_38%,transparent)]",
-                  active
+                  isSelected
                     ? "bg-[var(--secondary)] text-[var(--on-secondary)] ring-2 ring-[color-mix(in_srgb,var(--secondary)_30%,transparent)]"
-                    : "hover:bg-[color-mix(in_srgb,var(--on-surface)_7%,transparent)]",
+                    : isToday
+                      ? "border border-[color-mix(in_srgb,var(--secondary)_45%,transparent)] hover:bg-[color-mix(in_srgb,var(--on-surface)_7%,transparent)]"
+                      : "hover:bg-[color-mix(in_srgb,var(--on-surface)_7%,transparent)]",
                 ].join(" ")}
               >
                 {day.date.getDate()}
@@ -112,7 +133,7 @@ export function DashboardCalendarMenu({ role }: { role: AuthUser["role"] }) {
                   <span
                     className={[
                       "absolute bottom-1 h-1 w-1 rounded-full",
-                      active ? "bg-[var(--on-secondary)]" : "bg-[var(--secondary)]",
+                      isSelected ? "bg-[var(--on-secondary)]" : "bg-[var(--secondary)]",
                     ].join(" ")}
                   />
                 )}

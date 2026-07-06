@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import Link from "next/link";
@@ -17,12 +18,20 @@ export function AccountMenu({ user }: { user: AuthUser }) {
     .toUpperCase();
 
   return (
-    <details ref={popoverRef} className="group relative">
+    <details ref={popoverRef} name="dashboard-topbar-menu" className="group relative">
       <summary
-        className="grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--surface)] font-mono text-[0.72rem] text-[var(--on-surface)] transition-colors duration-300 hover:border-[color-mix(in_srgb,var(--secondary)_34%,transparent)]"
+        className="grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--surface)] font-mono text-[0.72rem] text-[var(--on-surface)] transition-colors duration-300 hover:border-[color-mix(in_srgb,var(--secondary)_34%,transparent)] overflow-hidden"
         aria-label="Open account menu"
       >
-        <span>{initials}</span>
+        {user.avatarUrl ? (
+          <img
+            src={user.avatarUrl}
+            alt={user.name}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <span>{initials}</span>
+        )}
       </summary>
       <div className="absolute right-0 top-12 z-50 w-64 overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[var(--surface)] p-2 shadow-[0_24px_70px_color-mix(in_srgb,var(--bg-deep)_28%,transparent)]">
         <div className="px-3 py-3">

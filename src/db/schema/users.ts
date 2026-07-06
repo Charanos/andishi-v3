@@ -15,6 +15,8 @@ export const users = pgTable("users", {
   emailVerified: boolean("email_verified").notNull().default(false),
   organizationId: uuid("organization_id"),
   engineerId: uuid("engineer_id"),
+  owner: text("owner"),
+  accessNotes: text("access_notes"),
   lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

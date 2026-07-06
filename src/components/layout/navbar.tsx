@@ -45,7 +45,21 @@ export function Navbar() {
   const [bannerOpen, setBannerOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [hasModalOpen, setHasModalOpen] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const checkModal = () => {
+      const modal = document.querySelector(
+        '[role="dialog"]:not([aria-label="Command search"]), [aria-modal="true"]:not([aria-label="Command search"])'
+      );
+      setHasModalOpen(!!modal);
+    };
+    checkModal();
+    const observer = new MutationObserver(checkModal);
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -137,7 +151,10 @@ export function Navbar() {
           )}
         </AnimatePresence>
 
-        <header className="pointer-events-auto w-full px-5 transition-all duration-300 sm:px-8 lg:px-10 pt-3 sm:pt-4">
+        <header className={cn(
+          "pointer-events-auto w-full px-5 transition-all duration-300 sm:px-8 lg:px-10 pt-3 sm:pt-4",
+          hasModalOpen ? "opacity-0 pointer-events-none -translate-y-4" : "opacity-100 translate-y-0"
+        )}>
           <motion.nav
           className="mx-auto flex h-16 w-full max-w-[92rem] items-center justify-between rounded-2xl px-3 lg:px-4"
           animate={{
@@ -199,12 +216,12 @@ export function Navbar() {
            {/* Right actions */}
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            {currentUser ? (
+            {currentUser || isAdmin ? (
               <Link
-                href={currentUser.role === "admin" ? "/admin" : currentUser.role === "client" ? "/dashboard" : "/dev"}
+                href={(currentUser?.role === "admin" || isAdmin) ? "/admin" : currentUser?.role === "client" ? "/dashboard" : "/dev"}
                 className="hidden min-h-10 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-5 py-2.5 text-[0.84rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-[0.98] sm:inline-flex"
               >
-                {currentUser.role === "admin" ? "Admin Console" : "Dashboard"}
+                {(currentUser?.role === "admin" || isAdmin) ? "Admin Console" : "Dashboard"}
               </Link>
             ) : (
               <>
@@ -304,13 +321,13 @@ export function Navbar() {
                 variants={itemVariants}
                 className="mt-4 flex items-center gap-3 pt-4"
               >
-                {currentUser ? (
+                {currentUser || isAdmin ? (
                   <Link
-                    href={currentUser.role === "admin" ? "/admin" : currentUser.role === "client" ? "/dashboard" : "/dev"}
+                    href={(currentUser?.role === "admin" || isAdmin) ? "/admin" : currentUser?.role === "client" ? "/dashboard" : "/dev"}
                     onClick={() => setMobileOpen(false)}
                     className="flex h-11 flex-1 items-center justify-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-5 text-[0.88rem] font-medium text-[var(--on-surface)] transition-all duration-300 hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-[0.98]"
                   >
-                    {currentUser.role === "admin" ? "Admin Console" : "Dashboard"}
+                    {(currentUser?.role === "admin" || isAdmin) ? "Admin Console" : "Dashboard"}
                   </Link>
                 ) : (
                   <>
@@ -343,7 +360,7 @@ export function Navbar() {
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--secondary)] opacity-75" />
                     <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--secondary)]" />
                   </span>
-                  <span className="text-[var(--secondary)] font-semibold uppercase">Studio Location:</span>
+                  <span className="text-[var(--secondary)] font-medium uppercase">Studio Location:</span>
                 </div>
                 <span>Bypass Business Arcade Ground Floor, Northern Bypass - Ruiru, Kenya</span>
                 <span className="text-[var(--primary)] font-medium">1°11&apos;37.1&quot;S 36°54&apos;18.9&quot;E</span>

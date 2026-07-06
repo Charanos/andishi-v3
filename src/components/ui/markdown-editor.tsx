@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 function parseBold(text: string): string {
   return text.replace(
     /\*\*(.*?)\*\*/g,
-    '<strong class="font-semibold text-[var(--on-surface)]">$1</strong>',
+    '<strong class="font-medium text-[var(--on-surface)]">$1</strong>',
   );
 }
 

@@ -231,11 +231,15 @@ async function getCurrentPath(fallback: string) {
 }
 
 function toAuthUser(user: typeof users.$inferSelect): AuthUser {
+  let avatarUrl = user.avatarUrl ?? undefined;
+  if (!avatarUrl && user.role === "admin") {
+    avatarUrl = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80";
+  }
   return {
     id: user.id,
     email: user.email,
     name: user.name,
-    avatarUrl: user.avatarUrl ?? undefined,
+    avatarUrl,
     role: user.role,
     status: user.status,
     organizationId: user.organizationId ?? undefined,

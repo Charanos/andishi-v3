@@ -2,18 +2,45 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CaseStudyExperience } from "@/components/marketing/case-study-experience";
 import { JsonLd } from "@/components/marketing/json-ld";
-import { workProjects } from "@/content/work";
+import { workProjects, type WorkProject } from "@/content/work";
 import { siteConfig } from "@/config/site";
+import { fetchPublicProjectBySlug, fetchPublicProjects } from "@/lib/api/public-client";
+import { mapApiProjectToWorkProject } from "@/lib/work-mapper";
 
 type Props = { params: Promise<{ slug: string }> };
 
+// Pre-renders the static fallback set; DB-backed case studies (unknown at
+// build time) render on-demand since dynamicParams defaults to true.
 export function generateStaticParams() {
   return workProjects.map((project) => ({ slug: project.id }));
 }
 
+async function resolveProject(slug: string): Promise<WorkProject | null> {
+  const dbProject = await fetchPublicProjectBySlug(slug);
+  if (dbProject) return mapApiProjectToWorkProject(dbProject);
+
+  return workProjects.find((item) => item.id === slug) ?? null;
+}
+
+async function resolveRelated(project: WorkProject): Promise<WorkProject[]> {
+  const dbProjects = await fetchPublicProjects();
+  if (dbProjects.length > 0) {
+    return dbProjects
+      .map(mapApiProjectToWorkProject)
+      .filter((item) => item.id !== project.id)
+      .sort((a) => (a.sector === project.sector ? -1 : 1))
+      .slice(0, 2);
+  }
+
+  return workProjects
+    .filter((item) => item.id !== project.id)
+    .sort((a) => (a.sector === project.sector ? -1 : 1))
+    .slice(0, 2);
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const project = workProjects.find((item) => item.id === slug);
+  const project = await resolveProject(slug);
   if (!project) return {};
 
   return {
@@ -30,16 +57,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function WorkDetailPage({ params }: Props) {
   const { slug } = await params;
-  const project = workProjects.find((item) => item.id === slug);
+  const project = await resolveProject(slug);
   if (!project) notFound();
 
-  const related = workProjects
-    .filter((item) => item.id !== project.id)
-    .sort((a, b) => {
-      const sameVertical = a.sector === project.sector ? -1 : 1;
-      return sameVertical;
-    })
-    .slice(0, 2);
+  const related = await resolveRelated(project);
 
   const articleSchema = {
     "@context": "https://schema.org",

@@ -29,42 +29,62 @@ export type DashboardNavItem = {
   label: string;
   icon: Icon;
   group: string;
+  /** One of these lives in the mobile bottom bar's fixed slots - see MobileBottomNav. */
+  primary?: boolean;
   children?: Array<{
     href: string;
     label: string;
   }>;
 };
 
+/**
+ * Grouping mirrors the real backend module map (docs/backend/
+ * BACKEND_ARCHITECTURE_MASTER.md Part 5) rather than ad-hoc page ordering -
+ * Workflow = the CRM-intake-to-delivery handoff (Briefs -> Pipeline ->
+ * Placements, same sequence and terminology as AdminWorkflowNav - the group
+ * is named "Workflow" rather than "Pipeline" so it doesn't collide with the
+ * Pipeline item label inside it), Network = talent supply + accounts,
+ * Marketing = CMS/proof assets, Support = support + notifications,
+ * Platform = identity/access + governance. Every href below is a route that
+ * already exists; no placeholders for not-yet-built pages.
+ */
 export const roleNav: Record<DashboardRole, DashboardNavItem[]> = {
   admin: [
-    { href: "/admin", label: "Overview", icon: IconLayoutDashboard, group: "Command" },
+    {
+      href: "/admin",
+      label: "Overview",
+      icon: IconLayoutDashboard,
+      group: "Command",
+      primary: true,
+    },
     {
       href: "/admin/briefs",
       label: "Briefs",
       icon: IconFileText,
-      group: "Operations",
+      group: "Workflow",
+      primary: true,
       children: [
         { href: "/admin/briefs", label: "Review Queue" },
         { href: "/admin/briefs/shortlist", label: "Shortlists" },
       ],
     },
-    { href: "/admin/matches", label: "Pipeline", icon: IconGitBranch, group: "Operations" },
+    {
+      href: "/admin/matches",
+      label: "Pipeline",
+      icon: IconGitBranch,
+      group: "Workflow",
+      primary: true,
+    },
     {
       href: "/admin/placements",
       label: "Placements",
       icon: IconBriefcase,
-      group: "Operations",
+      group: "Workflow",
+      primary: true,
       children: [
         { href: "/admin/placements", label: "Active Work" },
         { href: "/admin/placements/timeline", label: "Timeline" },
       ],
-    },
-    { href: "/admin/careers", label: "Careers", icon: IconUserCheck, group: "Operations" },
-    {
-      href: "/admin/testimonials",
-      label: "Testimonials",
-      icon: IconMessageCircle,
-      group: "Operations",
     },
     {
       href: "/admin/engineers",
@@ -76,23 +96,59 @@ export const roleNav: Record<DashboardRole, DashboardNavItem[]> = {
         { href: "/admin/placements", label: "Availability" },
       ],
     },
+    { href: "/admin/careers", label: "Careers", icon: IconUserCheck, group: "Network" },
     { href: "/admin/clients", label: "Clients", icon: IconUsers, group: "Network" },
-    { href: "/admin/payments", label: "Payments", icon: IconCreditCard, group: "Business" },
-    { href: "/admin/revenue", label: "Revenue", icon: IconChartBar, group: "Business" },
-    { href: "/admin/support", label: "Support", icon: IconMessageQuestion, group: "Admin" },
-    { href: "/admin/content", label: "Content", icon: IconTimeline, group: "Admin" },
-    { href: "/admin/users", label: "User Mgmt", icon: IconUsers, group: "Admin" },
-    { href: "/admin/audit", label: "Audit Reports", icon: IconReportAnalytics, group: "Admin" },
-    { href: "/admin/notifications", label: "Notifications", icon: IconBell, group: "Admin" },
-    { href: "/admin/profile", label: "Profile", icon: IconUserCircle, group: "Admin" },
-    { href: "/admin/settings", label: "Settings", icon: IconSettings, group: "Admin" },
+    { href: "/admin/payments", label: "Payments", icon: IconCreditCard, group: "Finance" },
+    { href: "/admin/revenue", label: "Revenue", icon: IconChartBar, group: "Finance" },
+    {
+      href: "/admin/testimonials",
+      label: "Testimonials",
+      icon: IconMessageCircle,
+      group: "Marketing",
+    },
+    { href: "/admin/content", label: "Content", icon: IconTimeline, group: "Marketing" },
+    { href: "/admin/users", label: "User Mgmt", icon: IconUsers, group: "Platform" },
+    {
+      href: "/admin/audit",
+      label: "Audit Reports",
+      icon: IconReportAnalytics,
+      group: "Platform",
+    },
+    { href: "/admin/profile", label: "Profile", icon: IconUserCircle, group: "Platform" },
+    { href: "/admin/settings", label: "Settings", icon: IconSettings, group: "Platform" },
+    { href: "/admin/support", label: "Support", icon: IconMessageQuestion, group: "Support" },
+    { href: "/admin/notifications", label: "Notifications", icon: IconBell, group: "Support" },
   ],
   client: [
-    { href: "/dashboard", label: "Overview", icon: IconLayoutDashboard, group: "Hiring" },
-    { href: "/dashboard/brief", label: "My Brief", icon: IconFileText, group: "Hiring" },
+    {
+      href: "/dashboard",
+      label: "Overview",
+      icon: IconLayoutDashboard,
+      group: "Hiring",
+      primary: true,
+    },
+    {
+      href: "/dashboard/brief",
+      label: "My Brief",
+      icon: IconFileText,
+      group: "Hiring",
+      primary: true,
+    },
     { href: "/dashboard/matches", label: "Developer Profiles", icon: IconUsers, group: "Hiring" },
-    { href: "/dashboard/team", label: "My Team", icon: IconCode, group: "Engagement" },
-    { href: "/dashboard/projects", label: "Projects", icon: IconBriefcase, group: "Engagement" },
+    {
+      href: "/dashboard/team",
+      label: "My Team",
+      icon: IconCode,
+      group: "Engagement",
+      primary: true,
+    },
+    {
+      href: "/dashboard/projects",
+      label: "Projects",
+      icon: IconBriefcase,
+      group: "Engagement",
+      primary: true,
+    },
     {
       href: "/dashboard/support",
       label: "Support",
@@ -109,14 +165,32 @@ export const roleNav: Record<DashboardRole, DashboardNavItem[]> = {
     { href: "/dashboard/settings", label: "Settings", icon: IconSettings, group: "Account" },
   ],
   developer: [
-    { href: "/dev", label: "Overview", icon: IconLayoutDashboard, group: "Work" },
-    { href: "/dev/projects", label: "My Projects", icon: IconBriefcase, group: "Work" },
+    {
+      href: "/dev",
+      label: "Overview",
+      icon: IconLayoutDashboard,
+      group: "Work",
+      primary: true,
+    },
+    {
+      href: "/dev/projects",
+      label: "My Projects",
+      icon: IconBriefcase,
+      group: "Work",
+      primary: true,
+    },
+    { href: "/dev/time", label: "Time Tracking", icon: IconClock, group: "Work", primary: true },
     { href: "/dev/support", label: "Support", icon: IconMessageQuestion, group: "Work" },
-    { href: "/dev/time", label: "Time Tracking", icon: IconClock, group: "Work" },
     { href: "/dev/profile", label: "My Profile", icon: IconUserCircle, group: "Career" },
-    { href: "/dev/earnings", label: "Earnings", icon: IconCoin, group: "Career" },
-    { href: "/dev/messages", label: "Messages", icon: IconMessageCircle, group: "Admin" },
-    { href: "/dev/settings", label: "Settings", icon: IconSettings, group: "Admin" },
+    {
+      href: "/dev/earnings",
+      label: "Earnings",
+      icon: IconCoin,
+      group: "Career",
+      primary: true,
+    },
+    { href: "/dev/messages", label: "Messages", icon: IconMessageCircle, group: "Account" },
+    { href: "/dev/settings", label: "Settings", icon: IconSettings, group: "Account" },
   ],
 };
 
@@ -211,4 +285,37 @@ export const onboardingItems = {
 export const notifications = [
   { icon: IconBell, label: "3 profile updates ready" },
   { icon: IconClock, label: "One milestone due this week" },
+];
+
+export const pinnedChats = [
+  {
+    id: "chat-support",
+    name: "Support Desk",
+    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=80&q=80",
+    color: "bg-[var(--tertiary)]",
+    colorText: "text-[var(--tertiary)]",
+    unread: 0,
+    type: "support" as const,
+    initials: "SD",
+  },
+  {
+    id: "chat-project",
+    name: "Alpha Project Chat",
+    avatar: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=80&q=80",
+    color: "bg-[var(--secondary)]",
+    colorText: "text-[var(--secondary)]",
+    unread: 0,
+    type: "project" as const,
+    initials: "AP",
+  },
+  {
+    id: "chat-team",
+    name: "Team Sync",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80",
+    color: "bg-purple-500",
+    colorText: "text-purple-500",
+    unread: 2,
+    type: "team" as const,
+    initials: "TS",
+  },
 ];

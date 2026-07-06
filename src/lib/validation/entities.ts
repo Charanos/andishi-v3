@@ -250,6 +250,38 @@ export const publishCaseStudySchema = z.object({
   featuredOrder: z.number().int().min(0).optional().nullable(),
 });
 
+/**
+ * Marketing-site convenience schema backing POST /api/work: creates a
+ * project and publishes it as a public case study in one call, unlike the
+ * internal dashboard's two-step create-then-PATCH-publish flow. The public
+ * `/work` admin surface only ever deals with case-study fields, never the
+ * internal delivery fields (briefId, engineerIds, milestones, etc.).
+ */
+export const createWorkCaseStudySchema = z.object({
+  title: z.string().trim().min(2),
+  publicSlug: z
+    .string()
+    .trim()
+    .min(3)
+    .regex(/^[a-z0-9-]+$/, "Slug must be lowercase alphanumeric with hyphens"),
+  clientName: z.string().trim().min(1),
+  serviceType: serviceTypeEnum,
+  vertical: verticalEnum,
+  challenge: z.string().trim().min(20),
+  solution: z.string().trim().min(20),
+  outcome: z.string().trim().min(1),
+  outcomeLabel: z.string().trim().min(1),
+  coverImageUrl: z.string().url().optional().nullable(),
+  clientQuote: optionalText,
+  clientQuoteAttribution: optionalText,
+  stackTags: z.array(z.string().trim().min(1)).default([]),
+  featuredOrder: z.number().int().min(0).optional().nullable(),
+  startDate: optionalText,
+  targetDate: optionalText,
+});
+
+export const updateWorkCaseStudySchema = createWorkCaseStudySchema.partial();
+
 // ── Timesheet ─────────────────────────────────────────────────────
 
 export const createTimesheetSchema = z.object({

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { CareerDetailExperience } from "@/components/marketing/career-detail-experience";
-import { getJobBySlug } from "@/data/careers";
+import { fetchPublicOpening } from "@/lib/api/public-client";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -9,12 +8,12 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const job = getJobBySlug(slug);
+  const job = await fetchPublicOpening(slug);
   if (!job) return {};
 
   return {
     title: `${job.title} - Careers | Andishi`,
-    description: `Apply for the ${job.title} role in the ${job.department} department. Location: ${job.location}. Compensation: ${job.compensation_note}`,
+    description: `Apply for the ${job.title} role in the ${job.department} department. Location: ${job.location}.${job.compensationNote ? ` Compensation: ${job.compensationNote}` : ""}`,
     openGraph: {
       title: `${job.title} - Careers | Andishi`,
       description: `Join Andishi as a ${job.title}. Department: ${job.department}. Remote: ${job.remote ? "Yes" : "No"}.`,
@@ -25,6 +24,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CareerDetailPage({ params }: Props) {
   const { slug } = await params;
-  // Note: on the client we read from localStorage, but we pass slug to let the client component know which job to load.
-  return <CareerDetailExperience slug={slug} />;
+  const job = await fetchPublicOpening(slug);
+  return <CareerDetailExperience slug={slug} initialJob={job} />;
 }

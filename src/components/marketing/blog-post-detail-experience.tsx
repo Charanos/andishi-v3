@@ -20,7 +20,8 @@ import {
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PostCard } from "@/components/marketing/post-card";
 import { FinalCtaArtwork } from "@/components/ui/final-cta-artwork";
-import { blogPosts, categorySlug, getPost, type BlogPost } from "@/data/blog";
+import { categorySlug, type BlogPost } from "@/data/blog";
+import { mapBlogPostRow } from "@/lib/blog-mapper";
 import { siteConfig } from "@/config/site";
 
 export function BlogPostDetailExperience({
@@ -28,22 +29,31 @@ export function BlogPostDetailExperience({
   initialPost,
 }: {
   slug: string;
-  initialPost: BlogPost | undefined;
+  initialPost: BlogPost | null;
 }) {
-  const [post, setPost] = useState<BlogPost | undefined>(() => {
-    if (typeof window === "undefined") return initialPost;
-    return getPost(slug);
-  });
-
-  const loadPost = () => {
-    setPost(getPost(slug));
-  };
+  const [post, setPost] = useState<BlogPost | null>(initialPost);
+  const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
 
   useEffect(() => {
-    window.addEventListener("blog_posts_updated", loadPost);
-    return () => {
-      window.removeEventListener("blog_posts_updated", loadPost);
+    const loadPost = async () => {
+      try {
+        const [postRes, allRes] = await Promise.all([
+          fetch(`/api/blog/${slug}`),
+          fetch("/api/blog"),
+        ]);
+        if (postRes.ok) {
+          const data = await postRes.json();
+          setPost(data.post ? mapBlogPostRow(data.post) : null);
+        }
+        if (allRes.ok) {
+          const data = await allRes.json();
+          setAllPosts((data.posts ?? []).map(mapBlogPostRow));
+        }
+      } catch {
+        // Keep initialPost if fetch fails
+      }
     };
+    loadPost();
   }, [slug]);
 
   if (!post) {
@@ -67,7 +77,7 @@ export function BlogPostDetailExperience({
     );
   }
 
-  const related = blogPosts.filter((item) => item.slug !== post.slug).slice(0, 3);
+  const related = allPosts.filter((item) => item.slug !== post.slug).slice(0, 3);
 
   const postSchema = {
     "@context": "https://schema.org",
@@ -209,7 +219,7 @@ export function BlogPostDetailExperience({
                 aria-label="Supplementary article info"
               >
                 <ReadingSignals post={post} />
-                <CategoryCard post={post} />
+                <CategoryCard post={post} allPosts={allPosts} />
               </aside>
             </div>
           </div>
@@ -693,7 +703,7 @@ function ArticleBody({ post }: { post: BlogPost }) {
               {String(index + 1).padStart(2, "0")}
             </span>
           </div>
-          <p className="text-[clamp(1.04rem,2vw,1.15rem)] font-light leading-[1.88] text-[var(--on-surface-dim)]">
+          <p className="text-[clamp(1.04rem,2vw,1.15rem)] leading-[1.88] text-[var(--on-surface-dim)]">
             {paragraph}
           </p>
           {index > 0 && index < post.body.length - 1 && index % 2 === 0 && (
@@ -752,8 +762,8 @@ function ReadingSignals({ post }: { post: BlogPost }) {
   );
 }
 
-function CategoryCard({ post }: { post: BlogPost }) {
-  const related = blogPosts
+function CategoryCard({ post, allPosts }: { post: BlogPost; allPosts: BlogPost[] }) {
+  const related = allPosts
     .filter((item) => item.slug !== post.slug && item.category === post.category)
     .slice(0, 2);
 

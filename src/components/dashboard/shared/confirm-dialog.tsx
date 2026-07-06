@@ -2,6 +2,8 @@
 
 import { forwardRef, useEffect, useRef } from "react";
 import { IconAlertTriangle, IconX } from "@tabler/icons-react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 import { cn } from "@/lib/utils";
 
 export function ConfirmDialog({
@@ -22,6 +24,8 @@ export function ConfirmDialog({
   title: string;
 }) {
   const cancelRef = useRef<HTMLButtonElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -38,11 +42,26 @@ export function ConfirmDialog({
     };
   }, [onCancel, open]);
 
+  useGSAP(() => {
+    if (!open) return;
+    gsap.fromTo(
+      backdropRef.current,
+      { opacity: 0, backdropFilter: "blur(0px)" },
+      { opacity: 1, backdropFilter: "blur(24px)", duration: 0.35, ease: "power2.out" },
+    );
+    gsap.fromTo(
+      cardRef.current,
+      { scale: 0.95, opacity: 0, y: 10 },
+      { scale: 1, opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.4)", delay: 0.05 },
+    );
+  }, [open]);
+
   if (!open) return null;
 
   return (
     <div
-      className="fixed inset-0 z-[90] grid place-items-center bg-[color-mix(in_srgb,var(--bg-deep)_74%,transparent)] px-4 py-6 backdrop-blur-xl"
+      ref={backdropRef}
+      className="fixed inset-0 z-[90] grid place-items-center bg-[color-mix(in_srgb,var(--bg-deep)_74%,transparent)] px-4 py-6"
       role="dialog"
       aria-modal="true"
       aria-labelledby="confirm-dialog-title"
@@ -50,7 +69,10 @@ export function ConfirmDialog({
         if (event.target === event.currentTarget) onCancel();
       }}
     >
-      <div className="w-full max-w-xl overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[var(--surface)] shadow-[0_28px_100px_color-mix(in_srgb,var(--bg-deep)_44%,transparent)]">
+      <div
+        ref={cardRef}
+        className="w-full max-w-xl overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[var(--surface)] shadow-[0_28px_100px_color-mix(in_srgb,var(--bg-deep)_44%,transparent)]"
+      >
         <div className="flex items-start gap-4 border-b border-[var(--glass-border)] p-5 sm:p-6">
           <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-[color-mix(in_srgb,var(--secondary)_26%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_10%,transparent)] text-[var(--secondary)]">
             <IconAlertTriangle size={21} stroke={1.7} />

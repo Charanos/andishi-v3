@@ -161,6 +161,8 @@ export const PERMISSION_CATALOG: PermissionDefinition[] = [
   perm("platform", "audit", "read", "View the immutable audit log"),
   perm("platform", "integration", "write", "Configure third-party integrations"),
   perm("platform", "job", "read", "View background job run history"),
+  perm("platform", "governance", "read", "View governance/compliance controls"),
+  perm("platform", "governance", "write", "Create, update, and archive governance/compliance controls"),
 ];
 
 export type PermissionKey = (typeof PERMISSION_CATALOG)[number]["key"];

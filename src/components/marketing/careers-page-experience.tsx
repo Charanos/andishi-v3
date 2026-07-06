@@ -15,10 +15,54 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getJobOpenings, saveJobOpening, deleteJobOpening, JobOpening, JobKind, JobStatus } from "@/data/careers";
+import type { JobOpening } from "@/db/schema/careers";
 import { MarkdownEditor } from "@/components/ui/markdown-editor";
 import { PublicPageShell, RouteHero, GlassPanel } from "./public-page";
 import { cn } from "@/lib/utils";
+import { ConfirmDialog } from "@/components/dashboard/shared/confirm-dialog";
+import { useToast } from "@/components/dashboard/shared/toast-provider";
+
+type JobKind = JobOpening["kind"];
+type JobStatus = JobOpening["status"];
+
+type JobDraft = {
+  id?: string;
+  title: string;
+  slug: string;
+  kind: JobKind;
+  department: string;
+  location: string;
+  remote: boolean;
+  seniority: string;
+  compensationNote: string;
+  status: JobStatus;
+  skills: string[];
+  descriptionMd: string;
+};
+
+function toDraft(job?: JobOpening): JobDraft {
+  return {
+    id: job?.id,
+    title: job?.title ?? "",
+    slug: job?.slug ?? "",
+    kind: job?.kind ?? "freelance",
+    department: job?.department ?? "Engineering",
+    location: job?.location ?? "Nairobi, Kenya",
+    remote: job?.remote ?? true,
+    seniority: job?.seniority ?? "Senior",
+    compensationNote: job?.compensationNote ?? "",
+    status: job?.status ?? "open",
+    skills: job?.skills ?? [],
+    descriptionMd: job?.descriptionMd ?? "",
+  };
+}
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
 
 // Accent glow mapping matching design system
 const kindStyles: Record<
@@ -48,11 +92,13 @@ const kindStyles: Record<
   },
 };
 
-export function CareersPageExperience() {
-  const [openings, setOpenings] = useState<JobOpening[]>(() => {
-    if (typeof window === "undefined") return [];
-    return getJobOpenings();
-  });
+interface CareersPageExperienceProps {
+  /** Pre-fetched server-side data to prevent empty flash on initial render. */
+  initialOpenings?: JobOpening[];
+}
+
+export function CareersPageExperience({ initialOpenings = [] }: CareersPageExperienceProps) {
+  const [openings, setOpenings] = useState<JobOpening[]>(initialOpenings);
   const [search, setSearch] = useState("");
   const [activeKind, setActiveKind] = useState<JobKind | "all">("all");
   const [activeDept, setActiveDept] = useState<string>("all");
@@ -60,13 +106,30 @@ export function CareersPageExperience() {
 
   // Administrative simulation state
   const [isAdmin, setIsAdmin] = useState(false);
-  const [editingJob, setEditingJob] = useState<JobOpening | null>(null);
+  const [draft, setDraft] = useState<JobDraft | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [deletingJobId, setDeletingJobId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { notify } = useToast();
 
-  // Load openings
+  const reloadOpenings = async (admin: boolean) => {
+    try {
+      const res = await fetch(admin ? "/api/careers/openings" : "/api/careers");
+      if (res.ok) {
+        const data = await res.json();
+        setOpenings(data.openings ?? []);
+      }
+    } catch {
+      // Keep current openings if fetch fails
+    }
+  };
+
   useEffect(() => {
     const checkAdmin = () => {
-      setIsAdmin(localStorage.getItem("andishi_admin_sim_logged_in") === "true");
+      const admin = localStorage.getItem("andishi_admin_sim_logged_in") === "true";
+      setIsAdmin(admin);
+      reloadOpenings(admin);
     };
     checkAdmin();
     window.addEventListener("storage", checkAdmin);
@@ -80,23 +143,30 @@ export function CareersPageExperience() {
   const handleDeleteJob = (id: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (confirm("Are you sure you want to delete this opening?")) {
-      deleteJobOpening(id);
-      reloadOpenings();
-    }
+    setDeletingJobId(id);
   };
 
-  // Sync state helper
-  const reloadOpenings = () => {
-    setOpenings(getJobOpenings());
+  const handleDeleteConfirm = async () => {
+    if (!deletingJobId) return;
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/careers/openings/${deletingJobId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Delete failed");
+      setOpenings((prev) => prev.filter((o) => o.id !== deletingJobId));
+      notify("Job opening deleted successfully", "success");
+    } catch {
+      notify("Failed to delete job opening", "error");
+    } finally {
+      setIsDeleting(false);
+      setDeletingJobId(null);
+    }
   };
 
   // Get unique departments for filtering
   const departments = ["all", ...Array.from(new Set(openings.map((j) => j.department)))];
 
-  // Filter logic: Admins see all status, public sees only "open" status
+  // Filter logic: admin view already fetches all statuses; public view already fetches only "open"
   const filteredOpenings = openings.filter((job) => {
-    const matchesStatus = isAdmin ? true : job.status === "open";
     const matchesSearch =
       job.title.toLowerCase().includes(search.toLowerCase()) ||
       job.skills.some((s) => s.toLowerCase().includes(search.toLowerCase())) ||
@@ -105,47 +175,65 @@ export function CareersPageExperience() {
     const matchesDept = activeDept === "all" ? true : job.department === activeDept;
     const matchesRemote = onlyRemote ? job.remote : true;
 
-    return matchesStatus && matchesSearch && matchesKind && matchesDept && matchesRemote;
+    return matchesSearch && matchesKind && matchesDept && matchesRemote;
   });
 
   // Inline CRUD Handlers
-  const handleSaveJob = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSaveJob = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!editingJob) return;
+    if (!draft) return;
 
-    // Auto-generate slug from title if new
-    const updatedJob = {
-      ...editingJob,
-      slug: editingJob.title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, ""),
-      published_at: editingJob.published_at || new Date().toISOString(),
+    const payload = {
+      title: draft.title,
+      slug: draft.slug || slugify(draft.title),
+      kind: draft.kind,
+      department: draft.department,
+      location: draft.location,
+      remote: draft.remote,
+      seniority: draft.seniority,
+      compensationNote: draft.compensationNote || null,
+      status: draft.status,
+      skills: draft.skills,
+      descriptionMd: draft.descriptionMd,
     };
 
-    saveJobOpening(updatedJob);
-    setEditingJob(null);
-    setIsCreating(false);
-    reloadOpenings();
+    setIsSaving(true);
+    try {
+      const res = isCreating
+        ? await fetch("/api/careers/openings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          })
+        : await fetch(`/api/careers/openings/${draft.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error ?? "Save failed");
+      }
+
+      const data = await res.json();
+      const saved: JobOpening = data.opening;
+
+      setOpenings((prev) =>
+        isCreating ? [saved, ...prev] : prev.map((o) => (o.id === saved.id ? saved : o)),
+      );
+      setDraft(null);
+      setIsCreating(false);
+      notify(isCreating ? "Job opening published successfully" : "Job opening saved successfully", "success");
+    } catch (err) {
+      notify(err instanceof Error ? err.message : "Save failed", "error");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleStartCreate = () => {
-    const newJob: JobOpening = {
-      id: `job-${Date.now()}`,
-      title: "",
-      slug: "",
-      kind: "freelance",
-      department: "Engineering",
-      location: "Nairobi, Kenya",
-      remote: true,
-      seniority: "Senior",
-      compensation_note: "",
-      status: "open",
-      published_at: "",
-      skills: [],
-      description_md: "",
-    };
-    setEditingJob(newJob);
+    setDraft(toDraft());
     setIsCreating(true);
   };
 
@@ -279,8 +367,8 @@ export function CareersPageExperience() {
                                 Closed
                               </span>
                             ) : null}
-                            {job.published_at
-                              ? new Date(job.published_at).toLocaleDateString()
+                            {job.publishedAt
+                              ? new Date(job.publishedAt).toLocaleDateString()
                               : ""}
                           </span>
                         </div>
@@ -296,7 +384,7 @@ export function CareersPageExperience() {
 
                         {/* Description excerpt */}
                         <p className="text-[0.82rem] leading-[1.62] text-[var(--on-surface-dim)] line-clamp-3">
-                          {job.description_md
+                          {job.descriptionMd
                             .replace(/[#*`\n_]/g, " ")
                             .replace(/\s+/g, " ")
                             .trim()}
@@ -340,17 +428,17 @@ export function CareersPageExperience() {
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
-                                  setEditingJob(job);
+                                  setDraft(toDraft(job));
                                   setIsCreating(false);
                                 }}
-                                className="p-1.5 rounded-lg border border-[var(--glass-border)] bg-[var(--surface-low)] text-[var(--on-surface-dim)] hover:text-[var(--on-surface)] hover:bg-[color-mix(in_srgb,var(--on-surface)_6%,transparent)] transition-all cursor-pointer"
+                                className="p-1.5 rounded-lg border border-[var(--glass-border)] bg-[var(--surface-low)] text-[var(--on-surface-dim)] shadow-sm backdrop-blur-md transition-all duration-200 hover:scale-105 hover:text-[var(--on-surface)] hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-95 cursor-pointer"
                                 title="Edit Role"
                               >
                                 <IconEdit size={13} />
                               </button>
                               <button
                                 onClick={(e) => handleDeleteJob(job.id, e)}
-                                className="p-1.5 rounded-lg border border-red-500/20 bg-[var(--surface-low)] text-red-500 hover:bg-red-500/10 transition-all cursor-pointer"
+                                className="p-1.5 rounded-lg border border-red-500/25 bg-[var(--surface-low)] text-red-500 shadow-sm backdrop-blur-md transition-all duration-200 hover:scale-105 hover:bg-red-500/15 active:scale-95 cursor-pointer"
                                 title="Delete Role"
                               >
                                 <IconTrash size={13} />
@@ -410,7 +498,7 @@ export function CareersPageExperience() {
 
       {/* Inline Creation / Edit Dialog Modal */}
       <AnimatePresence>
-        {editingJob && (
+        {draft && (
           <div
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md"
             role="dialog"
@@ -430,7 +518,7 @@ export function CareersPageExperience() {
                 <button
                   type="button"
                   onClick={() => {
-                    setEditingJob(null);
+                    setDraft(null);
                     setIsCreating(false);
                   }}
                   className="rounded-full p-1 text-[var(--on-surface-dim)] hover:text-[var(--on-surface)] hover:bg-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] transition-colors"
@@ -451,8 +539,8 @@ export function CareersPageExperience() {
                   <input
                     type="text"
                     required
-                    value={editingJob.title}
-                    onChange={(e) => setEditingJob({ ...editingJob, title: e.target.value })}
+                    value={draft.title}
+                    onChange={(e) => setDraft({ ...draft, title: e.target.value })}
                     placeholder="e.g. Senior AI Systems Engineer"
                     className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)] transition-all"
                   />
@@ -465,10 +553,8 @@ export function CareersPageExperience() {
                       Supply Channel
                     </label>
                     <select
-                      value={editingJob.kind}
-                      onChange={(e) =>
-                        setEditingJob({ ...editingJob, kind: e.target.value as JobKind })
-                      }
+                      value={draft.kind}
+                      onChange={(e) => setDraft({ ...draft, kind: e.target.value as JobKind })}
                       className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     >
                       <option value="freelance">Freelance Project</option>
@@ -482,8 +568,8 @@ export function CareersPageExperience() {
                       Department
                     </label>
                     <select
-                      value={editingJob.department}
-                      onChange={(e) => setEditingJob({ ...editingJob, department: e.target.value })}
+                      value={draft.department}
+                      onChange={(e) => setDraft({ ...draft, department: e.target.value })}
                       className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     >
                       <option value="Engineering">Engineering</option>
@@ -500,8 +586,8 @@ export function CareersPageExperience() {
                     <input
                       type="text"
                       required
-                      value={editingJob.seniority}
-                      onChange={(e) => setEditingJob({ ...editingJob, seniority: e.target.value })}
+                      value={draft.seniority}
+                      onChange={(e) => setDraft({ ...draft, seniority: e.target.value })}
                       placeholder="e.g. Senior / Lead"
                       className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     />
@@ -517,8 +603,8 @@ export function CareersPageExperience() {
                     <input
                       type="text"
                       required
-                      value={editingJob.location}
-                      onChange={(e) => setEditingJob({ ...editingJob, location: e.target.value })}
+                      value={draft.location}
+                      onChange={(e) => setDraft({ ...draft, location: e.target.value })}
                       placeholder="e.g. Nairobi, Kenya"
                       className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     />
@@ -529,10 +615,8 @@ export function CareersPageExperience() {
                       Remote Eligibility
                     </label>
                     <select
-                      value={editingJob.remote ? "true" : "false"}
-                      onChange={(e) =>
-                        setEditingJob({ ...editingJob, remote: e.target.value === "true" })
-                      }
+                      value={draft.remote ? "true" : "false"}
+                      onChange={(e) => setDraft({ ...draft, remote: e.target.value === "true" })}
                       className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     >
                       <option value="true">Fully Remote</option>
@@ -545,10 +629,8 @@ export function CareersPageExperience() {
                       Listing Status
                     </label>
                     <select
-                      value={editingJob.status}
-                      onChange={(e) =>
-                        setEditingJob({ ...editingJob, status: e.target.value as JobStatus })
-                      }
+                      value={draft.status}
+                      onChange={(e) => setDraft({ ...draft, status: e.target.value as JobStatus })}
                       className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     >
                       <option value="open">Open (Public)</option>
@@ -566,11 +648,8 @@ export function CareersPageExperience() {
                     </label>
                     <input
                       type="text"
-                      required
-                      value={editingJob.compensation_note}
-                      onChange={(e) =>
-                        setEditingJob({ ...editingJob, compensation_note: e.target.value })
-                      }
+                      value={draft.compensationNote}
+                      onChange={(e) => setDraft({ ...draft, compensationNote: e.target.value })}
                       placeholder="e.g. $8,000 - $12,000 / mo"
                       className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     />
@@ -583,10 +662,10 @@ export function CareersPageExperience() {
                     <input
                       type="text"
                       required
-                      value={editingJob.skills.join(", ")}
+                      value={draft.skills.join(", ")}
                       onChange={(e) =>
-                        setEditingJob({
-                          ...editingJob,
+                        setDraft({
+                          ...draft,
                           skills: e.target.value
                             .split(",")
                             .map((s) => s.trim())
@@ -603,8 +682,8 @@ export function CareersPageExperience() {
                 <div className="text-left">
                   <MarkdownEditor
                     label="Job Description"
-                    value={editingJob.description_md}
-                    onChange={(val) => setEditingJob({ ...editingJob, description_md: val })}
+                    value={draft.descriptionMd}
+                    onChange={(val) => setDraft({ ...draft, descriptionMd: val })}
                     placeholder="## The Role..."
                     rows={7}
                   />
@@ -615,19 +694,21 @@ export function CareersPageExperience() {
                   <button
                     type="button"
                     onClick={() => {
-                      setEditingJob(null);
+                      setDraft(null);
                       setIsCreating(false);
                     }}
-                    className="rounded-xl border border-[var(--glass-border)] px-4 h-10 font-mono text-[0.7rem] uppercase tracking-wider text-[var(--on-surface-dim)] hover:bg-[color-mix(in_srgb,var(--on-surface)_5%,transparent)] transition-all"
+                    disabled={isSaving}
+                    className="rounded-xl border border-[var(--glass-border)] px-4 h-10 font-mono text-[0.7rem] uppercase tracking-wider text-[var(--on-surface-dim)] hover:bg-[color-mix(in_srgb,var(--on-surface)_5%,transparent)] transition-all disabled:opacity-50"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex items-center gap-1.5 rounded-xl bg-[var(--on-surface)] px-5 h-10 font-mono text-[0.7rem] uppercase tracking-wider text-[var(--bg)] transition-all hover:bg-[color-mix(in_srgb,var(--on-surface)_90%,transparent)] active:scale-95"
+                    disabled={isSaving}
+                    className="flex items-center gap-1.5 rounded-xl bg-[var(--on-surface)] px-5 h-10 font-mono text-[0.7rem] uppercase tracking-wider text-[var(--bg)] transition-all hover:bg-[color-mix(in_srgb,var(--on-surface)_90%,transparent)] active:scale-95 disabled:opacity-70"
                   >
                     <IconCheck size={14} />
-                    {isCreating ? "Publish Opening" : "Save Changes"}
+                    {isSaving ? "Saving…" : isCreating ? "Publish Opening" : "Save Changes"}
                   </button>
                 </div>
               </form>
@@ -635,6 +716,15 @@ export function CareersPageExperience() {
           </div>
         )}
       </AnimatePresence>
+
+      <ConfirmDialog
+        open={deletingJobId !== null}
+        title="Delete Job Opening?"
+        description="This action is permanent and will remove the job opening from the public directory. Vetted applicants will no longer be able to view or apply to this role."
+        confirmLabel={isDeleting ? "Deleting…" : "Permanently Delete"}
+        onCancel={() => setDeletingJobId(null)}
+        onConfirm={handleDeleteConfirm}
+      />
     </PublicPageShell>
   );
 }

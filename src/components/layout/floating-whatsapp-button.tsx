@@ -53,7 +53,7 @@ export function FloatingWhatsappButton() {
 
             {/* Body message */}
             <p className="mt-4 font-sans text-[0.84rem] leading-relaxed text-[var(--on-surface-dim)]">
-              Hi! Have a general inquiry or want to build a digital product with Andishi Studio?
+              Hi! Have a general inquiry or want to build a Software Product with Andishi Studio?
               Let&apos;s chat on WhatsApp.
             </p>
 

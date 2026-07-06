@@ -391,7 +391,7 @@ export function ServiceDetailExperience({
                   <motion.h1 variants={fadeUp} className="title-serif m-0 text-[clamp(2.5rem,5.6vw,4.4rem)] font-normal leading-[0.96] tracking-tight text-[var(--on-surface)]">
                     {service.title}
                   </motion.h1>
-                  <motion.p variants={fadeUp} className="mt-5 max-w-xl text-[clamp(1rem,1.7vw,1.1rem)] leading-[1.74] font-light text-[var(--on-surface-dim)]">
+                  <motion.p variants={fadeUp} className="mt-5 max-w-xl text-[clamp(1rem,1.7vw,1.1rem)] leading-[1.74] text-[var(--on-surface-dim)]">
                     {service.tagline}
                   </motion.p>
                   <motion.div variants={fadeUp} className="mt-7 flex flex-wrap gap-3">

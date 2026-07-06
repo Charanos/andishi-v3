@@ -8,7 +8,7 @@ import {
   parseJson,
   validationError,
 } from "@/lib/api/responses";
-import { updateJobOpening } from "@/lib/services/careers/openings";
+import { deleteJobOpening, updateJobOpening } from "@/lib/services/careers/openings";
 import { updateJobOpeningSchema } from "@/lib/validation/careers";
 
 export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
@@ -27,6 +27,26 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ id: s
       parsed.data,
     );
     return NextResponse.json({ opening });
+  } catch (error) {
+    return handleRouteError(error, {
+      requestId,
+      actorUserId: session.user.id,
+      module: "careers",
+      action: "job.write",
+    });
+  }
+}
+
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const requestId = generateRequestId();
+  const session = await getSession();
+  if (!session) return jsonError("Unauthorized", 401);
+
+  const { id } = await context.params;
+
+  try {
+    await deleteJobOpening({ session, requestId, actorIp: getClientIp(req) }, id);
+    return NextResponse.json({ success: true });
   } catch (error) {
     return handleRouteError(error, {
       requestId,

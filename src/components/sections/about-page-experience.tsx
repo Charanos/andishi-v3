@@ -451,7 +451,7 @@ function Hero() {
             <p className="body-md text-[var(--on-surface-dim)]">
               Andishi is a software development studio that designs, builds, and ships
               high-quality custom software, SaaS platforms, AI systems, and mobile apps.
-              We work with global startups and local enterprises to launch digital products
+              We work with global startups and local enterprises to launch Software Products
               with speed, discipline, and full IP ownership.
             </p>
             <blockquote className="border-l border-[color-mix(in_srgb,var(--secondary)_44%,transparent)] pl-5 text-[clamp(1.18rem,2.4vw,1.55rem)] font-normal leading-snug text-[var(--on-surface)]">

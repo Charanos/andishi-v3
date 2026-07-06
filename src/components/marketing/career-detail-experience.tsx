@@ -13,20 +13,11 @@ import {
   IconBrandLinkedin,
   IconWorld,
   IconAlertCircle,
-  IconEdit,
-  IconX,
 } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import {
-  getJobBySlug,
-  saveJobOpening,
-  saveApplication,
-  JobOpening,
-  Application,
-  JobKind,
-  JobStatus,
-} from "@/data/careers";
+import { useToast } from "@/components/dashboard/shared/toast-provider";
+import type { JobOpening } from "@/db/schema/careers";
 import { PublicPageShell, GlassPanel } from "./public-page";
 
 // Custom simple markdown parser to render descriptions beautifully without library dependencies
@@ -95,16 +86,19 @@ function parseBold(text: string): string {
   );
 }
 
-const kindLabels: Record<JobKind, string> = {
+const kindLabels: Record<JobOpening["kind"], string> = {
   freelance: "Freelance Project",
   internal: "Studio Core",
   outsourced: "Client Placement",
 };
 
-export function CareerDetailExperience({ slug }: { slug: string }) {
-  const [job, setJob] = useState<JobOpening | null>(() => {
-    return getJobBySlug(slug) || null;
-  });
+interface CareerDetailExperienceProps {
+  slug: string;
+  initialJob: JobOpening | null;
+}
+
+export function CareerDetailExperience({ slug, initialJob }: CareerDetailExperienceProps) {
+  const [job, setJob] = useState<JobOpening | null>(initialJob);
   const [loading, setLoading] = useState(false);
 
   // Form State
@@ -119,41 +113,37 @@ export function CareerDetailExperience({ slug }: { slug: string }) {
 
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitProgress, setSubmitProgress] = useState(0);
   const [isSuccess, setIsSuccess] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "done">("idle");
-
-  // Admin inline editing simulation state
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingTitle, setEditingTitle] = useState(() => getJobBySlug(slug)?.title ?? "");
-  const [editingLocation, setEditingLocation] = useState(() => getJobBySlug(slug)?.location ?? "");
-  const [editingCompensation, setEditingCompensation] = useState(
-    () => getJobBySlug(slug)?.compensation_note ?? "",
-  );
-  const [editingDescription, setEditingDescription] = useState(
-    () => getJobBySlug(slug)?.description_md ?? "",
-  );
-  const [editingStatus, setEditingStatus] = useState<JobStatus>(
-    () => getJobBySlug(slug)?.status ?? "open",
-  );
+  const { notify } = useToast();
 
   useEffect(() => {
-    // Intentionally an Effect, not a lazy useState initializer: localStorage
-    // isn't available during SSR, so reading it eagerly would make the first
-    // client render disagree with the server-rendered HTML (a hydration
-    // mismatch). Deferring to an Effect keeps the first paint consistent and
-    // only flips isAdmin after hydration completes.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsAdmin(localStorage.getItem("andishi_admin_sim_logged_in") === "true");
-  }, []);
+    if (initialJob) return;
+    const loadJob = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/careers/${slug}`);
+        if (res.ok) {
+          const data = await res.json();
+          setJob(data.opening ?? null);
+        }
+      } catch {
+        // Keep null - renders the not-found state below
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadJob();
+  }, [slug, initialJob]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setResumeFile(file);
       setUploadStatus("uploading");
-      // Simulate file upload progress
+      // No file storage is wired up yet - this placeholder link stands in
+      // for a real upload until Vercel Blob (BLOB_READ_WRITE_TOKEN) is
+      // configured. Applicants can also paste a real resume link instead.
       setTimeout(() => {
         setUploadStatus("done");
         setResumeUrl(`https://example.com/resumes/${file.name}`);
@@ -161,71 +151,46 @@ export function CareerDetailExperience({ slug }: { slug: string }) {
     }
   };
 
-  const handleApply = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleApply = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!job) return;
 
-    if (!resumeUrl && !resumeFile) {
-      alert("Please upload a resume or provide a link.");
+    if (!resumeUrl) {
+      notify("Please upload a resume or provide a link.", "error");
       return;
     }
 
     setIsSubmitting(true);
-    setSubmitProgress(10);
-
-    // Simulate submission timeline
-    const interval = setInterval(() => {
-      setSubmitProgress((prev) => {
-        if (prev >= 90) {
-          clearInterval(interval);
-          return 90;
-        }
-        return prev + 25;
+    try {
+      const res = await fetch("/api/careers/applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jobOpeningId: job.id,
+          applicantName: name,
+          applicantEmail: email,
+          resumeUrl,
+          links: {
+            ...(github ? { github } : {}),
+            ...(linkedin ? { linkedin } : {}),
+            ...(portfolio ? { portfolio } : {}),
+          },
+          coverNote: coverNote || null,
+        }),
       });
-    }, 400);
 
-    setTimeout(() => {
-      clearInterval(interval);
-      setSubmitProgress(100);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error ?? "Submission failed");
+      }
 
-      const application: Application = {
-        id: `app-${Date.now()}`,
-        job_opening_id: job.id,
-        applicant_name: name,
-        applicant_email: email,
-        resume_url: resumeUrl || `https://example.com/resumes/${resumeFile?.name || "cv.pdf"}`,
-        links: { github, linkedin, portfolio },
-        cover_note: coverNote,
-        stage: "applied",
-        created_at: new Date().toISOString(),
-      };
-
-      saveApplication(application);
-
-      setTimeout(() => {
-        setIsSubmitting(false);
-        setIsSuccess(true);
-      }, 300);
-    }, 2000);
-  };
-
-  // Inline edit save
-  const handleInlineSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!job) return;
-
-    const updatedJob: JobOpening = {
-      ...job,
-      title: editingTitle,
-      location: editingLocation,
-      compensation_note: editingCompensation,
-      description_md: editingDescription,
-      status: editingStatus,
-    };
-
-    saveJobOpening(updatedJob);
-    setJob(updatedJob);
-    setIsEditing(false);
+      setIsSuccess(true);
+      notify("Job application submitted successfully!", "success");
+    } catch (err) {
+      notify(err instanceof Error ? err.message : "Submission failed", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -303,22 +268,13 @@ export function CareerDetailExperience({ slug }: { slug: string }) {
                   <IconMapPin size={15} className="text-[var(--secondary)]" />
                   {job.location} {job.remote && "(Remote eligible)"}
                 </div>
-                <div className="flex items-center gap-1">
-                  <IconClock size={15} />
-                  {job.compensation_note}
-                </div>
+                {job.compensationNote && (
+                  <div className="flex items-center gap-1">
+                    <IconClock size={15} />
+                    {job.compensationNote}
+                  </div>
+                )}
               </div>
-
-              {/* Inline Edit Trigger */}
-              {isAdmin && (
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-1.5 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3.5 py-1.5 font-mono text-[0.68rem] tracking-tight text-[var(--on-surface-dim)] hover:text-white hover:border-[var(--on-surface)] transition-all"
-                >
-                  <IconEdit size={12} />
-                  Edit Role Details
-                </button>
-              )}
             </div>
           </div>
 
@@ -333,7 +289,7 @@ export function CareerDetailExperience({ slug }: { slug: string }) {
                   "max-md:p-0 max-md:bg-transparent max-md:shadow-none",
                 )}
               >
-                <MarkdownRenderer content={job.description_md} />
+                <MarkdownRenderer content={job.descriptionMd} />
 
                 {/* Requirements Skills */}
                 <div className="mt-8 pt-8 border-t border-[var(--glass-border)]">
@@ -370,8 +326,7 @@ export function CareerDetailExperience({ slug }: { slug: string }) {
                         Apply Now
                       </h2>
                       <p className="body-md text-[0.8rem] text-[var(--on-surface-dim)] mb-6 leading-relaxed">
-                        Submit your developer profile directly to Andishi operations. Files upload
-                        locally.
+                        Submit your developer profile directly to Andishi operations.
                       </p>
 
                       <form onSubmit={handleApply} className="space-y-4">
@@ -428,7 +383,7 @@ export function CareerDetailExperience({ slug }: { slug: string }) {
                               <div className="flex flex-col items-center gap-2">
                                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--primary)] border-t-transparent" />
                                 <span className="font-mono text-[0.68rem] text-[var(--primary)]">
-                                  Simulating upload...
+                                  Uploading...
                                 </span>
                               </div>
                             )}
@@ -531,7 +486,7 @@ export function CareerDetailExperience({ slug }: { slug: string }) {
                             {isSubmitting ? (
                               <div className="flex items-center gap-2">
                                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent" />
-                                <span>Submitting ({submitProgress}%)</span>
+                                <span>Submitting…</span>
                               </div>
                             ) : (
                               <>
@@ -556,7 +511,7 @@ export function CareerDetailExperience({ slug }: { slug: string }) {
                         <IconCheck size={26} stroke={2.5} />
                       </div>
                       <h2 className="title-serif text-[1.6rem] text-[var(--on-surface)]">
-                        Application Logged!
+                        Application Submitted!
                       </h2>
                       <p className="body-md text-[0.84rem] text-[var(--on-surface-dim)] max-w-sm">
                         Thank you for applying, <strong className="text-white">{name}</strong>. Your
@@ -581,8 +536,7 @@ export function CareerDetailExperience({ slug }: { slug: string }) {
                       </div>
 
                       <p className="text-[0.72rem] text-[var(--on-surface-dim)] opacity-50 mt-1">
-                        A recruiter will review your profile and get back to you shortly. You can
-                        also view this application in the admin portal simulation.
+                        A recruiter will review your profile and get back to you shortly.
                       </p>
 
                       <button
@@ -610,129 +564,6 @@ export function CareerDetailExperience({ slug }: { slug: string }) {
           </div>
         </div>
       </section>
-
-      {/* Edit Drawer Sidebar (Full Screen Modal Overlay) */}
-      <AnimatePresence>
-        {isEditing && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-end bg-black/60 backdrop-blur-md"
-            role="dialog"
-            aria-modal="true"
-          >
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.35, ease: "easeInOut" }}
-              className="h-full w-full max-w-xl border-l border-[var(--glass-border)] bg-[var(--surface-container)] p-6 shadow-2xl backdrop-blur-2xl overflow-y-auto"
-            >
-              <div className="flex items-center justify-between border-b border-[var(--glass-border)] pb-4 mb-6">
-                <div>
-                  <h2 className="title-serif text-[1.4rem] text-[var(--on-surface)]">
-                    Edit Opening Details
-                  </h2>
-                  <p className="font-mono text-[0.65rem] text-[var(--on-surface-dim)] opacity-50">
-                    ID: {job.id}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                  className="rounded-full p-1 text-[var(--on-surface-dim)] hover:text-[var(--on-surface)] hover:bg-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] transition-colors"
-                >
-                  <IconX size={20} />
-                </button>
-              </div>
-
-              <form onSubmit={handleInlineSave} className="space-y-4">
-                <div>
-                  <label className="block text-[0.7rem] font-mono uppercase tracking-wider text-[var(--on-surface-dim)] mb-1">
-                    Job Title
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={editingTitle}
-                    onChange={(e) => setEditingTitle(e.target.value)}
-                    className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[0.7rem] font-mono uppercase tracking-wider text-[var(--on-surface-dim)] mb-1">
-                    Location
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={editingLocation}
-                    onChange={(e) => setEditingLocation(e.target.value)}
-                    className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[0.7rem] font-mono uppercase tracking-wider text-[var(--on-surface-dim)] mb-1">
-                    Compensation Note
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={editingCompensation}
-                    onChange={(e) => setEditingCompensation(e.target.value)}
-                    className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[0.7rem] font-mono uppercase tracking-wider text-[var(--on-surface-dim)] mb-1">
-                    Status
-                  </label>
-                  <select
-                    value={editingStatus}
-                    onChange={(e) => setEditingStatus(e.target.value as JobStatus)}
-                    className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
-                  >
-                    <option value="open">Open (Public)</option>
-                    <option value="draft">Draft (Admin Only)</option>
-                    <option value="closed">Closed / Filled</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-[0.7rem] font-mono uppercase tracking-wider text-[var(--on-surface-dim)] mb-1">
-                    Job Description (Markdown)
-                  </label>
-                  <textarea
-                    required
-                    rows={12}
-                    value={editingDescription}
-                    onChange={(e) => setEditingDescription(e.target.value)}
-                    className="w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] p-3 font-sans text-[0.82rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
-                  />
-                </div>
-
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-[var(--glass-border)] mt-6">
-                  <button
-                    type="button"
-                    onClick={() => setIsEditing(false)}
-                    className="rounded-xl border border-[var(--glass-border)] px-4 h-10 font-mono text-[0.7rem] uppercase tracking-wider text-[var(--on-surface-dim)] hover:bg-[color-mix(in_srgb,var(--on-surface)_5%,transparent)] transition-all"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex items-center gap-1.5 rounded-xl bg-[var(--on-surface)] px-5 h-10 font-mono text-[0.7rem] uppercase tracking-wider text-[var(--bg)] hover:bg-[color-mix(in_srgb,var(--on-surface)_90%,transparent)] transition-all active:scale-95"
-                  >
-                    <IconCheck size={14} />
-                    Save Details
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </PublicPageShell>
   );
 }

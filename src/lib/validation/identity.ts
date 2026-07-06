@@ -18,6 +18,8 @@ export const updateUserAccessSchema = z.object({
   role: z.enum(["admin", "client", "developer"]).optional(),
   organizationId: uuid.optional().nullable(),
   engineerId: uuid.optional().nullable(),
+  owner: optionalText,
+  accessNotes: optionalText,
 });
 
 /**

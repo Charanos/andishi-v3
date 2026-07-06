@@ -116,15 +116,20 @@ The visual style is a hyper-refined **Layered Glassmorphism**. Unlike standard g
 
 The palette is dual-themed, transitioning between the vastness of deep space and the clarity of stellar luminosity.
 
-**Nebula Dark** utilizes a #07050F base. It is not a pure black, but a deeply saturated violet-tinted void. Primary violet and cyan hues are used as glowing interactive elements or soft background orbs. 
+**Nebula Dark** utilizes a #07050F base. It is not a pure black, but a deeply saturated violet-tinted void. Primary violet and cyan hues are used as glowing interactive elements or soft background orbs. Status markers use emerald green for timeline milestones.
 
-**Stellar Light** mimics high-end frosted glass. It uses a clean arctic blue and lavender accent system against a neutral, high-key background. 
+**Stellar Light (Decyanized)** utilizes deep purples and violet shades strictly for branding and focus states. 
+- **No Cyan or Green Accents:** All tags, eyebrows, badges, active components, and accents have been stripped of cyan and green. Theme colors primary, secondary, and tertiary map to deep purple and violet shades.
+- **Background Swap:** The dashboard sidebar uses a subtle purple-hue background (`bg-[var(--dashboard-sidebar)]`), while the main dashboard canvas is clean and elevated to structure depth.
+- **KPI Metrics Cards Balance:** Avoid over-utilizing purple fills in metrics blocks. KPI cards should remain clean, minimal, and editorial to prevent color saturation.
 
 Both themes rely on **glassmorphism** for surface definition. Surfaces are defined by their backdrop blur (30px-60px) and a subtle 1px inner stroke that mimics light catching the edge of a lens. Avoid solid fills for containers; prefer semi-transparent layers that allow background cosmic illustrations to bleed through softly.
 
 ## Typography
 
-This design system pairs **Outfit** with a restrained editorial serif accent. Outfit remains the operating system for body copy, navigation, labels, controls, tables, and dense dashboard UI. **Cormorant Garamond** is reserved for public display headlines, landing section titles, dashboard page titles, and major dashboard section titles through the `.title-serif` utility. To maintain the high-end creative aesthetic, **bold weights are strictly prohibited**. Emphasis is created through scale, hierarchy, spacing, and color shifts rather than heavy thickness.
+This design system pairs **Outfit** with a restrained editorial serif accent. Outfit and Nunito remain the operating system for body copy, navigation, labels, controls, tables, and dense dashboard UI. **Cormorant Garamond** is reserved for public display headlines, landing section titles, dashboard page titles, and major dashboard section titles through the `.title-serif` utility. 
+
+To maintain the high-end creative aesthetic, **bold weights are strictly prohibited**. All typography follows the Nunito and Outfit medium (500) and normal (400) weight systems. Never use `font-bold` or `font-semibold` in navigation lists, page header labels, account user dropdowns, sidebar badges, or chat dialog boxes. Emphasis is created through scale, hierarchy, spacing, and color shifts rather than heavy thickness.
 
 - **Public Display & Landing Headlines:** Use the serif accent at normal weight for elegance and a more editorial brand voice. Keep widths generous enough for natural line breaks, except deliberately narrow proof/prose sections.
 - **Dashboard Page & Section Titles:** Use the serif accent with `font-medium` so private workspaces inherit the brand without becoming decorative.
@@ -132,9 +137,14 @@ This design system pairs **Outfit** with a restrained editorial serif accent. Ou
 - **Labels & Navigation:** Use weight 500 in uppercase with generous letter spacing to act as "instrumentation" style markers, grounding the cosmic visuals with technical precision.
 - **Contrast:** High contrast is achieved by pairing light grey text on dark backgrounds or deep indigo text on light backgrounds.
 
-## Layout & Spacing
+## Layout, Sidebar Pinned Chats & Floating Chat Spec
 
 The layout philosophy follows a **fixed-width grid** with expansive, "breathtaking" whitespace. Inspired by high-end editorial portfolios, the layout uses staggered offsets to create a sense of floating objects in 3D space.
+
+- **Pinned Sidebar Chats (Bottom Aligned):** Pinned chats (Support Desk, Alpha Project Chat, Team Sync) reside at the very bottom of the sidebar, right above the user profile badge (`MissionBadge`), separated by linear-gradient dividers. They render circular photo avatars matching those in the floating panel, alongside dynamic active indicator status dots and unread counter tags.
+- **Floating Chat Dialog (Compact & Scroll-Free):** The dialog drawer is restricted to a narrow, sleek `w-80` width card layout. Messages use `flex flex-col gap-2.5` (avoiding grid containers) and are aligned using `self-start` (others) and `self-end` (self) to wrap text natively without introducing horizontal scrollbars.
+  - The chat remains accessible for all dashboard roles (Admin, Client, Developer). Logged-in admin user avatars (e.g. Dennis Munge) default to a male professional business photo if empty and reflect in both the top bar switcher and sidebar badge.
+- **Gutters & Content Widths:** Outer page or section wrapper owns the responsive gutters: `px-5 sm:px-8 lg:px-10`. Inner content container controls the max-width: `mx-auto w-full max-w-[92rem]`. Standard section gap is `gap-9 md:gap-10 lg:gap-12` for dashboard canvases, and `gap-5/gap-6` for internal cards/panels.
 
 Elements are placed on a 12-column grid, but components should frequently break the grid or span asymmetrical columns (e.g., a 7-column main card paired with a 3-column orbital sidebar). Spacing is generous; section gaps of 160px or more are encouraged to let the cosmic illustrations "breathe." Content within glass cards should use a minimum of 32px padding to maintain the feeling of airy transparency.
 

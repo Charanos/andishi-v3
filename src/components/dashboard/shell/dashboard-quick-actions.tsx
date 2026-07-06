@@ -68,7 +68,11 @@ export function DashboardQuickActions({ role }: { role: AuthUser["role"] }) {
   const copy = roleCopy[role];
 
   return (
-    <details ref={popoverRef} className="group relative hidden sm:block">
+    <details
+      ref={popoverRef}
+      name="dashboard-topbar-menu"
+      className="group relative hidden sm:block"
+    >
       <summary
         aria-label="Open quick actions"
         className="grid h-8 w-8 cursor-pointer list-none place-items-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] text-[var(--bg)] shadow-[0_12px_28px_color-mix(in_srgb,var(--bg-deep)_28%,transparent)] transition-transform duration-300 hover:-translate-y-px"
