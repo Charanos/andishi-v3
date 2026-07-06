@@ -19,7 +19,7 @@ Adopt **permission-based RBAC**. Permissions (`<module>.<resource>.<action>`) ar
 |-----------|------------|
 | Complexity | Med-High |
 | Cost | Higher upfront (catalog, resolver, tables) |
-| Scalability | Excellent — new capabilities are data, not code |
+| Scalability | Excellent - new capabilities are data, not code |
 | Team familiarity | Standard pattern |
 
 **Pros:** Expresses every ERP persona; custom roles without deploys; central, auditable enforcement; supports scoping.

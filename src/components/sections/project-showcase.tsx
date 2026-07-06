@@ -228,7 +228,10 @@ export function ProjectShowcase({ initialProjects = [] }: ProjectShowcaseProps) 
       );
       setDraft(null);
       setIsCreating(false);
-      notify(isCreating ? "Case study published successfully" : "Case study updated successfully", "success");
+      notify(
+        isCreating ? "Case study published successfully" : "Case study updated successfully",
+        "success",
+      );
     } catch (err) {
       notify(err instanceof Error ? err.message : "Save failed", "error");
     } finally {
@@ -334,7 +337,7 @@ export function ProjectShowcase({ initialProjects = [] }: ProjectShowcaseProps) 
                     {featuredProject.outcomeLabel || "Outcome"}
                   </p>
                   <p className="text-2xl font-normal text-[var(--on-surface)]">
-                    {featuredProject.outcome || "—"}
+                    {featuredProject.outcome || "-"}
                   </p>
                 </div>
                 <div>
@@ -352,7 +355,7 @@ export function ProjectShowcase({ initialProjects = [] }: ProjectShowcaseProps) 
                     Key Stack
                   </p>
                   <p className="text-[0.88rem] leading-tight text-[var(--on-surface-dim)] pt-1">
-                    {featuredProject.stackTags.join(", ") || "—"}
+                    {featuredProject.stackTags.join(", ") || "-"}
                   </p>
                 </div>
               </div>
@@ -533,7 +536,10 @@ export function ProjectShowcase({ initialProjects = [] }: ProjectShowcaseProps) 
                 </button>
               </div>
 
-              <form onSubmit={handleSaveProject} className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+              <form
+                onSubmit={handleSaveProject}
+                className="space-y-4 max-h-[70vh] overflow-y-auto pr-1"
+              >
                 {/* Title & Slug */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
@@ -692,7 +698,10 @@ export function ProjectShowcase({ initialProjects = [] }: ProjectShowcaseProps) 
                       onChange={(e) =>
                         setDraft({
                           ...draft,
-                          stackTags: e.target.value.split(",").map((t) => t.trim()).filter(Boolean),
+                          stackTags: e.target.value
+                            .split(",")
+                            .map((t) => t.trim())
+                            .filter(Boolean),
                         })
                       }
                       placeholder="React, Next.js, Redis"
@@ -758,7 +767,9 @@ export function ProjectShowcase({ initialProjects = [] }: ProjectShowcaseProps) 
                     <input
                       type="text"
                       value={draft.clientQuoteAttribution}
-                      onChange={(e) => setDraft({ ...draft, clientQuoteAttribution: e.target.value })}
+                      onChange={(e) =>
+                        setDraft({ ...draft, clientQuoteAttribution: e.target.value })
+                      }
                       placeholder="e.g. CTO, Haraka Fleet"
                       className="h-10 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--surface-low)] px-3 text-[0.85rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)]"
                     />

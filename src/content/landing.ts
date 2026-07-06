@@ -18,7 +18,8 @@ export const services = [
     timeline: "4–10 weeks",
     icon: IconDeviceDesktop,
     slug: "custom-software",
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80",
   },
   {
     title: "SaaS Products",
@@ -26,7 +27,8 @@ export const services = [
     timeline: "6–14 weeks",
     icon: IconCode,
     slug: "saas-development",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
   },
   {
     title: "Mobile Applications",
@@ -34,7 +36,8 @@ export const services = [
     timeline: "6–12 weeks",
     icon: IconDeviceMobile,
     slug: "mobile-apps",
-    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&q=80",
   },
   {
     title: "AI & Intelligent Systems",
@@ -42,7 +45,8 @@ export const services = [
     timeline: "3–8 weeks",
     icon: IconBrain,
     slug: "ai-systems",
-    image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80",
   },
   {
     title: "Enterprise Software",
@@ -50,7 +54,8 @@ export const services = [
     timeline: "8–20 weeks",
     icon: IconBuildingSkyscraper,
     slug: "enterprise-software",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
   },
   {
     title: "Blockchain & Web3",
@@ -58,7 +63,8 @@ export const services = [
     timeline: "4–12 weeks",
     icon: IconCurrencyBitcoin,
     slug: "blockchain",
-    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=1200&q=80",
   },
   {
     title: "APIs & Integrations",
@@ -66,7 +72,8 @@ export const services = [
     timeline: "2–6 weeks",
     icon: IconCpu,
     slug: "apis-integrations",
-    image: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80",
   },
   {
     title: "Product Strategy & Design",
@@ -74,20 +81,21 @@ export const services = [
     timeline: "1–3 weeks",
     icon: IconCloudComputing,
     slug: "product-strategy",
-    image: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80",
   },
 ];
 
 export const processSteps = [
   {
     step: "01",
-    title: "One scoping call",
-    body: "Tell us what you're building and why. We'll tell you what's realistic, what it will take, and whether we're the right fit. No pitch. No deck. A direct conversation.",
+    title: "Start with a direct chat",
+    body: "Tell us about your product goals in your own words over WhatsApp. We prefer hearing details directly from you. Once aligned, we jump on a scoping call to formalize what's realistic.",
   },
   {
     step: "02",
     title: "We write the brief, not you",
-    body: "After the call, we produce a one-page project brief: scope, timeline, deliverables, and cost. You approve it or we adjust. No drawn-out back-and-forth.",
+    body: "Our product manager translates our chat and call into a comprehensive project brief: scope, timeline, deliverables, and direct cost. You approve or we adjust. No drawn-out specs documents.",
   },
   {
     step: "03",
@@ -107,8 +115,10 @@ export const caseStudies = [
     location: "Nairobi",
     timeline: "5 weeks",
     title: "Payment Reconciliation Engine",
-    problem: "The client needed a reliable engine that unified M-Pesa, cards, callback handling, and finance reporting.",
-    shipped: "A custom payment operations layer with retry queues, admin reconciliation, and live transaction visibility.",
+    problem:
+      "The client needed a reliable engine that unified M-Pesa, cards, callback handling, and finance reporting.",
+    shipped:
+      "A custom payment operations layer with retry queues, admin reconciliation, and live transaction visibility.",
     metric: "98.3%",
     context: "payments reconciled",
     quote: "The engine understood production risk from day one.",
@@ -118,8 +128,10 @@ export const caseStudies = [
     location: "Kenya",
     timeline: "3 weeks",
     title: "School Operations Platform",
-    problem: "School teams needed fee visibility, parent communication, staff workflows, and role-based access in one system.",
-    shipped: "A multi-workspace school management platform with parent updates, fee tracking, and local payment patterns.",
+    problem:
+      "School teams needed fee visibility, parent communication, staff workflows, and role-based access in one system.",
+    shipped:
+      "A multi-workspace school management platform with parent updates, fee tracking, and local payment patterns.",
     metric: "12+",
     context: "schools onboarded",
     quote: "They shipped like part of our own team.",
@@ -129,8 +141,10 @@ export const caseStudies = [
     location: "Global-ready",
     timeline: "4 weeks",
     title: "Operations Analytics Dashboard",
-    problem: "Operators had useful data, but it lived across disconnected tools and arrived too late for weekly decisions.",
-    shipped: "An analytics layer with trend cards, API data pipeline feeds, and reporting views leaders could act on.",
+    problem:
+      "Operators had useful data, but it lived across disconnected tools and arrived too late for weekly decisions.",
+    shipped:
+      "An analytics layer with trend cards, API data pipeline feeds, and reporting views leaders could act on.",
     metric: "+41%",
     context: "faster decision cycle",
     quote: "The technical judgment was senior, practical, and fast.",
@@ -196,7 +210,8 @@ export const showcaseProjects = [
     statValue: "41%",
     statSub: "across reporting workflows",
     tags: ["Dashboards", "Data pipeline", "Reporting", "API", "Charts"],
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
   },
   {
     eyebrow: "Logistics / East Africa",
@@ -216,7 +231,8 @@ export const showcaseProjects = [
     statValue: "18%",
     statSub: "reduction in idle time",
     tags: ["Geolocation", "Redis", "React Native", "Routing"],
-    image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1200&q=80",
   },
   {
     eyebrow: "Healthcare / Connect",
@@ -236,7 +252,8 @@ export const showcaseProjects = [
     statValue: "99.99%",
     statSub: "infrastructure reliability",
     tags: ["WebRTC", "HIPAA", "Video Calls", "Booking"],
-    image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80",
   },
   {
     eyebrow: "E-Commerce / B2B",
@@ -256,7 +273,8 @@ export const showcaseProjects = [
     statValue: "3x",
     statSub: "faster processing time",
     tags: ["GraphQL", "ERP", "Vue.js", "B2B Commerce"],
-    image: "https://images.unsplash.com/photo-1661956602116-aa6865609028?auto=format&fit=crop&w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1661956602116-aa6865609028?auto=format&fit=crop&w=1200&q=80",
   },
   {
     eyebrow: "AI Tooling / Internal",
@@ -276,7 +294,8 @@ export const showcaseProjects = [
     statValue: "99.1%",
     statSub: "on clause detection",
     tags: ["LLM", "FastAPI", "Vector DB", "Document Parsing"],
-    image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80",
+    image:
+      "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80",
   },
 ];
 

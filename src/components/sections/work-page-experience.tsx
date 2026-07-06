@@ -2,16 +2,16 @@
 
 import {
   IconArrowRight,
-  IconExternalLink,
+  IconBrandWhatsapp,
   IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
   IconX,
 } from "@tabler/icons-react";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { AnimatePresence, motion } from "framer-motion";
 import { gsap } from "gsap";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useMemo, useState, useRef } from "react";
 import {
   Area,
@@ -20,7 +20,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid
+  CartesianGrid,
 } from "recharts";
 import { workProjects, type WorkProject } from "@/content/work";
 import { CustomCursorRegion } from "@/components/ui/custom-cursor-region";
@@ -118,11 +118,19 @@ function FilterDropdown({
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-between gap-3 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-5 py-2.5 text-[0.82rem] font-medium transition-all hover:border-[color-mix(in_srgb,var(--primary)_30%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] min-w-[200px]"
       >
-        <span className="text-[var(--on-surface-dim)]">{label}: <strong className="text-[var(--on-surface)] font-medium ml-1">{selectedOption.label}</strong></span>
+        <span className="text-[var(--on-surface-dim)]">
+          {label}:{" "}
+          <strong className="text-[var(--on-surface)] font-medium ml-1">
+            {selectedOption.label}
+          </strong>
+        </span>
         <IconChevronDown
           size={16}
           stroke={1.8}
-          className={cn("text-[var(--on-surface-dim)] transition-transform duration-300", isOpen && "rotate-180")}
+          className={cn(
+            "text-[var(--on-surface-dim)] transition-transform duration-300",
+            isOpen && "rotate-180",
+          )}
         />
       </button>
 
@@ -150,11 +158,16 @@ function FilterDropdown({
                       "flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-left text-[0.82rem] font-medium transition-all duration-200",
                       isActive
                         ? "bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] text-[var(--primary)]"
-                        : "text-[var(--on-surface-dim)] hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)] hover:text-[var(--on-surface)]"
+                        : "text-[var(--on-surface-dim)] hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)] hover:text-[var(--on-surface)]",
                     )}
                   >
                     {option.label}
-                    <span className={cn("font-mono text-[0.68rem] tracking-tight", isActive ? "opacity-100" : "opacity-50")}>
+                    <span
+                      className={cn(
+                        "font-mono text-[0.68rem] tracking-tight",
+                        isActive ? "opacity-100" : "opacity-50",
+                      )}
+                    >
                       {counts(option.value)}
                     </span>
                   </button>
@@ -195,11 +208,11 @@ function Pagination({
       >
         <IconChevronLeft size={18} stroke={2} />
       </button>
-      
+
       {Array.from({ length: totalPages }).map((_, i) => {
         const page = i + 1;
         const isActive = page === currentPage;
-        
+
         if (
           page === 1 ||
           page === totalPages ||
@@ -213,21 +226,25 @@ function Pagination({
                 "grid h-10 min-w-10 px-2 place-items-center rounded-full border text-[0.85rem] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]",
                 isActive
                   ? "border-[color-mix(in_srgb,var(--primary)_30%,transparent)] bg-[color-mix(in_srgb,var(--primary)_10%,transparent)] text-[var(--primary)]"
-                  : "border-[var(--glass-border)] bg-[var(--glass-bg)] hover:border-[color-mix(in_srgb,var(--primary)_30%,transparent)] text-[var(--on-surface-dim)] hover:text-[var(--primary)]"
+                  : "border-[var(--glass-border)] bg-[var(--glass-bg)] hover:border-[color-mix(in_srgb,var(--primary)_30%,transparent)] text-[var(--on-surface-dim)] hover:text-[var(--primary)]",
               )}
             >
               {page}
             </button>
           );
         }
-        
+
         if (page === currentPage - 2 || page === currentPage + 2) {
-          return <span key={page} className="text-[var(--on-surface-dim)] px-1">...</span>;
+          return (
+            <span key={page} className="text-[var(--on-surface-dim)] px-1">
+              ...
+            </span>
+          );
         }
-        
+
         return null;
       })}
-      
+
       <button
         type="button"
         onClick={() => handleScrollToTop(currentPage + 1)}
@@ -247,9 +264,7 @@ export function WorkPageExperience() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 9;
 
-  const [selectedProject, setSelectedProject] = useState<WorkProject | null>(
-    null,
-  );
+  const [selectedProject, setSelectedProject] = useState<WorkProject | null>(null);
   const [dbProjects, setDbProjects] = useState<WorkProject[]>([]);
   const [loading, setLoading] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -261,7 +276,7 @@ export function WorkPageExperience() {
         const query = new URLSearchParams();
         if (activeService !== "all") query.set("service", activeService);
         if (activeVertical !== "all") query.set("vertical", activeVertical);
-        
+
         const res = await fetch(`/api/work?${query.toString()}`);
         if (res.ok) {
           const data = await res.json();
@@ -288,8 +303,7 @@ export function WorkPageExperience() {
         activeService === "all" ||
         project.tags.some((t) => t.toLowerCase().includes(activeService)) ||
         project.sector === activeService;
-      const matchVertical =
-        activeVertical === "all" || project.sector === activeVertical;
+      const matchVertical = activeVertical === "all" || project.sector === activeVertical;
       return matchService && matchVertical;
     });
   }, [dbProjects, activeService, activeVertical]);
@@ -330,8 +344,8 @@ export function WorkPageExperience() {
           duration: 0.55,
           stagger: 0.065,
           ease: "power2.out",
-          delay: 0.05
-        }
+          delay: 0.05,
+        },
       );
     }, gridRef);
     return () => ctx.revert();
@@ -340,16 +354,21 @@ export function WorkPageExperience() {
   const countForService = (val: string) => {
     if (dbProjects.length > 0) {
       if (val === "all") return dbProjects.length;
-      return dbProjects.filter(p => p.tags.some(t => t.toLowerCase().includes(val)) || p.sector === val).length;
+      return dbProjects.filter(
+        (p) => p.tags.some((t) => t.toLowerCase().includes(val)) || p.sector === val,
+      ).length;
     }
     if (val === "all") return workProjects.length;
-    return workProjects.filter((project) => project.tags.some(t => t.toLowerCase().includes(val)) || project.sector === val).length;
+    return workProjects.filter(
+      (project) =>
+        project.tags.some((t) => t.toLowerCase().includes(val)) || project.sector === val,
+    ).length;
   };
 
   const countForVertical = (val: string) => {
     if (dbProjects.length > 0) {
       if (val === "all") return dbProjects.length;
-      return dbProjects.filter(p => p.sector === val).length;
+      return dbProjects.filter((p) => p.sector === val).length;
     }
     if (val === "all") return workProjects.length;
     return workProjects.filter((project) => project.sector === val).length;
@@ -366,7 +385,6 @@ export function WorkPageExperience() {
           />
 
           <div className="relative z-[1] mx-auto flex w-full max-w-[92rem] flex-col pb-24 pt-32 lg:pt-36">
-            
             <header className="mb-8 px-5 sm:px-8 lg:px-10 md:mb-12 md:grid md:grid-cols-[1fr_auto] md:items-end md:gap-10">
               <motion.div
                 initial={{ opacity: 0, y: 18 }}
@@ -392,8 +410,8 @@ export function WorkPageExperience() {
                   {formatIndex(filteredProjects.length)}
                 </p>
                 <p className="body-md mt-3 font-medium text-[var(--on-surface-dim)]">
-                  Proof of our software delivery work across fintech,
-                  SaaS platforms, logistics, AI integrations, and mobile systems.
+                  Proof of our software delivery work across fintech, SaaS platforms, logistics, AI
+                  integrations, and mobile systems.
                 </p>
               </motion.div>
             </header>
@@ -429,7 +447,7 @@ export function WorkPageExperience() {
                 key={`${activeService}-${activeVertical}-${currentPage}`}
                 className={cn(
                   "grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr",
-                  loading && "opacity-35 transition-opacity duration-300"
+                  loading && "opacity-35 transition-opacity duration-300",
                 )}
               >
                 {paginatedProjects.map((project, index) => (
@@ -442,20 +460,17 @@ export function WorkPageExperience() {
                 ))}
               </div>
 
-              <Pagination 
-                currentPage={currentPage} 
-                totalPages={totalPages} 
-                onPageChange={setCurrentPage} 
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
               />
             </div>
           </div>
         </CustomCursorRegion>
       </main>
 
-      <CaseStudyDrawer
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-      />
+      <CaseStudyDrawer project={selectedProject} onClose={() => setSelectedProject(null)} />
     </>
   );
 }
@@ -475,7 +490,7 @@ function ProjectCard({
     <article
       className={cn(
         "project-card break-inside-avoid flex h-full",
-        isFeatured ? "lg:col-span-2" : ""
+        isFeatured ? "lg:col-span-2" : "",
       )}
     >
       <button
@@ -486,14 +501,16 @@ function ProjectCard({
           "group/card cursor-pointer flex w-full overflow-hidden text-left transition-all duration-500 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]",
           "rounded-[1.75rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] shadow-[var(--glass-inner-shadow)] backdrop-blur-md hover:border-[color-mix(in_srgb,var(--on-surface)_30%,transparent)] hover:shadow-[0_22px_56px_color-mix(in_srgb,var(--bg-deep)_16%,transparent)] hover:-translate-y-[3px]",
           "max-md:!rounded-none max-md:!border-x-0 max-md:!border-t-0 max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!px-0 max-md:!py-10 max-md:last:!border-b-0 max-md:!translate-y-0",
-          isFeatured ? "flex-col lg:flex-row" : "flex-col"
+          isFeatured ? "flex-col lg:flex-row" : "flex-col",
         )}
       >
         <div
           className={cn(
             "relative shrink-0 overflow-hidden",
             "max-md:rounded-[1.25rem] max-md:mb-4",
-            isFeatured ? "w-full lg:w-[55%] aspect-[4/3] lg:aspect-auto h-full" : "w-full aspect-[4/3]"
+            isFeatured
+              ? "w-full lg:w-[55%] aspect-[4/3] lg:aspect-auto h-full"
+              : "w-full aspect-[4/3]",
           )}
         >
           <Image
@@ -501,15 +518,15 @@ function ProjectCard({
             alt={`${project.title} project preview`}
             fill
             sizes={
-              isFeatured 
-                ? "(min-width: 1024px) 50vw, 100vw" 
+              isFeatured
+                ? "(min-width: 1024px) 50vw, 100vw"
                 : "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
             }
             className="object-cover transition duration-700 group-hover/card:scale-[1.04]"
           />
           {/* Dark gradient mask for professional contrast on light and dark mode */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />
-          
+
           <span className="absolute left-4 top-4 rounded-lg bg-[rgba(255,255,255,0.15)] px-2.5 py-1 font-mono text-[0.68rem] font-medium tracking-tight text-white backdrop-blur-xl border border-[rgba(255,255,255,0.1)]">
             {formatIndex(index)}
           </span>
@@ -521,29 +538,35 @@ function ProjectCard({
 
           {/* Sector and Title overlayed on image for punchy look */}
           <div className="absolute bottom-0 left-0 p-5 w-full">
-            <p className="label-caps mb-2 text-white/70">
-              {project.sectorLabel}
-            </p>
-            <h2 className={cn(
-              "font-medium leading-tight tracking-tight text-white",
-              isFeatured ? "text-[clamp(1.5rem,3vw,2rem)]" : "text-[1.25rem]"
-            )}>
+            <p className="label-caps mb-2 text-white/70">{project.sectorLabel}</p>
+            <h2
+              className={cn(
+                "font-medium leading-tight tracking-tight text-white",
+                isFeatured ? "text-[clamp(1.5rem,3vw,2rem)]" : "text-[1.25rem]",
+              )}
+            >
               {project.title}
             </h2>
           </div>
         </div>
 
-        <div className={cn(
-          "flex flex-col flex-1 max-md:px-2",
-          isFeatured ? "p-5 sm:p-6 lg:w-[45%] lg:p-8 lg:justify-center" : "p-5 sm:p-6"
-        )}>
-          <p className={cn(
-            "font-medium text-[var(--on-surface-dim)]",
-            isFeatured ? "text-[0.95rem] leading-[1.7]" : "line-clamp-3 text-[0.9rem] leading-[1.65]"
-          )}>
+        <div
+          className={cn(
+            "flex flex-col flex-1 max-md:px-2",
+            isFeatured ? "p-5 sm:p-6 lg:w-[45%] lg:p-8 lg:justify-center" : "p-5 sm:p-6",
+          )}
+        >
+          <p
+            className={cn(
+              "font-medium text-[var(--on-surface-dim)]",
+              isFeatured
+                ? "text-[0.95rem] leading-[1.7]"
+                : "line-clamp-3 text-[0.9rem] leading-[1.65]",
+            )}
+          >
             {project.description}
           </p>
-          
+
           {isFeatured && (
             <div className="mt-8 grid grid-cols-2 gap-4 overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_34%,transparent)]">
               {project.metrics.slice(0, 4).map((metric) => (
@@ -579,10 +602,7 @@ function ProjectCard({
                     tagIndex === 0
                       ? "color-mix(in srgb, var(--secondary) 24%, transparent)"
                       : "var(--glass-border)",
-                  color:
-                    tagIndex === 0
-                      ? "var(--secondary)"
-                      : "var(--on-surface-dim)",
+                  color: tagIndex === 0 ? "var(--secondary)" : "var(--on-surface-dim)",
                 }}
               >
                 {tag}
@@ -590,10 +610,12 @@ function ProjectCard({
             ))}
           </div>
 
-          <div className={cn(
-            "flex items-center justify-between border-[var(--glass-border)] max-md:border-transparent",
-            isFeatured ? "mt-8 border-t pt-6" : "mt-6 border-t pt-5"
-          )}>
+          <div
+            className={cn(
+              "flex items-center justify-between border-[var(--glass-border)] max-md:border-transparent",
+              isFeatured ? "mt-8 border-t pt-6" : "mt-6 border-t pt-5",
+            )}
+          >
             <div>
               <p className="font-mono text-[1rem] tracking-tight text-[var(--on-surface)]">
                 {project.metric}
@@ -664,7 +686,7 @@ function CaseStudyDrawer({
               />
               <div className="absolute inset-0 bg-[linear-gradient(to_top,var(--surface),transparent_80%)]" />
               <div className="absolute inset-0 bg-[linear-gradient(to_right,color-mix(in_srgb,var(--surface)_90%,transparent),transparent_60%)]" />
-              
+
               <div className="relative z-10 w-full max-w-2xl">
                 <p className="label-caps mb-3 text-[var(--secondary)]">
                   {project.sectorLabel} / {project.location}
@@ -729,7 +751,7 @@ function CaseStudyDrawer({
                         { month: "Mar", impact: 45 },
                         { month: "Apr", impact: 60 },
                         { month: "May", impact: 85 },
-                        { month: "Jun", impact: 110 }
+                        { month: "Jun", impact: 110 },
                       ]}
                       margin={{ top: 0, right: 0, left: -20, bottom: 0 }}
                     >
@@ -739,37 +761,42 @@ function CaseStudyDrawer({
                           <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="color-mix(in srgb, var(--on-surface) 6%, transparent)" />
-                      <XAxis 
-                        dataKey="month" 
-                        axisLine={false} 
-                        tickLine={false} 
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        vertical={false}
+                        stroke="color-mix(in srgb, var(--on-surface) 6%, transparent)"
+                      />
+                      <XAxis
+                        dataKey="month"
+                        axisLine={false}
+                        tickLine={false}
                         tick={{ fill: "var(--on-surface-dim)", fontSize: 12, fontWeight: 500 }}
                         dy={10}
                       />
-                      <YAxis 
-                        axisLine={false} 
-                        tickLine={false} 
+                      <YAxis
+                        axisLine={false}
+                        tickLine={false}
                         tick={{ fill: "var(--on-surface-dim)", fontSize: 12, fontWeight: 500 }}
                       />
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: "var(--surface)", 
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "var(--surface)",
                           borderRadius: "12px",
                           border: "1px solid var(--glass-border)",
-                          boxShadow: "0 10px 24px color-mix(in srgb, var(--bg-deep) 40%, transparent)",
+                          boxShadow:
+                            "0 10px 24px color-mix(in srgb, var(--bg-deep) 40%, transparent)",
                           color: "var(--on-surface)",
-                          fontWeight: 500
+                          fontWeight: 500,
                         }}
                         itemStyle={{ color: "var(--primary)" }}
                       />
-                      <Area 
-                        type="monotone" 
-                        dataKey="impact" 
-                        stroke="var(--primary)" 
+                      <Area
+                        type="monotone"
+                        dataKey="impact"
+                        stroke="var(--primary)"
                         strokeWidth={3}
-                        fillOpacity={1} 
-                        fill="url(#colorImpact)" 
+                        fillOpacity={1}
+                        fill="url(#colorImpact)"
                       />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -809,10 +836,7 @@ function CaseStudyDrawer({
                         index === 0
                           ? "color-mix(in srgb, var(--secondary) 24%, transparent)"
                           : "var(--glass-border)",
-                      color:
-                        index === 0
-                          ? "var(--secondary)"
-                          : "var(--on-surface-dim)",
+                      color: index === 0 ? "var(--secondary)" : "var(--on-surface-dim)",
                     }}
                   >
                     {tag}
@@ -821,13 +845,15 @@ function CaseStudyDrawer({
               </div>
 
               <div className="mt-10 flex flex-wrap gap-3">
-                <Link
-                  href="/start-project"
+                <a
+                  href={buildWhatsAppUrl(undefined, { context: `Work: ${project.title}` })}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex min-h-[3.35rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-7 py-3.5 text-[0.98rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-300 hover:-translate-y-px hover:shadow-[0_20px_48px_color-mix(in_srgb,var(--bg-deep)_46%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
                 >
                   Start a Project like this
-                  <IconExternalLink size={15} stroke={1.8} />
-                </Link>
+                  <IconBrandWhatsapp size={15} stroke={1.8} />
+                </a>
                 <button
                   type="button"
                   onClick={onClose}

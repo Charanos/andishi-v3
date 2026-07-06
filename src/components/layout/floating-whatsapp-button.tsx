@@ -4,12 +4,10 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IconBrandWhatsapp, IconX } from "@tabler/icons-react";
 import { floatSpring } from "@/lib/motion";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export function FloatingWhatsappButton() {
   const [open, setOpen] = useState(false);
-
-  const whatsappUrl =
-    "https://wa.me/254748825157?text=Hi%20Andishi%20team,%20I%27d%20like%20to%20discuss%20a%20project%20or%20ask%20a%20question...";
 
   return (
     <div className="fixed bottom-12 right-6 z-50 flex flex-col items-end">
@@ -53,13 +51,13 @@ export function FloatingWhatsappButton() {
 
             {/* Body message */}
             <p className="mt-4 font-sans text-[0.84rem] leading-relaxed text-[var(--on-surface-dim)]">
-              Hi! Have a general inquiry or want to build a Software Product with Andishi Studio?
-              Let&apos;s chat on WhatsApp.
+              Tell us about the software you want to build. We&apos;ll scope it, write the brief,
+              and get you a clear proposal - all from a quick WhatsApp conversation.
             </p>
 
             {/* CTA Button */}
             <a
-              href={whatsappUrl}
+              href={buildWhatsAppUrl()}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setOpen(false)}

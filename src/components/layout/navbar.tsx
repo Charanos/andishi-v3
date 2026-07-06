@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { IconArrowRight, IconX, IconMenu2 } from "@tabler/icons-react";
+import { IconBrandWhatsapp, IconX, IconMenu2 } from "@tabler/icons-react";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { Logo } from "@/components/brand/logo";
 import { siteConfig } from "@/config/site";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -51,7 +52,7 @@ export function Navbar() {
   useEffect(() => {
     const checkModal = () => {
       const modal = document.querySelector(
-        '[role="dialog"]:not([aria-label="Command search"]), [aria-modal="true"]:not([aria-label="Command search"])'
+        '[role="dialog"]:not([aria-label="Command search"]), [aria-modal="true"]:not([aria-label="Command search"])',
       );
       setHasModalOpen(!!modal);
     };
@@ -66,7 +67,7 @@ export function Navbar() {
       try {
         const user = await getSessionUserAction();
         setCurrentUser(user);
-        
+
         if (user && user.role === "admin") {
           localStorage.setItem("andishi_admin_sim_logged_in", "true");
           setIsAdmin(true);
@@ -151,131 +152,141 @@ export function Navbar() {
           )}
         </AnimatePresence>
 
-        <header className={cn(
-          "pointer-events-auto w-full px-5 transition-all duration-300 sm:px-8 lg:px-10 pt-3 sm:pt-4",
-          hasModalOpen ? "opacity-0 pointer-events-none -translate-y-4" : "opacity-100 translate-y-0"
-        )}>
-          <motion.nav
-          className="mx-auto flex h-16 w-full max-w-[92rem] items-center justify-between rounded-2xl px-3 lg:px-4"
-          animate={{
-            backdropFilter: scrolled ? "blur(28px)" : "blur(0px)",
-          }}
-          transition={{ duration: 0.35, ease: "easeOut" }}
-          style={{
-            backgroundColor: scrolled
-              ? "color-mix(in srgb, var(--bg-deep) 90%, transparent)"
-              : "transparent",
-            border: scrolled
-              ? "1px solid color-mix(in srgb, var(--on-surface) 12%, transparent)"
-              : "1px solid transparent",
-            boxShadow: scrolled
-              ? "0 16px 48px color-mix(in srgb, var(--bg-deep) 62%, transparent), 0 1px 0 color-mix(in srgb, var(--on-surface) 7%, transparent) inset"
-              : "none",
-            transition:
-              "background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease",
-          }}
+        <header
+          className={cn(
+            "pointer-events-auto w-full px-5 transition-all duration-300 sm:px-8 lg:px-10 pt-3 sm:pt-4",
+            hasModalOpen
+              ? "opacity-0 pointer-events-none -translate-y-4"
+              : "opacity-100 translate-y-0",
+          )}
         >
-          {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-2 rounded-lg focus-visible:outline-none"
+          <motion.nav
+            className="mx-auto flex h-16 w-full max-w-[92rem] items-center justify-between rounded-2xl px-3 lg:px-4"
+            animate={{
+              backdropFilter: scrolled ? "blur(28px)" : "blur(0px)",
+            }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            style={{
+              backgroundColor: scrolled
+                ? "color-mix(in srgb, var(--bg-deep) 90%, transparent)"
+                : "transparent",
+              border: scrolled
+                ? "1px solid color-mix(in srgb, var(--on-surface) 12%, transparent)"
+                : "1px solid transparent",
+              boxShadow: scrolled
+                ? "0 16px 48px color-mix(in srgb, var(--bg-deep) 62%, transparent), 0 1px 0 color-mix(in srgb, var(--on-surface) 7%, transparent) inset"
+                : "none",
+              transition:
+                "background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease",
+            }}
           >
-            <Logo />
-          </Link>
+            {/* Logo */}
+            <Link
+              href="/"
+              className="flex items-center gap-2 rounded-lg focus-visible:outline-none"
+            >
+              <Logo />
+            </Link>
 
-          {/* Desktop nav links */}
-          <div className="hidden items-center gap-0.5 md:flex">
-            {siteConfig.nav.map(({ label, href }) => (
-              <Link
-                key={href}
-                href={href}
-                className="relative px-3.5 py-2 label-caps rounded-lg transition-colors duration-200"
-                style={{
-                  color: isActive(href)
-                    ? "var(--on-surface)"
-                    : "var(--on-surface-dim)",
-                }}
-              >
-                {isActive(href) && (
-                  <motion.span
-                    layoutId="nav-pill"
-                    className="absolute inset-0 rounded-lg"
-                    style={{
-                      backgroundColor: scrolled
-                        ? "color-mix(in srgb, var(--on-surface) 10%, transparent)"
-                        : "rgba(255,255,255,0.08)",
-                    }}
-                    transition={{ type: "spring", damping: 28, stiffness: 280 }}
-                  />
-                )}
-                <span className="relative">{label}</span>
-              </Link>
-            ))}
-          </div>
-
-           {/* Right actions */}
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            {currentUser || isAdmin ? (
-              <Link
-                href={(currentUser?.role === "admin" || isAdmin) ? "/admin" : currentUser?.role === "client" ? "/dashboard" : "/dev"}
-                className="hidden min-h-10 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-5 py-2.5 text-[0.84rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-[0.98] sm:inline-flex"
-              >
-                {(currentUser?.role === "admin" || isAdmin) ? "Admin Console" : "Dashboard"}
-              </Link>
-            ) : (
-              <>
+            {/* Desktop nav links */}
+            <div className="hidden items-center gap-0.5 md:flex">
+              {siteConfig.nav.map(({ label, href }) => (
                 <Link
-                  href="/login"
-                  className="hidden min-h-10 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-5 py-2.5 text-[0.84rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-[0.98] sm:inline-flex"
-                >
-                  Login
-                </Link>
-                <Link
-                  href="/start-project"
-                  className="hidden min-h-10 items-center gap-2 rounded-full px-5 py-2.5
-                             text-[0.84rem] font-medium text-white transition-all duration-300
-                             hover:-translate-y-px active:scale-[0.98] sm:inline-flex"
+                  key={href}
+                  href={href}
+                  className="relative px-3.5 py-2 label-caps rounded-lg transition-colors duration-200"
                   style={{
-                    background: "var(--on-surface)",
-                    boxShadow: scrolled
-                      ? "0 16px 36px color-mix(in srgb, var(--bg-deep) 42%, transparent)"
-                      : "0 10px 24px color-mix(in srgb, var(--bg-deep) 28%, transparent)",
-                    color: "var(--bg)",
+                    color: isActive(href) ? "var(--on-surface)" : "var(--on-surface-dim)",
                   }}
                 >
-                  Start a Project
-                  <IconArrowRight size={14} stroke={2.2} />
+                  {isActive(href) && (
+                    <motion.span
+                      layoutId="nav-pill"
+                      className="absolute inset-0 rounded-lg"
+                      style={{
+                        backgroundColor: scrolled
+                          ? "color-mix(in srgb, var(--on-surface) 10%, transparent)"
+                          : "rgba(255,255,255,0.08)",
+                      }}
+                      transition={{ type: "spring", damping: 28, stiffness: 280 }}
+                    />
+                  )}
+                  <span className="relative">{label}</span>
                 </Link>
-              </>
-            )}
+              ))}
+            </div>
 
-            {/* Mobile hamburger */}
-            <button
-              onClick={() => setMobileOpen((v) => !v)}
-              aria-label="Toggle menu"
-              className="flex md:hidden items-center justify-center h-9 w-9 rounded-xl border
-                         transition-colors duration-200"
-              style={{
-                backgroundColor: scrolled
-                  ? "color-mix(in srgb, var(--bg-deep) 72%, transparent)"
-                  : "rgba(255,255,255,0.06)",
-                borderColor: scrolled
-                  ? "color-mix(in srgb, var(--on-surface) 14%, transparent)"
-                  : "rgba(255,255,255,0.10)",
-                color: "var(--on-surface)",
-              }}
-            >
-              {mobileOpen ? (
-                <IconX size={18} stroke={1.8} />
+            {/* Right actions */}
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              {currentUser || isAdmin ? (
+                <Link
+                  href={
+                    currentUser?.role === "admin" || isAdmin
+                      ? "/admin"
+                      : currentUser?.role === "client"
+                        ? "/dashboard"
+                        : "/dev"
+                  }
+                  className="hidden min-h-10 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-5 py-2.5 text-[0.84rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-[0.98] sm:inline-flex"
+                >
+                  {currentUser?.role === "admin" || isAdmin ? "Admin Console" : "Dashboard"}
+                </Link>
               ) : (
-                <IconMenu2 size={18} stroke={1.8} />
+                <>
+                  <Link
+                    href="/login"
+                    className="hidden min-h-10 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-5 py-2.5 text-[0.84rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-[0.98] sm:inline-flex"
+                  >
+                    Login
+                  </Link>
+                  <a
+                    href={buildWhatsAppUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hidden min-h-10 items-center gap-2 rounded-full px-5 py-2.5
+                             text-[0.84rem] font-medium text-white transition-all duration-300
+                             hover:-translate-y-px active:scale-[0.98] sm:inline-flex"
+                    style={{
+                      background: "var(--on-surface)",
+                      boxShadow: scrolled
+                        ? "0 16px 36px color-mix(in srgb, var(--bg-deep) 42%, transparent)"
+                        : "0 10px 24px color-mix(in srgb, var(--bg-deep) 28%, transparent)",
+                      color: "var(--bg)",
+                    }}
+                  >
+                    Start a Project
+                    <IconBrandWhatsapp size={15} stroke={1.8} />
+                  </a>
+                </>
               )}
-            </button>
-          </div>
-        </motion.nav>
-      </header>
-    </div>
+
+              {/* Mobile hamburger */}
+              <button
+                onClick={() => setMobileOpen((v) => !v)}
+                aria-label="Toggle menu"
+                className="flex md:hidden items-center justify-center h-9 w-9 rounded-xl border
+                         transition-colors duration-200"
+                style={{
+                  backgroundColor: scrolled
+                    ? "color-mix(in srgb, var(--bg-deep) 72%, transparent)"
+                    : "rgba(255,255,255,0.06)",
+                  borderColor: scrolled
+                    ? "color-mix(in srgb, var(--on-surface) 14%, transparent)"
+                    : "rgba(255,255,255,0.10)",
+                  color: "var(--on-surface)",
+                }}
+              >
+                {mobileOpen ? (
+                  <IconX size={18} stroke={1.8} />
+                ) : (
+                  <IconMenu2 size={18} stroke={1.8} />
+                )}
+              </button>
+            </div>
+          </motion.nav>
+        </header>
+      </div>
 
       {/* Mobile drawer */}
       <AnimatePresence>
@@ -302,9 +313,7 @@ export function Navbar() {
                     <span
                       className={cn(
                         "text-[1.68rem] tracking-tight font-normal leading-none transition-colors duration-200 group-hover:text-[var(--primary)]",
-                        isActive(href)
-                          ? "text-[var(--primary)]"
-                          : "text-[var(--on-surface)]"
+                        isActive(href) ? "text-[var(--primary)]" : "text-[var(--on-surface)]",
                       )}
                     >
                       {label}
@@ -317,17 +326,20 @@ export function Navbar() {
               ))}
 
               {/* Side-by-Side Sleek Action Buttons */}
-              <motion.div
-                variants={itemVariants}
-                className="mt-4 flex items-center gap-3 pt-4"
-              >
+              <motion.div variants={itemVariants} className="mt-4 flex items-center gap-3 pt-4">
                 {currentUser || isAdmin ? (
                   <Link
-                    href={(currentUser?.role === "admin" || isAdmin) ? "/admin" : currentUser?.role === "client" ? "/dashboard" : "/dev"}
+                    href={
+                      currentUser?.role === "admin" || isAdmin
+                        ? "/admin"
+                        : currentUser?.role === "client"
+                          ? "/dashboard"
+                          : "/dev"
+                    }
                     onClick={() => setMobileOpen(false)}
                     className="flex h-11 flex-1 items-center justify-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-5 text-[0.88rem] font-medium text-[var(--on-surface)] transition-all duration-300 hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] active:scale-[0.98]"
                   >
-                    {(currentUser?.role === "admin" || isAdmin) ? "Admin Console" : "Dashboard"}
+                    {currentUser?.role === "admin" || isAdmin ? "Admin Console" : "Dashboard"}
                   </Link>
                 ) : (
                   <>
@@ -338,14 +350,16 @@ export function Navbar() {
                     >
                       Login
                     </Link>
-                    <Link
-                      href="/start-project"
+                    <a
+                      href={buildWhatsAppUrl()}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       onClick={() => setMobileOpen(false)}
                       className="flex h-11 flex-1 items-center justify-center gap-1.5 rounded-full bg-[var(--on-surface)] px-5 text-[0.88rem] font-medium text-[var(--bg)] transition-all duration-300 active:scale-[0.98]"
                     >
                       Start a Project
-                      <IconArrowRight size={14} stroke={2.2} />
-                    </Link>
+                      <IconBrandWhatsapp size={15} stroke={1.8} />
+                    </a>
                   </>
                 )}
               </motion.div>
@@ -360,10 +374,14 @@ export function Navbar() {
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--secondary)] opacity-75" />
                     <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--secondary)]" />
                   </span>
-                  <span className="text-[var(--secondary)] font-medium uppercase">Studio Location:</span>
+                  <span className="text-[var(--secondary)] font-medium uppercase">
+                    Studio Location:
+                  </span>
                 </div>
                 <span>Bypass Business Arcade Ground Floor, Northern Bypass - Ruiru, Kenya</span>
-                <span className="text-[var(--primary)] font-medium">1°11&apos;37.1&quot;S 36°54&apos;18.9&quot;E</span>
+                <span className="text-[var(--primary)] font-medium">
+                  1°11&apos;37.1&quot;S 36°54&apos;18.9&quot;E
+                </span>
               </motion.div>
             </div>
           </motion.div>

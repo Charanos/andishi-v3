@@ -1,4 +1,4 @@
-# Andishi v3 — Backend Architecture Master
+# Andishi v3 - Backend Architecture Master
 
 **Version**: 1.0 (initial)
 **Date**: July 1, 2026
@@ -12,7 +12,7 @@
 
 ---
 
-## Part 0 — How to read this document
+## Part 0 - How to read this document
 
 The pivot (talent-placement-first → software-studio + talent-supply) means the backend must grow from a **marketplace** into a **multi-module internal ERP** that also powers the public site's CMS. The admin dashboard is the operating system for the whole company: delivery, finance, CRM/sales, marketing, content, talent supply (freelance + internal recruitment + third-party outsourcing), and support.
 
@@ -20,7 +20,7 @@ The public frontend is **pivot-accurate** and is treated as a requirements sourc
 
 ---
 
-## Part 1 — Current-state assessment (ground truth, July 1 2026)
+## Part 1 - Current-state assessment (ground truth, July 1 2026)
 
 ### 1.1 What exists and is production-grade (keep)
 
@@ -39,22 +39,22 @@ The public frontend is **pivot-accurate** and is treated as a requirements sourc
 
 | # | Gap | Consequence |
 |---|-----|-------------|
-| G1 | **Coarse RBAC** — 3 roles only, enforced by inline `session.user.role === "admin"` in ~28 routes. No permissions, admin sub-roles, or team/department scoping. | Cannot express finance-only, PM-only, recruiter-only staff. Blocks ERP. |
-| G2 | **No service/domain layer** — business logic in route handlers; no shared transactional workflows. | Multi-table transitions (accept match → placement → project → billing schedule) are non-atomic and non-reusable. |
-| G3 | **Finance is a stub** — only `invoices`; no bill/pay **rates**, expenses, payouts, ledger, revenue recognition, margin, budgets. | Revenue and margin cannot be computed at all. |
-| G4 | **CRM/Sales absent** — `/contact`, `/general-inquiry`, `/start-project`, `/hire`, and the homepage newsletter form only email or hold local state, none persist. No leads, deals, proposals, source attribution. | Entire top-of-funnel — including a fully-built-but-unwired newsletter signup — is invisible to the business. |
-| G5 | **PM is shallow** — milestones are a JSONB blob on `projects`; no tasks, sprints, dependencies, capacity/allocation. | Cannot run delivery ops. **(First module to build.)** |
-| G6 | **No CMS, and existing content is triplicated** — blog, skills, and especially services (split across `content/landing.ts` + `data/services.ts`, joined at render) and case studies (split across `content/landing.ts`, `data/projects.ts`, and the `projects` table's own public fields) all describe the same entities from multiple hardcoded sources. | No admin CRUD; editors must ship code to publish; content sources can drift out of sync with each other. |
-| G7 | **Careers/talent-supply missing** — freelance projects, internal recruitment, third-party outsourcing exist only as marketing copy. | No pipeline, no jobs, no applications. |
-| G11 | **No testimonials/reviews model** — confirmed absent from DB, `src/data/*`, and every component (full-codebase check). A homepage testimonials marquee is planned next (replacing the `BlogTicker` topic strip between the Founder and Blog sections). | Needs a `testimonials` table + admin CRUD before that UI can be data-driven. |
-| G12 | **Homepage stats are hardcoded, not computed** — "50+ engineers placed", "8 days avg match speed", "32+ products shipped" (`TalentTrack`, `ServicesMarquee`) are copy, not queries. | Once real placement/project data exists, these numbers will silently drift from reality unless replaced by a live metrics endpoint. |
-| G8 | **No true audit log** — `activity_events` is a user-facing feed, not an immutable actor/delta/IP trail. | Compliance & accountability gap. |
-| G9 | **Platform hygiene** — no Drizzle relations, likely missing indexes on hot filters (`organizationId`, `status`, `briefType`, `engineerId`), no background jobs, no notifications table, no persisted settings, no rate limiting/idempotency, no error tracking (Sentry). | Performance, reliability, and operability gaps. |
+| G1 | **Coarse RBAC** - 3 roles only, enforced by inline `session.user.role === "admin"` in ~28 routes. No permissions, admin sub-roles, or team/department scoping. | Cannot express finance-only, PM-only, recruiter-only staff. Blocks ERP. |
+| G2 | **No service/domain layer** - business logic in route handlers; no shared transactional workflows. | Multi-table transitions (accept match → placement → project → billing schedule) are non-atomic and non-reusable. |
+| G3 | **Finance is a stub** - only `invoices`; no bill/pay **rates**, expenses, payouts, ledger, revenue recognition, margin, budgets. | Revenue and margin cannot be computed at all. |
+| G4 | **CRM/Sales absent** - `/contact`, `/general-inquiry`, `/start-project`, `/hire`, and the homepage newsletter form only email or hold local state, none persist. No leads, deals, proposals, source attribution. | Entire top-of-funnel - including a fully-built-but-unwired newsletter signup - is invisible to the business. |
+| G5 | **PM is shallow** - milestones are a JSONB blob on `projects`; no tasks, sprints, dependencies, capacity/allocation. | Cannot run delivery ops. **(First module to build.)** |
+| G6 | **No CMS, and existing content is triplicated** - blog, skills, and especially services (split across `content/landing.ts` + `data/services.ts`, joined at render) and case studies (split across `content/landing.ts`, `data/projects.ts`, and the `projects` table's own public fields) all describe the same entities from multiple hardcoded sources. | No admin CRUD; editors must ship code to publish; content sources can drift out of sync with each other. |
+| G7 | **Careers/talent-supply missing** - freelance projects, internal recruitment, third-party outsourcing exist only as marketing copy. | No pipeline, no jobs, no applications. |
+| G11 | **No testimonials/reviews model** - confirmed absent from DB, `src/data/*`, and every component (full-codebase check). A homepage testimonials marquee is planned next (replacing the `BlogTicker` topic strip between the Founder and Blog sections). | Needs a `testimonials` table + admin CRUD before that UI can be data-driven. |
+| G12 | **Homepage stats are hardcoded, not computed** - "50+ engineers placed", "8 days avg match speed", "32+ products shipped" (`TalentTrack`, `ServicesMarquee`) are copy, not queries. | Once real placement/project data exists, these numbers will silently drift from reality unless replaced by a live metrics endpoint. |
+| G8 | **No true audit log** - `activity_events` is a user-facing feed, not an immutable actor/delta/IP trail. | Compliance & accountability gap. |
+| G9 | **Platform hygiene** - no Drizzle relations, likely missing indexes on hot filters (`organizationId`, `status`, `briefType`, `engineerId`), no background jobs, no notifications table, no persisted settings, no rate limiting/idempotency, no error tracking (Sentry). | Performance, reliability, and operability gaps. |
 | G10 | **Admin UI still mock-backed** via `src/data/dashboard-mock.ts` (revenue, payments, support, audit, settings). | UI exists; persistence does not. |
 
 ---
 
-## Part 2 — Architecture principles
+## Part 2 - Architecture principles
 
 1. **Layered, not fat routes.** `route handler → service (domain logic) → repository (data access) → Drizzle/Neon`. Routes only do auth, parse/validate, call a service, and shape the response.
 2. **Authorize on capability, not role string.** Every protected action checks a **permission** (+ scope), resolved from the user's roles. Role strings never appear in business logic.
@@ -69,7 +69,7 @@ The public frontend is **pivot-accurate** and is treated as a requirements sourc
 
 ---
 
-## Part 3 — Layered architecture
+## Part 3 - Layered architecture
 
 ```
 src/
@@ -102,7 +102,7 @@ All API errors return `{ error: string, field?: string, code?: string }` with co
 
 ---
 
-## Part 4 — RBAC & permissions model (ADR-0001)
+## Part 4 - RBAC & permissions model (ADR-0001)
 
 **Decision**: DB-driven permission-based RBAC with composable custom roles and scoping. Supersedes the 3-role string model for authorization (the `users.role` column remains as a coarse "primary persona" + redirect hint, but is not the authorization source of truth for admin capabilities).
 
@@ -123,7 +123,7 @@ team_members       (team_id, user_id, title)
 
 ### 4.2 Permission catalog (naming)
 
-`<module>.<resource>.<action>` — actions: `read | write | delete | approve | export`.
+`<module>.<resource>.<action>` - actions: `read | write | delete | approve | export`.
 Modules: `identity, crm, delivery, finance, talent, careers, marketing, cms, support, platform`.
 Examples: `finance.invoice.approve`, `delivery.task.write`, `cms.blog.write`, `talent.engineer.verify`, `careers.application.read`.
 
@@ -131,7 +131,7 @@ Examples: `finance.invoice.approve`, `delivery.task.write`, `cms.blog.write`, `t
 
 - `lib/authz/can(user, permission, resource?)` resolves the user's permission set (cached per request) and evaluates scope (global / team / self / owning-org).
 - API guard helper: `await authorize(session, "delivery.task.write", { teamId })` → throws `ForbiddenError` (mapped to 403) otherwise.
-- **Client/developer** external users keep resource-ownership rules (an org sees only its own briefs/projects/invoices; a developer sees only their own work) — expressed as `self`/`owning-org` scopes, not special-cased in each route.
+- **Client/developer** external users keep resource-ownership rules (an org sees only its own briefs/projects/invoices; a developer sees only their own work) - expressed as `self`/`owning-org` scopes, not special-cased in each route.
 - Authorization is enforced in the **service layer** (so jobs and admin actions share it), with a thin re-check at the route boundary.
 
 ### 4.4 Audit
@@ -140,7 +140,7 @@ Every `write/delete/approve` goes through `lib/authz` and writes an immutable `a
 
 ---
 
-## Part 5 — ERP domain module map
+## Part 5 - ERP domain module map
 
 Ten modules. Each has: owning team(s), permission namespace, tables, key services, and public/admin surfaces.
 
@@ -155,7 +155,7 @@ Ten modules. Each has: owning team(s), permission namespace, tables, key service
 | **Marketing** | Campaigns, newsletter, attribution, SEO/analytics ingestion | marketer | site-wide |
 | **CMS** | Blog, work/case studies, services, skills, static pages | content_editor | `/blog`, `/work`, `/services`, `/skills` |
 | **Support** | Cases, threads, resolver queue | support_agent | dashboard support chat |
-| ↳ delivery mechanism | Polling first (15-20s notifications, 5-8s active chat), managed realtime or SSE only if proven necessary | — | see [ADR-0009](adr/ADR-0009-messaging-delivery-strategy.md) |
+| ↳ delivery mechanism | Polling first (15-20s notifications, 5-8s active chat), managed realtime or SSE only if proven necessary | - | see [ADR-0009](adr/ADR-0009-messaging-delivery-strategy.md) |
 | **Platform** | Settings, integrations, notifications, audit, jobs | super_admin | `/admin/settings` |
 
 ⭐ = first build module.
@@ -164,7 +164,7 @@ System roles: `super_admin, sales_manager, finance_manager, delivery_pm, recruit
 
 ---
 
-## Part 6 — Data model (new & extended tables)
+## Part 6 - Data model (new & extended tables)
 
 Conventions: `id uuid pk default random`, `created_at/updated_at timestamptz`, money as `*_cents integer` + `currency text`, soft references via uuid + explicit FKs, JSONB only for genuinely schemaless data. **Add indexes** on every FK and on hot filter columns.
 
@@ -188,7 +188,7 @@ Key services: `createProject`, `promoteBriefToProject`, `addTask`, `moveTask`, `
 
 Implemented in `src/lib/services/delivery/`: `access.ts` (shared project-ownership scoping reused by every delivery service), `health.ts` (`computeProjectHealth`/`recomputeProjectHealth` - off_track on any blocked task or overdue unapproved milestone, at_risk on any overdue incomplete task, recomputed after task status changes and milestone approval), `milestones.ts`, `tasks.ts`, `sprints.ts` (enforces one active sprint per project), `allocations.ts`, `timesheets.ts` (full draft→submitted→approved/rejected lifecycle, migrated off the old ungated route). `promoteBriefToProject` is **not yet implemented** - `projects.briefId` and the schema support it, but the actual promotion workflow is deferred to when CRM (P3) creates real briefs to promote from.
 
-### 6.2 Finance (ledger — ADR-0003)
+### 6.2 Finance (ledger - ADR-0003)
 
 ```
 rate_cards          id, subject_type('engineer'|'client'|'org'), subject_id, kind('bill'|'pay'),
@@ -250,7 +250,7 @@ Column names were derived directly from the frontend's already-built `src/data/c
 
 **Not yet built**: `talent_pool_entries` (cross-channel supply-side pipeline view) - deferred until there's a concrete UI need for it beyond what `applications`/`stage` already provide.
 
-### 6.6 CMS (ADR-0004 — migrate hardcoded content to DB)
+### 6.6 CMS (ADR-0004 - migrate hardcoded content to DB)
 
 ```
 content_authors     not built - skipped, see status note below.
@@ -271,8 +271,8 @@ content_revisions ✅ id, content_type(enum), content_id, snapshot jsonb, editor
 
 **Consolidation note (derived from landing-page audit, July 1 2026):** three content sources currently overlap and must converge into single tables during migration, not be preserved as-is:
 - **Services**: `src/content/landing.ts` (`services`: icon/image/timeline/body) and `src/data/services.ts` (`ServiceDefinition`: scope/engagementOptions/faq/stackHighlights) are joined by slug at render time in `services-bento.tsx`. `services_content` becomes the single merged source for both the homepage bento grid and `/services/[slug]`.
-- **Case studies**: `src/content/landing.ts` (`showcaseProjects`), `src/data/projects.ts` (`ProjectEntry`), and the `projects` table's existing public fields (`challenge/solution/outcome/clientQuote/clientQuoteAttribution/clientName/isPublic/publicSlug/featuredOrder`) all describe the same entity. The `projects` table is already the richest shape — the homepage showcase and `/work` should both query it directly (`isPublic = true ORDER BY featuredOrder`), and the two hardcoded arrays are retired, not dual-sourced.
-- **Testimonials** are net-new (no existing data model, confirmed by full-codebase search) — needed for the founder→testimonials marquee planned for the homepage (GSAP-driven infinite scroll, replacing the current topic-tag `BlogTicker` strip in `blog-faq-newsletter.tsx`). Build the table + admin CRUD first; the frontend marquee consumes `GET /api/testimonials?featured=true`.
+- **Case studies**: `src/content/landing.ts` (`showcaseProjects`), `src/data/projects.ts` (`ProjectEntry`), and the `projects` table's existing public fields (`challenge/solution/outcome/clientQuote/clientQuoteAttribution/clientName/isPublic/publicSlug/featuredOrder`) all describe the same entity. The `projects` table is already the richest shape - the homepage showcase and `/work` should both query it directly (`isPublic = true ORDER BY featuredOrder`), and the two hardcoded arrays are retired, not dual-sourced.
+- **Testimonials** are net-new (no existing data model, confirmed by full-codebase search) - needed for the founder→testimonials marquee planned for the homepage (GSAP-driven infinite scroll, replacing the current topic-tag `BlogTicker` strip in `blog-faq-newsletter.tsx`). Build the table + admin CRUD first; the frontend marquee consumes `GET /api/testimonials?featured=true`.
 - **FAQs** are currently duplicated per page (`landing.ts faqItems`, service FAQs, skill-domain FAQs, `/hire/faq`). The `faqs` table with a `section` discriminator lets each page query its own slice from one editable source.
 
 Migration path: seed these tables from the current `src/data/*.ts` / `src/content/*.ts` so nothing regresses; public pages switch to reading DB with the static files as fallback until cutover, then the static files are deleted (not kept as permanent dual-source).
@@ -319,7 +319,7 @@ governance_controls id, title, scope, surface(enum), status(enum: clean|review|e
                               -- ✅ implemented July 6, 2026 (Platform group refinement pass)
 ```
 
-**`governance_controls`** (`src/db/schema/governance.ts`, `src/lib/services/platform/governance.ts`, `platform.governance.read`/`write`) is deliberately **not** the same thing as `audit_log`. `audit_log` is the immutable, system-generated trail of every write across the platform; a governance control is a *mutable policy row* an admin owns and advances through a status lifecycle (e.g. "client invoice and developer payout stay separated by role" — surface: commercial, status: exception → review → clean). Every write to a governance control still goes through `writeAudit()` like any other domain mutation, so "who changed this control and when" lives in `audit_log` same as everywhere else — this table is "what the policy currently is," not the trail of edits to it. Status transitions require a note (enforced client-side in the Audit Reports UI, appended to `evidence`); "overdue" is computed client-side from `updated_at` + `report_cadence`, not stored. Currently `platform.governance.*` is granted to `super_admin` only. See [PLATFORM_GROUP_REFINEMENT_GUIDE.md](../PLATFORM_GROUP_REFINEMENT_GUIDE.md) for the full workflow-design rationale.
+**`governance_controls`** (`src/db/schema/governance.ts`, `src/lib/services/platform/governance.ts`, `platform.governance.read`/`write`) is deliberately **not** the same thing as `audit_log`. `audit_log` is the immutable, system-generated trail of every write across the platform; a governance control is a *mutable policy row* an admin owns and advances through a status lifecycle (e.g. "client invoice and developer payout stay separated by role" - surface: commercial, status: exception → review → clean). Every write to a governance control still goes through `writeAudit()` like any other domain mutation, so "who changed this control and when" lives in `audit_log` same as everywhere else - this table is "what the policy currently is," not the trail of edits to it. Status transitions require a note (enforced client-side in the Audit Reports UI, appended to `evidence`); "overdue" is computed client-side from `updated_at` + `report_cadence`, not stored. Currently `platform.governance.*` is granted to `super_admin` only. See [PLATFORM_GROUP_REFINEMENT_GUIDE.md](../PLATFORM_GROUP_REFINEMENT_GUIDE.md) for the full workflow-design rationale.
 
 **`users` table gained two columns** (`owner text`, `access_notes text`, both nullable) in the same pass, replacing client-side-fabricated `owner`/`accessNotes` fields on the admin User Mgmt page with real, persisted ones. `mfaState`/`risk` fields that had no real backing signal were removed outright rather than left fabricated.
 
@@ -351,7 +351,7 @@ Verified live across five separate e2e runs (account provisioning + hire-to-plac
 
 ---
 
-## Part 7 — API design conventions
+## Part 7 - API design conventions
 
 - **REST resource routes** under `src/app/api/<module>/<resource>`. Collection `GET/POST`, item `GET/PATCH/DELETE`. Sub-actions as `POST /<resource>/[id]/<action>` (e.g. `/api/matches/[id]/accept`).
 - **Pagination**: `?page`, `?pageSize` (default 25, max 100) → `{ data, page, pageSize, total }`. Cursor pagination for large feeds (activity, audit).
@@ -364,7 +364,7 @@ Verified live across five separate e2e runs (account provisioning + hire-to-plac
 
 ---
 
-## Part 8 — Cross-cutting concerns
+## Part 8 - Cross-cutting concerns
 
 - **Transactions**: `db.transaction()` around every multi-table workflow; audit + activity written inside the txn.
 - **Background jobs** (`lib/jobs`): invoice generation per billing period, timesheet→invoice rollup, SLA/overdue sweeps, payout runs, notification digests. Triggered by scheduled routes (cron) with `job_runs` bookkeeping; can move to a queue later.
@@ -372,12 +372,12 @@ Verified live across five separate e2e runs (account provisioning + hire-to-plac
 - **Email** (`lib/email` + Resend): transactional (verification, notifications, invoice sent, application received) via templated senders.
 - **Caching**: request-scoped memoization for permission resolution and session (`react.cache` already used); consider short TTL cache for public CMS reads.
 - **Search**: start with Postgres `ILIKE`/trigram + indexed columns; revisit only if needed.
-- **Public metrics endpoint**: the homepage `TalentTrack` section (`src/app/page.tsx`) and `ServicesMarquee` hardcode operational stats ("50+ engineers placed", "8 days avg match speed", "32+ products shipped"). Once P1/P6 data exists, add `GET /api/public/metrics` computing these live (placed engineer count, avg time-to-placement, shipped project count from `projects.status = completed`) with a short cache TTL, and wire the homepage to it instead of copy. Low priority — do only after the underlying tables are populated with real records.
-- **Newsletter backend now exists** (Part 6.7, July 2 2026): `POST /api/newsletter/subscribe` is live against `newsletter_subscribers`. `blog-faq-newsletter.tsx`'s subscribe form still only sets local component state on submit — no request is sent anywhere — because the user was concurrently mid-edit on that exact file when this backend phase ran. Wiring it is now a near-zero-effort fast follow (swap the fake `setSubscribed(true)` for a real `fetch("/api/newsletter/subscribe", ...)` call); pick it up whenever that file is next touched.
+- **Public metrics endpoint**: the homepage `TalentTrack` section (`src/app/page.tsx`) and `ServicesMarquee` hardcode operational stats ("50+ engineers placed", "8 days avg match speed", "32+ products shipped"). Once P1/P6 data exists, add `GET /api/public/metrics` computing these live (placed engineer count, avg time-to-placement, shipped project count from `projects.status = completed`) with a short cache TTL, and wire the homepage to it instead of copy. Low priority - do only after the underlying tables are populated with real records.
+- **Newsletter backend now exists** (Part 6.7, July 2 2026): `POST /api/newsletter/subscribe` is live against `newsletter_subscribers`. `blog-faq-newsletter.tsx`'s subscribe form still only sets local component state on submit - no request is sent anywhere - because the user was concurrently mid-edit on that exact file when this backend phase ran. Wiring it is now a near-zero-effort fast follow (swap the fake `setSubscribed(true)` for a real `fetch("/api/newsletter/subscribe", ...)` call); pick it up whenever that file is next touched.
 
 ---
 
-## Part 9 — Observability & DevOps (ADR-0005) — DevOps owner
+## Part 9 - Observability & DevOps (ADR-0005) - DevOps owner
 
 - **Error tracking**: Sentry (`@sentry/nextjs`) for server + client, with release + environment tagging, PII scrubbing, and `requestId` on every server error.
 - **Logging**: structured JSON logs with request ID, user ID, module, action; no secrets or PII in logs.
@@ -393,7 +393,7 @@ Verified live across five separate e2e runs (account provisioning + hire-to-plac
 
 ---
 
-## Part 10 — Security
+## Part 10 - Security
 
 - Authorize every mutation via `lib/authz` (permission + scope), enforced in services.
 - Ownership scoping for client/developer users (org-owned / self-owned rows only).
@@ -405,7 +405,7 @@ Verified live across five separate e2e runs (account provisioning + hire-to-plac
 
 ---
 
-## Part 11 — Migration & seeding strategy
+## Part 11 - Migration & seeding strategy
 
 1. Every schema change = new file in `src/db/schema/*`, then `npm run db:generate`, review SQL, commit, apply with `npm run db:migrate` (push) or `migrate` in CI.
 2. Additive-first: new columns nullable/defaulted; enums extended.
@@ -414,7 +414,7 @@ Verified live across five separate e2e runs (account provisioning + hire-to-plac
 
 ---
 
-## Part 12 — Phased delivery roadmap
+## Part 12 - Phased delivery roadmap
 
 Sequenced so authorization + service layer exist before modules, PM ships first, and money is correct before automation.
 
@@ -430,13 +430,13 @@ Sequenced so authorization + service layer exist before modules, PM ships first,
 | **P7 Marketing** ✅ | campaigns, newsletter, campaign_metrics; GA4/analytics ingestion. | Done July 2, 2026 - see §6.7. Campaign ROI aggregate + subscriber list ready for admin UI; homepage newsletter form still needs its fetch call wired (see Part 8's cross-cutting note). |
 | **P8 Support & Notifications** ✅ | support_cases/messages, notifications, prefs; wire floating support chat + notification menu. | Done July 2, 2026 - see §6.8. Ticket-style support done; a separate internal project-messaging system is tracked next (see the dashboard-audit note below Part 12). |
 | **P9 Hardening** | idempotency, rate limiting, background job scheduling, indexes/perf pass, full test coverage of critical flows, provider-integration seams (Stripe/Wise) documented. | Load-sane, observable, tested; provider integration is a config change, not a refactor. |
-| **P10 Admin dashboard UI wiring — Platform group** ✅ | First real instance of the "wiring the UI is a follow-up" work every phase above deferred. Admin User Mgmt + Audit Reports pages converted from client-only mock state onto real endpoints; new `governance_controls` table/service/routes; Settings/Appearance draft+Save model; shared `OperationalDataTable`/`ModalShell`/`ConfirmDialog` component fixes that apply across ~16 admin pages, not just Platform group. | Done July 6, 2026 - see [PLATFORM_GROUP_REFINEMENT_GUIDE.md](../PLATFORM_GROUP_REFINEMENT_GUIDE.md) for the full audit, decisions, and a conventions checklist (§9) for repeating this pass on the remaining nav groups (Network, Finance, Marketing, Support). |
+| **P10 Admin dashboard UI wiring - Platform group** ✅ | First real instance of the "wiring the UI is a follow-up" work every phase above deferred. Admin User Mgmt + Audit Reports pages converted from client-only mock state onto real endpoints; new `governance_controls` table/service/routes; Settings/Appearance draft+Save model; shared `OperationalDataTable`/`ModalShell`/`ConfirmDialog` component fixes that apply across ~16 admin pages, not just Platform group. | Done July 6, 2026 - see [PLATFORM_GROUP_REFINEMENT_GUIDE.md](../PLATFORM_GROUP_REFINEMENT_GUIDE.md) for the full audit, decisions, and a conventions checklist (§9) for repeating this pass on the remaining nav groups (Network, Finance, Marketing, Support). |
 
 Each phase: schema → migration → services (+authz+audit) → API → validation → tests → replace mock → docs update.
 
 ---
 
-## Part 13 — Definition of done (per phase)
+## Part 13 - Definition of done (per phase)
 
 - Migration generated, reviewed, applied; schema typed and exported.
 - Services authorize via `can()` + scope, run in transactions, emit audit + activity.

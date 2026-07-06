@@ -2,7 +2,7 @@
  * scripts/seed-prod.ts
  *
  * Seeds the PRODUCTION database with ONLY admin/seed user accounts.
- * Zero content data — all CMS content is managed via the admin dashboard.
+ * Zero content data - all CMS content is managed via the admin dashboard.
  *
  * Run with: npm run db:seed:prod
  *
@@ -51,11 +51,11 @@ async function main() {
     .onConflictDoNothing();
 
   console.log(`   ✓ Admin user seeded: ${PROD_ADMIN_EMAIL}`);
-  console.log(`   ⚠  Initial password: "${PROD_ADMIN_INITIAL_PASSWORD}" — CHANGE IMMEDIATELY.`);
+  console.log(`   ⚠  Initial password: "${PROD_ADMIN_INITIAL_PASSWORD}" - CHANGE IMMEDIATELY.`);
 
   await pool.end();
   console.log(
-    "\n✅  Production seed complete. No content data was seeded — manage via the admin dashboard.\n",
+    "\n✅  Production seed complete. No content data was seeded - manage via the admin dashboard.\n",
   );
 }
 

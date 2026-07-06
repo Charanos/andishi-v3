@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useActionState, useMemo, useState } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   IconArrowRight,
@@ -12,6 +11,7 @@ import {
   IconMail,
   IconShieldCheck,
 } from "@tabler/icons-react";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { cosmicSpring } from "@/lib/motion";
@@ -301,12 +301,14 @@ export function LoginPageExperience({
 
             <div className="border-t border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] px-6 py-4 text-center text-[0.92rem] text-[var(--on-surface-dim)] sm:px-7 dark:border-[var(--glass-border)]">
               Need access?{" "}
-              <Link
-                href="/start-project"
+              <a
+                href={buildWhatsAppUrl(undefined, { variant: "hire" })}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="font-medium text-[var(--secondary)] transition-opacity duration-300 hover:opacity-75"
               >
                 Start hiring
-              </Link>
+              </a>
             </div>
           </div>
 

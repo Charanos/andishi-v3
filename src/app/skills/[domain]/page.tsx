@@ -16,6 +16,7 @@ import { DualTrackCTA } from "@/components/marketing/dual-track-cta";
 import { getEngineersByDomain } from "@/data/engineers";
 import { skillDomainList, skillDomains, type SkillDomain } from "@/data/skills";
 import { siteConfig } from "@/config/site";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 type Props = {
   params: Promise<{ domain: string }>;
@@ -90,7 +91,7 @@ export default async function SkillDomainPage({ params }: Props) {
           title={domain.h1}
           body={domain.subheadline}
           primary={{
-            href: "/start-project",
+            href: buildWhatsAppUrl(undefined, { context: `Skills: ${domain.label}` }),
             label: "Start a Project",
           }}
           secondary={{ href: "/services", label: "Explore Services" }}
@@ -114,10 +115,7 @@ export default async function SkillDomainPage({ params }: Props) {
           </div>
         </SectionBlock>
 
-        <SectionBlock
-          eyebrow="Core technologies"
-          title="The tech stack we leverage."
-        >
+        <SectionBlock eyebrow="Core technologies" title="The tech stack we leverage.">
           <div className="flex flex-wrap gap-3">
             {domain.technologies.map((tech) => (
               <span
@@ -169,10 +167,7 @@ export default async function SkillDomainPage({ params }: Props) {
           </SectionBlock>
         )}
 
-        <SectionBlock
-          eyebrow="Domain FAQ"
-          title={`${domain.label} questions, answered.`}
-        >
+        <SectionBlock eyebrow="Domain FAQ" title={`${domain.label} questions, answered.`}>
           <FaqList items={domain.faq} />
         </SectionBlock>
 
@@ -185,19 +180,18 @@ export default async function SkillDomainPage({ params }: Props) {
                 style={textureStyle}
               />
               <div className="relative z-[1] mx-auto max-w-2xl">
-                <p className="label-caps mb-4 text-[var(--secondary)]">
-                  Start here
-                </p>
+                <p className="label-caps mb-4 text-[var(--secondary)]">Start here</p>
                 <h2 className="title-serif text-[clamp(2.18rem,4.5vw,3.45rem)] font-normal leading-[1.02] tracking-tight text-[var(--on-surface)]">
                   Start building your {domain.label} product.
                 </h2>
                 <p className="body-md mx-auto my-6 max-w-lg text-[var(--on-surface-dim)]">
-                  Work with our senior engineering team to scope, design, and deliver your next product milestone.
+                  Work with our senior engineering team to scope, design, and deliver your next
+                  product milestone.
                 </p>
                 <DualTrackCTA
                   context=""
                   primaryLabel="Start a Project"
-                  primaryHref="/start-project"
+                  primaryHref={buildWhatsAppUrl(undefined, { context: `Skills: ${domain.label}` })}
                   secondaryLabel="Or hire an engineer"
                   secondaryHref="/hire"
                 />

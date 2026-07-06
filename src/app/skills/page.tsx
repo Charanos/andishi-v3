@@ -8,6 +8,7 @@ import {
 } from "@/components/marketing/public-page";
 import { LinkButton } from "@/components/ui/button";
 import { skillDomainList } from "@/data/skills";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Product Capabilities & Skill Domains - Andishi",
@@ -22,16 +23,14 @@ export default function SkillsPage() {
         eyebrow="Product Capabilities"
         title="Engineered for performance."
         body="Explore the core technical domains our team leverages to scope, design, and ship custom software platforms, AI applications, and secure systems."
-        primary={{ href: "/start-project", label: "Start a Project" }}
+        primary={{ href: buildWhatsAppUrl(), label: "Start a Project" }}
         secondary={{ href: "/services", label: "Explore Services" }}
       />
       <SectionBlock title="Choose a domain.">
         <div className="grid gap-4 md:grid-cols-2">
           {skillDomainList.map((domain) => (
             <GlassPanel key={domain.slug}>
-              <p className="label-caps mb-4 text-[var(--secondary)]">
-                {domain.eyebrow}
-              </p>
+              <p className="label-caps mb-4 text-[var(--secondary)]">{domain.eyebrow}</p>
               <h2 className="text-[1.45rem] font-medium leading-tight text-[var(--on-surface)]">
                 {domain.label}
               </h2>
@@ -49,11 +48,7 @@ export default function SkillsPage() {
                 ))}
               </div>
               <div className="mt-6">
-                <LinkButton
-                  href={`/skills/${domain.slug}`}
-                  variant="glass"
-                  size="sm"
-                >
+                <LinkButton href={`/skills/${domain.slug}`} variant="glass" size="sm">
                   View domain
                   <IconArrowRight size={15} stroke={1.8} />
                 </LinkButton>

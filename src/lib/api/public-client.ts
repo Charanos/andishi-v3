@@ -49,7 +49,7 @@ export interface PublicProject {
 export async function fetchPublicTestimonials(
   options: { featuredOnly?: boolean; baseUrl?: string } = {},
 ): Promise<Testimonial[]> {
-  const base = options.baseUrl ?? (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000");
+  const base = options.baseUrl ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const url = new URL("/api/testimonials", base);
   if (options.featuredOnly) url.searchParams.set("featured", "true");
 
@@ -72,7 +72,7 @@ export async function fetchPublicTestimonials(
 export async function fetchPublicBlogPosts(
   options: { category?: string; baseUrl?: string } = {},
 ): Promise<BlogPost[]> {
-  const base = options.baseUrl ?? (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000");
+  const base = options.baseUrl ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const url = new URL("/api/blog", base);
   if (options.category && options.category !== "All") {
     url.searchParams.set("category", options.category);
@@ -94,7 +94,7 @@ export async function fetchPublicBlogPost(
   slug: string,
   baseUrl?: string,
 ): Promise<BlogPost | null> {
-  const base = baseUrl ?? (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000");
+  const base = baseUrl ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
   try {
     const res = await fetch(`${base}/api/blog/${slug}`, {
@@ -115,7 +115,7 @@ export async function fetchPublicBlogPost(
 export async function fetchPublicProjects(
   options: { service?: string; vertical?: string; baseUrl?: string } = {},
 ): Promise<PublicProject[]> {
-  const base = options.baseUrl ?? (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000");
+  const base = options.baseUrl ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const url = new URL("/api/work", base);
   if (options.service) url.searchParams.set("service", options.service);
   if (options.vertical) url.searchParams.set("vertical", options.vertical);
@@ -136,7 +136,7 @@ export async function fetchPublicProjectBySlug(
   slug: string,
   baseUrl?: string,
 ): Promise<PublicProject | null> {
-  const base = baseUrl ?? (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000");
+  const base = baseUrl ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
   try {
     const res = await fetch(`${base}/api/work/${slug}`, {
@@ -157,13 +157,13 @@ export async function fetchPublicProjectBySlug(
 export async function fetchPublicOpenings(
   options: { kind?: "freelance" | "internal" | "outsourced"; baseUrl?: string } = {},
 ): Promise<JobOpening[]> {
-  const base = options.baseUrl ?? (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000");
+  const base = options.baseUrl ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const url = new URL("/api/careers", base);
   if (options.kind) url.searchParams.set("kind", options.kind);
 
   try {
     const res = await fetch(url.toString(), {
-      next: { revalidate: 60 }, // 1 minute — jobs change more frequently
+      next: { revalidate: 60 }, // 1 minute - jobs change more frequently
     });
     if (!res.ok) return [];
     const data = await res.json();
@@ -177,7 +177,7 @@ export async function fetchPublicOpening(
   slug: string,
   baseUrl?: string,
 ): Promise<JobOpening | null> {
-  const base = baseUrl ?? (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000");
+  const base = baseUrl ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
   try {
     const res = await fetch(`${base}/api/careers/${slug}`, {

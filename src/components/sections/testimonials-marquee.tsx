@@ -1,7 +1,15 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { IconStar, IconEdit, IconTrash, IconPlus, IconX, IconCheck, IconMessageCircle } from "@tabler/icons-react";
+import {
+  IconStar,
+  IconEdit,
+  IconTrash,
+  IconPlus,
+  IconX,
+  IconCheck,
+  IconMessageCircle,
+} from "@tabler/icons-react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { cn } from "@/lib/utils";
@@ -167,7 +175,7 @@ export function TestimonialsMarquee({ initialTestimonials = [] }: TestimonialsMa
     }
   };
 
-  // Submit Modal Save — calls real API
+  // Submit Modal Save - calls real API
   const handleSaveSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingTestimonial) return;
@@ -221,9 +229,7 @@ export function TestimonialsMarquee({ initialTestimonials = [] }: TestimonialsMa
       const saved: Testimonial = data.testimonial;
 
       setTestimonials((prev) =>
-        isNew
-          ? [...prev, saved]
-          : prev.map((t) => (t.id === saved.id ? saved : t)),
+        isNew ? [...prev, saved] : prev.map((t) => (t.id === saved.id ? saved : t)),
       );
       setModalOpen(false);
       setEditingTestimonial(null);
@@ -293,79 +299,80 @@ export function TestimonialsMarquee({ initialTestimonials = [] }: TestimonialsMa
           </div>
         </div>
       ) : (
-      <div
-        className="relative overflow-hidden border-y border-[var(--glass-border)] py-8 bg-[color-mix(in_srgb,var(--bg-deep)_34%,transparent)]"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {/* Soft fading edges gradients */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[18%] max-w-[240px] bg-gradient-to-r from-[var(--bg)] to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-[18%] max-w-[240px] bg-gradient-to-l from-[var(--bg)] to-transparent" />
+        <div
+          className="relative overflow-hidden border-y border-[var(--glass-border)] py-8 bg-[color-mix(in_srgb,var(--bg-deep)_34%,transparent)]"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {/* Soft fading edges gradients */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[18%] max-w-[240px] bg-gradient-to-r from-[var(--bg)] to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-[18%] max-w-[240px] bg-gradient-to-l from-[var(--bg)] to-transparent" />
 
-        {/* Moving track wrapper */}
-        <div ref={trackRef} className="flex w-max will-change-transform">
-          {mounted && duplicatedItems.map((item, index) => (
-            <div
-              key={`${item.id}-${index}`}
-              className="group/card relative w-[420px] max-w-[85vw] shrink-0 p-8 mx-5 rounded-[2rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] shadow-[var(--glass-inner-shadow)] backdrop-blur-md transition-all duration-300 hover:border-[color-mix(in_srgb,var(--on-surface)_18%,transparent)]"
-            >
-              {/* Star rating row */}
-              <div className="flex justify-between items-center mb-4">
-                {renderStars(item.rating)}
-                <span className="font-mono text-[0.58rem] tracking-wider text-[var(--on-surface-dim)] opacity-40">
-                  {item.date}
-                </span>
-              </div>
+          {/* Moving track wrapper */}
+          <div ref={trackRef} className="flex w-max will-change-transform">
+            {mounted &&
+              duplicatedItems.map((item, index) => (
+                <div
+                  key={`${item.id}-${index}`}
+                  className="group/card relative w-[420px] max-w-[85vw] shrink-0 p-8 mx-5 rounded-[2rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] shadow-[var(--glass-inner-shadow)] backdrop-blur-md transition-all duration-300 hover:border-[color-mix(in_srgb,var(--on-surface)_18%,transparent)]"
+                >
+                  {/* Star rating row */}
+                  <div className="flex justify-between items-center mb-4">
+                    {renderStars(item.rating)}
+                    <span className="font-mono text-[0.58rem] tracking-wider text-[var(--on-surface-dim)] opacity-40">
+                      {item.date}
+                    </span>
+                  </div>
 
-              {/* Review content */}
-              <p className="text-[0.85rem] leading-[1.65] text-[var(--on-surface)] opacity-90 mb-6 font-normal">
-                &ldquo;{item.content}&rdquo;
-              </p>
-
-              {/* Author profile row */}
-              <div className="flex items-center gap-3">
-                <div className="relative h-9 w-9 overflow-hidden rounded-full border border-[var(--glass-border)] bg-white/5">
-                  <Image
-                    src={item.avatarUrl}
-                    alt={item.authorName}
-                    width={36}
-                    height={36}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div>
-                  <h4 className="text-[0.8rem] font-medium text-[var(--on-surface)]">
-                    {item.authorName}
-                  </h4>
-                  <p className="text-[0.66rem] text-[var(--on-surface-dim)] font-medium">
-                    {item.authorRole}
+                  {/* Review content */}
+                  <p className="text-[0.85rem] leading-[1.65] text-[var(--on-surface)] opacity-90 mb-6 font-normal">
+                    &ldquo;{item.content}&rdquo;
                   </p>
-                </div>
-              </div>
 
-              {/* Inline Administrator actions overlays */}
-              {isAdmin && (
-                <div className="absolute top-3 right-3 flex items-center gap-1.5 opacity-0 group-hover/card:opacity-100 transition-all duration-300">
-                  <button
-                    onClick={(e) => handleEditInline(item, e)}
-                    className="p-1.5 rounded-lg border border-[var(--glass-border)] bg-[var(--surface-low)] text-[var(--on-surface-dim)] shadow-sm backdrop-blur-md transition-all duration-200 hover:scale-105 hover:border-[color-mix(in_srgb,var(--on-surface)_20%,transparent)] hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] hover:text-[var(--on-surface)] active:scale-95"
-                    title="Edit Review"
-                  >
-                    <IconEdit size={12} />
-                  </button>
-                  <button
-                    onClick={(e) => handleDeleteInline(item.id, e)}
-                    className="p-1.5 rounded-lg border border-red-500/25 bg-[var(--surface-low)] text-red-500 shadow-sm backdrop-blur-md transition-all duration-200 hover:scale-105 hover:bg-red-500/15 active:scale-95"
-                    title="Delete Review"
-                  >
-                    <IconTrash size={12} />
-                  </button>
+                  {/* Author profile row */}
+                  <div className="flex items-center gap-3">
+                    <div className="relative h-9 w-9 overflow-hidden rounded-full border border-[var(--glass-border)] bg-white/5">
+                      <Image
+                        src={item.avatarUrl}
+                        alt={item.authorName}
+                        width={36}
+                        height={36}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="text-[0.8rem] font-medium text-[var(--on-surface)]">
+                        {item.authorName}
+                      </h4>
+                      <p className="text-[0.66rem] text-[var(--on-surface-dim)] font-medium">
+                        {item.authorRole}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Inline Administrator actions overlays */}
+                  {isAdmin && (
+                    <div className="absolute top-3 right-3 flex items-center gap-1.5 opacity-0 group-hover/card:opacity-100 transition-all duration-300">
+                      <button
+                        onClick={(e) => handleEditInline(item, e)}
+                        className="p-1.5 rounded-lg border border-[var(--glass-border)] bg-[var(--surface-low)] text-[var(--on-surface-dim)] shadow-sm backdrop-blur-md transition-all duration-200 hover:scale-105 hover:border-[color-mix(in_srgb,var(--on-surface)_20%,transparent)] hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] hover:text-[var(--on-surface)] active:scale-95"
+                        title="Edit Review"
+                      >
+                        <IconEdit size={12} />
+                      </button>
+                      <button
+                        onClick={(e) => handleDeleteInline(item.id, e)}
+                        className="p-1.5 rounded-lg border border-red-500/25 bg-[var(--surface-low)] text-red-500 shadow-sm backdrop-blur-md transition-all duration-200 hover:scale-105 hover:bg-red-500/15 active:scale-95"
+                        title="Delete Review"
+                      >
+                        <IconTrash size={12} />
+                      </button>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
+              ))}
+          </div>
         </div>
-      </div>
       )}
 
       {/* Testimonials Inline Edit Modal */}
@@ -506,7 +513,18 @@ export function TestimonialsMarquee({ initialTestimonials = [] }: TestimonialsMa
                   className="flex items-center gap-1.5 rounded-full bg-[var(--on-surface)] px-5 py-2 text-[0.74rem] font-mono uppercase tracking-wider text-[var(--bg)] hover:opacity-90 transition-opacity disabled:opacity-70"
                 >
                   {isSaving ? (
-                    <svg className="animate-spin" width={12} height={12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><circle cx="12" cy="12" r="10" strokeOpacity={0.25}/><path d="M12 2a10 10 0 0 1 10 10" /></svg>
+                    <svg
+                      className="animate-spin"
+                      width={12}
+                      height={12}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                    >
+                      <circle cx="12" cy="12" r="10" strokeOpacity={0.25} />
+                      <path d="M12 2a10 10 0 0 1 10 10" />
+                    </svg>
                   ) : (
                     <IconCheck size={12} />
                   )}

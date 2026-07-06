@@ -7,6 +7,7 @@ import {
   IconArrowLeft,
   IconArrowRight,
   IconBookmark,
+  IconBrandWhatsapp,
   IconCalendar,
   IconCheck,
   IconClock,
@@ -17,6 +18,7 @@ import {
   IconShare,
   IconUserCircle,
 } from "@tabler/icons-react";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PostCard } from "@/components/marketing/post-card";
 import { FinalCtaArtwork } from "@/components/ui/final-cta-artwork";
@@ -291,13 +293,15 @@ export function BlogPostDetailExperience({
                   direct pricing within 48 hours - or match you with a vetted specialist.
                 </p>
                 <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-                  <Link
-                    href="/start-project"
+                  <a
+                    href={buildWhatsAppUrl(undefined, { context: `Blog: ${post.title}` })}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-8 py-3 text-[0.92rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_40%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--tertiary)_40%,transparent)]"
                   >
                     Start a project
-                    <IconArrowRight size={15} stroke={2} aria-hidden="true" />
-                  </Link>
+                    <IconBrandWhatsapp size={15} stroke={1.8} aria-hidden="true" />
+                  </a>
                   <a
                     href={`mailto:${siteConfig.email}`}
                     className="inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-7 py-3 text-[0.92rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--on-surface)_36%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--tertiary)_40%,transparent)]"
@@ -830,13 +834,15 @@ function InlineCta() {
             need.
           </p>
         </div>
-        <Link
-          href="/start-project"
+        <a
+          href={buildWhatsAppUrl(undefined, { context: "Blog" })}
+          target="_blank"
+          rel="noopener noreferrer"
           className="inline-flex min-h-[2.75rem] shrink-0 items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-7 py-3 text-[0.92rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_38%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--tertiary)_40%,transparent)]"
         >
           Start a project
-          <IconArrowRight size={14} stroke={2} aria-hidden="true" />
-        </Link>
+          <IconBrandWhatsapp size={14} stroke={1.8} aria-hidden="true" />
+        </a>
       </div>
     </GlassPanel>
   );

@@ -10,7 +10,7 @@
  *   - job openings        → job_openings table
  *   - case study projects → projects table (with isPublic=true + mapped fields)
  *
- * Safe to re-run — uses onConflictDoNothing() so existing rows are never overwritten.
+ * Safe to re-run - uses onConflictDoNothing() so existing rows are never overwritten.
  */
 
 import "dotenv/config";
@@ -248,7 +248,7 @@ const DEFAULT_JOB_OPENINGS = [
     slug: "react-native-mobile-engineer",
     kind: "freelance" as const,
     department: "Engineering",
-    location: "Remote — Africa",
+    location: "Remote - Africa",
     remote: true,
     seniority: "Senior",
     compensationNote: "$6,000 - $10,000 / month",
@@ -322,7 +322,7 @@ const DEFAULT_PROJECTS = [
     isPublic: true,
     coverImageUrl: "/images/project4.webp",
     challenge:
-      "A school group managing 12 institutions ran fee collection on paper registers and WhatsApp messages — no audit trail, no central view, no automation.",
+      "A school group managing 12 institutions ran fee collection on paper registers and WhatsApp messages - no audit trail, no central view, no automation.",
     solution:
       "Built a multi-workspace SaaS with per-school role-based access, automated M-Pesa collection, parent portals, and a central ops dashboard.",
     outcome: "12+",
@@ -390,7 +390,8 @@ const DEFAULT_PROJECTS = [
     isPublic: true,
     coverImageUrl:
       "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80",
-    challenge: "A UK law firm's paralegal team spent 6-8 hours per large contract reviewing clauses for risk.",
+    challenge:
+      "A UK law firm's paralegal team spent 6-8 hours per large contract reviewing clauses for risk.",
     solution:
       "Built a RAG-powered contract analyzer using FastAPI + OpenAI + Pinecone that extracts clauses, flags risks by category, and generates executive summaries.",
     outcome: "85%",
@@ -412,7 +413,8 @@ const DEFAULT_PROJECTS = [
     isPublic: true,
     coverImageUrl:
       "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=80",
-    challenge: "A bootstrapped SaaS founder needed a multi-tenant invoicing platform for independent contractors.",
+    challenge:
+      "A bootstrapped SaaS founder needed a multi-tenant invoicing platform for independent contractors.",
     solution:
       "Built on Next.js + Stripe + Neon with multi-tenant workspace isolation, Stripe Connect payouts, time tracking, and auto-generated tax documents.",
     outcome: "2,800+",

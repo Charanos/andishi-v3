@@ -9,6 +9,7 @@ import {
   IconArrowRight,
   IconBolt,
   IconBrandGithub,
+  IconBrandWhatsapp,
   IconBriefcase,
   IconCheck,
   IconClock,
@@ -19,6 +20,7 @@ import {
   IconStack2,
   IconUserCheck,
 } from "@tabler/icons-react";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import type { Engineer } from "@/data/engineers";
 import { CustomCursorRegion } from "@/components/ui/custom-cursor-region";
 import { FinalCtaArtwork } from "@/components/ui/final-cta-artwork";
@@ -105,9 +107,7 @@ function AvailabilityBadge({ engineer }: { engineer: Engineer }) {
         )}
         aria-hidden="true"
       />
-      <span className="text-[0.62rem] font-medium">
-        {availabilityText(engineer)}
-      </span>
+      <span className="text-[0.62rem] font-medium">{availabilityText(engineer)}</span>
     </span>
   );
 }
@@ -137,13 +137,7 @@ function FadeIn({
   );
 }
 
-function ProfilePanel({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+function ProfilePanel({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <div
       className={cn(
@@ -190,13 +184,7 @@ function SectionTitle({
   );
 }
 
-function SkillTag({
-  children,
-  active = false,
-}: {
-  children: React.ReactNode;
-  active?: boolean;
-}) {
+function SkillTag({ children, active = false }: { children: React.ReactNode; active?: boolean }) {
   return (
     <span
       className="rounded-full border px-2.5 py-1 text-[0.72rem] font-medium"
@@ -235,12 +223,9 @@ function RelatedCard({ engineer }: { engineer: Engineer }) {
           <p className="truncate text-[0.98rem] font-medium text-[var(--on-surface)]">
             {engineer.name}
           </p>
-          <p className="truncate text-[0.8rem] text-[var(--on-surface-dim)]">
-            {engineer.role}
-          </p>
+          <p className="truncate text-[0.8rem] text-[var(--on-surface-dim)]">{engineer.role}</p>
           <p className="mt-1 font-mono text-[0.68rem] text-[var(--secondary)]">
-            {engineer.yearsExp} yrs /{" "}
-            {timezoneText(engineer.location.utcOffset)}
+            {engineer.yearsExp} yrs / {timezoneText(engineer.location.utcOffset)}
           </p>
         </div>
         <IconArrowRight
@@ -328,10 +313,7 @@ export function EngineerProfileExperience({
                   transition={{ ...cosmicSpring, delay: 0.04 }}
                   className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)]"
                 >
-                  <span
-                    className="h-px w-7 bg-[var(--secondary)]"
-                    aria-hidden="true"
-                  />
+                  <span className="h-px w-7 bg-[var(--secondary)]" aria-hidden="true" />
                   {engineer.domains.map(domainLabel).join(" / ")}
                 </motion.p>
 
@@ -362,10 +344,7 @@ export function EngineerProfileExperience({
                   aria-label="Engineer details"
                 >
                   {[
-                    [
-                      IconMapPin,
-                      `${engineer.location.city}, ${engineer.location.country}`,
-                    ],
+                    [IconMapPin, `${engineer.location.city}, ${engineer.location.country}`],
                     [IconClock, timezoneText(engineer.location.utcOffset)],
                     [IconCode, `${engineer.yearsExp} yrs production`],
                   ].map(([Icon, label]) => {
@@ -376,11 +355,7 @@ export function EngineerProfileExperience({
                         key={label as string}
                         className="inline-flex items-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_48%,transparent)] px-3 py-2 text-[0.82rem] text-[var(--on-surface-dim)] backdrop-blur-xl"
                       >
-                        <DetailIcon
-                          size={14}
-                          stroke={1.5}
-                          className="text-[var(--secondary)]"
-                        />
+                        <DetailIcon size={14} stroke={1.5} className="text-[var(--secondary)]" />
                         {label as string}
                       </span>
                     );
@@ -415,13 +390,18 @@ export function EngineerProfileExperience({
                   </div>
 
                   <div className="grid gap-3">
-                    <Link
-                      href="/start-project"
+                    <a
+                      href={buildWhatsAppUrl(undefined, {
+                        variant: "hire",
+                        context: `Engineer: ${engineer.name}`,
+                      })}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-5 py-2.5 text-[0.95rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_32%,transparent)] transition-all duration-300 hover:-translate-y-px"
                     >
-                      <IconBolt size={16} stroke={1.9} />
+                      <IconBrandWhatsapp size={16} stroke={1.8} />
                       Request intro
-                    </Link>
+                    </a>
                     <Link
                       href="/hire"
                       className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-5 py-2.5 text-[0.92rem] font-medium text-[var(--on-surface-dim)] transition-colors duration-300 hover:text-[var(--on-surface)]"
@@ -520,10 +500,7 @@ export function EngineerProfileExperience({
                     <SectionTitle icon={IconBriefcase} label="Experience" />
                     <ol className="relative space-y-6 border-l border-[var(--glass-border)] pl-6">
                       {engineer.workHistory.map((work) => (
-                        <li
-                          key={`${work.company}-${work.duration}`}
-                          className="relative"
-                        >
+                        <li key={`${work.company}-${work.duration}`} className="relative">
                           <span
                             aria-hidden="true"
                             className="absolute -left-[1.85rem] top-1 grid h-4 w-4 place-items-center rounded-full border border-[color-mix(in_srgb,var(--secondary)_30%,transparent)] bg-[var(--surface)]"
@@ -557,10 +534,7 @@ export function EngineerProfileExperience({
                         label="Vetting completed"
                         tone="tertiary"
                       />
-                      <ul
-                        className="space-y-2.5"
-                        aria-label="Vetting stages passed"
-                      >
+                      <ul className="space-y-2.5" aria-label="Vetting stages passed">
                         {vettingItems.map((item) => (
                           <li
                             key={item}
@@ -586,17 +560,21 @@ export function EngineerProfileExperience({
                         Work with {engineer.name.split(" ")[0]}
                       </p>
                       <p className="text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">
-                        Submit a brief and mention this profile. Andishi will
-                        confirm availability, fit, and intro timing before the
-                        first call.
+                        Submit a brief and mention this profile. Andishi will confirm availability,
+                        fit, and intro timing before the first call.
                       </p>
-                      <Link
-                        href="/start-project"
+                      <a
+                        href={buildWhatsAppUrl(undefined, {
+                          variant: "hire",
+                          context: `Engineer: ${engineer.name}`,
+                        })}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="my-8 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-full bg-[var(--on-surface)] px-5 py-2 text-[0.92rem] font-medium text-[var(--bg)]"
                       >
                         Request an intro
-                        <IconArrowRight size={15} stroke={1.8} />
-                      </Link>
+                        <IconBrandWhatsapp size={15} stroke={1.8} />
+                      </a>
                     </ProfilePanel>
                   </FadeIn>
                 </div>
@@ -607,10 +585,7 @@ export function EngineerProfileExperience({
                   <ProfilePanel className="p-5 sm:p-7">
                     <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                       <div>
-                        <SectionTitle
-                          icon={IconStack2}
-                          label="Similar profiles"
-                        />
+                        <SectionTitle icon={IconStack2} label="Similar profiles" />
                         <h2 className="title-serif text-[clamp(1.72rem,3.4vw,2.3rem)] font-normal leading-[1.04] tracking-tight text-[var(--on-surface)]">
                           More engineers you might like.
                         </h2>
@@ -648,25 +623,27 @@ export function EngineerProfileExperience({
                   className="pointer-events-none absolute -right-10 top-8 h-32 w-52 rotate-[8deg] rounded-[2rem] border border-[color-mix(in_srgb,var(--secondary)_16%,transparent)] opacity-35"
                 />
                 <div className="relative z-[1] mx-auto max-w-2xl">
-                  <p className="label-caps mb-4 text-[var(--secondary)]">
-                    Ready to move?
-                  </p>
+                  <p className="label-caps mb-4 text-[var(--secondary)]">Ready to move?</p>
                   <h2 className="title-serif text-[clamp(2.16rem,4.4vw,3.35rem)] font-normal leading-[1.04] tracking-tight text-[var(--on-surface)]">
-                    Submit a brief and we will connect you with{" "}
-                    {engineer.name.split(" ")[0]}.
+                    Submit a brief and we will connect you with {engineer.name.split(" ")[0]}.
                   </h2>
                   <p className="body-md mx-auto my-8 max-w-lg text-[var(--on-surface-dim)]">
-                    Tell us your role, stack, and timeline. Andishi handles the
-                    fit check, availability, and intro scheduling.
+                    Tell us your role, stack, and timeline. Andishi handles the fit check,
+                    availability, and intro scheduling.
                   </p>
                   <div className="mt-8 flex flex-wrap justify-center gap-3">
-                    <Link
-                      href="/start-project"
+                    <a
+                      href={buildWhatsAppUrl(undefined, {
+                        variant: "hire",
+                        context: `Engineer: ${engineer.name}`,
+                      })}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex min-h-[2.35rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
                     >
                       Submit a hiring brief
-                      <IconArrowRight size={15} stroke={2} />
-                    </Link>
+                      <IconBrandWhatsapp size={15} stroke={1.8} />
+                    </a>
                     <Link
                       href="/engineers"
                       className="inline-flex min-h-[2.35rem] items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--on-surface)_34%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"

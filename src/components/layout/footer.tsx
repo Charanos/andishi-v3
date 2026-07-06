@@ -5,6 +5,7 @@ import { IconBrandGithub, IconBrandLinkedin, IconBrandX } from "@tabler/icons-re
 import { Logo } from "@/components/brand/logo";
 import { siteConfig } from "@/config/site";
 import { useEffect, useState } from "react";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const socialLinks = [
   { label: "LinkedIn", href: siteConfig.social.linkedin || "#", icon: IconBrandLinkedin },
@@ -45,7 +46,7 @@ const columns = [
   {
     title: "Engagement",
     items: [
-      ["Start a Project", "/start-project"],
+      ["Start a Project", buildWhatsAppUrl()],
       ["Hire an Engineer", "/hire"],
       ["Hiring FAQ", "/hire/faq"],
     ],
@@ -164,6 +165,16 @@ export function Footer() {
                       {href.startsWith("mailto:") ? (
                         <a
                           href={href}
+                          className="group relative inline-flex items-center text-[0.85rem] text-[var(--on-surface-dim)] transition-colors hover:text-[var(--on-surface)]"
+                        >
+                          <span className="relative z-10">{item}</span>
+                          <span className="absolute -bottom-0.5 left-0 h-[1px] w-0 bg-[var(--on-surface)] transition-all duration-300 group-hover:w-full" />
+                        </a>
+                      ) : href.startsWith("https://") ? (
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="group relative inline-flex items-center text-[0.85rem] text-[var(--on-surface-dim)] transition-colors hover:text-[var(--on-surface)]"
                         >
                           <span className="relative z-10">{item}</span>

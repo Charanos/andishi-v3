@@ -4,6 +4,10 @@ export const siteConfig = {
   email: "hire@andishi.dev",
   description:
     "Andishi is a software development studio building custom software, SaaS products, AI systems, mobile apps, and enterprise tools.",
+  whatsapp: {
+    /** WhatsApp Business number (international format, no + prefix) */
+    phone: "254748825157",
+  },
   nav: [
     { label: "Services", href: "/services" },
     { label: "Work", href: "/work" },

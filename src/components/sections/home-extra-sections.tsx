@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { IconArrowRight } from "@tabler/icons-react";
+import { IconArrowRight, IconBrandWhatsapp } from "@tabler/icons-react";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -43,10 +44,10 @@ export function TalentTrack() {
             start: "top 88%",
             once: true,
           },
-        }
+        },
       );
     },
-    { scope: containerRef }
+    { scope: containerRef },
   );
 
   return (
@@ -136,7 +137,7 @@ export function Founder() {
             start: "top 85%",
             once: true,
           },
-        }
+        },
       );
 
       // Animate right side contents
@@ -153,7 +154,7 @@ export function Founder() {
             start: "top 85%",
             once: true,
           },
-        }
+        },
       );
 
       // Animate operating rules cards stagger
@@ -171,14 +172,17 @@ export function Founder() {
             start: "top 88%",
             once: true,
           },
-        }
+        },
       );
     },
-    { scope: containerRef }
+    { scope: containerRef },
   );
 
   return (
-    <section ref={containerRef} className="relative isolate overflow-hidden px-5 py-24 max-sm:py-16 sm:px-8 lg:px-10 lg:py-36 bg-[var(--bg)]">
+    <section
+      ref={containerRef}
+      className="relative isolate overflow-hidden px-5 py-24 max-sm:py-16 sm:px-8 lg:px-10 lg:py-36 bg-[var(--bg)]"
+    >
       {/* Subtle top section border line */}
       <div
         aria-hidden="true"
@@ -190,7 +194,10 @@ export function Founder() {
 
       <div className="relative z-[1] mx-auto grid max-w-[92rem] gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
         {/* Left Column: Image Canvas & Stats */}
-        <div className="order-2 lg:order-1 founder-left-anim" style={{ willChange: "transform, opacity" }}>
+        <div
+          className="order-2 lg:order-1 founder-left-anim"
+          style={{ willChange: "transform, opacity" }}
+        >
           <div className="relative mx-auto max-w-[28rem] lg:mx-0">
             {/* Elegant overlapping glass outlines */}
             <div
@@ -246,7 +253,10 @@ export function Founder() {
         </div>
 
         {/* Right Column: Founder Copy */}
-        <div className="order-1 lg:order-2 founder-right-anim" style={{ willChange: "transform, opacity" }}>
+        <div
+          className="order-1 lg:order-2 founder-right-anim"
+          style={{ willChange: "transform, opacity" }}
+        >
           <p className="label-caps mb-5 flex items-center gap-3 text-[var(--tertiary)] font-medium tracking-[0.18em]">
             <span className="h-px w-7 bg-[var(--tertiary)]" />
             FOUNDER CONTEXT
@@ -319,10 +329,10 @@ export function FinalCTA() {
             start: "top 88%",
             once: true,
           },
-        }
+        },
       );
     },
-    { scope: cardRef }
+    { scope: cardRef },
   );
 
   return (
@@ -382,13 +392,15 @@ export function FinalCTA() {
             honest assessment of fit within one business day.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link
-              href="/start-project"
+            <a
+              href={buildWhatsAppUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex min-h-[2.4rem] items-center justify-center gap-2 rounded-full border border-transparent bg-[var(--on-surface)] px-8 py-3 text-[15px] font-[500] text-[var(--bg)] no-underline shadow-lg transition-all duration-300 hover:-translate-y-px"
             >
               Start a Project
-              <IconArrowRight size={16} stroke={1.8} />
-            </Link>
+              <IconBrandWhatsapp size={16} stroke={1.8} />
+            </a>
             <Link
               href="/hire"
               className="inline-flex min-h-[2.4rem] items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--primary)_24%,transparent)] bg-[color-mix(in_srgb,var(--surface-low)_32%,transparent)] px-7 py-3 text-[15px] font-[500] text-[var(--primary)] no-underline backdrop-blur-sm transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--tertiary)_50%,transparent)] hover:bg-[color-mix(in_srgb,var(--primary)_8%,transparent)]"

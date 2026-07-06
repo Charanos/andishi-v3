@@ -6,14 +6,19 @@ import Link from "next/link";
 import {
   IconArrowLeft,
   IconArrowRight,
+  IconBrandWhatsapp,
   IconCalendar,
   IconMapPin,
 } from "@tabler/icons-react";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import type { WorkProject } from "@/content/work";
 import { FinalCtaArtwork } from "@/components/ui/final-cta-artwork";
 import { cosmicSpring, fadeUp, stagger } from "@/lib/motion";
 
-const statusStyles: Record<WorkProject["status"], { bg: string; border: string; color: string; label: string }> = {
+const statusStyles: Record<
+  WorkProject["status"],
+  { bg: string; border: string; color: string; label: string }
+> = {
   Live: {
     bg: "color-mix(in srgb, var(--tertiary) 14%, transparent)",
     border: "color-mix(in srgb, var(--tertiary) 30%, transparent)",
@@ -104,13 +109,11 @@ export function CaseStudyExperience({
           </motion.div>
 
           {/* Hero text block */}
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            animate="visible"
-            className="max-w-4xl"
-          >
-            <motion.p variants={fadeUp} className="label-caps mb-4 flex items-center gap-3 text-[var(--secondary)]">
+          <motion.div variants={stagger} initial="hidden" animate="visible" className="max-w-4xl">
+            <motion.p
+              variants={fadeUp}
+              className="label-caps mb-4 flex items-center gap-3 text-[var(--secondary)]"
+            >
               <span className="h-px w-7 bg-[var(--secondary)]" aria-hidden="true" />
               {project.sectorLabel}
             </motion.p>
@@ -123,9 +126,17 @@ export function CaseStudyExperience({
             <motion.div variants={fadeUp} className="mt-6 flex flex-wrap items-center gap-3">
               <span
                 className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[0.75rem] font-medium"
-                style={{ backgroundColor: status.bg, borderColor: status.border, color: status.color }}
+                style={{
+                  backgroundColor: status.bg,
+                  borderColor: status.border,
+                  color: status.color,
+                }}
               >
-                <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: status.color }} aria-hidden="true" />
+                <span
+                  className="h-1.5 w-1.5 rounded-full"
+                  style={{ backgroundColor: status.color }}
+                  aria-hidden="true"
+                />
                 {status.label}
               </span>
               <span className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] bg-[color-mix(in_srgb,var(--bg)_48%,transparent)] px-3 py-1.5 text-[0.75rem] text-[color-mix(in_srgb,var(--on-surface)_62%,transparent)] backdrop-blur-xl">
@@ -145,7 +156,6 @@ export function CaseStudyExperience({
       <div className="relative z-[1] px-5 pb-24 pt-10 sm:px-8 lg:px-10">
         <div className="mx-auto max-w-[92rem]">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
-
             {/* Left column */}
             <div className="space-y-8">
               {/* Intro */}
@@ -187,10 +197,7 @@ export function CaseStudyExperience({
                         background: `linear-gradient(to right, transparent, color-mix(in srgb, var(--${tone}) 38%, transparent), transparent)`,
                       }}
                     />
-                    <p
-                      className="label-caps mb-4"
-                      style={{ color: `var(--${tone})` }}
-                    >
+                    <p className="label-caps mb-4" style={{ color: `var(--${tone})` }}>
                       {label}
                     </p>
                     <p className="text-[0.94rem] leading-[1.75] text-[var(--on-surface-dim)]">
@@ -288,7 +295,9 @@ export function CaseStudyExperience({
                   ].map(({ label, value }) => (
                     <div key={label} className="flex items-center justify-between px-5 py-3.5">
                       <span className="text-[0.8rem] text-[var(--on-surface-dim)]">{label}</span>
-                      <span className="font-mono text-[0.8rem] text-[var(--on-surface)]">{value}</span>
+                      <span className="font-mono text-[0.8rem] text-[var(--on-surface)]">
+                        {value}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -309,15 +318,18 @@ export function CaseStudyExperience({
                 <div className="relative z-[1]">
                   <p className="label-caps mb-3 text-[var(--secondary)]">Build your product</p>
                   <p className="text-[0.92rem] leading-relaxed text-[var(--on-surface-dim)]">
-                    Need a similar outcome? Share your brief. We scope, design, and ship your product - just like this.
+                    Need a similar outcome? Share your brief. We scope, design, and ship your
+                    product - just like this.
                   </p>
-                  <Link
-                    href="/start-project"
+                  <a
+                    href={buildWhatsAppUrl(undefined, { context: `Case Study: ${project.title}` })}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] py-3 text-[0.9rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_38%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
                   >
                     Start a project like this
-                    <IconArrowRight size={14} stroke={2} aria-hidden="true" />
-                  </Link>
+                    <IconBrandWhatsapp size={14} stroke={1.8} aria-hidden="true" />
+                  </a>
                   <Link
                     href="/services"
                     className="mt-3 inline-flex w-full items-center justify-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] py-3 text-[0.9rem] font-medium text-[var(--on-surface-dim)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--on-surface)_30%,transparent)] hover:text-[var(--on-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
@@ -410,23 +422,24 @@ export function CaseStudyExperience({
               className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(to_right,transparent,color-mix(in_srgb,var(--on-surface)_22%,transparent),transparent)]"
             />
             <div className="relative z-[1] mx-auto max-w-2xl">
-              <p className="label-caps mb-4 text-[var(--secondary)]">
-                Ready to build?
-              </p>
+              <p className="label-caps mb-4 text-[var(--secondary)]">Ready to build?</p>
               <h2 className="title-serif text-[clamp(2.18rem,4.4vw,3.4rem)] font-normal leading-[1.04] tracking-tight text-[var(--on-surface)]">
                 Let&apos;s design, build, and ship your next product.
               </h2>
               <p className="body-md mx-auto my-8 max-w-lg text-[var(--on-surface-dim)]">
-                Tell us what you&apos;re building. We return a clear brief, fixed timeline, and direct pricing within 48 hours.
+                Tell us what you&apos;re building. We return a clear brief, fixed timeline, and
+                direct pricing within 48 hours.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
-                <Link
-                  href="/start-project"
+                <a
+                  href={buildWhatsAppUrl(undefined, { context: `Case Study: ${project.title}` })}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-8 py-3 text-[0.92rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_40%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
                 >
                   Start a project
-                  <IconArrowRight size={14} stroke={2} aria-hidden="true" />
-                </Link>
+                  <IconBrandWhatsapp size={15} stroke={1.8} aria-hidden="true" />
+                </a>
                 <Link
                   href="/work"
                   className="inline-flex min-h-[2.75rem] items-center justify-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-7 py-3 text-[0.92rem] font-medium text-[var(--on-surface-dim)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--on-surface)_30%,transparent)] hover:text-[var(--on-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"

@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { generateRequestId, handleRouteError, jsonError, parseJson, validationError } from "@/lib/api/responses";
+import {
+  generateRequestId,
+  handleRouteError,
+  jsonError,
+  parseJson,
+  validationError,
+} from "@/lib/api/responses";
 import { listApplications, submitApplication } from "@/lib/services/careers/applications";
 import { createApplicationSchema } from "@/lib/validation/careers";
 import { getClientIp } from "@/lib/api/request";
@@ -32,7 +38,7 @@ export async function GET(req: NextRequest) {
 /**
  * POST /api/careers/applications
  *
- * Public, unauthenticated — the careers apply form.
+ * Public, unauthenticated - the careers apply form.
  * Rate-limited to prevent spam (5 applications per hour per IP).
  */
 export async function POST(req: NextRequest) {
@@ -59,4 +65,3 @@ export async function POST(req: NextRequest) {
     });
   }
 }
-

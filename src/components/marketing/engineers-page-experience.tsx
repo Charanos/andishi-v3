@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   IconArrowRight,
+  IconBrandWhatsapp,
   IconClock,
   IconFilter,
   IconMapPin,
@@ -13,6 +14,7 @@ import {
   IconUsersGroup,
   IconX,
 } from "@tabler/icons-react";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import type { Engineer } from "@/data/engineers";
 import { engineerRoles } from "@/data/engineers";
 import { CustomCursorRegion } from "@/components/ui/custom-cursor-region";
@@ -49,9 +51,7 @@ function matchesRole(engineer: Engineer, role: RoleFilter) {
     `${engineer.role} ${engineer.skills.join(" ")} ${engineer.domains.join(" ")}`.toLowerCase();
 
   if (role === "Full-Stack") {
-    return (
-      engineer.domains.includes("fullstack") || haystack.includes("full-stack")
-    );
+    return engineer.domains.includes("fullstack") || haystack.includes("full-stack");
   }
 
   if (role === "AI/ML") {
@@ -130,20 +130,12 @@ function AvailabilityBadge({ engineer }: { engineer: Engineer }) {
         )}
         aria-hidden="true"
       />
-      <span className="text-[0.68rem] font-medium leading-none">
-        {availabilityText(engineer)}
-      </span>
+      <span className="text-[0.68rem] font-medium leading-none">{availabilityText(engineer)}</span>
     </span>
   );
 }
 
-function EngineerCard({
-  engineer,
-  index,
-}: {
-  engineer: Engineer;
-  index: number;
-}) {
+function EngineerCard({ engineer, index }: { engineer: Engineer; index: number }) {
   const visibleSkills = engineer.skills.slice(0, 4);
   const extraSkillCount = engineer.skills.length - visibleSkills.length;
 
@@ -279,18 +271,13 @@ function EngineerCard({
   );
 }
 
-export function EngineersPageExperience({
-  engineers,
-}: {
-  engineers: Engineer[];
-}) {
+export function EngineersPageExperience({ engineers }: { engineers: Engineer[] }) {
   const [activeRole, setActiveRole] = useState<RoleFilter>("All");
   const [availableOnly, setAvailableOnly] = useState(false);
   const [search, setSearch] = useState("");
 
   const availableCount = useMemo(
-    () =>
-      engineers.filter((engineer) => engineer.availability === "now").length,
+    () => engineers.filter((engineer) => engineer.availability === "now").length,
     [engineers],
   );
 
@@ -298,8 +285,7 @@ export function EngineersPageExperience({
     const query = search.trim().toLowerCase();
 
     return engineers.filter((engineer) => {
-      const matchesAvailability =
-        !availableOnly || engineer.availability === "now";
+      const matchesAvailability = !availableOnly || engineer.availability === "now";
       const matchesSearch =
         !query ||
         [
@@ -315,11 +301,7 @@ export function EngineersPageExperience({
           .toLowerCase()
           .includes(query);
 
-      return (
-        matchesRole(engineer, activeRole) &&
-        matchesAvailability &&
-        matchesSearch
-      );
+      return matchesRole(engineer, activeRole) && matchesAvailability && matchesSearch;
     });
   }, [activeRole, availableOnly, engineers, search]);
 
@@ -360,9 +342,7 @@ export function EngineersPageExperience({
                           backgroundColor: isActive
                             ? "color-mix(in srgb, var(--primary) 10%, transparent)"
                             : "transparent",
-                          color: isActive
-                            ? "var(--primary)"
-                            : "var(--on-surface-dim)",
+                          color: isActive ? "var(--primary)" : "var(--on-surface-dim)",
                         }}
                       >
                         {role === "All" ? "All engineers" : role}
@@ -436,10 +416,7 @@ export function EngineersPageExperience({
                   transition={cosmicSpring}
                 >
                   <p className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)]">
-                    <span
-                      className="h-px w-7 bg-[var(--secondary)]"
-                      aria-hidden="true"
-                    />
+                    <span className="h-px w-7 bg-[var(--secondary)]" aria-hidden="true" />
                     Vetted network / {engineers.length} engineers
                   </p>
                   <h1 className="title-serif m-0 text-[clamp(3.15rem,7.4vw,5.25rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
@@ -457,9 +434,9 @@ export function EngineersPageExperience({
                     {String(availableCount).padStart(2, "0")}
                   </p>
                   <p className="body-md mt-3 text-[var(--on-surface-dim)]">
-                    Senior African engineers cleared for placement across
-                    full-stack, AI, Web3, cloud, mobile, and backend systems.
-                    Every profile has passed the Andishi technical bar.
+                    Senior African engineers cleared for placement across full-stack, AI, Web3,
+                    cloud, mobile, and backend systems. Every profile has passed the Andishi
+                    technical bar.
                   </p>
                 </motion.div>
               </header>
@@ -533,9 +510,7 @@ export function EngineersPageExperience({
                           borderColor: isActive
                             ? "color-mix(in srgb, var(--primary) 34%, transparent)"
                             : "var(--glass-border)",
-                          color: isActive
-                            ? "var(--primary)"
-                            : "var(--on-surface-dim)",
+                          color: isActive ? "var(--primary)" : "var(--on-surface-dim)",
                         }}
                       >
                         {role === "All" ? "All" : role}
@@ -567,9 +542,7 @@ export function EngineersPageExperience({
                     />
                   </span>
                   Available now
-                  <span className="font-mono text-[var(--tertiary)]">
-                    ({availableCount})
-                  </span>
+                  <span className="font-mono text-[var(--tertiary)]">({availableCount})</span>
                 </button>
 
                 <span
@@ -592,11 +565,7 @@ export function EngineersPageExperience({
                     className="columns-1 gap-5 sm:columns-2 lg:columns-3"
                   >
                     {filteredEngineers.map((engineer, index) => (
-                      <EngineerCard
-                        key={engineer.slug}
-                        engineer={engineer}
-                        index={index}
-                      />
+                      <EngineerCard key={engineer.slug} engineer={engineer} index={index} />
                     ))}
                   </motion.div>
                 ) : (
@@ -610,11 +579,7 @@ export function EngineersPageExperience({
                     aria-live="polite"
                   >
                     <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)]">
-                      <IconUsersGroup
-                        size={24}
-                        stroke={1.5}
-                        aria-hidden="true"
-                      />
+                      <IconUsersGroup size={24} stroke={1.5} aria-hidden="true" />
                     </div>
                     <p className="mb-2 text-[1rem] font-medium text-[var(--on-surface)]">
                       No engineers found
@@ -656,18 +621,19 @@ export function EngineersPageExperience({
                     Submit a brief. We will find the right engineer.
                   </h2>
                   <p className="body-md mx-auto my-8 max-w-lg text-[var(--on-surface-dim)]">
-                    Tell us your stack, role, and timeline. We surface matched
-                    senior African engineers, including profiles not listed
-                    here.
+                    Tell us your stack, role, and timeline. We surface matched senior African
+                    engineers, including profiles not listed here.
                   </p>
                   <div className="mt-8 flex flex-wrap justify-center gap-3">
-                    <Link
-                      href="/start-project"
+                    <a
+                      href={buildWhatsAppUrl(undefined, { variant: "hire" })}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex min-h-[2.35rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
                     >
                       Start matching
-                      <IconArrowRight size={15} stroke={2} />
-                    </Link>
+                      <IconBrandWhatsapp size={15} stroke={1.8} />
+                    </a>
                     <Link
                       href="/hire"
                       className="inline-flex min-h-[2.35rem] items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--on-surface)_34%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"

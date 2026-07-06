@@ -6,7 +6,7 @@
 
 ## Context
 
-Careers exists only as marketing copy today — there is no page, data model, or pipeline. The business needs one admin-controlled surface to run three distinct talent-supply channels: **freelance** project work, **internal recruitment** (Andishi's own hires), and **third-party outsourcing** (placing external tech talent with clients). Each channel shares the "opening → application → pipeline → decision" shape but differs in audience, compensation, and destination.
+Careers exists only as marketing copy today - there is no page, data model, or pipeline. The business needs one admin-controlled surface to run three distinct talent-supply channels: **freelance** project work, **internal recruitment** (Andishi's own hires), and **third-party outsourcing** (placing external tech talent with clients). Each channel shares the "opening → application → pipeline → decision" shape but differs in audience, compensation, and destination.
 
 ## Decision
 
@@ -18,7 +18,7 @@ Model careers with `job_openings` (discriminated by `kind: freelance | internal 
 | Dimension | Assessment |
 |-----------|------------|
 | Complexity | Med |
-| Reuse | High — one pipeline, one recruiter UX |
+| Reuse | High - one pipeline, one recruiter UX |
 | Flexibility | Handles all three channels + future ones |
 
 **Pros:** One workflow and UI; consistent reporting across channels; easy to add channels. **Cons:** Some fields only apply to certain kinds (handled via nullable columns + validation).

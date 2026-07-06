@@ -176,7 +176,7 @@ function composeBuildProblemStatement(data: BuildContactInput): string {
   if (data.additionalContext) extras.push(`Additional context: ${data.additionalContext}`);
 
   if (extras.length > 0) {
-    parts.push("", "— Additional details —", ...extras);
+    parts.push("", "- Additional details -", ...extras);
   }
 
   return parts.join("\n");

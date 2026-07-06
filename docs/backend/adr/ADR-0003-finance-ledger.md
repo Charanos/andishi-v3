@@ -32,7 +32,7 @@ Build an **internal ledger**: `rate_cards` (bill/pay rates per engineer/client),
 
 ## Trade-off Analysis
 
-Money correctness must precede automation and provider integration. A ledger is the reconciliation target any provider will need anyway, so building it first is not throwaway work — it's the foundation Stripe/Wise plug into.
+Money correctness must precede automation and provider integration. A ledger is the reconciliation target any provider will need anyway, so building it first is not throwaway work - it's the foundation Stripe/Wise plug into.
 
 ## Consequences
 

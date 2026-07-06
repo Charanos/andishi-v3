@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   IconArrowRight,
   IconBriefcase,
+  IconBrandWhatsapp,
   IconCheck,
   IconCircleCheck,
   IconClockHour8,
@@ -17,15 +18,11 @@ import {
   IconUsers,
   IconWorld,
 } from "@tabler/icons-react";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { FaqList } from "@/components/marketing/faq-list";
 import { FinalCtaArtwork } from "@/components/ui/final-cta-artwork";
-import {
-  engagementModels,
-  hireFaqTeaser,
-  hireGuarantees,
-  hireProcessSteps,
-} from "@/data/hire";
+import { engagementModels, hireFaqTeaser, hireGuarantees, hireProcessSteps } from "@/data/hire";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -84,13 +81,7 @@ const routeLinks = [
   { href: "#faq", label: "FAQ" },
 ] as const;
 
-const processIcons = [
-  IconFileText,
-  IconRoute,
-  IconUsers,
-  IconMessageCircle,
-  IconCode,
-] as const;
+const processIcons = [IconFileText, IconRoute, IconUsers, IconMessageCircle, IconCode] as const;
 
 const modelMeta = [
   { timeline: "2-8 weeks", label: "Scoped delivery", icon: IconBriefcase },
@@ -188,11 +179,7 @@ function SectionBody({
   children: React.ReactNode;
   className?: string;
 }) {
-  return (
-    <p className={`body-md my-8 text-[var(--on-surface-dim)] ${className}`}>
-      {children}
-    </p>
-  );
+  return <p className={`body-md my-8 text-[var(--on-surface-dim)] ${className}`}>{children}</p>;
 }
 
 function RouteBar() {
@@ -212,13 +199,15 @@ function RouteBar() {
               {item.label}
             </a>
           ))}
-          <Link
-            href="/start-project"
+          <a
+            href={buildWhatsAppUrl(undefined, { variant: "hire" })}
+            target="_blank"
+            rel="noopener noreferrer"
             className="ml-1 inline-flex items-center gap-2 rounded-full bg-[var(--on-surface)] px-4 py-2 text-[0.78rem] font-medium text-[var(--bg)]"
           >
             Start
-            <IconArrowRight size={12} stroke={2} aria-hidden="true" />
-          </Link>
+            <IconBrandWhatsapp size={12} stroke={1.8} aria-hidden="true" />
+          </a>
         </nav>
       </div>
     </div>
@@ -305,16 +294,10 @@ function ShortlistDeck() {
           ].map(([label, body, value]) => (
             <div key={label}>
               <div className="mb-1.5 flex items-center justify-between">
-                <p className="text-[0.82rem] font-medium text-[var(--on-surface)]">
-                  {label}
-                </p>
-                <p className="font-mono text-[0.7rem] text-[var(--secondary)]">
-                  {value}%
-                </p>
+                <p className="text-[0.82rem] font-medium text-[var(--on-surface)]">{label}</p>
+                <p className="font-mono text-[0.7rem] text-[var(--secondary)]">{value}%</p>
               </div>
-              <p className="text-[0.74rem] leading-snug text-[var(--on-surface-dim)]">
-                {body}
-              </p>
+              <p className="text-[0.74rem] leading-snug text-[var(--on-surface-dim)]">{body}</p>
               <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[color-mix(in_srgb,var(--on-surface)_10%,transparent)]">
                 <div
                   className="h-full rounded-full bg-[var(--secondary)]"
@@ -350,12 +333,8 @@ function ShortlistDeck() {
             </span>
           </div>
           <div className="p-4">
-            <p className="text-[1rem] font-medium text-[var(--on-surface)]">
-              {engineer.name}
-            </p>
-            <p className="mt-1 text-[0.84rem] text-[var(--on-surface-dim)]">
-              {engineer.role}
-            </p>
+            <p className="text-[1rem] font-medium text-[var(--on-surface)]">{engineer.name}</p>
+            <p className="mt-1 text-[0.84rem] text-[var(--on-surface-dim)]">{engineer.role}</p>
             <div className="mt-3 flex flex-wrap gap-1.5">
               {engineer.stack.map((item) => (
                 <span
@@ -436,11 +415,7 @@ function BriefLab() {
         ))}
       </div>
 
-      <GlassPanel
-        className="p-5 lg:sticky lg:top-32"
-        showChrome
-        label="risk.controls"
-      >
+      <GlassPanel className="p-5 lg:sticky lg:top-32" showChrome label="risk.controls">
         <div className="mt-4 flex items-center justify-between border-b border-[var(--glass-border)] pb-4">
           <p className="label-caps text-[var(--secondary)]">Included</p>
           <span className="font-mono text-[0.68rem] text-[var(--on-surface-dim)]"></span>
@@ -450,10 +425,7 @@ function BriefLab() {
             const Icon = [IconClockHour8, IconUsers, IconCircleCheck][index];
 
             return (
-              <div
-                key={item.title}
-                className="grid grid-cols-[2.5rem_1fr] gap-3"
-              >
+              <div key={item.title} className="grid grid-cols-[2.5rem_1fr] gap-3">
                 <span className="grid h-10 w-10 place-items-center rounded-xl border border-[color-mix(in_srgb,var(--secondary)_24%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_9%,transparent)] text-[var(--secondary)]">
                   <Icon size={18} stroke={1.6} aria-hidden="true" />
                 </span>
@@ -573,14 +545,16 @@ function EngagementModels() {
                 {model.body}
               </p>
             </div>
-            <Link
-              href="/start-project"
+            <a
+              href={buildWhatsAppUrl(undefined, { variant: "hire" })}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex min-h-[2.5rem] items-center justify-center gap-2 rounded-full border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_48%,transparent)] px-5 text-[0.86rem] font-medium text-[var(--on-surface)] transition-all duration-300 group-hover:border-[color-mix(in_srgb,var(--secondary)_28%,transparent)] group-hover:text-[var(--secondary)]"
               aria-label={`Start hiring with ${model.title} model`}
             >
               Start
               <IconArrowRight size={13} stroke={2} aria-hidden="true" />
-            </Link>
+            </a>
           </article>
         );
       })}
@@ -594,9 +568,7 @@ function DecisionRoom() {
       <GlassPanel className="p-5 sm:p-6">
         <div className="mb-6 flex items-start justify-between gap-5 border-b border-[var(--glass-border)] pb-5">
           <div>
-            <p className="label-caps mb-3 text-[var(--secondary)]">
-              Intro room
-            </p>
+            <p className="label-caps mb-3 text-[var(--secondary)]">Intro room</p>
             <h3 className="text-[clamp(1.5rem,3vw,2.15rem)] font-normal leading-tight text-[var(--on-surface)]">
               Review fewer people with stronger signal.
             </h3>
@@ -625,9 +597,7 @@ function DecisionRoom() {
                 {String(index + 1).padStart(2, "0")}
               </span>
               <div className="border-b border-[var(--glass-border)] pb-4 last:border-b-0 last:pb-0">
-                <p className="text-[0.96rem] font-medium text-[var(--on-surface)]">
-                  {title}
-                </p>
+                <p className="text-[0.96rem] font-medium text-[var(--on-surface)]">{title}</p>
                 <p className="mt-1.5 text-[0.88rem] leading-relaxed text-[var(--on-surface-dim)]">
                   {body}
                 </p>
@@ -656,12 +626,8 @@ function DecisionRoom() {
                 ["Signal", "Code shipped"],
               ].map(([value, label]) => (
                 <div key={value}>
-                  <p className="text-[0.92rem] font-medium text-[var(--on-surface)]">
-                    {value}
-                  </p>
-                  <p className="mt-1 text-[0.72rem] text-[var(--on-surface-dim)]">
-                    {label}
-                  </p>
+                  <p className="text-[0.92rem] font-medium text-[var(--on-surface)]">{value}</p>
+                  <p className="mt-1 text-[0.72rem] text-[var(--on-surface-dim)]">{label}</p>
                 </div>
               ))}
             </div>
@@ -703,18 +669,20 @@ export default function HirePage() {
                 A sharper way to hire verified tech talent.
               </h1>
               <p className="body-md mt-7 max-w-2xl text-[var(--on-surface-dim)]">
-                Andishi turns a real technical need into a narrow, evidence-rich
-                shortlist of senior African engineers. The experience is built
-                like a matching room, not a recruiting marketplace.
+                Andishi turns a real technical need into a narrow, evidence-rich shortlist of senior
+                African engineers. The experience is built like a matching room, not a recruiting
+                marketplace.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  href="/start-project"
+                <a
+                  href={buildWhatsAppUrl(undefined, { variant: "hire" })}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-7 py-3 text-[0.92rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--secondary)_40%,transparent)]"
                 >
                   Start hiring
-                  <IconArrowRight size={15} stroke={2} aria-hidden="true" />
-                </Link>
+                  <IconBrandWhatsapp size={15} stroke={1.8} aria-hidden="true" />
+                </a>
                 <Link
                   href="/engineers"
                   className="inline-flex min-h-[2.75rem] items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_18%,transparent)] bg-[var(--glass-bg)] px-7 py-3 text-[0.92rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--on-surface)_36%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--secondary)_40%,transparent)]"
@@ -769,8 +737,8 @@ export default function HirePage() {
                 </SectionTitle>
               </div>
               <p className="body-md text-[var(--on-surface-dim)] lg:text-right">
-                The shape is intentionally narrow: enough diligence to reduce
-                risk, not enough process to stall the roadmap.
+                The shape is intentionally narrow: enough diligence to reduce risk, not enough
+                process to stall the roadmap.
               </p>
             </div>
             <ProcessRunway />
@@ -801,8 +769,8 @@ export default function HirePage() {
                   The brief is the first quality filter.
                 </SectionTitle>
                 <SectionBody className="max-w-2xl">
-                  We need the working truth: what should be owned, what already
-                  exists, and how the team makes decisions.
+                  We need the working truth: what should be owned, what already exists, and how the
+                  team makes decisions.
                 </SectionBody>
               </div>
             </div>
@@ -828,8 +796,8 @@ export default function HirePage() {
                 Match the contract to the work.
               </SectionTitle>
               <SectionBody>
-                Scoped build, embedded capacity, or a small senior team. The
-                model follows the ownership need, not the other way round.
+                Scoped build, embedded capacity, or a small senior team. The model follows the
+                ownership need, not the other way round.
               </SectionBody>
               <div className="mt-8 grid grid-cols-3 overflow-hidden rounded-2xl border border-[var(--glass-border)]">
                 {[
@@ -870,8 +838,8 @@ export default function HirePage() {
                 Evaluate for ownership before onboarding.
               </SectionTitle>
               <p className="body-md max-w-md text-[var(--on-surface-dim)] lg:text-right">
-                Every profile should answer one question: can this engineer own
-                the work with your team inside the first sprint?
+                Every profile should answer one question: can this engineer own the work with your
+                team inside the first sprint?
               </p>
             </div>
             <DecisionRoom />
@@ -892,12 +860,10 @@ export default function HirePage() {
               <p className="font-mono text-[0.74rem] uppercase tracking-[0.14em] text-[var(--secondary)]">
                 Buyer FAQ
               </p>
-              <SectionTitle className="mt-4">
-                The questions teams ask first.
-              </SectionTitle>
+              <SectionTitle className="mt-4">The questions teams ask first.</SectionTitle>
               <SectionBody>
-                Short answers for the evaluation stage. The full FAQ covers
-                contracts, billing, timezone, vetting, and replacement terms.
+                Short answers for the evaluation stage. The full FAQ covers contracts, billing,
+                timezone, vetting, and replacement terms.
               </SectionBody>
               <div className="mt-8 grid gap-3">
                 {[
@@ -960,18 +926,19 @@ export default function HirePage() {
                   Submit your brief. We will build the shortlist.
                 </h2>
                 <p className="body-md mx-auto my-8 max-w-xl text-[var(--on-surface-dim)]">
-                  Send the role, stack, timeline, and ownership gap. Andishi
-                  turns it into a narrow, technical shortlist of vetted senior
-                  engineers.
+                  Send the role, stack, timeline, and ownership gap. Andishi turns it into a narrow,
+                  technical shortlist of vetted senior engineers.
                 </p>
                 <div className="mt-8 flex flex-wrap justify-center gap-3">
-                  <Link
-                    href="/start-project"
+                  <a
+                    href={buildWhatsAppUrl(undefined, { variant: "hire" })}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-8 py-3 text-[0.92rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_40%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--secondary)_40%,transparent)]"
                   >
                     Start hiring
-                    <IconArrowRight size={15} stroke={2} aria-hidden="true" />
-                  </Link>
+                    <IconBrandWhatsapp size={15} stroke={1.8} aria-hidden="true" />
+                  </a>
                   <Link
                     href="/engineers"
                     className="inline-flex min-h-[2.75rem] items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_18%,transparent)] bg-[var(--glass-bg)] px-7 py-3 text-[0.92rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--on-surface)_36%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--secondary)_40%,transparent)]"

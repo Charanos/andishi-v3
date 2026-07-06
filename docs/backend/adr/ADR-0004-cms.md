@@ -10,7 +10,7 @@ Blog posts, case studies (`/work`), services, and skill domains are hardcoded in
 
 ## Decision
 
-Move content into DB tables: `blog_posts`, `services_content`, `skill_domains`, `content_authors`, and reuse the `projects` table (with its existing `isPublic`/`publicSlug`/case-study fields) for case studies — adding editorial `status` and a shared `content_revisions` table for version history. Public pages **dual-read**: DB first, falling back to `src/data/*` until each table is seeded and verified, then the static fallback is removed. Admin CRUD is gated by `cms.*` permissions.
+Move content into DB tables: `blog_posts`, `services_content`, `skill_domains`, `content_authors`, and reuse the `projects` table (with its existing `isPublic`/`publicSlug`/case-study fields) for case studies - adding editorial `status` and a shared `content_revisions` table for version history. Public pages **dual-read**: DB first, falling back to `src/data/*` until each table is seeded and verified, then the static fallback is removed. Admin CRUD is gated by `cms.*` permissions.
 
 ## Options Considered
 
@@ -28,7 +28,7 @@ Move content into DB tables: `blog_posts`, `services_content`, `skill_domains`, 
 **Pros:** Rich editor out of the box. **Cons:** New vendor, cost, auth, and sync; splits content ownership; overkill for current volume.
 
 ### Option C: Keep content in `src/data/*.ts`
-**Pros:** Zero work. **Cons:** No admin CRUD — fails the requirement.
+**Pros:** Zero work. **Cons:** No admin CRUD - fails the requirement.
 
 ## Trade-off Analysis
 

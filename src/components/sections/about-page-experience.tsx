@@ -5,10 +5,10 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import {
-  IconArrowRight,
   IconBolt,
   IconBrandGithub,
   IconBrandLinkedin,
+  IconBrandWhatsapp,
   IconBrandX,
   IconCalendarTime,
   IconCheck,
@@ -19,13 +19,8 @@ import {
   IconUsers,
   IconWorld,
 } from "@tabler/icons-react";
-import {
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  Radar,
-  ResponsiveContainer,
-} from "recharts";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer } from "recharts";
 import { LinkButton } from "@/components/ui/button";
 import { FinalCtaArtwork } from "@/components/ui/final-cta-artwork";
 import { cn } from "@/lib/utils";
@@ -40,12 +35,7 @@ const socialLinks = [
 const contactLinks = [
   ["Email", "hire@andishi.dev", IconMail, "mailto:hire@andishi.dev"],
   ["Twitter/X", "@andishidev", IconBrandX, "https://twitter.com/andishidev"],
-  [
-    "LinkedIn",
-    "Andishi Talent",
-    IconBrandLinkedin,
-    "https://linkedin.com/company/andishi",
-  ],
+  ["LinkedIn", "Andishi Talent", IconBrandLinkedin, "https://linkedin.com/company/andishi"],
 ] as const;
 
 const storySections = [
@@ -201,13 +191,7 @@ const skillGroups = [
   },
 ];
 
-function PlusTexture({
-  className = "",
-  opacity = 0.12,
-}: {
-  className?: string;
-  opacity?: number;
-}) {
+function PlusTexture({ className = "", opacity = 0.12 }: { className?: string; opacity?: number }) {
   return (
     <div
       aria-hidden="true"
@@ -286,7 +270,7 @@ export function AboutPageExperience() {
                         "absolute left-[7px] top-[18px] z-10 h-[9px] w-[9px] rounded-full border transition-all duration-300",
                         isActive
                           ? "border-[var(--primary)] bg-[var(--primary)] shadow-[0_0_6px_var(--primary)] scale-110"
-                          : "border-transparent bg-[color-mix(in_srgb,var(--on-surface)_20%,transparent)] group-hover:bg-[var(--on-surface-dim)] group-hover:scale-105"
+                          : "border-transparent bg-[color-mix(in_srgb,var(--on-surface)_20%,transparent)] group-hover:bg-[var(--on-surface-dim)] group-hover:scale-105",
                       )}
                     />
 
@@ -297,7 +281,9 @@ export function AboutPageExperience() {
                     <span
                       className={cn(
                         "text-[0.84rem] font-medium uppercase tracking-[0.06em] transition-all duration-300 group-hover:text-[var(--on-surface)]",
-                        isActive ? "text-[var(--primary)] font-medium tracking-wide" : "text-[var(--on-surface-dim)]"
+                        isActive
+                          ? "text-[var(--primary)] font-medium tracking-wide"
+                          : "text-[var(--on-surface-dim)]",
                       )}
                     >
                       {section.label}
@@ -329,9 +315,7 @@ export function AboutPageExperience() {
                     borderColor: isActive
                       ? "color-mix(in srgb, var(--primary) 34%, transparent)"
                       : "var(--glass-border)",
-                    color: isActive
-                      ? "var(--primary)"
-                      : "var(--on-surface-dim)",
+                    color: isActive ? "var(--primary)" : "var(--on-surface-dim)",
                   }}
                 >
                   {section.label}
@@ -370,32 +354,29 @@ function Hero() {
         <div className="relative mb-7 aspect-[4/5] max-h-[34rem] overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_34%,transparent)] p-4 shadow-[0_24px_70px_color-mix(in_srgb,var(--bg-deep)_28%,transparent)]">
           <PlusTexture opacity={0.1} />
           <div className="relative grid h-full grid-cols-2 gap-3">
-            {[
-              "/images/dev1.jpg",
-              "/images/dev2.jpg",
-              "/images/dev3.jpg",
-              "/images/dev4.jpg",
-            ].map((src, index) => (
-              <div
-                key={src}
-                className={cn(
-                  "relative overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)]",
-                  index === 0 && "translate-y-4",
-                  index === 1 && "-translate-y-1",
-                  index === 2 && "translate-y-1",
-                  index === 3 && "-translate-y-4",
-                )}
-              >
-                <Image
-                  src={src}
-                  alt=""
-                  fill
-                  priority={index === 0}
-                  sizes="(min-width: 1280px) 16vw, (min-width: 1024px) 20vw, 45vw"
-                  className="object-cover brightness-[0.82] saturate-[0.9]"
-                />
-              </div>
-            ))}
+            {["/images/dev1.jpg", "/images/dev2.jpg", "/images/dev3.jpg", "/images/dev4.jpg"].map(
+              (src, index) => (
+                <div
+                  key={src}
+                  className={cn(
+                    "relative overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)]",
+                    index === 0 && "translate-y-4",
+                    index === 1 && "-translate-y-1",
+                    index === 2 && "translate-y-1",
+                    index === 3 && "-translate-y-4",
+                  )}
+                >
+                  <Image
+                    src={src}
+                    alt=""
+                    fill
+                    priority={index === 0}
+                    sizes="(min-width: 1280px) 16vw, (min-width: 1024px) 20vw, 45vw"
+                    className="object-cover brightness-[0.82] saturate-[0.9]"
+                  />
+                </div>
+              ),
+            )}
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
           <div className="absolute left-4 right-4 top-4 flex flex-wrap gap-2">
@@ -403,10 +384,7 @@ function Hero() {
             <PortraitChip icon={IconCode} label="Senior product builders" />
           </div>
           <div className="absolute inset-x-4 bottom-4 flex flex-wrap items-end justify-between gap-2">
-            <PortraitChip
-              icon={IconCalendarTime}
-              label="Operating since 2024"
-            />
+            <PortraitChip icon={IconCalendarTime} label="Operating since 2024" />
             <span className="inline-flex items-center gap-2 rounded-xl border border-[color-mix(in_srgb,var(--tertiary)_28%,transparent)] bg-[color-mix(in_srgb,var(--bg)_54%,transparent)] px-3 py-2 text-[0.72rem] font-medium text-[var(--tertiary)] backdrop-blur-xl">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--tertiary)]" />
               Active product studio
@@ -449,18 +427,18 @@ function Hero() {
           </h1>
           <div className="mt-7 max-w-2xl space-y-5">
             <p className="body-md text-[var(--on-surface-dim)]">
-              Andishi is a software development studio that designs, builds, and ships
-              high-quality custom software, SaaS platforms, AI systems, and mobile apps.
-              We work with global startups and local enterprises to launch Software Products
-              with speed, discipline, and full IP ownership.
+              Andishi is a software development studio that designs, builds, and ships high-quality
+              custom software, SaaS platforms, AI systems, and mobile apps. We work with global
+              startups and local enterprises to launch Software Products with speed, discipline, and
+              full IP ownership.
             </p>
             <blockquote className="border-l border-[color-mix(in_srgb,var(--secondary)_44%,transparent)] pl-5 text-[clamp(1.18rem,2.4vw,1.55rem)] font-normal leading-snug text-[var(--on-surface)]">
               We design, build, and ship software products that drive real business outcomes.
             </blockquote>
             <p className="body-md text-[var(--on-surface-dim)]">
-              We maintain a vetted network of senior software engineers across Africa to scale
-              our delivery capabilities, ensuring that every project is built by autonomous,
-              senior technical owners.
+              We maintain a vetted network of senior software engineers across Africa to scale our
+              delivery capabilities, ensuring that every project is built by autonomous, senior
+              technical owners.
             </p>
           </div>
         </div>
@@ -489,13 +467,7 @@ function Hero() {
   );
 }
 
-function PortraitChip({
-  icon: Icon,
-  label,
-}: {
-  icon: typeof IconMapPin;
-  label: string;
-}) {
+function PortraitChip({ icon: Icon, label }: { icon: typeof IconMapPin; label: string }) {
   return (
     <span className="inline-flex items-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_54%,transparent)] px-3 py-2 text-[0.72rem] font-medium text-[var(--on-surface-dim)] backdrop-blur-xl">
       <Icon size={14} stroke={1.6} className="text-[var(--secondary)]" />
@@ -526,17 +498,15 @@ function Story() {
         </h2>
         <div className="mt-7 max-w-3xl space-y-5">
           <p className="body-md text-[var(--on-surface-dim)]">
-            Andishi exists because serious African engineers are still
-            under-discovered by global hiring teams, while startups keep burning
-            months in recruiting loops that do not reliably find senior talent.
-            The company was built around a simple operating principle: source
-            carefully, vet rigorously, and make the engagement easy to start.
+            Andishi exists because serious African engineers are still under-discovered by global
+            hiring teams, while startups keep burning months in recruiting loops that do not
+            reliably find senior talent. The company was built around a simple operating principle:
+            source carefully, vet rigorously, and make the engagement easy to start.
           </p>
           <p className="body-md text-[var(--on-surface-dim)]">
-            The name Andishi comes from Swahili. It means writer or author. The
-            idea still matters: engineers author systems, but the bigger job is
-            helping the right authors find the teams where their work can move
-            fastest.
+            The name Andishi comes from Swahili. It means writer or author. The idea still matters:
+            engineers author systems, but the bigger job is helping the right authors find the teams
+            where their work can move fastest.
           </p>
         </div>
       </motion.div>
@@ -546,15 +516,10 @@ function Story() {
 
 function FounderContext() {
   return (
-    <section
-      id="founder"
-      className="scroll-mt-32 border-b border-[var(--glass-border)] py-16"
-    >
+    <section id="founder" className="scroll-mt-32 border-b border-[var(--glass-border)] py-16">
       <div className="grid gap-8 lg:grid-cols-[0.38fr_1fr] lg:items-start">
         <div className="lg:sticky lg:top-28 lg:self-start">
-          <p className="label-caps mb-4 text-[var(--secondary)]">
-            Founder context
-          </p>
+          <p className="label-caps mb-4 text-[var(--secondary)]">Founder context</p>
           <h2 className="title-serif max-w-[18ch] text-[clamp(2.16rem,4.4vw,3.35rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
             Built from Africa, shipping for the world.
           </h2>
@@ -581,22 +546,20 @@ function FounderContext() {
             </div>
 
             <div>
-              <p className="label-caps mb-4 text-[var(--primary)]">
-                Ian Mwangi / Founder & CEO
-              </p>
+              <p className="label-caps mb-4 text-[var(--primary)]">Ian Mwangi / Founder & CEO</p>
               <div className="space-y-4 text-[0.94rem] leading-[1.8] text-[var(--on-surface-dim)]">
                 <p>
                   Ian started Andishi to fix the broken agency model: founders paying for bloated
-                  account manager layers, missed deadlines, and unmotivated developers who don&apos;t
-                  understand the product&apos;s business goals.
+                  account manager layers, missed deadlines, and unmotivated developers who
+                  don&apos;t understand the product&apos;s business goals.
                 </p>
                 <p>
                   His role is to protect the standard: technical architecture, scoping precision,
                   sprint discipline, and the quality of every line of code shipped.
                 </p>
                 <p>
-                  Andishi is intentionally structured for high accountability. You get direct
-                  access to lead builders and see working software progress weekly.
+                  Andishi is intentionally structured for high accountability. You get direct access
+                  to lead builders and see working software progress weekly.
                 </p>
               </div>
 
@@ -610,9 +573,7 @@ function FounderContext() {
                     key={label}
                     className="rounded-xl border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_38%,transparent)] px-4 py-3"
                   >
-                    <p className="text-[0.82rem] font-medium text-[var(--on-surface)]">
-                      {label}
-                    </p>
+                    <p className="text-[0.82rem] font-medium text-[var(--on-surface)]">{label}</p>
                     <p className="mt-1 text-[0.72rem] leading-snug text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)]">
                       {detail}
                     </p>
@@ -629,10 +590,7 @@ function FounderContext() {
 
 function Timeline() {
   return (
-    <section
-      id="timeline"
-      className="scroll-mt-32 border-b border-[var(--glass-border)] py-16"
-    >
+    <section id="timeline" className="scroll-mt-32 border-b border-[var(--glass-border)] py-16">
       {/* Title row */}
       <div className="mb-12 flex items-baseline justify-between gap-6">
         <h2 className="title-serif text-[clamp(2.16rem,4.4vw,3.35rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
@@ -657,7 +615,7 @@ function Timeline() {
               transition={{ ...cosmicSpring, delay: Math.min(index * 0.06, 0.25) }}
               className={cn(
                 "relative pb-10 last:pb-0 group",
-                "max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:!pb-8 max-md:!pt-2 max-md:last:!border-b-0"
+                "max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:!pb-8 max-md:!pt-2 max-md:last:!border-b-0",
               )}
             >
               {/* Timeline dot */}
@@ -669,7 +627,7 @@ function Timeline() {
                       ? "border-[var(--tertiary)] bg-[var(--tertiary)] shadow-[0_0_8px_var(--tertiary)]"
                       : isFeatured
                         ? "border-[var(--primary)] bg-[var(--primary)] shadow-[0_0_8px_var(--primary)]"
-                        : "border-[var(--glass-border)] bg-[var(--on-surface-dim)]"
+                        : "border-[var(--glass-border)] bg-[var(--on-surface-dim)]",
                   )}
                 />
               </div>
@@ -680,9 +638,7 @@ function Timeline() {
                   <p
                     className="font-mono text-[0.74rem] font-normal tracking-tight"
                     style={{
-                      color: item.current
-                        ? "var(--tertiary)"
-                        : "var(--primary)",
+                      color: item.current ? "var(--tertiary)" : "var(--primary)",
                     }}
                   >
                     {item.year}
@@ -719,11 +675,8 @@ function Timeline() {
 
 function Values() {
   return (
-    <section
-      id="values"
-      className="scroll-mt-32 border-b border-[var(--glass-border)] py-16"
-    >
-      {/* Title row: heading left, label right — z-pattern balance */}
+    <section id="values" className="scroll-mt-32 border-b border-[var(--glass-border)] py-16">
+      {/* Title row: heading left, label right - z-pattern balance */}
       <div className="mb-9 flex items-baseline justify-between gap-6">
         <h2 className="title-serif text-[clamp(2.18rem,4.5vw,3.45rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
           What we actually believe.
@@ -775,14 +728,9 @@ function Values() {
 
 function StudioStatus() {
   return (
-    <section
-      id="status"
-      className="scroll-mt-32 border-b border-[var(--glass-border)] py-16"
-    >
+    <section id="status" className="scroll-mt-32 border-b border-[var(--glass-border)] py-16">
       <div className="mb-9">
-        <p className="label-caps mb-4 text-[var(--secondary)]">
-          Live studio status
-        </p>
+        <p className="label-caps mb-4 text-[var(--secondary)]">Live studio status</p>
         <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--tertiary)_26%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_10%,transparent)] px-3 py-1.5 text-[0.72rem] font-medium text-[var(--tertiary)]">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--tertiary)]" />
           Updated June 2026
@@ -800,32 +748,29 @@ function StudioStatus() {
                 key={name}
                 className="flex items-center justify-between gap-4 rounded-xl border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_34%,transparent)] px-4 py-3"
               >
-                <span className="text-[0.86rem] text-[var(--on-surface-dim)]">
-                  {name}
-                </span>
+                <span className="text-[0.86rem] text-[var(--on-surface-dim)]">{name}</span>
                 <span
                   className="inline-flex shrink-0 items-center gap-2 text-[0.72rem] font-medium"
                   style={{ color }}
                 >
-                  <span
-                    className="h-1.5 w-1.5 rounded-full"
-                    style={{ backgroundColor: color }}
-                  />
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} />
                   {status}
                 </span>
               </div>
             ))}
           </div>
           <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-            <LinkButton href="/start-project" variant="primary" className="flex-1">
-              Start a Project
-              <IconArrowRight size={15} stroke={1.8} />
-            </LinkButton>
             <LinkButton
-              href="mailto:hire@andishi.dev"
-              variant="glass"
+              href={buildWhatsAppUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="primary"
               className="flex-1"
             >
+              Start a Project
+              <IconBrandWhatsapp size={15} stroke={1.8} />
+            </LinkButton>
+            <LinkButton href="mailto:hire@andishi.dev" variant="glass" className="flex-1">
               hire@andishi.dev
             </LinkButton>
           </div>
@@ -843,9 +788,7 @@ function StudioStatus() {
                     {initial}
                   </span>
                   <div>
-                    <p className="text-[0.88rem] font-medium text-[var(--on-surface)]">
-                      {name}
-                    </p>
+                    <p className="text-[0.88rem] font-medium text-[var(--on-surface)]">{name}</p>
                     <p className="text-[0.72rem] leading-snug text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)]">
                       {detail}
                     </p>
@@ -907,12 +850,8 @@ function StatusPanel({
   return (
     <article className="overflow-hidden rounded-[1.3rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl max-md:!rounded-none max-md:!border-x-0 max-md:!border-t-0 max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!px-0 max-md:!py-6 max-md:last:!border-b-0">
       <div className="flex items-center justify-between border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface-high)_42%,transparent)] px-5 py-4 max-md:!border-b-0 max-md:!bg-transparent max-md:!px-0 max-md:!pb-3">
-        <p className="text-[0.86rem] font-medium text-[var(--on-surface)]">
-          {title}
-        </p>
-        <p className="font-mono text-[0.66rem] tracking-tight text-[var(--secondary)]">
-          {aside}
-        </p>
+        <p className="text-[0.86rem] font-medium text-[var(--on-surface)]">{title}</p>
+        <p className="font-mono text-[0.66rem] tracking-tight text-[var(--secondary)]">{aside}</p>
       </div>
       <div className="p-5 max-md:!px-0 max-md:!pb-2">{children}</div>
     </article>
@@ -921,11 +860,8 @@ function StatusPanel({
 
 function Capabilities() {
   return (
-    <section
-      id="capabilities"
-      className="scroll-mt-32 border-b border-[var(--glass-border)] py-16"
-    >
-      {/* Title row: label left, heading right — z-pattern balance */}
+    <section id="capabilities" className="scroll-mt-32 border-b border-[var(--glass-border)] py-16">
+      {/* Title row: label left, heading right - z-pattern balance */}
       <div className="mb-10 flex items-baseline justify-between gap-6">
         <p className="label-caps shrink-0 text-[var(--primary)]">Capabilities</p>
         <h2 className="title-serif text-right text-[clamp(2.16rem,4.4vw,3.35rem)] font-normal leading-[0.98] tracking-tight text-[var(--on-surface)]">
@@ -937,7 +873,8 @@ function Capabilities() {
         {/* Skill groups as chip clouds */}
         <div>
           <p className="body-md mb-7 text-[var(--on-surface-dim)]">
-            Our build teams cover core product engineering needs across full-stack web, SaaS architectures, backend APIs, AI systems, cloud infrastructure, Web3, and mobile apps.
+            Our build teams cover core product engineering needs across full-stack web, SaaS
+            architectures, backend APIs, AI systems, cloud infrastructure, Web3, and mobile apps.
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             {skillGroups.map((group) => (
@@ -963,11 +900,15 @@ function Capabilities() {
           </div>
         </div>
 
-        {/* Radar chart — depth index */}
+        {/* Radar chart - depth index */}
         <div>
           <div className="overflow-hidden rounded-[1.35rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-5 backdrop-blur-2xl">
-            <p className="label-caps mb-0.5 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">Depth index</p>
-            <p className="mb-3 text-[0.66rem] text-[color-mix(in_srgb,var(--on-surface-dim)_40%,transparent)]">Self-assessed across active projects</p>
+            <p className="label-caps mb-0.5 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
+              Depth index
+            </p>
+            <p className="mb-3 text-[0.66rem] text-[color-mix(in_srgb,var(--on-surface-dim)_40%,transparent)]">
+              Self-assessed across active projects
+            </p>
             <ResponsiveContainer width="100%" height={286}>
               <RadarChart data={radarData} margin={{ top: 10, right: 28, bottom: 10, left: 28 }}>
                 <PolarGrid
@@ -976,7 +917,11 @@ function Capabilities() {
                 />
                 <PolarAngleAxis
                   dataKey="domain"
-                  tick={{ fontSize: 10, fill: "var(--on-surface-dim)", fontFamily: "var(--font-jetbrains)" }}
+                  tick={{
+                    fontSize: 10,
+                    fill: "var(--on-surface-dim)",
+                    fontFamily: "var(--font-jetbrains)",
+                  }}
                 />
                 <Radar
                   dataKey="v"
@@ -1012,19 +957,19 @@ function Signoff() {
             </p>
             <div className="space-y-5 text-[0.95rem] leading-[1.8] text-[var(--on-surface-dim)]">
               <p>
-                When you build with Andishi, you are not just contracting generalists or
-                managing fragmented freelance hires. You partner with a structured software studio
-                that understands product architecture, deadlines, and direct accountability.
+                When you build with Andishi, you are not just contracting generalists or managing
+                fragmented freelance hires. You partner with a structured software studio that
+                understands product architecture, deadlines, and direct accountability.
               </p>
               <p>
-                We structure our builds in weekly sprints. You speak directly to the lead developers,
-                review live product demos, and get full visibility into the codebase. No account
-                manager layers, no telephone game.
+                We structure our builds in weekly sprints. You speak directly to the lead
+                developers, review live product demos, and get full visibility into the codebase. No
+                account manager layers, no telephone game.
               </p>
               <p>
-                The result is production-ready, documented software that you own entirely
-                (IP is yours). Post-launch, we back our work with a 30-day warranty window to fix
-                any issues in production.
+                The result is production-ready, documented software that you own entirely (IP is
+                yours). Post-launch, we back our work with a 30-day warranty window to fix any
+                issues in production.
               </p>
             </div>
             <div className="mt-8 flex items-center gap-3 border-t border-[var(--glass-border)] pt-5">
@@ -1056,9 +1001,7 @@ function Signoff() {
           />
           <PlusTexture opacity={0.07} />
           <div className="relative z-[1]">
-            <p className="label-caps mb-4 text-[var(--secondary)]">
-              Get in touch
-            </p>
+            <p className="label-caps mb-4 text-[var(--secondary)]">Get in touch</p>
             <h2 className="title-serif max-w-[18ch] text-[clamp(2.12rem,4.2vw,3.2rem)] font-normal leading-[1.02] tracking-tight text-[var(--on-surface)]">
               Let&apos;s build your next product.
             </h2>
@@ -1077,9 +1020,7 @@ function Signoff() {
                   <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[color-mix(in_srgb,var(--surface-high)_54%,transparent)]">
                     <Icon size={15} stroke={1.6} />
                   </span>
-                  <span className="font-medium text-[var(--on-surface)]">
-                    {label}
-                  </span>
+                  <span className="font-medium text-[var(--on-surface)]">{label}</span>
                   <span className="ml-auto text-[0.74rem] text-[color-mix(in_srgb,var(--on-surface-dim)_64%,transparent)]">
                     {value}
                   </span>
@@ -1088,9 +1029,15 @@ function Signoff() {
             </div>
 
             <div className="mt-7">
-              <LinkButton href="/start-project" variant="primary" className="w-full">
+              <LinkButton
+                href={buildWhatsAppUrl()}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="primary"
+                className="w-full"
+              >
                 Start a Project
-                <IconArrowRight size={16} stroke={1.8} />
+                <IconBrandWhatsapp size={16} stroke={1.8} />
               </LinkButton>
             </div>
           </div>

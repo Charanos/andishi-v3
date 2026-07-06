@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useRef } from "react";
-import { IconCircleCheck, IconX, IconArrowRight } from "@tabler/icons-react";
-import Link from "next/link";
+import { IconCircleCheck, IconX, IconBrandWhatsapp } from "@tabler/icons-react";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { comparisonRows } from "@/content/landing";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -31,7 +31,7 @@ export function WhyAndishiSection() {
             start: "top 88%",
             once: true,
           },
-        }
+        },
       );
 
       // Feature matrix desktop Animation
@@ -48,7 +48,7 @@ export function WhyAndishiSection() {
             start: "top 86%",
             once: true,
           },
-        }
+        },
       );
 
       // Mobile cards Animation
@@ -65,7 +65,7 @@ export function WhyAndishiSection() {
             start: "top 88%",
             once: true,
           },
-        }
+        },
       );
 
       // CTA Animation
@@ -82,10 +82,10 @@ export function WhyAndishiSection() {
             start: "top 88%",
             once: true,
           },
-        }
+        },
       );
     },
-    { scope: containerRef }
+    { scope: containerRef },
   );
 
   return (
@@ -108,7 +108,10 @@ export function WhyAndishiSection() {
       />
 
       <div className="relative z-[1] mx-auto max-w-[84rem]">
-        <div className="mb-14 flex flex-col items-center text-center why-header-anim" style={{ willChange: "transform, opacity" }}>
+        <div
+          className="mb-14 flex flex-col items-center text-center why-header-anim"
+          style={{ willChange: "transform, opacity" }}
+        >
           <p className="label-caps mb-4 flex items-center justify-center gap-3 text-[var(--tertiary)] font-medium">
             <span className="h-px w-7 bg-[var(--tertiary)]" />
             WHY ANDISHI
@@ -124,7 +127,10 @@ export function WhyAndishiSection() {
         </div>
 
         {/* Desktop Feature Matrix (md and up) */}
-        <div className="hidden md:block relative z-10 max-w-6xl mx-auto mt-16 why-matrix-anim" style={{ willChange: "transform, opacity" }}>
+        <div
+          className="hidden md:block relative z-10 max-w-6xl mx-auto mt-16 why-matrix-anim"
+          style={{ willChange: "transform, opacity" }}
+        >
           <div className="grid grid-cols-[minmax(200px,1.5fr)_1fr_1fr_1.15fr] gap-x-2">
             {/* Headers */}
             <div className="pb-6 pl-6 flex items-end border-b border-[color-mix(in_srgb,var(--on-surface)_6%,transparent)]">
@@ -210,7 +216,10 @@ export function WhyAndishiSection() {
         </div>
 
         {/* Mobile Card Layout (max-md) */}
-        <div className="md:hidden mt-12 flex flex-col gap-6 why-cards-anim" style={{ willChange: "transform, opacity" }}>
+        <div
+          className="md:hidden mt-12 flex flex-col gap-6 why-cards-anim"
+          style={{ willChange: "transform, opacity" }}
+        >
           {comparisonRows.map((row) => (
             <div
               key={row[0]}
@@ -272,17 +281,22 @@ export function WhyAndishiSection() {
         </div>
 
         {/* CTA */}
-        <div className="mt-16 flex flex-col items-center text-center gap-6 why-cta-anim" style={{ willChange: "transform, opacity" }}>
+        <div
+          className="mt-16 flex flex-col items-center text-center gap-6 why-cta-anim"
+          style={{ willChange: "transform, opacity" }}
+        >
           <p className="body-md max-w-xl text-[var(--on-surface-dim)]">
             Ready to experience a different approach to product engineering?
           </p>
-          <Link
-            href="/start-project"
+          <a
+            href={buildWhatsAppUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex min-h-[2.8rem] items-center justify-center gap-2 rounded-full border border-transparent bg-[var(--on-surface)] px-8 py-3 text-[15px] font-medium text-[var(--bg)] no-underline shadow-lg transition-all duration-300 hover:-translate-y-px hover:shadow-xl"
           >
             Start a Project
-            <IconArrowRight size={16} stroke={2} />
-          </Link>
+            <IconBrandWhatsapp size={16} stroke={1.8} />
+          </a>
         </div>
       </div>
     </section>

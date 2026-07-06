@@ -18,8 +18,8 @@ Add `leads`, `deals`, `proposals`, `deal_activities` (master doc §6.3). Every p
 | Dimension | Assessment |
 |-----------|------------|
 | Complexity | Med |
-| Consistency | High — one intake mechanism for every current and future form |
-| Data quality | High — every inquiry is now a real, reportable row |
+| Consistency | High - one intake mechanism for every current and future form |
+| Data quality | High - every inquiry is now a real, reportable row |
 
 **Pros:** Closes the exact inconsistency found in the July 2 intake audit; matches ADR-0007's already-documented flow; low schema risk (additive tables only). **Cons:** `/api/contact`'s auto-brief-creation and the lead's qualification state can diverge slightly for self-qualifying submissions (mitigated by linking `convertedToBriefId` and setting `status: "qualified"` at creation time, not leaving it ambiguous).
 
@@ -27,11 +27,11 @@ Add `leads`, `deals`, `proposals`, `deal_activities` (master doc §6.3). Every p
 **Pros:** Smaller change. **Cons:** Leaves two different intake shapes permanently, the exact problem being fixed; no funnel visibility for the wizard's much higher submission volume.
 
 ### Option C: Make every submission go through manual lead qualification (no auto-brief-creation for anyone)
-**Pros:** Architecturally "pure" per ADR-0007's flow map. **Cons:** Regresses the `/start-project` wizard's already-verified, working auto-brief flow for no concrete benefit — a multi-step wizard submission is self-qualifying in practice; forcing a manual conversion step here would only slow down real client intake.
+**Pros:** Architecturally "pure" per ADR-0007's flow map. **Cons:** Regresses the `/start-project` wizard's already-verified, working auto-brief flow for no concrete benefit - a multi-step wizard submission is self-qualifying in practice; forcing a manual conversion step here would only slow down real client intake.
 
 ## Trade-off Analysis
 
-The real gap wasn't the *existence* of brief auto-creation for qualified submissions — it was the *absence* of any CRM-level record for the other, less-structured intake paths, and the lack of a shared write path that made the two mechanisms diverge in the first place. Option A fixes both without touching the parts of the existing flow that already work correctly.
+The real gap wasn't the *existence* of brief auto-creation for qualified submissions - it was the *absence* of any CRM-level record for the other, less-structured intake paths, and the lack of a shared write path that made the two mechanisms diverge in the first place. Option A fixes both without touching the parts of the existing flow that already work correctly.
 
 ## Consequences
 

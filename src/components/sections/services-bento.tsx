@@ -3,7 +3,8 @@
 import React, { useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { IconArrowRight, IconArrowUpRight } from "@tabler/icons-react";
+import { IconArrowRight, IconArrowUpRight, IconBrandWhatsapp } from "@tabler/icons-react";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { services as landingServices } from "@/content/landing";
@@ -76,7 +77,6 @@ export function ServicesBentoGrid() {
       className="relative w-full bg-[var(--bg)] px-5 py-16 max-sm:py-12 sm:px-8 lg:px-10 lg:py-24"
     >
       <div className="mx-auto max-w-[92rem]">
-
         {/* Section header */}
         <div className="mb-12">
           <p className="label-caps mb-3 flex items-center gap-3 text-[var(--tertiary)]">
@@ -92,7 +92,6 @@ export function ServicesBentoGrid() {
 
         {/* Bento grid */}
         <div className="bento-grid grid grid-cols-1 gap-4 max-md:gap-0 md:grid-cols-2 lg:grid-cols-4 md:auto-rows-[244px] lg:auto-rows-[244px]">
-
           {services.map((service, index) => {
             const Icon = service.icon;
             const variantKey = glowAccent[service.glow] ?? "surface";
@@ -109,7 +108,6 @@ export function ServicesBentoGrid() {
                   className={`${cardBase} col-span-1 p-7 md:col-span-2 lg:col-span-2 lg:row-span-2`}
                 >
                   <div className="relative z-10 grid h-full grid-cols-1 gap-0 lg:grid-cols-[1fr_1fr] lg:items-stretch">
-
                     {/* Left - structured content */}
                     <div className="flex h-full flex-col justify-between py-1 pr-0 lg:pr-8">
                       <div className="flex flex-col gap-5">
@@ -120,7 +118,11 @@ export function ServicesBentoGrid() {
                           </span>
                           <span
                             className="rounded-full border px-2.5 py-0.5 font-mono text-[0.62rem]"
-                            style={{ backgroundColor: accent.bg, borderColor: accent.border, color: accent.color }}
+                            style={{
+                              backgroundColor: accent.bg,
+                              borderColor: accent.border,
+                              color: accent.color,
+                            }}
                           >
                             {service.timeline}
                           </span>
@@ -130,7 +132,11 @@ export function ServicesBentoGrid() {
                         <div>
                           <div
                             className="mb-4 flex h-11 w-11 items-center justify-center rounded-[0.85rem] border shadow-sm"
-                            style={{ borderColor: accent.border, backgroundColor: accent.bg, color: accent.color }}
+                            style={{
+                              borderColor: accent.border,
+                              backgroundColor: accent.bg,
+                              color: accent.color,
+                            }}
                           >
                             <Icon size={22} stroke={1.4} />
                           </div>
@@ -222,7 +228,13 @@ export function ServicesBentoGrid() {
                   {/* Atmospheric image */}
                   {service.image && (
                     <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.12] transition-all duration-700 group-hover:opacity-[0.22] max-md:hidden">
-                      <Image src={service.image} alt="" fill className="object-cover object-center transition-transform duration-[3s] ease-out group-hover:scale-105" sizes="14vw" />
+                      <Image
+                        src={service.image}
+                        alt=""
+                        fill
+                        className="object-cover object-center transition-transform duration-[3s] ease-out group-hover:scale-105"
+                        sizes="14vw"
+                      />
                       <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/50 to-transparent" />
                     </div>
                   )}
@@ -232,13 +244,21 @@ export function ServicesBentoGrid() {
                       <div className="mb-4 flex items-start justify-between">
                         <div
                           className="flex h-10 w-10 items-center justify-center rounded-[0.85rem] border"
-                          style={{ borderColor: accent.border, backgroundColor: accent.bg, color: accent.color }}
+                          style={{
+                            borderColor: accent.border,
+                            backgroundColor: accent.bg,
+                            color: accent.color,
+                          }}
                         >
                           <Icon size={20} stroke={1.4} />
                         </div>
                         <span
                           className="rounded-full border px-2.5 py-0.5 font-mono text-[0.62rem]"
-                          style={{ backgroundColor: accent.bg, borderColor: accent.border, color: accent.color }}
+                          style={{
+                            backgroundColor: accent.bg,
+                            borderColor: accent.border,
+                            color: accent.color,
+                          }}
                         >
                           {service.timeline}
                         </span>
@@ -257,7 +277,13 @@ export function ServicesBentoGrid() {
                         <div className="absolute left-1/2 top-1.5 z-20 h-2.5 w-10 -translate-x-1/2 rounded-full bg-black/30" />
                         <div className="relative h-[200px] w-full overflow-hidden bg-[var(--bg-deep)]">
                           {service.image && (
-                            <Image src={service.image} alt={service.title} fill className="object-cover object-center transition-transform duration-[3s] ease-out group-hover:scale-105" sizes="12vw" />
+                            <Image
+                              src={service.image}
+                              alt={service.title}
+                              fill
+                              className="object-cover object-center transition-transform duration-[3s] ease-out group-hover:scale-105"
+                              sizes="12vw"
+                            />
                           )}
                         </div>
                       </div>
@@ -267,10 +293,19 @@ export function ServicesBentoGrid() {
                     <div className="mt-auto flex items-center justify-between border-t border-[var(--glass-border)] pt-3.5 max-md:!border-transparent">
                       <div className="flex flex-wrap gap-1">
                         {service.tags.slice(0, 2).map((t) => (
-                          <span key={t} className="rounded-full border border-[var(--glass-border)] px-2 py-[2px] font-mono text-[0.6rem] text-[var(--on-surface-dim)]">{t}</span>
+                          <span
+                            key={t}
+                            className="rounded-full border border-[var(--glass-border)] px-2 py-[2px] font-mono text-[0.6rem] text-[var(--on-surface-dim)]"
+                          >
+                            {t}
+                          </span>
                         ))}
                       </div>
-                      <IconArrowUpRight size={15} stroke={1.7} className="text-[var(--on-surface-dim)] transition-all duration-300 group-hover:text-[var(--primary)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      <IconArrowUpRight
+                        size={15}
+                        stroke={1.7}
+                        className="text-[var(--on-surface-dim)] transition-all duration-300 group-hover:text-[var(--primary)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      />
                     </div>
                   </div>
                 </Link>
@@ -290,7 +325,13 @@ export function ServicesBentoGrid() {
                   {/* Atmospheric image */}
                   {service.image && (
                     <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.13] transition-all duration-700 group-hover:opacity-[0.22] max-md:hidden">
-                      <Image src={service.image} alt="" fill className="object-cover transition-transform duration-[3s] ease-out group-hover:scale-105" sizes="40vw" />
+                      <Image
+                        src={service.image}
+                        alt=""
+                        fill
+                        className="object-cover transition-transform duration-[3s] ease-out group-hover:scale-105"
+                        sizes="40vw"
+                      />
                       <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg)] via-[var(--bg)]/50 to-[var(--bg)]/20" />
                     </div>
                   )}
@@ -302,13 +343,21 @@ export function ServicesBentoGrid() {
                         <div className="mb-4 flex items-center gap-3">
                           <div
                             className="flex h-9 w-9 items-center justify-center rounded-[0.75rem] border"
-                            style={{ borderColor: accent.border, backgroundColor: accent.bg, color: accent.color }}
+                            style={{
+                              borderColor: accent.border,
+                              backgroundColor: accent.bg,
+                              color: accent.color,
+                            }}
                           >
                             <Icon size={18} stroke={1.4} />
                           </div>
                           <span
                             className="rounded-full border px-2.5 py-0.5 font-mono text-[0.62rem]"
-                            style={{ backgroundColor: accent.bg, borderColor: accent.border, color: accent.color }}
+                            style={{
+                              backgroundColor: accent.bg,
+                              borderColor: accent.border,
+                              color: accent.color,
+                            }}
                           >
                             {service.timeline}
                           </span>
@@ -323,10 +372,20 @@ export function ServicesBentoGrid() {
                       {/* Tech tags - slide up on hover */}
                       <div className="flex flex-wrap gap-1.5 pt-3 transition-all duration-300 max-md:hidden">
                         {service.tags.map((t) => (
-                          <span key={t} className="rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-2 py-[2px] font-mono text-[0.6rem] text-[var(--on-surface-dim)]">{t}</span>
+                          <span
+                            key={t}
+                            className="rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-2 py-[2px] font-mono text-[0.6rem] text-[var(--on-surface-dim)]"
+                          >
+                            {t}
+                          </span>
                         ))}
                         <span className="ml-auto inline-flex items-center gap-1 text-[0.78rem] text-[var(--on-surface-dim)] transition-all duration-300 group-hover:text-[var(--primary)]">
-                          Explore <IconArrowRight size={13} stroke={1.8} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+                          Explore{" "}
+                          <IconArrowRight
+                            size={13}
+                            stroke={1.8}
+                            className="transition-transform duration-300 group-hover:translate-x-0.5"
+                          />
                         </span>
                       </div>
                     </div>
@@ -335,7 +394,13 @@ export function ServicesBentoGrid() {
                     <div className="relative hidden lg:flex h-full w-[160px] shrink-0 items-center">
                       <div className="relative h-[140px] w-full overflow-hidden rounded-xl soft-neumorphic-inner transition-all duration-700 group-hover:scale-[1.03]">
                         {service.image && (
-                          <Image src={service.image} alt="" fill className="object-cover transition-transform duration-[3s] ease-out group-hover:scale-105" sizes="12vw" />
+                          <Image
+                            src={service.image}
+                            alt=""
+                            fill
+                            className="object-cover transition-transform duration-[3s] ease-out group-hover:scale-105"
+                            sizes="12vw"
+                          />
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)]/30 to-transparent" />
                       </div>
@@ -357,7 +422,13 @@ export function ServicesBentoGrid() {
                 {/* Atmospheric image */}
                 {service.image && (
                   <div className="pointer-events-none absolute inset-0 z-0 opacity-[0.14] transition-all duration-700 group-hover:opacity-[0.25] max-md:hidden">
-                    <Image src={service.image} alt="" fill className="object-cover transition-transform duration-[3s] ease-out group-hover:scale-105" sizes="14vw" />
+                    <Image
+                      src={service.image}
+                      alt=""
+                      fill
+                      className="object-cover transition-transform duration-[3s] ease-out group-hover:scale-105"
+                      sizes="14vw"
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/40 to-transparent" />
                   </div>
                 )}
@@ -368,13 +439,21 @@ export function ServicesBentoGrid() {
                     <div className="flex items-start justify-between">
                       <div
                         className="flex h-9 w-9 items-center justify-center rounded-[0.75rem] border"
-                        style={{ borderColor: accent.border, backgroundColor: accent.bg, color: accent.color }}
+                        style={{
+                          borderColor: accent.border,
+                          backgroundColor: accent.bg,
+                          color: accent.color,
+                        }}
                       >
                         <Icon size={18} stroke={1.4} />
                       </div>
                       <span
                         className="rounded-full border px-2 py-[2px] font-mono text-[0.6rem]"
-                        style={{ backgroundColor: accent.bg, borderColor: accent.border, color: accent.color }}
+                        style={{
+                          backgroundColor: accent.bg,
+                          borderColor: accent.border,
+                          color: accent.color,
+                        }}
                       >
                         {service.timeline}
                       </span>
@@ -395,7 +474,12 @@ export function ServicesBentoGrid() {
                     <div className="flex items-center gap-1.5">
                       <div className="flex flex-1 flex-wrap gap-1 transition-all duration-300">
                         {service.tags.slice(0, 2).map((t) => (
-                          <span key={t} className="rounded-full border border-[var(--glass-border)] px-2 py-[2px] font-mono text-[0.6rem] text-[var(--on-surface-dim)]">{t}</span>
+                          <span
+                            key={t}
+                            className="rounded-full border border-[var(--glass-border)] px-2 py-[2px] font-mono text-[0.6rem] text-[var(--on-surface-dim)]"
+                          >
+                            {t}
+                          </span>
                         ))}
                       </div>
                       <IconArrowUpRight
@@ -420,16 +504,19 @@ export function ServicesBentoGrid() {
                   Have something more complex in mind?
                 </h3>
                 <p className="text-[0.86rem] leading-[1.65] text-[var(--on-surface-dim)]">
-                  We design bespoke architectures, unique database solutions, specialized integrations, and workflow engines built specifically around your business.
+                  We design bespoke architectures, unique database solutions, specialized
+                  integrations, and workflow engines built specifically around your business.
                 </p>
               </div>
               <div className="flex shrink-0 flex-col gap-2.5 lg:items-end">
-                <Link
-                  href="/start-project"
+                <a
+                  href={buildWhatsAppUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex min-h-[2.35rem] items-center justify-center gap-2 rounded-full bg-[var(--on-surface)] px-5 py-2 text-[0.84rem] text-[var(--bg)] shadow-md no-underline transition-all duration-300 hover:-translate-y-px hover:shadow-lg lg:w-auto w-full"
                 >
-                  Start a project <IconArrowRight size={13} stroke={2} />
-                </Link>
+                  Start a project <IconBrandWhatsapp size={14} stroke={1.8} />
+                </a>
                 <Link
                   href="/hire"
                   className="text-[0.8rem] text-[var(--on-surface-dim)] hover:text-[var(--on-surface)] transition-colors no-underline pl-1 lg:pl-0 text-center lg:text-right"
@@ -439,7 +526,6 @@ export function ServicesBentoGrid() {
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </section>

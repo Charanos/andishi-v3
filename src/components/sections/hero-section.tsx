@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  IconArrowRight,
-  IconChartLine,
-} from "@tabler/icons-react";
+import { IconArrowRight, IconChartLine } from "@tabler/icons-react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -69,15 +66,16 @@ export function HeroSection() {
               variants={fadeUp}
               className="m-0 max-w-[69ch] text-[clamp(1.04rem,3.6vw,1.06rem)] leading-[1.65] text-[color-mix(in_srgb,var(--on-surface-dim)_92%,var(--on-surface))] max-[560px]:text-base"
             >
-              Custom software, SaaS platforms, AI systems, mobile apps, and enterprise tools. For founders and teams who need working software, not another project plan.
+              Custom software, SaaS platforms, AI systems, mobile apps, and enterprise tools. For
+              founders and teams who need working software, not another project plan.
             </motion.p>
 
             <motion.div variants={fadeUp} className="flex flex-wrap gap-3 pt-1">
               <Link
-                href="/start-project"
+                href="#services"
                 className="inline-flex min-h-[2.4rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--bg)] no-underline shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-300 hover:-translate-y-px hover:shadow-[0_22px_52px_color-mix(in_srgb,var(--bg-deep)_48%,transparent)] max-[899px]:flex-1 max-[899px]:basis-48 max-[560px]:min-h-[2.3rem] max-[560px]:text-[0.95rem]"
               >
-                Start a Project
+                See Services
                 <IconArrowRight size={15} stroke={2.2} />
               </Link>
               <Link
@@ -137,15 +135,9 @@ export function HeroSection() {
               </div>
 
               <div className="absolute right-[1rem] top-[34.5rem] z-[4] flex items-center gap-3 rounded-[1.2rem] border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--surface)_72%,transparent),color-mix(in_srgb,var(--surface-high)_42%,transparent))] px-4 py-3 text-[var(--on-surface)] shadow-[0_24px_90px_color-mix(in_srgb,var(--bg-deep)_70%,transparent)] backdrop-blur-[28px]">
-                <IconChartLine
-                  className="text-[var(--tertiary)]"
-                  size={18}
-                  stroke={1.8}
-                />
+                <IconChartLine className="text-[var(--tertiary)]" size={18} stroke={1.8} />
                 <div>
-                  <strong className={`${numberClass} block text-[1.35rem]`}>
-                    32+
-                  </strong>
+                  <strong className={`${numberClass} block text-[1.35rem]`}>32+</strong>
                   <span className="block text-[0.78rem] font-medium uppercase text-[var(--on-surface-dim)]">
                     shipped builds
                   </span>
@@ -155,32 +147,33 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-
-
         <motion.div
           variants={fadeUp}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
           className="relative z-20 mx-auto max-w-3xl px-6 pt-20 text-center sm:px-8 lg:pt-24"
         >
-          <p className="label-caps mb-5 text-[var(--primary)]">
-            THE REAL SITUATION
-          </p>
+          <p className="label-caps mb-5 text-[var(--primary)]">THE REAL SITUATION</p>
           <h2 className="headline-lg text-[var(--on-surface)]">
             Building software is straightforward. Getting it delivered is not.
           </h2>
           <div className="body-md mt-6 space-y-4 text-[var(--on-surface-dim)] leading-relaxed">
             <p>
-              You&apos;ve briefed an agency. Got a proposal with a six-week start date and a 90-day timeline. Paid a deposit. Got a product that didn&apos;t match the brief.
+              You&apos;ve briefed an agency. Got a proposal with a six-week start date and a 90-day
+              timeline. Paid a deposit. Got a product that didn&apos;t match the brief.
             </p>
             <p>
-              Or you hired freelancers. Three of them. Each owned a different piece. Nobody owned the whole thing.
+              Or you hired freelancers. Three of them. Each owned a different piece. Nobody owned
+              the whole thing.
             </p>
             <p>
-              Andishi works differently. We scope in a single call. We write the brief, not you. We ship in weeks, not quarters. And we measure success by what changes for your business, not by the length of the deliverables list.
+              Andishi works differently. We scope in a single call. We write the brief, not you. We
+              ship in weeks, not quarters. And we measure success by what changes for your business,
+              not by the length of the deliverables list.
             </p>
             <p>
-              We also place senior engineers with teams who&apos;d rather extend their own team than hand a project to us. Both options are on the table.
+              We also place senior engineers with teams who&apos;d rather extend their own team than
+              hand a project to us. Both options are on the table.
             </p>
           </div>
         </motion.div>

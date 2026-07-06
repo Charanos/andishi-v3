@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import {
   IconArrowLeft,
   IconArrowRight,
+  IconBrandWhatsapp,
   IconCalendarTime,
   IconCheck,
   IconFileText,
@@ -15,6 +16,7 @@ import {
   IconRocket,
   IconSend,
 } from "@tabler/icons-react";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { cosmicSpring } from "@/lib/motion";
@@ -336,6 +338,31 @@ export function StartProjectExperience() {
               Save & exit
             </Link>
           </div>
+
+          {step === 0 && (
+            <div className="mb-8 overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_62%,transparent)] p-5 shadow-lg backdrop-blur-xl">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="space-y-1">
+                  <h3 className="font-sans text-[0.95rem] font-medium tracking-tight text-[var(--on-surface)]">
+                    Prefer a quick conversation?
+                  </h3>
+                  <p className="text-[0.84rem] leading-relaxed text-[var(--on-surface-dim)]">
+                    Direct us to a chat on WhatsApp. You can explain your product goals naturally
+                    and we will scope it for you.
+                  </p>
+                </div>
+                <a
+                  href={buildWhatsAppUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 text-[0.86rem] font-medium text-white shadow-md hover:bg-[#20ba59] transition-all duration-300 hover:-translate-y-px whitespace-nowrap"
+                >
+                  <IconBrandWhatsapp size={16} stroke={1.8} />
+                  Chat on WhatsApp
+                </a>
+              </div>
+            </div>
+          )}
 
           <motion.div
             key={step}

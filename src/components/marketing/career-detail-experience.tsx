@@ -399,7 +399,7 @@ export function CareerDetailExperience({ slug, initialJob }: CareerDetailExperie
                           </div>
 
                           <div className="mt-2 text-center text-[0.68rem] text-[var(--on-surface-dim)] opacity-40">
-                            — or provide a URL —
+                            - or provide a URL -
                           </div>
 
                           <input
