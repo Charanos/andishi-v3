@@ -384,39 +384,41 @@ export function WorkPageExperience() {
             className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--surface-high)_8%,transparent),transparent_22rem),linear-gradient(90deg,color-mix(in_srgb,var(--bg)_88%,transparent),transparent_38%,color-mix(in_srgb,var(--bg)_72%,transparent))]"
           />
 
-          <div className="relative z-[1] mx-auto flex w-full max-w-[92rem] flex-col pb-24 pt-32 lg:pt-36">
-            <header className="mb-8 px-5 sm:px-8 lg:px-10 md:mb-12 md:grid md:grid-cols-[1fr_auto] md:items-end md:gap-10">
-              <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={cosmicSpring}
-              >
-                <p className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)]">
-                  <span className="h-px w-7 bg-[var(--secondary)]" />
-                  Selected work / 2024-2026
-                </p>
-                <h1 className="title-serif m-0 text-[clamp(3.15rem,7.4vw,5.25rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
-                  Our Work.
-                </h1>
-              </motion.div>
+          <div className="relative z-[1] flex w-full flex-col pb-24 pt-32 lg:pt-36">
+            <section className="w-full px-5 sm:px-8 lg:px-10">
+              <header className="mx-auto w-full max-w-[92rem] mb-8 md:mb-12 md:grid md:grid-cols-[1fr_auto] md:items-end md:gap-10">
+                <motion.div
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={cosmicSpring}
+                >
+                  <p className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)]">
+                    <span className="h-px w-7 bg-[var(--secondary)]" />
+                    Selected work / 2024-2026
+                  </p>
+                  <h1 className="title-serif m-0 text-[clamp(3.15rem,7.4vw,5.25rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
+                    Our Work.
+                  </h1>
+                </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ ...cosmicSpring, delay: 0.08 }}
-                className="mt-6 max-w-md md:mt-0 md:text-right"
-              >
-                <p className="font-mono text-[clamp(3rem,7vw,5rem)] font-medium leading-none tracking-tight text-[color-mix(in_srgb,var(--on-surface)_28%,transparent)] dark:text-[color-mix(in_srgb,var(--on-surface)_14%,transparent)]">
-                  {formatIndex(filteredProjects.length)}
-                </p>
-                <p className="body-md mt-3 font-medium text-[var(--on-surface-dim)]">
-                  Proof of our software delivery work across fintech, SaaS platforms, logistics, AI
-                  integrations, and mobile systems.
-                </p>
-              </motion.div>
-            </header>
+                <motion.div
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ ...cosmicSpring, delay: 0.08 }}
+                  className="mt-6 max-w-md md:mt-0 md:text-right"
+                >
+                  <p className="font-mono text-[clamp(3rem,7vw,5rem)] font-medium leading-none tracking-tight text-[color-mix(in_srgb,var(--on-surface)_28%,transparent)] dark:text-[color-mix(in_srgb,var(--on-surface)_14%,transparent)]">
+                    {formatIndex(filteredProjects.length)}
+                  </p>
+                  <p className="body-md mt-3 font-medium text-[var(--on-surface-dim)]">
+                    Proof of our software delivery work across fintech, SaaS platforms, logistics,
+                    AI integrations, and mobile systems.
+                  </p>
+                </motion.div>
+              </header>
+            </section>
 
-            <div className="sticky top-[4.5rem] z-[40] border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_85%,transparent)] px-5 py-4 backdrop-blur-xl transition-all duration-300 sm:px-8 lg:px-10 mb-6">
+            <div className="sticky top-[4.5rem] z-[40] w-full border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_85%,transparent)] px-5 py-4 backdrop-blur-xl transition-all duration-300 sm:px-8 lg:px-10 mb-6">
               <div className="mx-auto flex w-full max-w-[92rem] flex-col gap-4 sm:flex-row sm:items-center">
                 <FilterDropdown
                   label="Service"
@@ -441,31 +443,33 @@ export function WorkPageExperience() {
               </div>
             </div>
 
-            <div className="px-5 sm:px-8 lg:px-10">
-              <div
-                ref={gridRef}
-                key={`${activeService}-${activeVertical}-${currentPage}`}
-                className={cn(
-                  "grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr",
-                  loading && "opacity-35 transition-opacity duration-300",
-                )}
-              >
-                {paginatedProjects.map((project, index) => (
-                  <ProjectCard
-                    key={project.id}
-                    index={(currentPage - 1) * itemsPerPage + index}
-                    project={project}
-                    onOpen={() => setSelectedProject(project)}
-                  />
-                ))}
-              </div>
+            <section className="w-full px-5 sm:px-8 lg:px-10">
+              <div className="mx-auto w-full max-w-[92rem]">
+                <div
+                  ref={gridRef}
+                  key={`${activeService}-${activeVertical}-${currentPage}`}
+                  className={cn(
+                    "grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 grid-flow-dense",
+                    loading && "opacity-35 transition-opacity duration-300",
+                  )}
+                >
+                  {paginatedProjects.map((project, index) => (
+                    <ProjectCard
+                      key={project.id}
+                      index={(currentPage - 1) * itemsPerPage + index}
+                      project={project}
+                      onOpen={() => setSelectedProject(project)}
+                    />
+                  ))}
+                </div>
 
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-              />
-            </div>
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              </div>
+            </section>
           </div>
         </CustomCursorRegion>
       </main>
@@ -509,7 +513,7 @@ function ProjectCard({
             "relative shrink-0 overflow-hidden",
             "max-md:rounded-[1.25rem] max-md:mb-4",
             isFeatured
-              ? "w-full lg:w-[55%] aspect-[4/3] lg:aspect-auto h-full"
+              ? "w-full lg:w-[55%] aspect-[4/3] lg:h-full lg:min-h-[22rem]"
               : "w-full aspect-[4/3]",
           )}
         >

@@ -130,7 +130,7 @@ export function Navbar() {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="pointer-events-auto w-full overflow-hidden border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_90%,transparent)] backdrop-blur-xl text-[var(--on-surface-dim)] shadow-[0_4px_24px_color-mix(in_srgb,var(--bg-deep)_12%,transparent)]"
+              className="pointer-events-auto hidden md:block w-full overflow-hidden border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_90%,transparent)] backdrop-blur-xl text-[var(--on-surface-dim)] shadow-[0_4px_24px_color-mix(in_srgb,var(--bg-deep)_12%,transparent)]"
             >
               <a
                 href="/contact"
