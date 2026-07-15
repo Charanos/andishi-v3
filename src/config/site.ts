@@ -6,7 +6,7 @@ export const siteConfig = {
     "Andishi is a software development studio building custom software, SaaS products, AI systems, mobile apps, and enterprise tools.",
   whatsapp: {
     /** WhatsApp Business number (international format, no + prefix) */
-    phone: "254748825157",
+    phone: "254759912373",
   },
   nav: [
     { label: "Services", href: "/services" },

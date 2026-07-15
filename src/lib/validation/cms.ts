@@ -45,7 +45,7 @@ export const createBlogPostSchema = z.object({
   dateModified: z.string().trim().min(1),
   readTime: z.coerce.number().int().min(1).max(120).default(5),
   featured: z.coerce.boolean().default(false),
-  body: z.array(z.string().trim().min(1)).min(1),
+  body: z.string().trim().min(1),
   status: z.enum(["published", "draft", "archived"]).default("draft"),
 });
 

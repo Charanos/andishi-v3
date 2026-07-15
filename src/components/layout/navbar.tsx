@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { IconBrandWhatsapp, IconX, IconMenu2 } from "@tabler/icons-react";
+import { IconBrandWhatsapp, IconX, IconMenu2, IconLocationPin } from "@tabler/icons-react";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { Logo } from "@/components/brand/logo";
 import { siteConfig } from "@/config/site";
@@ -132,10 +132,13 @@ export function Navbar() {
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="pointer-events-auto w-full overflow-hidden border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_90%,transparent)] backdrop-blur-xl text-[var(--on-surface-dim)] shadow-[0_4px_24px_color-mix(in_srgb,var(--bg-deep)_12%,transparent)]"
             >
-              <div className="relative mx-auto flex max-w-[92rem] items-center justify-center px-5 py-2.5 sm:px-8 lg:px-10">
+              <a
+                href="/contact"
+                className="relative mx-auto flex max-w-[92rem] items-center justify-center cursor-pointer px-5 py-2.5 sm:px-8 lg:px-10"
+              >
                 <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-mono text-[0.72rem] tracking-tight text-[var(--on-surface-dim)] text-center">
                   <span className="inline-flex items-center gap-1.5 text-[var(--secondary)]">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--secondary)] animate-pulse shadow-[0_0_8px_var(--secondary)]" />
+                    <IconLocationPin size={15} stroke={2} />
                     FIND US:
                   </span>
                   <span>Bypass Business Arcade Ground Floor, Northern Bypass - Ruiru, Kenya</span>
@@ -147,7 +150,7 @@ export function Navbar() {
                 >
                   <IconX size={15} stroke={2} />
                 </button>
-              </div>
+              </a>
             </motion.div>
           )}
         </AnimatePresence>

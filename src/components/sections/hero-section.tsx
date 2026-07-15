@@ -51,7 +51,7 @@ export function HeroSection() {
             <motion.div variants={fadeUp}>
               <span className="inline-flex w-fit max-w-full items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--primary)_20%,transparent)] bg-[color-mix(in_srgb,var(--surface)_54%,transparent)] px-3 py-2 text-[0.64rem] font-medium uppercase leading-none tracking-[0.18em] text-[color-mix(in_srgb,var(--primary)_78%,var(--on-surface))] backdrop-blur-xl max-[560px]:text-[0.66rem] max-[560px]:leading-tight">
                 <span className="h-1.5 w-1.5 rounded-full bg-[var(--tertiary)] shadow-[0_0_18px_color-mix(in_srgb,var(--tertiary)_70%,transparent)]" />
-                SOFTWARE DEVELOPMENT & PRODUCT STUDIO
+                DIGITAL ENGINEERING & PRODUCT STUDIO
               </span>
             </motion.div>
 
@@ -66,8 +66,9 @@ export function HeroSection() {
               variants={fadeUp}
               className="m-0 max-w-[69ch] text-[clamp(1.04rem,3.6vw,1.06rem)] leading-[1.65] text-[color-mix(in_srgb,var(--on-surface-dim)_92%,var(--on-surface))] max-[560px]:text-base"
             >
-              Custom software, SaaS platforms, AI systems, mobile apps, and enterprise tools. For
-              founders and teams who need working software, not another project plan.
+              Scalable applications, SaaS platforms, AI systems, mobile apps, and enterprise tools.
+              For founders and teams who demand shipped solutions and tangible impact, not just
+              another project plan.
             </motion.p>
 
             <motion.div variants={fadeUp} className="flex flex-wrap gap-3 pt-1">
@@ -75,14 +76,14 @@ export function HeroSection() {
                 href="#services"
                 className="inline-flex min-h-[2.4rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--bg)] no-underline shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-300 hover:-translate-y-px hover:shadow-[0_22px_52px_color-mix(in_srgb,var(--bg-deep)_48%,transparent)] max-[899px]:flex-1 max-[899px]:basis-48 max-[560px]:min-h-[2.3rem] max-[560px]:text-[0.95rem]"
               >
-                See Services
+                Discover Services
                 <IconArrowRight size={15} stroke={2.2} />
               </Link>
               <Link
                 href="/work"
                 className="inline-flex min-h-[2.4rem] items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_14%,transparent)] bg-[color-mix(in_srgb,var(--surface)_62%,transparent)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--on-surface)] no-underline shadow-[inset_0_1px_0_color-mix(in_srgb,white_20%,transparent),0_12px_30px_color-mix(in_srgb,var(--bg-deep)_22%,transparent)] backdrop-blur-lg transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--tertiary)_28%,transparent)] max-[899px]:flex-1 max-[899px]:basis-48 max-[560px]:min-h-[2.3rem] max-[560px]:text-[0.95rem]"
               >
-                See Our Work
+                View Portfolio
               </Link>
             </motion.div>
           </motion.div>
@@ -155,25 +156,27 @@ export function HeroSection() {
         >
           <p className="label-caps mb-5 text-[var(--primary)]">THE REAL SITUATION</p>
           <h2 className="headline-lg text-[var(--on-surface)]">
-            Building software is straightforward. Getting it delivered is not.
+            Writing code is straightforward. Delivering a successful product is not.
           </h2>
           <div className="body-md mt-6 space-y-4 text-[var(--on-surface-dim)] leading-relaxed">
             <p>
-              You&apos;ve briefed an agency. Got a proposal with a six-week start date and a 90-day
-              timeline. Paid a deposit. Got a product that didn&apos;t match the brief.
+              You&apos;ve likely briefed an agency before. You received a proposal with a six-week
+              start date and a 90-day timeline, paid a hefty deposit, and ultimately got a product
+              that barely resembled your original vision.
             </p>
             <p>
-              Or you hired freelancers. Three of them. Each owned a different piece. Nobody owned
-              the whole thing.
+              Or perhaps you hired multiple freelancers. Each owned a different piece of the puzzle,
+              but nobody took responsibility for the entire outcome.
             </p>
             <p>
-              Andishi works differently. We scope in a single call. We write the brief, not you. We
-              ship in weeks, not quarters. And we measure success by what changes for your business,
-              not by the length of the deliverables list.
+              Andishi operates differently. We scope your requirements in a single call. We write
+              the technical brief. We ship in weeks, not quarters. Above all, we measure our success
+              by the tangible impact on your business, not by the sheer length of a deliverables
+              checklist.
             </p>
             <p>
-              We also place senior engineers with teams who&apos;d rather extend their own team than
-              hand a project to us. Both options are on the table.
+              Prefer to build in-house? We also embed senior engineering talent into existing teams
+              who need to scale quickly. Both pathways are fully supported.
             </p>
           </div>
         </motion.div>

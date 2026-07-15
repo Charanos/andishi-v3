@@ -286,7 +286,7 @@ export function AdminContentPage() {
       dateModified: new Date().toISOString().split("T")[0],
       readTime: 5,
       featured: false,
-      body: ["First paragraph...", "Second paragraph..."],
+      body: "First paragraph...\n\nSecond paragraph...",
       status: "published",
     });
     setIsNewBlog(true);
@@ -351,7 +351,9 @@ export function AdminContentPage() {
         if (!res.ok) throw new Error("Create failed");
         savedRow = (await res.json()).post;
       } else {
-        const existing = blogPostsState.find((p) => p.slug === (editingBlogPost?.slug ?? post.slug));
+        const existing = blogPostsState.find(
+          (p) => p.slug === (editingBlogPost?.slug ?? post.slug),
+        );
         if (!existing) throw new Error("Post not found");
         const res = await fetch(`/api/blog/posts/${existing.dbId}`, {
           method: "PATCH",
@@ -1818,7 +1820,7 @@ function BlogEditModal({
       dateModified: new Date().toISOString().split("T")[0],
       readTime: 5,
       featured: false,
-      body: ["First paragraph...", "Second paragraph..."],
+      body: "First paragraph...\n\nSecond paragraph...",
       status: "published",
     };
   });
@@ -2028,15 +2030,13 @@ function BlogEditModal({
 
           <label className="sm:col-span-2">
             <span className="text-[0.78rem] font-medium text-[var(--on-surface)]">
-              Body paragraphs (Double newline separated)
+              Body (Markdown)
             </span>
             <textarea
-              value={formData.body.join("\n\n")}
-              onChange={(e) =>
-                setFormData({ ...formData, body: e.target.value.split("\n\n").filter(Boolean) })
-              }
+              value={formData.body}
+              onChange={(e) => setFormData({ ...formData, body: e.target.value })}
               className="mt-2 min-h-32 w-full resize-none rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-3 text-[0.88rem] text-[var(--on-surface)] outline-none focus:border-[var(--primary)] leading-relaxed"
-              placeholder="Article body content..."
+              placeholder="Article body content in Markdown..."
               required
             />
           </label>

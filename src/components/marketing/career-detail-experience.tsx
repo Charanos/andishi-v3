@@ -114,7 +114,7 @@ export function CareerDetailExperience({ slug, initialJob }: CareerDetailExperie
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "done">("idle");
+  const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "done" | "error">("idle");
   const { notify } = useToast();
 
   useEffect(() => {
@@ -136,18 +136,27 @@ export function CareerDetailExperience({ slug, initialJob }: CareerDetailExperie
     loadJob();
   }, [slug, initialJob]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setResumeFile(file);
-      setUploadStatus("uploading");
-      // No file storage is wired up yet - this placeholder link stands in
-      // for a real upload until Vercel Blob (BLOB_READ_WRITE_TOKEN) is
-      // configured. Applicants can also paste a real resume link instead.
-      setTimeout(() => {
-        setUploadStatus("done");
-        setResumeUrl(`https://example.com/resumes/${file.name}`);
-      }, 1500);
+    if (!file) return;
+
+    setResumeFile(file);
+    setUploadStatus("uploading");
+
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/careers/resume-upload", { method: "POST", body: form });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error ?? "Upload failed");
+      }
+      const data = await res.json();
+      setResumeUrl(data.url);
+      setUploadStatus("done");
+    } catch (err) {
+      setUploadStatus("error");
+      notify(err instanceof Error ? err.message : "Resume upload failed", "error");
     }
   };
 
@@ -394,6 +403,15 @@ export function CareerDetailExperience({ slug, initialJob }: CareerDetailExperie
                                   {resumeFile?.name}
                                 </span>
                                 <span className="text-[0.62rem] opacity-60">Ready to submit</span>
+                              </div>
+                            )}
+                            {uploadStatus === "error" && (
+                              <div className="flex flex-col items-center gap-1 text-red-400">
+                                <IconAlertCircle size={20} />
+                                <span className="text-[0.78rem] font-medium">Upload failed</span>
+                                <span className="text-[0.62rem] opacity-60">
+                                  Try again or paste a link below
+                                </span>
                               </div>
                             )}
                           </div>

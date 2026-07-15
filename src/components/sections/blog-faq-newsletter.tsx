@@ -25,8 +25,6 @@ import { cn } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/dashboard/shared/confirm-dialog";
 import { useToast } from "@/components/dashboard/shared/toast-provider";
 
-
-
 const topics = [
   "Senior Engineers",
   "AI Integration",
@@ -298,7 +296,7 @@ function BlogSection({
       dateModified: new Date().toISOString().split("T")[0],
       readTime: 5,
       featured: false,
-      body: ["First paragraph...", "Second paragraph..."],
+      body: "First paragraph...\n\nSecond paragraph...",
       status: "published",
     });
     setIsNew(true);
@@ -680,15 +678,15 @@ function BlogSection({
 
               <div className="text-left">
                 <MarkdownEditor
-                  label="Article Body Content"
-                  value={editingPost.body.join("\n\n")}
+                  label="Article Body Content (Markdown)"
+                  value={editingPost.body}
                   onChange={(val) =>
                     setEditingPost({
                       ...editingPost,
-                      body: val.split("\n\n").filter(Boolean),
+                      body: val,
                     })
                   }
-                  placeholder="Separate paragraphs by double newlines. Markdown is allowed..."
+                  placeholder="Markdown is allowed..."
                   rows={8}
                 />
               </div>

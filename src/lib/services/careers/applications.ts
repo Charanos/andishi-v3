@@ -5,7 +5,11 @@ import { applicationEvents, applications, engineers, jobOpenings } from "@/db/sc
 import { authorize } from "@/lib/authz/can";
 import { writeAudit } from "@/lib/authz/audit";
 import { ConflictError, ForbiddenError, NotFoundError } from "@/lib/authz/errors";
-import { sendInviteEmail } from "@/lib/email";
+import {
+  sendApplicationNotification,
+  sendApplicationReceivedConfirmation,
+  sendInviteEmail,
+} from "@/lib/email";
 import { emitActivityEvent } from "@/lib/services/activity";
 import { buildActivationUrl, provisionUserAccount } from "@/lib/services/identity/provisioning";
 import type { CallerContext } from "@/lib/services/types";
@@ -20,6 +24,8 @@ type CreateApplicationInput = z.infer<typeof createApplicationSchema>;
 type UpdateApplicationStageInput = z.infer<typeof updateApplicationStageSchema>;
 type UpdateApplicationRatingInput = z.infer<typeof updateApplicationRatingSchema>;
 type HireApplicationInput = z.infer<typeof hireApplicationSchema>;
+
+const CAREERS_NOTIFICATION_EMAIL = process.env.CAREERS_NOTIFICATION_EMAIL ?? "careers@andishi.dev";
 
 function slugify(value: string) {
   return value
@@ -63,6 +69,25 @@ export async function submitApplication(input: CreateApplicationInput) {
       },
       tx,
     );
+
+    sendApplicationNotification(CAREERS_NOTIFICATION_EMAIL, {
+      applicantName: application.applicantName,
+      applicantEmail: application.applicantEmail,
+      jobTitle: opening.title,
+      resumeUrl: application.resumeUrl,
+      links: application.links,
+      coverNote: application.coverNote,
+    }).catch((error) => {
+      console.error("[submitApplication] Failed to send careers notification email:", error);
+    });
+
+    sendApplicationReceivedConfirmation(
+      application.applicantEmail,
+      application.applicantName,
+      opening.title,
+    ).catch((error) => {
+      console.error("[submitApplication] Failed to send applicant confirmation email:", error);
+    });
 
     return application;
   });

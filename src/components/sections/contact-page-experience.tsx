@@ -28,9 +28,9 @@ const directContacts = [
     tone: "var(--primary)",
   },
   {
-    href: "https://wa.me/254748825157",
+    href: "https://wa.me/254759912373",
     label: "WhatsApp",
-    value: "+254 748 825 157",
+    value: "+254 759 912 373",
     sub: "Direct text line",
     icon: IconBrandWhatsapp,
     tone: "var(--secondary)",

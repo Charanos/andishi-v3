@@ -1,16 +1,13 @@
 /**
- * scripts/seed-dev.ts
+ * scripts/seed-prod-content.ts
  *
- * Seeds the DEV Neon database from existing src/data/*.ts mock data.
- * Run with: npm run db:seed
+ * One-off: seeds real, production-facing content onto the PRODUCTION Neon
+ * branch - the one real job opening, 6 case-study projects, 6 testimonials,
+ * and 3 blog posts. Unlike seed-dev.ts (placeholder/demo data for local
+ * engineering use), everything inserted here is meant to be genuinely live.
  *
- * What this seeds:
- *   - testimonials        → testimonials table
- *   - blog posts          → blog_posts table
- *   - job openings        → job_openings table
- *   - case study projects → projects table (with isPublic=true + mapped fields)
- *
- * Safe to re-run - uses onConflictDoNothing() so existing rows are never overwritten.
+ * Run with: npx tsx --env-file=.env scripts/seed-prod-content.ts
+ * Safe to re-run - uses onConflictDoNothing() on each unique slug.
  */
 
 import "dotenv/config";
@@ -22,11 +19,144 @@ import * as schema from "../src/db/schema";
 
 neonConfig.webSocketConstructor = ws;
 
-// ─────────────────────────────────────────────────────────────
-// Inline seed data (mirrors src/data/*.ts without importing Next.js)
-// ─────────────────────────────────────────────────────────────
+const JOB_OPENING = {
+  title: "Freelance Product Analytics & Operations Consultant",
+  slug: "freelance-product-analytics-operations-consultant",
+  kind: "freelance" as const,
+  department: "Product & Analytics",
+  location: "Remote",
+  remote: true,
+  seniority: "Senior",
+  compensationNote:
+    "Freelance contract - rate based on experience and proposed weekly availability",
+  status: "open" as const,
+  publishedAt: new Date(),
+  skills: [
+    "SQL",
+    "Snowflake",
+    "Power BI",
+    "Tableau",
+    "Looker",
+    "Product Analytics",
+    "A/B Testing",
+    "Cohort Analysis",
+    "Data Visualization",
+    "Python",
+  ],
+  descriptionMd: `**Engagement Type:** Freelance / Contract (Remote)
 
-const DEFAULT_TESTIMONIALS = [
+## Project Overview
+
+We are seeking an experienced **Product Analytics & Operations Consultant** to support a technology-focused product operations initiative.
+
+This engagement focuses on transforming product, customer, and operational data into actionable insights that improve product strategy, customer experience, feature adoption, retention, operational efficiency, and business growth.
+
+The ideal consultant is highly analytical, comfortable working independently, and capable of owning the entire analytics lifecycle - from data discovery and SQL development to dashboard creation, insight generation, and executive reporting.
+
+## Key Responsibilities
+
+You will:
+
+- Write, optimize, and maintain SQL queries against large product and operational datasets.
+- Analyze product usage, customer behavior, feature adoption, engagement, retention, churn, and performance trends.
+- Conduct funnel, cohort, segmentation, and customer lifecycle analyses.
+- Define and maintain key product and operational KPIs.
+- Design and maintain dashboards that monitor product performance, customer experience, growth, retention, profitability, and operational health.
+- Identify trends, anomalies, risks, and opportunities within product and business data.
+- Develop measurement frameworks for new product initiatives and strategic projects.
+- Analyze A/B and multivariate experiments and communicate findings with clear recommendations.
+- Support product planning through data-driven insights and performance reporting.
+- Translate complex analyses into practical recommendations for business and product stakeholders.
+- Prepare executive-ready reports, presentations, and documentation.
+- Collaborate with Product, Engineering, UX, Finance, Sales, and Customer Success teams.
+- Document metrics, data sources, methodologies, assumptions, and dashboard logic.
+- Identify data quality issues and recommend improvements to reporting and measurement processes.
+
+## Required Skills
+
+Strong hands-on experience with:
+
+- SQL
+- Snowflake or another modern cloud data warehouse
+- Power BI, Tableau, or Looker
+- Product usage and behavioral analytics
+- Dashboard development and KPI reporting
+- Funnel, cohort, and segmentation analysis
+- Feature adoption measurement
+- Customer retention and churn analysis
+- A/B testing and experimentation
+- Data modeling and metric definition
+- Data visualization and storytelling
+
+## Preferred Qualifications
+
+Experience with one or more of the following is an advantage:
+
+- Python or R
+- Gainsight PX or similar product analytics platforms
+- SaaS or software product analytics
+- Agile product development environments
+- Product strategy and OKR frameworks
+- Advanced statistical analysis
+- Product event or telemetry data
+- Customer lifecycle analytics
+
+## Ideal Candidate
+
+We're looking for someone with:
+
+- 4+ years of experience in Product Analytics, Business Analytics, Product Operations, or a related field.
+- Experience supporting Product Management or Product Operations teams.
+- Experience working within SaaS, software, or technology organizations.
+- Strong business acumen and the ability to connect data with strategic decisions.
+- Excellent communication and presentation skills.
+- The ability to explain analytical findings to both technical and non-technical stakeholders.
+- Strong attention to detail and analytical accuracy.
+- A proactive, ownership-oriented mindset with the ability to work independently.
+- Experience collaborating with remote or distributed teams.
+
+## Expected Deliverables
+
+Deliverables may include:
+
+- Optimized SQL queries and reusable analytical datasets
+- Executive dashboards and KPI reporting
+- Product performance and customer behavior reports
+- Funnel, cohort, retention, and segmentation analyses
+- Experiment measurement plans and A/B test evaluations
+- Product health and operational performance reports
+- Executive presentations and strategic recommendations
+- Data quality assessments and reporting improvements
+- Documentation covering metrics, assumptions, methodologies, and analytical processes
+
+## Engagement Expectations
+
+The consultant will independently own assigned workstreams and deliver high-quality, well-documented outputs.
+
+Applicants should be prepared to discuss previous product analytics engagements, including:
+
+- Business problems addressed
+- SQL approaches used
+- Metrics and KPIs developed
+- Dashboards created
+- Recommendations delivered
+- Measurable business outcomes
+
+## Application Requirements
+
+Please include:
+
+- A brief summary of your relevant experience
+- Examples or portfolio of similar analytics projects
+- Experience with SQL, Snowflake, and BI tools
+- Your approach to product usage, adoption, retention, and customer analytics
+- Experience designing or evaluating product experiments
+- Weekly availability
+- Preferred hourly or monthly contract rate
+- Earliest available start date`,
+};
+
+const TESTIMONIALS = [
   {
     authorName: "Amina Otieno",
     authorRole: "CTO, Haraka Fleet",
@@ -83,9 +213,37 @@ const DEFAULT_TESTIMONIALS = [
     featured: false,
     order: 4,
   },
+  {
+    authorName: "Sarah Whitfield",
+    authorRole: "Operations Director, Lex Meridian",
+    content:
+      "Andishi's contract analysis tool cut our paralegal review time by more than half in the first month. The RAG pipeline surfaces exactly the clauses our team needs to flag, and the executive summaries save partners hours before client calls.",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=150&h=150&q=80",
+    projectUrl: "/work/legal-document-analyzer",
+    rating: 5,
+    date: "2026-06-02",
+    status: "active" as const,
+    featured: false,
+    order: 5,
+  },
+  {
+    authorName: "Marcus Chen",
+    authorRole: "Founder, Workbill",
+    content:
+      "We needed a multi-tenant billing platform that could scale with our contractor base without falling over. Andishi delivered exactly that - clean Stripe Connect integration, solid tenant isolation, and code we've had no trouble extending ourselves since handoff.",
+    avatarUrl:
+      "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=150&h=150&q=80",
+    projectUrl: "/work/contractor-billing-saas",
+    rating: 5,
+    date: "2026-06-20",
+    status: "active" as const,
+    featured: false,
+    order: 6,
+  },
 ];
 
-const DEFAULT_BLOG_POSTS = [
+const BLOG_POSTS = [
   {
     slug: "how-to-brief-a-senior-engineer",
     title: "How to brief a senior engineer so matching works faster",
@@ -149,146 +307,9 @@ const DEFAULT_BLOG_POSTS = [
     ].join("\n\n"),
     status: "published" as const,
   },
-  {
-    slug: "what-vetting-should-prove",
-    title: "What technical vetting should prove before an intro call",
-    category: "Hiring" as const,
-    excerpt:
-      "Good vetting proves ownership, communication, system judgment, and production experience before the client spends time interviewing.",
-    coverImage: "/images/blog-image-8.jpg",
-    authorName: "Andishi Team",
-    authorRole: "Talent Operations",
-    authorAvatarUrl: "/logo.svg",
-    datePublished: "2026-05-02",
-    dateModified: "2026-05-08",
-    readTime: 5,
-    featured: false,
-    body: [
-      "A senior engineer profile should carry more signal than a title and a list of tools. It should show what the engineer has owned, how they communicate, and where their judgment has been tested.",
-      "Andishi vetting looks for production history, system design thinking, code review clarity, architecture tradeoffs, and references where possible.",
-      "The best intro call then becomes a focused technical conversation rather than a broad screening exercise.",
-    ].join("\n\n"),
-    status: "published" as const,
-  },
-  {
-    slug: "scoping-a-fixed-price-build",
-    title: "How we scope a fixed-price build without the change-order trap",
-    category: "Engineering" as const,
-    excerpt:
-      "Fixed-price only works when the scope document does the arguing before the invoice does. Here's the structure we use.",
-    coverImage: "/images/blog-image-2.jpg",
-    authorName: "Ian Mwangi",
-    authorRole: "Founder, Andishi",
-    authorAvatarUrl: "/images/ian.jpg",
-    datePublished: "2026-04-28",
-    dateModified: "2026-04-28",
-    readTime: 6,
-    featured: false,
-    body: [
-      "Fixed-price engagements fail for a predictable reason: the scope document was vague enough that both sides could read it differently once work started.",
-      "We scope against explicit acceptance criteria per milestone, not a feature list. A milestone is done when its criteria are demonstrably true, not when the engineer feels finished.",
-      "Anything outside that criteria list is a change order by definition, agreed in writing before the sprint that touches it starts. This is what keeps a fixed-price build fixed.",
-    ].join("\n\n"),
-    status: "published" as const,
-  },
-  {
-    slug: "remote-onboarding-first-week",
-    title: "The first week: onboarding a remote engineer onto a live codebase",
-    category: "Remote Work" as const,
-    excerpt:
-      "A senior hire's first week determines whether month two is productive or apologetic. Here's our onboarding checklist.",
-    coverImage: "/images/blog-image-5.jpg",
-    authorName: "Andishi Team",
-    authorRole: "Engineering Notes",
-    authorAvatarUrl: "/logo.svg",
-    datePublished: "2026-04-20",
-    dateModified: "2026-04-20",
-    readTime: 4,
-    featured: false,
-    body: [
-      "Most onboarding failures aren't skill gaps - they're context gaps. A senior engineer without access to the right docs, environments, and decision history will still move slowly in week one.",
-      "We front-load repo access, environment setup, architecture docs, and a recorded walkthrough of the areas they'll own before day one, not during it.",
-      "By the end of week one, the expectation is a merged PR, however small - proof the environment works and the engineer understands the review bar.",
-    ].join("\n\n"),
-    status: "published" as const,
-  },
 ];
 
-const DEFAULT_JOB_OPENINGS = [
-  {
-    title: "Senior AI Integration Engineer",
-    slug: "senior-ai-integration-engineer",
-    kind: "freelance" as const,
-    department: "Engineering",
-    location: "Nairobi, Kenya",
-    remote: true,
-    seniority: "Senior",
-    compensationNote: "$8,000 - $12,000 / month",
-    status: "open" as const,
-    publishedAt: new Date("2026-06-20T10:00:00Z"),
-    skills: ["Next.js", "Python", "OpenAI API", "LangChain", "pgvector", "TypeScript"],
-    descriptionMd: `## The Role\nWe are seeking a **Senior AI Integration Engineer** to join our talent network on a freelance contract. You will design, build, and deploy RAG pipelines, custom LLM agents, and support workflow orchestrations for clients in SaaS and FinTech.\n\n## Responsibilities\n- Architect and implement RAG pipelines using vector stores\n- Integrate OpenAI, Anthropic, and open-source LLMs into production apps\n- Build LangChain-based agents with tool-use capabilities\n- Write clean, well-tested TypeScript/Python code`,
-  },
-  {
-    title: "Full-Stack Product Engineer (Next.js + Node.js)",
-    slug: "fullstack-product-engineer-nextjs",
-    kind: "freelance" as const,
-    department: "Engineering",
-    location: "Nairobi, Kenya",
-    remote: true,
-    seniority: "Mid-Senior",
-    compensationNote: "$5,000 - $9,000 / month",
-    status: "open" as const,
-    publishedAt: new Date("2026-06-15T10:00:00Z"),
-    skills: ["Next.js", "React", "Node.js", "PostgreSQL", "TypeScript", "Drizzle ORM"],
-    descriptionMd: `## The Role\nWe are looking for a **Full-Stack Product Engineer** to work on SaaS applications and client-facing platforms.\n\n## Responsibilities\n- Build full-stack features in Next.js 14+ App Router and Node.js\n- Design and maintain relational databases (PostgreSQL/Neon)\n- Integrate third-party APIs (Stripe, Resend, Twilio, etc.)\n- Deliver production-grade code`,
-  },
-  {
-    title: "React Native Mobile Engineer",
-    slug: "react-native-mobile-engineer",
-    kind: "freelance" as const,
-    department: "Engineering",
-    location: "Remote - Africa",
-    remote: true,
-    seniority: "Senior",
-    compensationNote: "$6,000 - $10,000 / month",
-    status: "open" as const,
-    publishedAt: new Date("2026-06-10T10:00:00Z"),
-    skills: ["React Native", "Expo", "TypeScript", "Firebase", "M-Pesa", "iOS", "Android"],
-    descriptionMd: `## The Role\nWe're seeking a **Senior React Native Mobile Engineer** to build cross-platform iOS and Android apps.\n\n## Responsibilities\n- Build and maintain React Native apps using Expo\n- Implement biometric auth, geolocation, offline-first sync\n- Integrate payment APIs (M-Pesa, Stripe, Flutterwave)`,
-  },
-  {
-    title: "Senior Product Designer (UX/UI)",
-    slug: "senior-product-designer-ux-ui",
-    kind: "outsourced" as const,
-    department: "Design",
-    location: "Nairobi, Kenya",
-    remote: true,
-    seniority: "Lead / Senior",
-    compensationNote: "Client-paid rate card: $65 - $85 / hour",
-    status: "open" as const,
-    publishedAt: new Date("2026-06-28T12:00:00Z"),
-    skills: ["Figma", "UI Design System", "High-fidelity Prototyping", "UX Research"],
-    descriptionMd: `## The Role\nAndishi is sourcing a **Senior Product Designer** for placement with a partner organization on their core product dashboard.\n\n## Responsibilities\n- Establish a refined design system inside Figma\n- Translate technical requirements into clean, production-ready UI\n- Produce high-fidelity components and interactive flows`,
-  },
-  {
-    title: "Technical Recruiter & Talent Manager",
-    slug: "technical-recruiter-talent-manager",
-    kind: "internal" as const,
-    department: "Operations",
-    location: "Nairobi, Kenya",
-    remote: false,
-    seniority: "Mid-Senior",
-    compensationNote: "Competitive salary + placement commissions",
-    status: "draft" as const,
-    publishedAt: null,
-    skills: ["Technical Vetting", "Applicant Tracking", "Interviewing", "Operations"],
-    descriptionMd: `## The Role\nWe are seeking a **Technical Recruiter & Talent Manager** to run the supply-side pipeline for Andishi's core team and external client channels.\n\n## Responsibilities\n- Screen, vet, and verify engineers applying to join Andishi's network\n- Manage recruitment pipelines and curate developer slates\n- Partner with client companies to scope talent needs`,
-  },
-];
-
-// We seed a representative subset of the 20+ mock projects
-const DEFAULT_PROJECTS = [
+const PROJECTS = [
   {
     title: "Payment Reconciliation Engine",
     publicSlug: "payment-reconciliation-engine",
@@ -427,51 +448,33 @@ const DEFAULT_PROJECTS = [
   },
 ];
 
-// ─────────────────────────────────────────────────────────────
-// Main seeder
-// ─────────────────────────────────────────────────────────────
-
 async function main() {
   const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    throw new Error("DATABASE_URL is not set. Add it to your .env.local file.");
-  }
+  if (!databaseUrl) throw new Error("DATABASE_URL is not set. Ensure .env (production) is loaded.");
 
-  console.log("🌱  Connecting to dev database...");
+  const host = new URL(databaseUrl).hostname;
+  console.log(`Seeding production content onto: ${host}`);
+
   const pool = new Pool({ connectionString: databaseUrl });
   const db = drizzle(pool, { schema });
 
-  // ── Testimonials ────────────────────────────────────────────────────
-  console.log("\n📝  Seeding testimonials...");
-  let testimonialCount = 0;
-  for (const t of DEFAULT_TESTIMONIALS) {
+  console.log("\nSeeding job opening...");
+  await db.insert(schema.jobOpenings).values(JOB_OPENING).onConflictDoNothing();
+  console.log("   done");
+
+  console.log("\nSeeding testimonials...");
+  for (const t of TESTIMONIALS) {
     await db.insert(schema.testimonials).values(t).onConflictDoNothing();
-    testimonialCount++;
   }
-  console.log(`   ✓ ${testimonialCount} testimonials`);
+  console.log(`   ${TESTIMONIALS.length} testimonials`);
 
-  // ── Blog Posts ──────────────────────────────────────────────────────
-  console.log("\n📰  Seeding blog posts...");
-  let blogCount = 0;
-  for (const p of DEFAULT_BLOG_POSTS) {
+  console.log("\nSeeding blog posts...");
+  for (const p of BLOG_POSTS) {
     await db.insert(schema.blogPosts).values(p).onConflictDoNothing();
-    blogCount++;
   }
-  console.log(`   ✓ ${blogCount} blog posts`);
+  console.log(`   ${BLOG_POSTS.length} blog posts`);
 
-  // ── Job Openings ────────────────────────────────────────────────────
-  console.log("\n💼  Seeding job openings...");
-  let jobCount = 0;
-  for (const j of DEFAULT_JOB_OPENINGS) {
-    await db.insert(schema.jobOpenings).values(j).onConflictDoNothing();
-    jobCount++;
-  }
-  console.log(`   ✓ ${jobCount} job openings`);
-
-  // ── Projects ─────────────────────────────────────────────────────────
-  console.log("\n🏗️   Seeding case study projects...");
-
-  // Find or create a seeder organization
+  console.log("\nSeeding case study projects...");
   let orgId: string;
   const existingOrg = await db
     .select({ id: schema.organizations.id })
@@ -481,7 +484,7 @@ async function main() {
 
   if (existingOrg.length > 0 && existingOrg[0]) {
     orgId = existingOrg[0].id;
-    console.log("   ↩  Reusing existing 'Andishi Studio' org");
+    console.log("   reusing existing 'Andishi Studio' org");
   } else {
     const [org] = await db
       .insert(schema.organizations)
@@ -489,24 +492,22 @@ async function main() {
       .returning({ id: schema.organizations.id });
     if (!org) throw new Error("Failed to create seed organization");
     orgId = org.id;
-    console.log("   ✓ Created 'Andishi Studio' org");
+    console.log("   created 'Andishi Studio' org");
   }
 
-  let projectCount = 0;
-  for (const p of DEFAULT_PROJECTS) {
+  for (const p of PROJECTS) {
     await db
       .insert(schema.projects)
       .values({ ...p, organizationId: orgId })
       .onConflictDoNothing();
-    projectCount++;
   }
-  console.log(`   ✓ ${projectCount} case study projects`);
+  console.log(`   ${PROJECTS.length} projects`);
 
   await pool.end();
-  console.log("\n✅  Dev seed complete.\n");
+  console.log("\nProduction content seed complete.");
 }
 
 main().catch((err) => {
-  console.error("\n❌  Seed failed:", err);
+  console.error("\nSeed failed:", err);
   process.exit(1);
 });

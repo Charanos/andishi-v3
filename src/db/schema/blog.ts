@@ -1,9 +1,7 @@
-import { sql } from "drizzle-orm";
 import {
   boolean,
   index,
   integer,
-  jsonb,
   pgEnum,
   pgTable,
   text,
@@ -46,7 +44,7 @@ export const blogPosts = pgTable(
     dateModified: text("date_modified").notNull(),
     readTime: integer("read_time").notNull().default(5),
     featured: boolean("featured").notNull().default(false),
-    body: jsonb("body").$type<string[]>().notNull().default(sql`'[]'::jsonb`),
+    body: text("body").notNull().default(""),
     status: blogPostStatusEnum("status").notNull().default("draft"),
     authorUserId: uuid("author_user_id").references(() => users.id, { onDelete: "set null" }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

@@ -9,7 +9,6 @@ import {
   IconBookmark,
   IconBrandWhatsapp,
   IconCalendar,
-  IconCheck,
   IconClock,
   IconExternalLink,
   IconHash,
@@ -18,6 +17,8 @@ import {
   IconShare,
   IconUserCircle,
 } from "@tabler/icons-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { JsonLd } from "@/components/marketing/json-ld";
 import { PostCard } from "@/components/marketing/post-card";
@@ -96,7 +97,7 @@ export function BlogPostDetailExperience({
       url: siteConfig.url,
     },
     mainEntityOfPage: `${siteConfig.url}/blog/${post.slug}`,
-    wordCount: wordCount(post),
+    wordCount: wordCount(post.body),
   };
 
   const breadcrumbSchema = {
@@ -121,8 +122,6 @@ export function BlogPostDetailExperience({
 
   return (
     <>
-      <ScrollProgressBar />
-
       <main className="relative isolate overflow-hidden bg-[var(--bg)]">
         <PatternTexture className="z-0" opacity={0.065} />
         <div
@@ -159,10 +158,9 @@ export function BlogPostDetailExperience({
                     {post.title}
                   </h1>
                   <div className="mt-7 max-w-2xl space-y-5">
-                    <p className="body-md text-[var(--on-surface-dim)]">{post.excerpt}</p>
-                    <blockquote className="border-l border-[color-mix(in_srgb,var(--tertiary)_44%,transparent)] pl-5 text-[clamp(1.18rem,2.4vw,1.55rem)] font-normal leading-snug text-[var(--on-surface)]">
-                      {firstSentence(post.body[0])}.
-                    </blockquote>
+                    <p className="text-[clamp(1.15rem,2.5vw,1.55rem)] font-normal leading-[1.4] tracking-tight text-[var(--on-surface)]">
+                      {post.excerpt}
+                    </p>
                   </div>
                   <div className="mt-8">
                     <ArticleMeta post={post} />
@@ -172,7 +170,7 @@ export function BlogPostDetailExperience({
                 <div className="mt-8 grid overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] sm:grid-cols-3">
                   {[
                     [`${post.readTime}m`, "Read time"],
-                    [`~${Math.max(150, Math.round(wordCount(post) / 50) * 50)}`, "Words"],
+                    [`~${Math.max(150, Math.round(wordCount(post.body) / 50) * 50)}`, "Words"],
                     [String(new Date(post.datePublished).getFullYear()), "Published"],
                   ].map(([value, label]) => (
                     <div
@@ -191,33 +189,101 @@ export function BlogPostDetailExperience({
               </div>
             </section>
 
-            <div className="mt-10 grid gap-7 xl:grid-cols-[17rem_minmax(0,1fr)_17rem]">
+            <div className="mt-16 grid gap-10 lg:grid-cols-[17rem_minmax(0,1fr)_17rem]">
               <aside
-                className="grid gap-5 self-start xl:sticky xl:top-28"
-                aria-label="Article sidebar"
+                className="grid gap-5 self-start lg:sticky lg:top-28"
+                aria-label="Article author"
               >
                 <AuthorPanel post={post} />
-                <TocPanel post={post} />
               </aside>
 
               <div className="grid min-w-0 gap-6">
-                <div className="p-0 border-0 bg-transparent shadow-none backdrop-blur-none">
-                  <div className="mb-7 flex items-start gap-4 border-b border-[var(--glass-border)] pb-7">
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-[color-mix(in_srgb,var(--tertiary)_24%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_9%,transparent)] text-[var(--tertiary)]">
-                      <IconQuote size={20} stroke={1.5} aria-hidden="true" />
-                    </span>
-                    <p className="text-[clamp(1.15rem,2.5vw,1.55rem)] font-normal leading-[1.3] tracking-tight text-[var(--on-surface)]">
-                      {post.excerpt}
-                    </p>
-                  </div>
-                  <ArticleBody post={post} />
+                <div className="max-w-[70ch] mx-auto w-full">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      p: ({ node, ...props }) => (
+                        <p
+                          className="mb-6 text-[clamp(1.04rem,2vw,1.15rem)] leading-[1.88] text-[var(--on-surface-dim)]"
+                          {...props}
+                        />
+                      ),
+                      h2: ({ node, ...props }) => (
+                        <h2
+                          className="title-serif mt-12 mb-6 text-[clamp(2.1rem,4vw,2.8rem)] font-normal leading-tight tracking-tight text-[var(--on-surface)]"
+                          {...props}
+                        />
+                      ),
+                      h3: ({ node, ...props }) => (
+                        <h3
+                          className="title-serif mt-10 mb-4 text-[clamp(1.6rem,3vw,2rem)] font-normal leading-snug tracking-tight text-[var(--on-surface)]"
+                          {...props}
+                        />
+                      ),
+                      ul: ({ node, ...props }) => (
+                        <ul
+                          className="mb-6 ml-6 list-disc space-y-2 text-[clamp(1.04rem,2vw,1.15rem)] text-[var(--on-surface-dim)] marker:text-[var(--tertiary)]"
+                          {...props}
+                        />
+                      ),
+                      ol: ({ node, ...props }) => (
+                        <ol
+                          className="mb-6 ml-6 list-decimal space-y-2 text-[clamp(1.04rem,2vw,1.15rem)] text-[var(--on-surface-dim)] marker:text-[var(--tertiary)]"
+                          {...props}
+                        />
+                      ),
+                      li: ({ node, ...props }) => <li className="leading-[1.88]" {...props} />,
+                      blockquote: ({ node, children, ...props }) => (
+                        <blockquote
+                          className="relative my-8 overflow-hidden rounded-[1.1rem] border border-[color-mix(in_srgb,var(--tertiary)_20%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_5%,transparent)] px-6 py-5 sm:px-8"
+                          {...props}
+                        >
+                          <IconQuote
+                            size={28}
+                            stroke={1.2}
+                            className="absolute right-4 top-4 text-[var(--tertiary)] opacity-20"
+                            aria-hidden="true"
+                          />
+                          <span
+                            aria-hidden="true"
+                            className="absolute bottom-3 left-0 top-3 w-[3px] rounded-r-full bg-[linear-gradient(to_bottom,var(--tertiary),var(--primary))]"
+                          />
+                          <div className="relative text-[clamp(1.05rem,2vw,1.18rem)] font-normal italic leading-[1.65] tracking-tight text-[var(--on-surface)]">
+                            {children}
+                          </div>
+                        </blockquote>
+                      ),
+                      img: ({ node, ...props }) => (
+                        <div className="my-10 w-full overflow-hidden rounded-2xl border border-[var(--glass-border)] shadow-[0_24px_70px_color-mix(in_srgb,var(--bg-deep)_28%,transparent)]">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img className="w-full h-auto object-cover" {...props} />
+                        </div>
+                      ),
+                      strong: ({ node, ...props }) => (
+                        <strong className="font-medium text-[var(--on-surface)]" {...props} />
+                      ),
+                      a: ({ node, ...props }) => (
+                        <a
+                          className="text-[var(--tertiary)] underline decoration-[color-mix(in_srgb,var(--tertiary)_40%,transparent)] underline-offset-4 transition-colors hover:text-[var(--primary)] hover:decoration-[var(--primary)]"
+                          {...props}
+                        />
+                      ),
+                      em: ({ node, ...props }) => (
+                        <em className="italic text-[var(--on-surface)]" {...props} />
+                      ),
+                    }}
+                  >
+                    {post.body}
+                  </ReactMarkdown>
                 </div>
 
-                <InlineCta />
+                <div className="mt-12 border-t border-[var(--glass-border)] pt-8">
+                  <InlineCta />
+                </div>
               </div>
 
               <aside
-                className="grid gap-5 self-start xl:sticky xl:top-28"
+                className="grid gap-5 self-start lg:sticky lg:top-28"
                 aria-label="Supplementary article info"
               >
                 <ReadingSignals post={post} />
@@ -226,8 +292,6 @@ export function BlogPostDetailExperience({
             </div>
           </div>
         </article>
-
-        <TocScrollScript count={post.body.length} />
 
         <section
           className="relative z-[1] px-5 py-14 sm:px-8 lg:px-10 lg:py-20"
@@ -348,17 +412,8 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
-function wordCount(post: BlogPost) {
-  return post.body.join(" ").split(/\s+/).filter(Boolean).length;
-}
-
-function shortLabel(paragraph: string) {
-  const words = paragraph.trim().split(/\s+/).slice(0, 6).join(" ");
-  return words.length < paragraph.trim().length ? `${words}...` : words;
-}
-
-function firstSentence(text: string) {
-  return text.split(/[.!?]/)[0]?.trim() || text.slice(0, 120);
+function wordCount(text: string) {
+  return text.split(/\s+/).filter(Boolean).length;
 }
 
 function PatternTexture({
@@ -408,73 +463,6 @@ function SectionEyebrow({ children }: { children: React.ReactNode }) {
       <span className="h-px w-6 bg-[var(--tertiary)] opacity-70" aria-hidden="true" />
       {children}
     </p>
-  );
-}
-
-function ScrollProgressBar() {
-  return (
-    <>
-      <div
-        id="scroll-progress"
-        aria-hidden="true"
-        className="fixed inset-x-0 top-0 z-[200] h-[2px] origin-left scale-x-0 bg-[linear-gradient(to_right,var(--tertiary),var(--primary))] will-change-transform"
-      />
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-(function(){
-  var bar = document.getElementById('scroll-progress');
-  if (!bar) return;
-  function update() {
-    var doc = document.documentElement;
-    var max = doc.scrollHeight - doc.clientHeight;
-    var pct = max > 0 ? doc.scrollTop / max : 0;
-    bar.style.transform = 'scaleX(' + Math.min(Math.max(pct, 0), 1) + ')';
-  }
-  window.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('resize', update);
-  update();
-})();
-          `.trim(),
-        }}
-      />
-    </>
-  );
-}
-
-function TocScrollScript({ count }: { count: number }) {
-  return (
-    <script
-      dangerouslySetInnerHTML={{
-        __html: `
-(function(){
-  var links = Array.prototype.slice.call(document.querySelectorAll('[data-toc-link]'));
-  var sections = [];
-  for (var i = 0; i < ${count}; i++) {
-    var el = document.getElementById('section-' + (i + 1));
-    if (el) sections.push(el);
-  }
-  function onScroll() {
-    var mid = window.scrollY + window.innerHeight * 0.38;
-    var active = 0;
-    for (var i = 0; i < sections.length; i++) {
-      if (sections[i].offsetTop <= mid) active = i;
-    }
-    links.forEach(function(link, index) {
-      var selected = index === active;
-      link.setAttribute('data-active', selected ? 'true' : 'false');
-      link.style.color = selected ? 'var(--tertiary)' : 'var(--on-surface-dim)';
-      var bar = link.querySelector('[data-toc-bar]');
-      if (bar) bar.style.transform = selected ? 'scaleY(1)' : 'scaleY(0)';
-    });
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll);
-  onScroll();
-})();
-        `.trim(),
-      }}
-    />
   );
 }
 
@@ -532,27 +520,6 @@ function HeroCoverArtifact({ post }: { post: BlogPost }) {
           {post.readTime} min read
         </span>
       </div>
-
-      <div className="absolute inset-x-4 bottom-4 grid gap-3">
-        <div className="rounded-2xl border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_60%,transparent)] p-4 backdrop-blur-xl">
-          <p className="label-caps mb-3 text-[color-mix(in_srgb,var(--on-surface-dim)_66%,transparent)]">
-            Key Dimensions
-          </p>
-          <div className="grid gap-2">
-            {["Problem framing", "Production context", "Next action"].map((item, index) => (
-              <div key={item} className="grid grid-cols-[1fr_4rem] items-center gap-3">
-                <p className="text-[0.78rem] text-[var(--on-surface-dim)]">{item}</p>
-                <div className="h-1.5 overflow-hidden rounded-full bg-[color-mix(in_srgb,var(--on-surface)_10%,transparent)]">
-                  <div
-                    className="h-full rounded-full bg-[var(--tertiary)]"
-                    style={{ width: `${78 + index * 8}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
@@ -601,136 +568,9 @@ function AuthorPanel({ post }: { post: BlogPost }) {
   );
 }
 
-function TocPanel({ post }: { post: BlogPost }) {
-  return (
-    <GlassPanel className="p-5">
-      <div className="mb-4 flex items-center gap-2">
-        <IconHash size={14} stroke={1.6} className="text-[var(--tertiary)]" aria-hidden="true" />
-        <p className="label-caps text-[color-mix(in_srgb,var(--on-surface-dim)_64%,transparent)]">
-          In this article
-        </p>
-      </div>
-      <nav aria-label="Table of contents">
-        <ol className="grid gap-1">
-          {post.body.map((paragraph, index) => (
-            <li key={`${index}-${paragraph.slice(0, 16)}`} className="relative">
-              <a
-                data-toc-link
-                data-active="false"
-                href={`#section-${index + 1}`}
-                className="relative flex items-center justify-between gap-3 rounded-xl px-3 py-2 pl-4 text-left text-[0.8rem] leading-snug text-[var(--on-surface-dim)] transition-all duration-300 hover:bg-[color-mix(in_srgb,var(--tertiary)_6%,transparent)] hover:text-[var(--on-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--tertiary)_36%,transparent)]"
-              >
-                <span
-                  data-toc-bar
-                  aria-hidden="true"
-                  className="absolute bottom-1 left-0 top-1 w-[2px] origin-top scale-y-0 rounded-full bg-[var(--tertiary)] transition-transform duration-300"
-                />
-                <span className="line-clamp-2 flex-1">{shortLabel(paragraph)}</span>
-                <span className="shrink-0 font-mono text-[0.62rem] text-[color-mix(in_srgb,var(--tertiary)_50%,transparent)]">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-              </a>
-            </li>
-          ))}
-        </ol>
-      </nav>
-    </GlassPanel>
-  );
-}
-
-function PullQuote({ text }: { text: string }) {
-  return (
-    <blockquote className="relative my-1 overflow-hidden rounded-[1.1rem] border border-[color-mix(in_srgb,var(--tertiary)_20%,transparent)] bg-[color-mix(in_srgb,var(--tertiary)_5%,transparent)] px-5 py-5 sm:px-6">
-      <IconQuote
-        size={28}
-        stroke={1.2}
-        className="absolute right-4 top-4 text-[var(--tertiary)] opacity-20"
-        aria-hidden="true"
-      />
-      <span
-        aria-hidden="true"
-        className="absolute bottom-3 left-0 top-3 w-[3px] rounded-r-full bg-[linear-gradient(to_bottom,var(--tertiary),var(--primary))]"
-      />
-      <p className="relative text-[clamp(1.05rem,2vw,1.18rem)] font-normal italic leading-[1.65] tracking-tight text-[var(--on-surface)]">
-        &quot;{firstSentence(text)}.&quot;
-      </p>
-    </blockquote>
-  );
-}
-
-function TakeawayStrip({ text }: { text: string }) {
-  const points = text
-    .split(/[.!?]/)
-    .map((item) => item.trim())
-    .filter((item) => item.length > 20)
-    .slice(0, 3);
-
-  return (
-    <div className="my-1 overflow-hidden rounded-[1.1rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_32%,transparent)] backdrop-blur-xl">
-      <div className="flex items-center gap-2 border-b border-[var(--glass-border)] px-5 py-3">
-        <span className="flex h-5 w-5 items-center justify-center rounded-md bg-[color-mix(in_srgb,var(--tertiary)_14%,transparent)] text-[var(--tertiary)]">
-          <IconCheck size={11} stroke={2.5} aria-hidden="true" />
-        </span>
-        <p className="label-caps text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
-          Key takeaways
-        </p>
-      </div>
-      <ul className="grid divide-y divide-[var(--glass-border)]">
-        {points.map((point, index) => (
-          <li key={`${index}-${point.slice(0, 14)}`} className="flex items-start gap-3 px-5 py-3.5">
-            <span className="mt-1 shrink-0 font-mono text-[0.65rem] text-[var(--tertiary)]">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <p className="text-[0.9rem] leading-relaxed text-[var(--on-surface-dim)]">{point}.</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function ArticleBody({ post }: { post: BlogPost }) {
-  const mid = Math.floor(post.body.length / 2);
-
-  return (
-    <div className="grid gap-8">
-      {post.body.map((paragraph, index) => (
-        <section
-          key={`${index}-${paragraph.slice(0, 16)}`}
-          id={`section-${index + 1}`}
-          className="scroll-mt-32"
-          aria-label={`Section ${index + 1}`}
-        >
-          <div className="mb-4 flex items-center gap-3">
-            <span className="h-px flex-1 bg-[var(--glass-border)]" aria-hidden="true" />
-            <span className="font-mono text-[0.68rem] text-[color-mix(in_srgb,var(--tertiary)_58%,transparent)]">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-          </div>
-          <p className="text-[clamp(1.04rem,2vw,1.15rem)] leading-[1.88] text-[var(--on-surface-dim)]">
-            {paragraph}
-          </p>
-          {index > 0 && index < post.body.length - 1 && index % 2 === 0 && (
-            <div className="mt-6">
-              <PullQuote text={paragraph} />
-            </div>
-          )}
-          {index === mid && (
-            <div className="mt-6">
-              <TakeawayStrip text={paragraph} />
-            </div>
-          )}
-        </section>
-      ))}
-    </div>
-  );
-}
-
 function ReadingSignals({ post }: { post: BlogPost }) {
-  const words = wordCount(post);
-  const hasTechnicalSignal = post.body.some((paragraph) =>
-    /stack|API|code|latency|production|system|engineer/i.test(paragraph),
-  );
+  const words = wordCount(post.body);
+  const hasTechnicalSignal = /stack|API|code|latency|production|system|engineer/i.test(post.body);
   const density = words > 650 ? "Deep dive" : words > 320 ? "Medium" : "Quick read";
 
   return (

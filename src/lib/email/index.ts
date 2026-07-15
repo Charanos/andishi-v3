@@ -35,11 +35,7 @@ function isEmailEnabled() {
  * Sends an email verification link to a newly registered user.
  * Silently skips if RESEND_API_KEY is not configured.
  */
-export async function sendVerificationEmail(
-  to: string,
-  name: string,
-  token: string,
-) {
+export async function sendVerificationEmail(to: string, name: string, token: string) {
   if (!isEmailEnabled()) return;
 
   const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/verify-email?token=${token}`;
@@ -115,7 +111,7 @@ const serviceLabelMap: Record<string, string> = {
   "ai-systems": "AI and intelligent systems",
   "mobile-apps": "mobile application development",
   "enterprise-software": "enterprise software",
-  "blockchain": "blockchain and Web3 development",
+  blockchain: "blockchain and Web3 development",
   "apis-integrations": "API and systems integration",
   "product-strategy": "product strategy and design",
 };
@@ -124,11 +120,7 @@ const serviceLabelMap: Record<string, string> = {
  * Confirms to the submitter that their build project brief was received.
  * Fires when POST /api/contact is called with type: "build".
  */
-export async function sendBuildBriefConfirmation(
-  to: string,
-  name: string,
-  serviceType: string,
-) {
+export async function sendBuildBriefConfirmation(to: string, name: string, serviceType: string) {
   if (!isEmailEnabled()) return;
 
   const serviceLabel = serviceLabelMap[serviceType] ?? serviceType;
@@ -153,11 +145,7 @@ export async function sendBuildBriefConfirmation(
  * Confirms to the submitter that their hire brief was received.
  * Fires when POST /api/contact is called with type: "hire".
  */
-export async function sendHireBriefConfirmation(
-  to: string,
-  name: string,
-  role: string,
-) {
+export async function sendHireBriefConfirmation(to: string, name: string, role: string) {
   if (!isEmailEnabled()) return;
 
   await getResend().emails.send({
@@ -179,10 +167,7 @@ export async function sendHireBriefConfirmation(
  * Notifies the admin team of a new inbound inquiry (build or hire).
  * Fires on every POST /api/contact submission.
  */
-export async function sendProjectInquiryNotification(
-  to: string,
-  data: Record<string, unknown>,
-) {
+export async function sendProjectInquiryNotification(to: string, data: Record<string, unknown>) {
   if (!isEmailEnabled()) return;
 
   const type = data.type === "build" ? "Build inquiry" : "Hire inquiry";
@@ -210,17 +195,83 @@ export async function sendProjectInquiryNotification(
   });
 }
 
+// ── Careers application received (NEW - July 2026) ────────────────
+
+/**
+ * Confirms to the applicant that their job application was received.
+ * Fires on every POST /api/careers/applications submission.
+ */
+export async function sendApplicationReceivedConfirmation(
+  to: string,
+  applicantName: string,
+  jobTitle: string,
+) {
+  if (!isEmailEnabled()) return;
+
+  await getResend().emails.send({
+    from: getFromEmail(),
+    to,
+    subject: `We received your application - ${jobTitle}`,
+    html: [
+      `<p>Hi ${escapeHtml(applicantName)},</p>`,
+      `<p>Thanks for applying for <strong>${escapeHtml(jobTitle)}</strong> at Andishi. We've received your application and our team will review it shortly.</p>`,
+      "<p>If your background looks like a match, we'll reach out to schedule next steps.</p>",
+      "<p>- The Andishi Team</p>",
+    ].join(""),
+  });
+}
+
+/**
+ * Notifies the careers inbox of a new job application.
+ * Fires on every POST /api/careers/applications submission.
+ */
+export async function sendApplicationNotification(
+  to: string,
+  data: {
+    applicantName: string;
+    applicantEmail: string;
+    jobTitle: string;
+    resumeUrl?: string | null;
+    links?: { github?: string; linkedin?: string; portfolio?: string };
+    coverNote?: string | null;
+  },
+) {
+  if (!isEmailEnabled()) return;
+
+  const linkRows = [
+    data.resumeUrl ? `Resume: <a href="${data.resumeUrl}">${escapeHtml(data.resumeUrl)}</a>` : null,
+    data.links?.github
+      ? `GitHub: <a href="${data.links.github}">${escapeHtml(data.links.github)}</a>`
+      : null,
+    data.links?.linkedin
+      ? `LinkedIn: <a href="${data.links.linkedin}">${escapeHtml(data.links.linkedin)}</a>`
+      : null,
+    data.links?.portfolio
+      ? `Portfolio: <a href="${data.links.portfolio}">${escapeHtml(data.links.portfolio)}</a>`
+      : null,
+  ].filter(Boolean);
+
+  await getResend().emails.send({
+    from: getFromEmail(),
+    to,
+    subject: `[Andishi Careers] New application: ${data.jobTitle}`,
+    html: [
+      `<p><strong>New application for ${escapeHtml(data.jobTitle)}</strong></p>`,
+      `<p>Name: ${escapeHtml(data.applicantName)}<br>Email: ${escapeHtml(data.applicantEmail)}</p>`,
+      linkRows.length ? `<p>${linkRows.join("<br>")}</p>` : "",
+      data.coverNote ? `<p><strong>Cover note:</strong><br>${escapeHtml(data.coverNote)}</p>` : "",
+      `<p><a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/careers">Review in Admin →</a></p>`,
+    ].join(""),
+  });
+}
+
 // ── Password reset ────────────────────────────────────────────────
 
 /**
  * Sends a password reset link. Token should be stored in the tokens table
  * with a 1-hour expiry before calling this function.
  */
-export async function sendPasswordResetEmail(
-  to: string,
-  name: string,
-  token: string,
-) {
+export async function sendPasswordResetEmail(to: string, name: string, token: string) {
   if (!isEmailEnabled()) return;
 
   const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`;
