@@ -1,6 +1,6 @@
 export const siteConfig = {
   name: "Andishi",
-  url: "https://andishi.dev",
+  url: "https://www.andishi.dev",
   email: "hire@andishi.dev",
   description:
     "Andishi is a software development studio building custom software, SaaS products, AI systems, mobile apps, and enterprise tools.",

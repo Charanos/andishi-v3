@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import { AboutPageExperience } from "@/components/sections/about-page-experience";
 
 export const metadata: Metadata = {
-  title: "About Andishi - African Engineering Talent for Global Startups",
+  title: "About Andishi - Software Development Studio",
   description:
-    "Andishi sources, vets, and places senior African engineers with global startups that need serious software talent.",
+    "Andishi is a software development studio that designs, builds, and ships high-quality custom software, SaaS platforms, AI systems, and mobile apps.",
+  alternates: {
+    canonical: "/about",
+  },
 };
 
 export default function AboutPage() {

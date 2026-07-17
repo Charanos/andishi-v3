@@ -6,7 +6,18 @@ import { WhyAndishiSection } from "@/components/sections/why-andishi-section";
 import { ServicesBentoGrid } from "@/components/sections/services-bento";
 import { ProcessSection } from "@/components/sections/process-section";
 import { TalentTrack, Founder, FinalCTA } from "@/components/sections/home-extra-sections";
-import { fetchPublicBlogPosts, fetchPublicProjects, fetchPublicTestimonials } from "@/lib/api/public-client";
+import {
+  fetchPublicBlogPosts,
+  fetchPublicProjects,
+  fetchPublicTestimonials,
+} from "@/lib/api/public-client";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+};
 
 const faqSchema = {
   "@context": "https://schema.org",

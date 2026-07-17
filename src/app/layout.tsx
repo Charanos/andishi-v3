@@ -40,7 +40,6 @@ export const metadata: Metadata = {
     title: "Andishi - Software Development Studio",
     description:
       "Nairobi-led global software studio delivering custom software, SaaS platforms, AI systems, and mobile apps with full IP ownership.",
-    url: siteConfig.url,
     siteName: siteConfig.name,
     type: "website",
   },
