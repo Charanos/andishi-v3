@@ -83,7 +83,12 @@ export default function RootLayout({
       className={`${nunito.variable} ${jetBrains.variable} ${cormorant.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
           <ToastProvider>
             <SiteChrome>{children}</SiteChrome>
             <Analytics />
