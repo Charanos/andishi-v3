@@ -1206,17 +1206,20 @@ function CaseStudyExperienceInner({ project, related, isAdmin, projectId }: Prop
                         </>
                       ) : (
                         <>
-                          <span className="font-mono text-[2.2rem] leading-none text-[var(--on-surface)] font-medium">
-                            {result.metric}
-                          </span>
+                          {result.context ? (
+                            <Tooltip content={result.context}>
+                              <span className="font-mono text-[2.2rem] leading-none text-[var(--tertiary,var(--on-surface))] font-medium cursor-help underline decoration-dotted decoration-[var(--on-surface-dim)] underline-offset-4">
+                                {result.metric}
+                              </span>
+                            </Tooltip>
+                          ) : (
+                            <span className="font-mono text-[2.2rem] leading-none text-[var(--on-surface)] font-medium">
+                              {result.metric}
+                            </span>
+                          )}
                           <span className="text-[0.85rem] text-[var(--on-surface-dim)] font-medium mt-1.5">
                             {result.label}
                           </span>
-                          {result.context && (
-                            <span className="mt-1 text-[0.75rem] text-[var(--on-surface-dim)] opacity-70">
-                              {result.context}
-                            </span>
-                          )}
                         </>
                       )}
                     </GlassCard>

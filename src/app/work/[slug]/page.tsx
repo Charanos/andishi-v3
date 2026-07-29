@@ -10,6 +10,7 @@ import {
   mapStaticProjectToCaseStudy,
   mapApiProjectToWorkProject,
 } from "@/lib/work-mapper";
+import { casedokCaseStudy } from "@/content/work";
 import { getSession } from "@/lib/auth/session";
 import type { CaseStudyProject } from "@/types/case-study";
 
@@ -27,6 +28,9 @@ async function resolveCaseStudy(slug: string, isAdmin: boolean): Promise<CaseStu
     preview: isAdmin, // admins can preview draft projects
   });
   if (dbProject) return mapApiProjectToCaseStudy(dbProject);
+
+  // Use the rich static casedok object directly (has full narrative & architecture)
+  if (slug === "casedok") return casedokCaseStudy;
 
   // Fall back to static content (no DB record yet)
   const staticProject = workProjects.find((item) => item.id === slug);

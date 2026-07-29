@@ -1,3 +1,5 @@
+import type { CaseStudyProject } from "@/types/case-study";
+
 export type WorkProjectStatus = "Live" | "Shipped" | "Beta";
 
 export type WorkProject = {
@@ -900,7 +902,7 @@ export const workFilters = [
   { label: "Logistics", value: "logistics" },
   { label: "Retail", value: "retail" },
   { label: "SaaS", value: "saas" },
-  { label: "Legal Tech", value: "saas" },
+  { label: "Legal Tech", value: "legaltech" },
 ] as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -911,31 +913,289 @@ export const workFilters = [
 
 export const casedokProject: WorkProject = {
   id: "casedok",
-  sector: "saas",
-  sectorLabel: "SaaS / Legal Tech",
+  sector: "legaltech",
+  sectorLabel: "HealthTech / Legal SaaS",
   title: "Casedok",
   shortTitle: "Casedok",
   description:
-    "A legal case management SaaS that helps Kenyan law firms move from paper files and WhatsApp threads to a structured, collaborative, client-ready platform.",
+    "A HIPAA-compliant, dual-sided SaaS platform that bridges the gap between patient healthcare data and legal discovery — replacing 30-day wait times with one-click, automated record retrieval.",
   challenge:
-    "Law firms in Kenya were operating case files across physical folders, WhatsApp threads, and shared Google Drive — with no structured tracking, no client visibility, and no way to bill time accurately. Casedok needed to solve case management, document handling, client portals, and subscription billing in one coherent product.",
+    "Law firms and legal professionals spend weeks manually chasing down medical records, films, and itemized bills, while patients lack secure, centralized ownership of their health history.",
   solution:
-    "Andishi designed and built a full-stack SaaS with role-based access (advocate, paralegal, client), structured case timelines, document management, a client portal, legal subscription plan tiers, and an integrated billing system — shipped in 6 weeks.",
+    "Andishi engineered distinct, secure portals for both patients and legal teams, powered by automated HITECH right-of-access requests and an OCR processing pipeline — delivering complete, HIPAA-compliant medical discovery in a single click.",
   image: "/casedok/hero-section.png",
   status: "Live",
-  metric: "6 weeks",
-  metricLabel: "full product delivered",
-  timeline: "6 weeks",
-  location: "Nairobi",
+  metric: "1 Click",
+  metricLabel: "replaces 30-day manual discovery",
+  timeline: "16 weeks",
+  location: "USA",
   featured: true,
   imageHeight: "mid",
-  tags: ["Next.js", "TypeScript", "PostgreSQL", "Drizzle ORM", "Vercel", "Stripe"],
+  tags: ["Next.js", "TypeScript", "PostgreSQL", "HIPAA", "OCR", "HITECH", "RBAC"],
   metrics: [
-    { value: "<50ms", label: "query search latency", tone: "success" },
-    { value: "3", label: "user access roles", tone: "cyan" },
-    { value: "5", label: "subscription tiers", tone: "primary" },
-    { value: "100%", label: "paperless case management" },
+    { value: "30→1", label: "days to one click", tone: "success" },
+    { value: "2", label: "secure user portals", tone: "cyan" },
+    { value: "4+", label: "health plan integrations", tone: "primary" },
+    { value: "100%", label: "HIPAA compliant" },
   ],
+};
+
+/**
+ * Rich CaseStudyProject for Casedok — used directly by /work/casedok
+ * when no DB record exists, bypassing mapStaticProjectToCaseStudy.
+ * Contains the full narrative, approach steps, solution highlights,
+ * and results that the ad campaign and detail page require.
+ */
+
+export const casedokCaseStudy: CaseStudyProject = {
+  // ── Identity ──────────────────────────────────────────────────
+  id: "casedok",
+  slug: "casedok",
+  dbId: null,
+
+  // ── Hero ──────────────────────────────────────────────────────
+  title: "Casedok",
+  tagline: "We Are Ending Static Medicine and Increasing Access to Justice.",
+  sector: "legaltech",
+  sectorLabel: "HealthTech / Legal SaaS",
+  clientName: "Casedok",
+  coverImageUrl: "/casedok/hero-section.png",
+  liveUrl: null,
+  repoUrl: null,
+  status: "Live",
+
+  // ── Quick Facts Bar ───────────────────────────────────────────
+  role: "Lead Engineer — Full Platform Build",
+  teamSize: "4 engineers",
+  timeline: "16 weeks",
+  stackTags: [
+    "Next.js",
+    "TypeScript",
+    "PostgreSQL",
+    "Drizzle ORM",
+    "AWS S3",
+    "HIPAA",
+    "OCR Pipeline",
+    "RBAC",
+    "HITECH",
+  ],
+
+  // ── Summary ───────────────────────────────────────────────────
+  summary:
+    "A HIPAA-compliant, dual-sided SaaS platform that replaced 30-day manual medical discovery with one-click automated retrieval — purpose-built for patients and legal professionals.",
+
+  // ── Problem Narrative ─────────────────────────────────────────
+  challenge:
+    "Law firms and legal professionals spend weeks manually chasing down medical records, films, and itemized bills, while patients lack secure, centralized ownership of their health history. The status quo is fragmented oral histories, 30-day HITECH wait windows, and discovery that costs firms thousands per case.",
+
+  // ── Approach Steps (System Architecture & Technical Highlights) ─
+  approachSteps: [
+    {
+      id: "arch-01",
+      title: "Dual-Portal Logic & RBAC",
+      description:
+        "Distinct routing and Role-Based Access Control (RBAC) separating the Patient Workspace from the Legal Professional Workspace — each with its own data boundaries, permission scopes, and UI surface.",
+      imageUrl: null,
+      order: 1,
+    },
+    {
+      id: "arch-02",
+      title: "Automated HITECH Requests",
+      description:
+        "Programmatic generation and routing of HITECH right-of-access requests directly to healthcare providers — eliminating manual fax queues and the 30-day wait window that defines legacy medical discovery.",
+      imageUrl: null,
+      order: 2,
+    },
+    {
+      id: "arch-03",
+      title: "OCR Processing Pipeline",
+      description:
+        "Automatic text extraction and verification for user-uploaded ID and insurance cards during secure registration — ensuring clean identity data flows into downstream claims aggregation without human review.",
+      imageUrl: null,
+      order: 3,
+    },
+    {
+      id: "arch-04",
+      title: "HIPAA-Compliant Infrastructure",
+      description:
+        "Enterprise-grade security protocols featuring encrypted, time-limited access controls for record sharing and comprehensive, audit-ready access trails — built specifically for court submissions and compliance reviews.",
+      imageUrl: null,
+      order: 4,
+    },
+    {
+      id: "arch-05",
+      title: "Claims Aggregation Engine",
+      description:
+        "Systems to scan health cards and aggregate medical claims in a single, unified interface — currently serving Medicare, UHC, Aetna, and Florida Blue enrollees across multiple plan structures.",
+      imageUrl: null,
+      order: 5,
+    },
+  ],
+
+  // ── Solution Highlights (Feature Breakdown) ───────────────────
+  solutionHighlights: [
+    {
+      id: "feat-patient-01",
+      title: "Secure Patient Registration",
+      description:
+        "Seamless patient onboarding via automated OCR processing of government ID and insurance cards — replacing manual form entry with verified, secure identity confirmation.",
+      imageUrl: null,
+      order: 1,
+    },
+    {
+      id: "feat-patient-02",
+      title: "Individual Library of Medicine",
+      description:
+        "Patients can retrieve their entire medical history in one click, replacing fragmented oral histories with a precision, centrally-owned health record — accessible anytime, on demand.",
+      imageUrl: null,
+      order: 2,
+    },
+    {
+      id: "feat-patient-03",
+      title: "Granular Legal Access Control",
+      description:
+        "Patients control exactly who sees their data — send data blockers to authorities or share records exclusively with their legal team when needed, with full audit visibility.",
+      imageUrl: null,
+      order: 3,
+    },
+    {
+      id: "feat-legal-01",
+      title: "Firm Registration & Team Management",
+      description:
+        "Law firms can onboard attorneys, paralegals, and client accounts with strict role-based permissions — maintaining clean separation between case teams and client data visibility.",
+      imageUrl: null,
+      order: 4,
+    },
+    {
+      id: "feat-legal-02",
+      title: "Accelerated Medical Discovery",
+      description:
+        "Fetch complete medical evidence instantly, cap record retrieval expenses, and replace 30-day HITECH wait windows with immediate, automated access to full medical histories.",
+      imageUrl: null,
+      order: 5,
+    },
+    {
+      id: "feat-legal-03",
+      title: "Automated Case Summaries",
+      description:
+        "System-generated case summaries derived directly from patient records — delivered to legal teams to accelerate case preparation without manual document review.",
+      imageUrl: null,
+      order: 6,
+    },
+    {
+      id: "feat-legal-04",
+      title: "Secure Client Collaboration",
+      description:
+        "Invite clients via secure links, view and download complete medical histories, and maintain audit-ready records for court compliance — all within a single HIPAA-compliant workspace.",
+      imageUrl: null,
+      order: 7,
+    },
+  ],
+
+  // ── Gallery ───────────────────────────────────────────────────
+  gallery: [
+    {
+      id: "gallery-01",
+      url: "/casedok/hero-section.png",
+      alt: "Casedok platform hero — dual portal overview",
+      width: 1280,
+      height: 800,
+      order: 1,
+    },
+    {
+      id: "gallery-02",
+      url: "/casedok/login.png",
+      alt: "Casedok secure login — patient and legal professional portals",
+      width: 1280,
+      height: 800,
+      order: 2,
+    },
+    {
+      id: "gallery-03",
+      url: "/casedok/how-and-why-casedok.png",
+      alt: "How and why Casedok — platform overview and value proposition",
+      width: 1280,
+      height: 800,
+      order: 3,
+    },
+    {
+      id: "gallery-04",
+      url: "/casedok/legal-sub-plans.png",
+      alt: "Casedok legal subscription plans — tiered access for law firms",
+      width: 1280,
+      height: 800,
+      order: 4,
+    },
+    {
+      id: "gallery-05",
+      url: "/casedok/pricing.png",
+      alt: "Casedok pricing — transparent plan tiers for patients and legal professionals",
+      width: 1280,
+      height: 800,
+      order: 5,
+    },
+  ],
+
+  // ── Results & Impact ──────────────────────────────────────────
+  results: [
+    {
+      id: "result-01",
+      metric: "1 Click",
+      label: "replaces 30-day manual discovery",
+      context:
+        "Manual 30-day HITECH wait times for complete medical histories replaced with automated, secure, one-click record retrieval.",
+    },
+    {
+      id: "result-02",
+      metric: "2",
+      label: "secure user portals",
+      context:
+        "Distinct Patient Workspace and Legal Professional Workspace with independent RBAC boundaries.",
+    },
+    {
+      id: "result-03",
+      metric: "4+",
+      label: "health plan integrations",
+      context: "Claims aggregation serving Medicare, UHC, Aetna, and Florida Blue enrollees.",
+    },
+    {
+      id: "result-04",
+      metric: "100%",
+      label: "HIPAA compliant infrastructure",
+      context:
+        "Enterprise-grade encrypted access, time-limited record sharing, and court-ready audit trails.",
+    },
+  ],
+
+  testimonial: null,
+
+  // ── Tech Stack ────────────────────────────────────────────────
+  techStackDetails: [
+    { name: "Next.js", reason: "Full-stack React framework for both portals" },
+    { name: "TypeScript", reason: "End-to-end type safety across portal boundaries" },
+    { name: "PostgreSQL", reason: "Relational schema for PHI with audit logging" },
+    { name: "Drizzle ORM", reason: "Type-safe DB queries for HIPAA compliance" },
+    { name: "AWS S3", reason: "Encrypted, access-controlled medical record storage" },
+    { name: "OCR Pipeline", reason: "Automated ID & insurance card verification" },
+    { name: "HITECH Automation", reason: "Programmatic right-of-access request routing" },
+    { name: "RBAC", reason: "Role-based access control across both portals" },
+  ],
+
+  // ── SEO ───────────────────────────────────────────────────────
+  seoMetaTitle: "Casedok — HIPAA-Compliant Medical Discovery SaaS | Andishi",
+  seoMetaDescription:
+    "Casedok replaces 30-day manual medical discovery with one-click retrieval. A HIPAA-compliant dual-sided SaaS platform built by Andishi for patients and legal professionals.",
+  seoOgImageUrl: null,
+
+  // ── Ad Campaign ───────────────────────────────────────────────
+  adExcerpt:
+    "30 days to 1 click. HIPAA-compliant dual-portal SaaS replacing manual medical discovery for patients and law firms.",
+  featured: true,
+
+  // ── Lifecycle ─────────────────────────────────────────────────
+  caseStudyStatus: "published",
+  publishedAt: "2025-01-01T00:00:00Z",
+  updatedAt: null,
 };
 
 // Inject casedok at position 0 so it appears first on /work
