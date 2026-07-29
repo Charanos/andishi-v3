@@ -1,24 +1,33 @@
 "use client";
 
-import { useMemo, useState } from "react";
+/**
+ * src/components/marketing/engineers-page-experience.tsx
+ *
+ * Flagship production-grade /engineers listing page experience:
+ * - Ultra-clean 2-column header with serif typography & stat strip
+ * - High-craft glass search input & compact Role Filter Dropdown popover
+ * - Glassmorphic Engineer Profile Cards with larger avatars & max-contrast uppercase badges
+ * - Exact Decarding technique on Mobile, Full Glass Cards on Desktop
+ * - GSAP Power3 stagger entrance animations & custom cursor hover cues ("PROFILE")
+ * - 100% monochrome editorial styling
+ */
+
+import { useMemo, useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+import { gsap } from "gsap";
 import {
   IconArrowRight,
-  IconBrandWhatsapp,
-  IconClock,
-  IconFilter,
+  IconCheck,
+  IconChevronDown,
   IconMapPin,
   IconSearch,
-  IconUsersGroup,
   IconX,
 } from "@tabler/icons-react";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import type { Engineer } from "@/data/engineers";
 import { engineerRoles } from "@/data/engineers";
 import { CustomCursorRegion } from "@/components/ui/custom-cursor-region";
-import { FinalCtaArtwork } from "@/components/ui/final-cta-artwork";
 import { cosmicSpring } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
@@ -28,11 +37,6 @@ function formatIndex(index: number) {
   return String(index + 1).padStart(2, "0");
 }
 
-function timezoneText(offset: number) {
-  if (offset === 0) return "UTC+0";
-  return `UTC${offset > 0 ? "+" : ""}${offset}`;
-}
-
 function domainLabel(domain: Engineer["domains"][number]) {
   const labels: Record<Engineer["domains"][number], string> = {
     ai: "AI / LLM",
@@ -40,7 +44,6 @@ function domainLabel(domain: Engineer["domains"][number]) {
     fullstack: "Full-Stack",
     web3: "Web3",
   };
-
   return labels[domain];
 }
 
@@ -79,202 +82,254 @@ function countForRole(engineers: Engineer[], role: RoleFilter) {
   return engineers.filter((engineer) => matchesRole(engineer, role)).length;
 }
 
-function availabilityText(engineer: Engineer) {
-  if (engineer.availability === "now") return "Available now";
-
-  return `From ${new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-  }).format(new Date(engineer.availability))}`;
-}
-
-function PatternTexture({
-  className = "",
-  opacity = 0.16,
-}: {
-  className?: string;
-  opacity?: number;
-}) {
+function PatternTexture({ opacity = 0.04 }: { opacity?: number }) {
   return (
     <div
       aria-hidden="true"
-      className={cn("pointer-events-none absolute inset-0", className)}
+      className="pointer-events-none absolute inset-0"
       style={{
         opacity,
         backgroundImage:
-          "url(\"data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 11.5v9M11.5 16h9' stroke='%23c5b8e8' stroke-width='0.7' stroke-linecap='round' opacity='0.32'/%3E%3C/svg%3E\")",
-        backgroundSize: "32px 32px",
+          "url(\"data:image/svg+xml,%3Csvg width='34' height='34' viewBox='0 0 34 34' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M17 11v12M11 17h12' stroke='%23c5b8e8' stroke-width='0.65' stroke-linecap='round' opacity='0.22'/%3E%3C/svg%3E\")",
+        backgroundSize: "34px 34px",
       }}
     />
   );
 }
 
-function AvailabilityBadge({ engineer }: { engineer: Engineer }) {
+// ─────────────────────────────────────────────────────────────────────────────
+// Role Dropdown Popover Component
+// ─────────────────────────────────────────────────────────────────────────────
+
+function RoleDropdown({
+  roles,
+  value,
+  onChange,
+  counts,
+}: {
+  roles: readonly RoleFilter[];
+  value: RoleFilter;
+  onChange: (val: RoleFilter) => void;
+  counts: (val: RoleFilter) => number;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          "flex items-center justify-between gap-3 rounded-full border px-4 py-2.5 text-[0.8rem] font-medium transition-all duration-200 min-w-[190px]",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--on-surface)]",
+          value !== "All"
+            ? "border-[var(--on-surface)] bg-[var(--on-surface)] text-[var(--bg)] shadow-md"
+            : "border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)]",
+        )}
+      >
+        <span className="flex items-center gap-1.5 truncate">
+          <span className="opacity-70 font-mono text-[0.72rem] uppercase">Role:</span>
+          <strong className="font-medium truncate">
+            {value === "All" ? "All Engineers" : value}
+          </strong>
+        </span>
+        <IconChevronDown
+          size={15}
+          stroke={2}
+          className={cn("shrink-0 transition-transform duration-300", isOpen && "rotate-180")}
+        />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 6, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 6, scale: 0.97 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="absolute left-0 top-[calc(100%+0.5rem)] z-50 w-[240px] max-w-[90vw] overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[var(--surface-high)] p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.18)] backdrop-blur-2xl"
+          >
+            <div className="max-h-[300px] overflow-y-auto no-scrollbar">
+              {roles.map((role) => {
+                const isActive = role === value;
+                const count = counts(role);
+                return (
+                  <button
+                    key={role}
+                    type="button"
+                    onClick={() => {
+                      onChange(role);
+                      setIsOpen(false);
+                    }}
+                    className={cn(
+                      "flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-left text-[0.82rem] font-medium transition-all duration-150",
+                      isActive
+                        ? "bg-[var(--on-surface)] text-[var(--bg)]"
+                        : "text-[var(--on-surface-dim)] hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] hover:text-[var(--on-surface)]",
+                    )}
+                  >
+                    <span className="flex items-center gap-2 truncate">
+                      {isActive && <IconCheck size={14} className="shrink-0" />}
+                      <span className="truncate">{role === "All" ? "All Engineers" : role}</span>
+                    </span>
+                    <span
+                      className={cn(
+                        "font-mono text-[0.68rem] ml-2 shrink-0",
+                        isActive ? "opacity-90" : "opacity-50",
+                      )}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Production-Grade Engineer Card Component
+// ─────────────────────────────────────────────────────────────────────────────
+
+function EngineerCard({ engineer, index }: { engineer: Engineer; index: number }) {
   const availableNow = engineer.availability === "now";
 
   return (
-    <span
-      className={cn(
-        "flex items-center gap-1.5 rounded-full border px-3 py-1 bg-[var(--surface)] shadow-sm z-10",
-        availableNow
-          ? "border-[color-mix(in_srgb,var(--tertiary)_32%,transparent)] text-[var(--on-surface)]"
-          : "border-[color-mix(in_srgb,var(--secondary)_30%,transparent)] text-[var(--on-surface)]",
-      )}
-    >
-      <span
-        className={cn(
-          "h-[6px] w-[6px] rounded-full",
-          availableNow
-            ? "bg-[var(--tertiary)] shadow-[0_0_8px_var(--tertiary)]"
-            : "bg-[var(--secondary)]",
-        )}
-        aria-hidden="true"
-      />
-      <span className="text-[0.68rem] font-medium leading-none">{availabilityText(engineer)}</span>
-    </span>
-  );
-}
-
-function EngineerCard({ engineer, index }: { engineer: Engineer; index: number }) {
-  const visibleSkills = engineer.skills.slice(0, 4);
-  const extraSkillCount = engineer.skills.length - visibleSkills.length;
-
-  return (
-    <motion.article
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ ...cosmicSpring, delay: Math.min(index * 0.04, 0.22) }}
-      className="mb-5 break-inside-avoid"
-      style={{ willChange: "transform, opacity" }}
-    >
+    <article className="engineer-card flex h-full">
       <Link
         href={`/engineers/${engineer.slug}`}
-        className="group/card relative w-full overflow-hidden rounded-[1.25rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] text-left shadow-[0_24px_70px_color-mix(in_srgb,var(--bg-deep)_26%,transparent)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[color-mix(in_srgb,var(--secondary)_28%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]"
-        aria-label={`View profile: ${engineer.name}, ${engineer.role}`}
+        data-cursor-text="PROFILE"
+        className={cn(
+          "group/card flex w-full flex-col overflow-hidden text-left transition-all duration-500 ease-out",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--on-surface)]",
+          // Desktop: Rich Glass Card Container
+          "md:rounded-[1.75rem] md:border md:border-[var(--glass-border)] md:bg-[var(--glass-bg)] md:p-6 md:backdrop-blur-xl md:shadow-[var(--glass-inner-shadow)]",
+          "md:hover:border-[color-mix(in_srgb,var(--on-surface)_35%,transparent)] md:hover:-translate-y-1.5 md:hover:shadow-[0_22px_56px_rgba(0,0,0,0.12)]",
+          // Mobile: Decarding (border-bottom list item, no glass)
+          "max-md:!rounded-none max-md:!border-x-0 max-md:!border-t-0 max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!px-0 max-md:!py-8 max-md:last:!border-b-0 max-md:!translate-y-0",
+        )}
       >
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(to_right,transparent,color-mix(in_srgb,var(--secondary)_55%,transparent),transparent)] opacity-0 transition-opacity duration-300 group-hover/card:opacity-100"
-        />
-
-        <div className="relative h-36 overflow-hidden bg-[var(--surface-high)]">
-          <Image
-            src={engineer.avatar}
-            alt={`${engineer.name} profile photo`}
-            fill
-            sizes="(min-width: 1280px) 24vw, (min-width: 640px) 44vw, 100vw"
-            className="object-cover brightness-[0.82] saturate-[0.88] transition duration-700 group-hover/card:scale-105 group-hover/card:brightness-[0.95] group-hover/card:saturate-100"
-          />
-          <PatternTexture opacity={0.08} />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
-
-          <span className="absolute left-4 top-4 rounded-lg bg-black/60 px-2.5 py-1 font-mono text-[0.68rem] tracking-tight text-white/80 border border-white/10 shadow-sm z-10">
-            {formatIndex(index)}
-          </span>
-          <span className="absolute right-4 top-4 z-10">
-            <AvailabilityBadge engineer={engineer} />
-          </span>
-
-          <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3 z-10">
-            <div className="min-w-0">
-              <p className="label-caps mb-2 text-white/70">
-                {engineer.domains.map(domainLabel).join(" / ")}
-              </p>
-              <h2 className="truncate text-[1.18rem] font-medium leading-tight tracking-tight text-white">
-                {engineer.name}
-              </h2>
+        {/* Top Header Row: Avatar, Name, Role & High-Contrast Status Badge */}
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div className="flex items-center gap-3.5">
+            {/* Prominent Developer Avatar Image */}
+            <div className="relative h-14 w-14 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-full border-2 border-[var(--glass-border)] bg-[var(--surface-high)] shadow-sm">
+              <Image
+                src={engineer.avatar}
+                alt={engineer.name}
+                fill
+                sizes="64px"
+                className="object-cover transition-transform duration-500 group-hover/card:scale-105"
+              />
             </div>
-            {engineer.featured && (
-              <span className="shrink-0 rounded-full border border-white/15 bg-black/60 px-2.5 py-1 font-mono text-[0.64rem] text-white shadow-sm">
-                Featured
-              </span>
-            )}
+
+            <div>
+              <h3 className="title-serif text-[1.3rem] font-normal text-[var(--on-surface)] leading-tight group-hover/card:text-[var(--on-surface)] transition-colors">
+                {engineer.name}
+              </h3>
+              <p className="font-mono text-[0.68rem] uppercase tracking-wider text-[var(--on-surface-dim)] mt-0.5">
+                {engineer.role}
+              </p>
+            </div>
           </div>
+
+          {/* Max-Contrast Uppercase Availability Badge */}
+          <span
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[0.62rem] uppercase tracking-wider shrink-0 font-medium shadow-sm",
+              availableNow
+                ? "border-emerald-800/80 bg-emerald-950 text-emerald-200 dark:border-emerald-500/50 dark:bg-emerald-950/80 dark:text-emerald-300"
+                : "border-[var(--outline)] bg-[var(--surface-high)] text-[var(--on-surface-dim)]",
+            )}
+          >
+            <span
+              className={cn(
+                "h-1.5 w-1.5 rounded-full",
+                availableNow
+                  ? "bg-emerald-400 animate-pulse"
+                  : "bg-[var(--on-surface-dim)] opacity-40",
+              )}
+            />
+            {availableNow ? "AVAILABLE NOW" : "ALLOCATED"}
+          </span>
         </div>
 
-        <div className="px-5 pb-5 pt-5 sm:px-6 sm:pb-6">
-          <p className="text-[0.92rem] leading-relaxed text-[var(--on-surface-dim)]">
-            {engineer.role}
-          </p>
+        {/* Bio / Narrative */}
+        <p className="line-clamp-2 text-[0.88rem] text-[var(--on-surface-dim)] leading-relaxed mb-5 font-normal">
+          {engineer.bio}
+        </p>
 
-          <p className="mt-3 line-clamp-2 text-[0.9rem] leading-[1.65] text-[var(--on-surface-dim)]">
-            {engineer.highlights[0]}
-          </p>
+        {/* Domain Badges */}
+        <div className="flex flex-wrap gap-1.5 mb-4">
+          {engineer.domains.map((dom) => (
+            <span
+              key={dom}
+              className="rounded-lg border border-[var(--glass-border)] bg-[var(--surface-high)] px-2.5 py-0.5 font-mono text-[0.68rem] text-[var(--on-surface)]"
+            >
+              {domainLabel(dom)}
+            </span>
+          ))}
+          {engineer.skills.slice(0, 3).map((skill) => (
+            <span
+              key={skill}
+              className="rounded-lg border border-[var(--outline)] bg-transparent px-2.5 py-0.5 font-mono text-[0.68rem] text-[var(--on-surface-dim)]"
+            >
+              {skill}
+            </span>
+          ))}
+        </div>
 
-          <div
-            className="mt-4 flex flex-wrap gap-1.5"
-            role="list"
-            aria-label={`${engineer.name} skills`}
-          >
-            {visibleSkills.map((skill, skillIndex) => (
-              <span
-                key={skill}
-                role="listitem"
-                className="rounded-full border px-2.5 py-1 text-[0.72rem] font-medium leading-none"
-                style={{
-                  backgroundColor:
-                    skillIndex === 0
-                      ? "color-mix(in srgb, var(--secondary) 10%, transparent)"
-                      : "color-mix(in srgb, var(--surface) 58%, transparent)",
-                  borderColor:
-                    skillIndex === 0
-                      ? "color-mix(in srgb, var(--secondary) 30%, transparent)"
-                      : "var(--glass-border)",
-                  color:
-                    skillIndex === 0
-                      ? "var(--on-surface)"
-                      : "color-mix(in srgb, var(--on-surface) 84%, transparent)",
-                }}
-              >
-                {skill}
-              </span>
-            ))}
-            {extraSkillCount > 0 && (
-              <span className="rounded-full border border-[color-mix(in_srgb,var(--primary)_26%,transparent)] bg-[color-mix(in_srgb,var(--surface)_58%,transparent)] px-2.5 py-1 font-mono text-[0.72rem] leading-none text-[var(--on-surface)]">
-                +{extraSkillCount}
-              </span>
-            )}
-          </div>
-
-          <div className="my-8 flex items-center justify-between gap-4 border-t border-[var(--glass-border)] pt-4">
-            <div className="min-w-0 space-y-1">
-              <span className="flex min-w-0 items-center gap-1 text-[0.76rem] leading-snug text-[var(--on-surface-dim)]">
-                <IconMapPin size={11} stroke={1.5} aria-hidden="true" />
-                <span className="truncate">
-                  {engineer.location.city}, {engineer.location.country}
-                </span>
-              </span>
-              <span className="flex items-center gap-1 text-[0.76rem] leading-snug text-[var(--on-surface-dim)]">
-                <IconClock size={11} stroke={1.5} aria-hidden="true" />
-                {timezoneText(engineer.location.utcOffset)}
+        {/* Footer Row: Location, Experience & CTA */}
+        <div className="flex items-center justify-between pt-4 border-t border-[var(--glass-border)] max-md:border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] mt-auto">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 text-[0.75rem] text-[var(--on-surface-dim)]">
+              <IconMapPin size={13} />
+              <span>
+                {engineer.location.city}, {engineer.location.country}
               </span>
             </div>
-            <div className="flex shrink-0 items-center gap-2">
-              <span className="font-mono text-[0.95rem] tracking-tight text-[var(--on-surface)]">
-                {engineer.yearsExp}
-                <span className="text-[0.62rem] font-normal text-[color-mix(in_srgb,var(--on-surface-dim)_56%,transparent)]">
-                  yr
-                </span>
-              </span>
-              <span
-                className="grid h-8 w-8 place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] transition-all duration-300 group-hover/card:border-[color-mix(in_srgb,var(--secondary)_38%,transparent)] group-hover/card:text-[var(--secondary)]"
-                aria-hidden="true"
-              >
-                <IconArrowRight size={14} stroke={1.7} />
-              </span>
-            </div>
+            <span className="text-[var(--on-surface-dim)] opacity-30">•</span>
+            <span className="font-mono text-[0.75rem] text-[var(--on-surface)] font-medium">
+              {engineer.yearsExp} yrs exp
+            </span>
           </div>
+
+          <span className="grid h-8 w-8 place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--surface-high)] text-[var(--on-surface-dim)] transition-all duration-300 group-hover/card:border-[var(--on-surface)] group-hover/card:bg-[var(--on-surface)] group-hover/card:text-[var(--bg)]">
+            <IconArrowRight
+              size={14}
+              className="-rotate-45 transition-transform group-hover/card:rotate-0"
+            />
+          </span>
         </div>
       </Link>
-    </motion.article>
+    </article>
   );
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Public EngineersPageExperience Component
+// ─────────────────────────────────────────────────────────────────────────────
 
 export function EngineersPageExperience({ engineers }: { engineers: Engineer[] }) {
   const [activeRole, setActiveRole] = useState<RoleFilter>("All");
   const [availableOnly, setAvailableOnly] = useState(false);
   const [search, setSearch] = useState("");
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const availableCount = useMemo(
     () => engineers.filter((engineer) => engineer.availability === "now").length,
@@ -305,348 +360,234 @@ export function EngineersPageExperience({ engineers }: { engineers: Engineer[] }
     });
   }, [activeRole, availableOnly, engineers, search]);
 
-  const clearFilters = () => {
-    setActiveRole("All");
-    setAvailableOnly(false);
-    setSearch("");
-  };
+  // Refined Power3 GSAP entrance animation
+  useEffect(() => {
+    if (!gridRef.current || filteredEngineers.length === 0) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".engineer-card",
+        { opacity: 0, y: 32, scale: 0.98 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.6,
+          stagger: 0.06,
+          ease: "power3.out",
+          delay: 0.04,
+        },
+      );
+    }, gridRef);
+    return () => ctx.revert();
+  }, [filteredEngineers]);
+
+  const hasActiveFilters = activeRole !== "All" || availableOnly || search.length > 0;
 
   return (
-    <>
-      <main className="relative isolate overflow-visible bg-[var(--bg)]">
-        <CustomCursorRegion className="relative isolate px-5 sm:px-8 lg:px-10">
-          <PatternTexture className="z-0" opacity={0.1} />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--surface-high)_8%,transparent),transparent_22rem),linear-gradient(90deg,color-mix(in_srgb,var(--bg)_88%,transparent),transparent_38%,color-mix(in_srgb,var(--bg)_72%,transparent))]"
-          />
+    <main className="relative isolate overflow-visible bg-[var(--bg)]">
+      <CustomCursorRegion className="relative isolate">
+        <PatternTexture opacity={0.04} />
 
-          <div className="relative z-[1] mx-auto flex w-full max-w-[92rem] items-start gap-0 pb-24 pt-32 lg:pt-36">
-            <aside className="sticky top-28 hidden max-h-[calc(100svh-8rem)] w-56 shrink-0 flex-col justify-between self-start overflow-y-auto border-r border-[var(--glass-border)] pr-5 xl:flex">
-              <div>
-                <p className="label-caps mb-4 text-[color-mix(in_srgb,var(--on-surface-dim)_58%,transparent)]">
-                  Filter by role
-                </p>
-                <div className="space-y-1">
-                  {engineerRoles.map((role) => {
-                    const isActive = activeRole === role;
+        {/* Subtle top background glow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,color-mix(in_srgb,var(--surface-high)_12%,transparent),transparent)]"
+        />
 
-                    return (
-                      <button
-                        key={role}
-                        type="button"
-                        onClick={() => setActiveRole(role)}
-                        aria-pressed={isActive}
-                        className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-[0.88rem] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]"
-                        style={{
-                          backgroundColor: isActive
-                            ? "color-mix(in srgb, var(--primary) 10%, transparent)"
-                            : "transparent",
-                          color: isActive ? "var(--primary)" : "var(--on-surface-dim)",
-                        }}
-                      >
-                        {role === "All" ? "All engineers" : role}
-                        <span className="font-mono text-[0.68rem] tracking-tight text-[color-mix(in_srgb,currentColor_66%,transparent)]">
-                          {countForRole(engineers, role)}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
+        <div className="relative z-[1] flex w-full flex-col pb-24 pt-28 lg:pt-32">
+          {/* ── Hero Section ─────────────────────────────────────────── */}
+          <section className="w-full px-5 sm:px-8 lg:px-10 mb-8">
+            <div className="mx-auto w-full max-w-[92rem]">
+              {/* Eyebrow */}
+              <motion.p
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...cosmicSpring, delay: 0 }}
+                className="label-caps mb-4 flex items-center gap-2.5 text-[var(--on-surface-dim)]"
+              >
+                <span className="h-px w-6 bg-[var(--on-surface-dim)] opacity-40" />
+                Vetted Talent Network · {engineers.length} Senior Engineers
+              </motion.p>
 
-                <div className="my-8 border-t border-[var(--glass-border)] pt-5">
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={availableOnly}
-                    onClick={() => setAvailableOnly((value) => !value)}
-                    className="flex w-full items-center justify-between text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]"
-                  >
-                    <span className="text-[0.84rem] text-[var(--on-surface-dim)]">
-                      Available now{" "}
-                      <span className="font-mono text-[0.7rem] text-[var(--tertiary)]">
-                        ({availableCount})
-                      </span>
-                    </span>
-                    <span
-                      className={cn(
-                        "relative h-5 w-9 rounded-full transition-colors duration-200",
-                        availableOnly
-                          ? "bg-[var(--tertiary)]"
-                          : "bg-[color-mix(in_srgb,var(--on-surface-dim)_20%,transparent)]",
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          "absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform duration-200",
-                          availableOnly ? "translate-x-4" : "translate-x-0.5",
-                        )}
-                      />
-                    </span>
-                  </button>
-                </div>
+              {/* Header Title & Available Counter Grid */}
+              <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ ...cosmicSpring, delay: 0.06 }}
+                  className="title-serif text-[clamp(3.2rem,7.5vw,5.5rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]"
+                >
+                  The Network.
+                </motion.h1>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ ...cosmicSpring, delay: 0.12 }}
+                  className="lg:text-right"
+                >
+                  <p className="font-mono text-[clamp(2.8rem,6vw,4.5rem)] font-medium leading-none tracking-tight text-[color-mix(in_srgb,var(--on-surface)_18%,transparent)]">
+                    {formatIndex(availableCount - 1)}
+                  </p>
+                  <p className="mt-3 max-w-xs text-[0.88rem] leading-[1.6] text-[var(--on-surface-dim)] lg:ml-auto">
+                    Senior pre-vetted engineers across full-stack, AI, cloud, Web3, and mobile
+                    systems. Ready for immediate deployment.
+                  </p>
+                </motion.div>
               </div>
 
-              <div className="space-y-2">
+              {/* Stat strip */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...cosmicSpring, delay: 0.18 }}
+                className="mt-10 flex flex-wrap items-center gap-x-10 gap-y-4 border-t border-[var(--glass-border)] pt-7"
+              >
                 {[
-                  ["50+", "engineers in network"],
-                  ["8%", "acceptance rate"],
-                  ["6+", "avg years experience"],
-                ].map(([value, label]) => (
-                  <div
-                    key={label}
-                    className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 py-2 my-2 backdrop-blur-xl"
-                  >
-                    <p className="font-mono text-[1.45rem] leading-none tracking-tight text-[var(--on-surface)]">
-                      {value}
-                    </p>
-                    <p className="mt-2 text-[0.72rem] leading-snug text-[color-mix(in_srgb,var(--on-surface-dim)_68%,transparent)]">
-                      {label}
-                    </p>
+                  { value: "50+", label: "Engineers in Network" },
+                  { value: "8%", label: "Acceptance Rate" },
+                  { value: "6+ yrs", label: "Avg Experience" },
+                  { value: "100%", label: "Pre-Vetted Bar" },
+                ].map((stat) => (
+                  <div key={stat.label} className="flex items-baseline gap-2.5">
+                    <span className="font-mono text-[1.2rem] font-medium text-[var(--on-surface)]">
+                      {stat.value}
+                    </span>
+                    <span className="text-[0.75rem] font-mono text-[var(--on-surface-dim)] uppercase tracking-wider">
+                      {stat.label}
+                    </span>
                   </div>
                 ))}
-              </div>
-            </aside>
+              </motion.div>
+            </div>
+          </section>
 
-            <div className="min-w-0 flex-1 xl:pl-10">
-              <header className="mb-10 border-b border-[var(--glass-border)] pb-8 md:mb-12 md:grid md:grid-cols-[1fr_auto] md:items-end md:gap-10">
-                <motion.div
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={cosmicSpring}
-                >
-                  <p className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)]">
-                    <span className="h-px w-7 bg-[var(--secondary)]" aria-hidden="true" />
-                    Vetted network / {engineers.length} engineers
-                  </p>
-                  <h1 className="title-serif m-0 text-[clamp(3.15rem,7.4vw,5.25rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
-                    The Network.
-                  </h1>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ ...cosmicSpring, delay: 0.08 }}
-                  className="mt-6 max-w-md md:mt-0 md:text-right"
-                >
-                  <p className="font-mono text-[clamp(3rem,7vw,5rem)] leading-none tracking-tight text-[color-mix(in_srgb,var(--on-surface)_28%,transparent)] dark:text-[color-mix(in_srgb,var(--on-surface)_14%,transparent)]">
-                    {String(availableCount).padStart(2, "0")}
-                  </p>
-                  <p className="body-md mt-3 text-[var(--on-surface-dim)]">
-                    Senior African engineers cleared for placement across full-stack, AI, Web3,
-                    cloud, mobile, and backend systems. Every profile has passed the Andishi
-                    technical bar.
-                  </p>
-                </motion.div>
-              </header>
-
-              <div className="mb-8 flex flex-col gap-4 lg:mb-10 lg:flex-row lg:items-center">
-                <div className="relative w-full max-w-md">
-                  <label htmlFor="engineer-search" className="sr-only">
-                    Search engineers
-                  </label>
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute left-2 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full border border-[color-mix(in_srgb,var(--secondary)_24%,transparent)] bg-[color-mix(in_srgb,var(--secondary)_9%,transparent)] text-[var(--secondary)] shadow-[inset_0_1px_0_color-mix(in_srgb,var(--on-surface)_12%,transparent),0_10px_30px_color-mix(in_srgb,var(--secondary)_10%,transparent)]"
-                  >
-                    <span className="absolute h-4 w-4 rounded-full border border-[color-mix(in_srgb,var(--secondary)_18%,transparent)]" />
-                    <IconSearch size={14} stroke={1.8} className="relative" />
-                  </span>
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute bottom-1.5 left-11 top-1.5 w-px bg-[linear-gradient(to_bottom,transparent,color-mix(in_srgb,var(--on-surface)_14%,transparent),transparent)]"
+          {/* ── High-Craft Compact Filter & Search Trigger Bar ─────────── */}
+          <div className="sticky top-[4rem] sm:top-[4.5rem] z-[40] w-full border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_92%,transparent)] px-5 py-3 backdrop-blur-xl sm:px-8 lg:px-10 mb-10">
+            <div className="mx-auto flex w-full max-w-[92rem] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                {/* Search Bar Input */}
+                <div className="relative flex-1 sm:w-80">
+                  <IconSearch
+                    size={15}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--on-surface-dim)]"
                   />
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-full border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_36%,transparent)] px-2 py-0.5 font-mono text-[0.62rem] text-[color-mix(in_srgb,var(--on-surface-dim)_62%,transparent)] sm:inline-flex"
-                  >
-                    Network index
-                  </span>
                   <input
-                    id="engineer-search"
                     type="search"
                     value={search}
-                    onChange={(event) => setSearch(event.target.value)}
-                    placeholder="Search name, stack, country..."
-                    className="h-11 w-full rounded-full border border-[color-mix(in_srgb,var(--on-surface)_14%,transparent)] bg-[color-mix(in_srgb,var(--surface)_44%,transparent)] pl-14 pr-10 text-[0.88rem] text-[var(--on-surface)] outline-none shadow-[0_18px_54px_color-mix(in_srgb,var(--bg-deep)_18%,transparent),inset_0_1px_0_color-mix(in_srgb,var(--on-surface)_8%,transparent)] backdrop-blur-2xl transition-all placeholder:text-[color-mix(in_srgb,var(--on-surface-dim)_66%,transparent)] focus:border-[color-mix(in_srgb,var(--secondary)_42%,transparent)] focus:ring-2 focus:ring-[color-mix(in_srgb,var(--secondary)_12%,transparent)] sm:pr-32"
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search name, skill, country..."
+                    className="h-10 w-full rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] pl-10 pr-8 text-[0.82rem] text-[var(--on-surface)] outline-none focus:border-[var(--on-surface)] backdrop-blur-xl transition-all placeholder:text-[var(--on-surface-dim)] opacity-80 focus:opacity-100"
                   />
-                  <AnimatePresence>
-                    {search && (
-                      <motion.button
-                        initial={{ opacity: 0, scale: 0.7 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.7 }}
-                        type="button"
-                        onClick={() => setSearch("")}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--on-surface-dim)] hover:text-[var(--on-surface)] focus-visible:outline-none sm:right-[7.9rem]"
-                        aria-label="Clear search"
-                      >
-                        <IconX size={13} stroke={2} />
-                      </motion.button>
-                    )}
-                  </AnimatePresence>
+                  {search && (
+                    <button
+                      onClick={() => setSearch("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--on-surface-dim)] hover:text-[var(--on-surface)]"
+                    >
+                      <IconX size={13} />
+                    </button>
+                  )}
                 </div>
 
-                <div className="flex items-center gap-2 text-[0.76rem] font-medium uppercase tracking-[0.12em] text-[var(--on-surface-dim)] xl:hidden">
-                  <IconFilter size={15} stroke={1.6} aria-hidden="true" />
-                  Filter
-                </div>
-                <div className="flex gap-2 overflow-x-auto pb-1 xl:hidden">
-                  {engineerRoles.map((role) => {
-                    const isActive = activeRole === role;
+                {/* Role Dropdown Popover */}
+                <RoleDropdown
+                  roles={engineerRoles}
+                  value={activeRole}
+                  onChange={setActiveRole}
+                  counts={(r) => countForRole(engineers, r)}
+                />
 
-                    return (
-                      <button
-                        key={role}
-                        type="button"
-                        onClick={() => setActiveRole(role)}
-                        aria-pressed={isActive}
-                        className="shrink-0 rounded-full border px-4 py-2 text-[0.78rem] font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]"
-                        style={{
-                          backgroundColor: isActive
-                            ? "color-mix(in srgb, var(--primary) 10%, transparent)"
-                            : "var(--glass-bg)",
-                          borderColor: isActive
-                            ? "color-mix(in srgb, var(--primary) 34%, transparent)"
-                            : "var(--glass-border)",
-                          color: isActive ? "var(--primary)" : "var(--on-surface-dim)",
-                        }}
-                      >
-                        {role === "All" ? "All" : role}
-                      </button>
-                    );
-                  })}
-                </div>
-
+                {/* High Contrast Available Now Switch */}
                 <button
                   type="button"
-                  role="switch"
-                  aria-checked={availableOnly}
-                  onClick={() => setAvailableOnly((value) => !value)}
-                  className="inline-flex w-fit items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 py-2 text-[0.78rem] font-medium text-[var(--on-surface-dim)] transition-colors duration-300 hover:text-[var(--on-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--tertiary)_35%,transparent)] xl:hidden"
+                  onClick={() => setAvailableOnly((v) => !v)}
+                  className={cn(
+                    "inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-[0.72rem] uppercase tracking-wider transition-all duration-200 font-medium",
+                    availableOnly
+                      ? "border-emerald-800/80 bg-emerald-950 text-emerald-200 dark:border-emerald-500/50 dark:bg-emerald-950/80 dark:text-emerald-300 shadow-sm"
+                      : "border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)]",
+                  )}
                 >
                   <span
                     className={cn(
-                      "relative h-5 w-9 rounded-full transition-colors duration-300",
-                      availableOnly
-                        ? "bg-[color-mix(in_srgb,var(--tertiary)_72%,var(--surface))]"
-                        : "bg-[color-mix(in_srgb,var(--on-surface)_12%,transparent)]",
+                      "h-1.5 w-1.5 rounded-full",
+                      availableOnly ? "bg-emerald-400 animate-pulse" : "bg-[var(--on-surface-dim)]",
                     )}
-                  >
-                    <span
-                      className={cn(
-                        "absolute top-0.5 h-4 w-4 rounded-full bg-[var(--surface)] shadow transition-transform duration-300",
-                        availableOnly ? "translate-x-4" : "translate-x-0.5",
-                      )}
-                    />
-                  </span>
-                  Available now
-                  <span className="font-mono text-[var(--tertiary)]">({availableCount})</span>
+                  />
+                  <span>AVAILABLE NOW</span>
                 </button>
-
-                <span
-                  className="ml-auto hidden text-[0.78rem] text-[color-mix(in_srgb,var(--on-surface-dim)_60%,transparent)] lg:block"
-                  aria-live="polite"
-                >
-                  {filteredEngineers.length} engineer
-                  {filteredEngineers.length === 1 ? "" : "s"}
-                </span>
               </div>
 
-              <AnimatePresence mode="wait">
-                {filteredEngineers.length > 0 ? (
-                  <motion.div
-                    key={`${activeRole}-${String(availableOnly)}-${search || "all"}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25 }}
-                    className="columns-1 gap-5 sm:columns-2 lg:columns-3"
+              {/* Counter & Reset Filter Trigger */}
+              <div className="hidden sm:flex items-center gap-3 shrink-0">
+                <span className="font-mono text-[0.75rem] text-[var(--on-surface-dim)]">
+                  Showing <strong>{filteredEngineers.length}</strong> engineer
+                  {filteredEngineers.length !== 1 ? "s" : ""}
+                </span>
+
+                {hasActiveFilters && (
+                  <button
+                    onClick={() => {
+                      setActiveRole("All");
+                      setAvailableOnly(false);
+                      setSearch("");
+                    }}
+                    className="inline-flex items-center gap-1 rounded-full border border-[var(--glass-border)] bg-[var(--surface-high)] px-3 py-1 font-mono text-[0.7rem] text-[var(--on-surface-dim)] hover:text-[var(--on-surface)] transition-colors"
                   >
-                    {filteredEngineers.map((engineer, index) => (
-                      <EngineerCard key={engineer.slug} engineer={engineer} index={index} />
-                    ))}
-                  </motion.div>
-                ) : (
+                    <IconX size={12} />
+                    <span>Reset</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Showcase Section ────────────────────────────────────────── */}
+          <section className="w-full px-5 sm:px-8 lg:px-10">
+            <div className="mx-auto w-full max-w-[92rem]">
+              {/* Empty state */}
+              <AnimatePresence mode="wait">
+                {filteredEngineers.length === 0 && (
                   <motion.div
                     key="empty"
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
-                    className="flex flex-col items-center justify-center py-24 text-center"
-                    role="status"
-                    aria-live="polite"
+                    className="py-24 text-center"
                   >
-                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)]">
-                      <IconUsersGroup size={24} stroke={1.5} aria-hidden="true" />
-                    </div>
-                    <p className="mb-2 text-[1rem] font-medium text-[var(--on-surface)]">
-                      No engineers found
-                    </p>
-                    <p className="mb-6 text-[0.88rem] text-[var(--on-surface-dim)]">
-                      Try a different search term or filter.
+                    <p className="text-[0.9rem] text-[var(--on-surface-dim)]">
+                      No engineers match this search or filter combination.
                     </p>
                     <button
-                      type="button"
-                      onClick={clearFilters}
-                      className="rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-5 py-2.5 text-[0.88rem] font-medium text-[var(--on-surface)] transition-all hover:border-[color-mix(in_srgb,var(--secondary)_34%,transparent)] hover:text-[var(--secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]"
+                      onClick={() => {
+                        setActiveRole("All");
+                        setAvailableOnly(false);
+                        setSearch("");
+                      }}
+                      className="mt-4 font-mono text-[0.82rem] text-[var(--on-surface)] underline underline-offset-4"
                     >
-                      Clear filters
+                      Reset all filters
                     </button>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              <section className="relative mt-20 overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_42%,transparent)] px-6 py-12 text-center shadow-[0_24px_80px_color-mix(in_srgb,var(--bg-deep)_24%,transparent)] backdrop-blur-2xl sm:px-10 lg:mt-24 lg:px-16 lg:py-16">
-                <FinalCtaArtwork />
-                <PatternTexture opacity={0.12} />
+              {/* Uniform Engineer Showcase Grid */}
+              {filteredEngineers.length > 0 && (
                 <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(to_right,transparent,color-mix(in_srgb,var(--on-surface)_22%,transparent),transparent)]"
-                />
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -bottom-10 left-8 h-28 w-44 rotate-[-8deg] rounded-[2rem] border border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] opacity-40"
-                />
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -right-10 top-8 h-32 w-52 rotate-[8deg] rounded-[2rem] border border-[color-mix(in_srgb,var(--secondary)_16%,transparent)] opacity-35"
-                />
-                <div className="relative z-[1] mx-auto max-w-2xl">
-                  <p className="label-caps mb-4 text-[var(--secondary)]">
-                    Do not see exactly what you need?
-                  </p>
-                  <h2 className="title-serif text-[clamp(2.16rem,4.4vw,3.35rem)] font-normal leading-[1.04] tracking-tight text-[var(--on-surface)]">
-                    Submit a brief. We will find the right engineer.
-                  </h2>
-                  <p className="body-md mx-auto my-8 max-w-lg text-[var(--on-surface-dim)]">
-                    Tell us your stack, role, and timeline. We surface matched senior African
-                    engineers, including profiles not listed here.
-                  </p>
-                  <div className="mt-8 flex flex-wrap justify-center gap-3">
-                    <a
-                      href={buildWhatsAppUrl(undefined, { variant: "hire" })}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex min-h-[2.35rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-300 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
-                    >
-                      Start matching
-                      <IconBrandWhatsapp size={15} stroke={1.8} />
-                    </a>
-                    <Link
-                      href="/hire"
-                      className="inline-flex min-h-[2.35rem] items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-6 py-2.5 text-[0.98rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:border-[color-mix(in_srgb,var(--on-surface)_34%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
-                    >
-                      How matching works
-                    </Link>
-                  </div>
+                  ref={gridRef}
+                  key={`${activeRole}-${availableOnly}-${search}`}
+                  className="grid grid-cols-1 gap-0 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-6"
+                >
+                  {filteredEngineers.map((engineer, index) => (
+                    <EngineerCard key={engineer.slug} engineer={engineer} index={index} />
+                  ))}
                 </div>
-              </section>
+              )}
             </div>
-          </div>
-        </CustomCursorRegion>
-      </main>
-    </>
+          </section>
+        </div>
+      </CustomCursorRegion>
+    </main>
   );
 }
