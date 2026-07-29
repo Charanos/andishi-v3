@@ -250,6 +250,52 @@ export const publishCaseStudySchema = z.object({
   featuredOrder: z.number().int().min(0).optional().nullable(),
 });
 
+// ── Case study sub-schemas ────────────────────────────────────────
+
+const approachStepSchema = z.object({
+  id: z.string().trim().min(1),
+  title: z.string().trim().min(1),
+  description: z.string().trim().min(1),
+  imageUrl: z.string().url().optional().nullable(),
+  order: z.coerce.number().int().min(0),
+});
+
+const solutionHighlightSchema = z.object({
+  id: z.string().trim().min(1),
+  title: z.string().trim().min(1),
+  description: z.string().trim().min(1),
+  imageUrl: z.string().url().optional().nullable(),
+  order: z.coerce.number().int().min(0),
+});
+
+const galleryImageSchema = z.object({
+  id: z.string().trim().min(1),
+  url: z.string().url(),
+  alt: z.string().trim().min(1),
+  width: z.coerce.number().int().optional().nullable(),
+  height: z.coerce.number().int().optional().nullable(),
+  order: z.coerce.number().int().min(0),
+});
+
+const resultMetricSchema = z.object({
+  id: z.string().trim().min(1),
+  metric: z.string().trim().min(1),
+  label: z.string().trim().min(1),
+  context: z.string().trim().optional().nullable(),
+});
+
+const testimonialSchema = z.object({
+  quote: z.string().trim().min(10),
+  authorName: z.string().trim().min(1),
+  authorTitle: z.string().trim().min(1),
+  authorAvatarUrl: z.string().url().optional().nullable(),
+});
+
+const techDetailSchema = z.object({
+  name: z.string().trim().min(1),
+  reason: z.string().trim().optional().nullable(),
+});
+
 /**
  * Marketing-site convenience schema backing POST /api/work: creates a
  * project and publishes it as a public case study in one call, unlike the
@@ -267,10 +313,11 @@ export const createWorkCaseStudySchema = z.object({
   clientName: z.string().trim().min(1),
   serviceType: serviceTypeEnum,
   vertical: verticalEnum,
-  challenge: z.string().trim().min(20),
-  solution: z.string().trim().min(20),
-  outcome: z.string().trim().min(1),
-  outcomeLabel: z.string().trim().min(1),
+  // Legacy single-field content (backward compat)
+  challenge: z.string().trim().min(20).optional(),
+  solution: z.string().trim().min(20).optional(),
+  outcome: z.string().trim().min(1).optional(),
+  outcomeLabel: z.string().trim().min(1).optional(),
   coverImageUrl: z.string().url().optional().nullable(),
   clientQuote: optionalText,
   clientQuoteAttribution: optionalText,
@@ -278,9 +325,59 @@ export const createWorkCaseStudySchema = z.object({
   featuredOrder: z.number().int().min(0).optional().nullable(),
   startDate: optionalText,
   targetDate: optionalText,
+  // Rich case study fields
+  tagline: z.string().trim().max(200).optional().nullable(),
+  summary: z.string().trim().max(400).optional().nullable(), // 40-60 words target
+  role: optionalText,
+  teamSize: optionalText,
+  liveUrl: z.string().url().optional().nullable(),
+  repoUrl: z.string().url().optional().nullable(),
+  featured: z.coerce.boolean().default(false),
+  approachSteps: z.array(approachStepSchema).optional().default([]),
+  solutionHighlights: z.array(solutionHighlightSchema).optional().default([]),
+  gallery: z.array(galleryImageSchema).optional().default([]),
+  results: z.array(resultMetricSchema).optional().default([]),
+  testimonial: testimonialSchema.optional().nullable(),
+  techStackDetails: z.array(techDetailSchema).optional().default([]),
+  seoMetaTitle: optionalText,
+  seoMetaDescription: z.string().trim().max(160).optional().nullable(),
+  seoOgImageUrl: z.string().url().optional().nullable(),
+  adExcerpt: z.string().trim().max(125).optional().nullable(),
+  caseStudyStatus: z.enum(["draft", "published", "archived"]).optional(),
 });
 
 export const updateWorkCaseStudySchema = createWorkCaseStudySchema.partial();
+
+/**
+ * publishCaseStudyV2Schema
+ *
+ * Strict validation run only on the publish action. All required-to-publish
+ * fields must be present before status flips to "published". Autosave uses
+ * updateWorkCaseStudySchema (partial) — this schema runs only on explicit Publish.
+ */
+export const publishCaseStudyV2Schema = z
+  .object({
+    isPublishing: z.literal(true),
+  })
+  .and(
+    updateWorkCaseStudySchema
+      .required({
+        title: true,
+        publicSlug: true,
+        clientName: true,
+        serviceType: true,
+        vertical: true,
+        coverImageUrl: true,
+      })
+      .refine((data) => !!(data.liveUrl || data.repoUrl), {
+        message: "At least one of liveUrl or repoUrl is required to publish",
+        path: ["liveUrl"],
+      })
+      .refine((data) => (data.results?.length ?? 0) >= 1, {
+        message: "At least one result metric is required to publish",
+        path: ["results"],
+      }),
+  );
 
 // ── Timesheet ─────────────────────────────────────────────────────
 

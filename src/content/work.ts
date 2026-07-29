@@ -900,4 +900,45 @@ export const workFilters = [
   { label: "Logistics", value: "logistics" },
   { label: "Retail", value: "retail" },
   { label: "SaaS", value: "saas" },
+  { label: "Legal Tech", value: "saas" },
 ] as const;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Casedok — flagship case study (updated separately once DB project is created)
+// ─────────────────────────────────────────────────────────────────────────────
+// Note: this static entry is the fallback for /work/casedok before the DB row
+// is created and published. Gallery images are served from /public/casedok/.
+
+export const casedokProject: WorkProject = {
+  id: "casedok",
+  sector: "saas",
+  sectorLabel: "SaaS / Legal Tech",
+  title: "Casedok",
+  shortTitle: "Casedok",
+  description:
+    "A legal case management SaaS that helps Kenyan law firms move from paper files and WhatsApp threads to a structured, collaborative, client-ready platform.",
+  challenge:
+    "Law firms in Kenya were operating case files across physical folders, WhatsApp threads, and shared Google Drive — with no structured tracking, no client visibility, and no way to bill time accurately. Casedok needed to solve case management, document handling, client portals, and subscription billing in one coherent product.",
+  solution:
+    "Andishi designed and built a full-stack SaaS with role-based access (advocate, paralegal, client), structured case timelines, document management, a client portal, legal subscription plan tiers, and an integrated billing system — shipped in 6 weeks.",
+  image: "/casedok/hero-section.png",
+  status: "Live",
+  metric: "6 weeks",
+  metricLabel: "full product delivered",
+  timeline: "6 weeks",
+  location: "Nairobi",
+  featured: true,
+  imageHeight: "mid",
+  tags: ["Next.js", "TypeScript", "PostgreSQL", "Drizzle ORM", "Vercel", "Stripe"],
+  metrics: [
+    { value: "<50ms", label: "query search latency", tone: "success" },
+    { value: "3", label: "user access roles", tone: "cyan" },
+    { value: "5", label: "subscription tiers", tone: "primary" },
+    { value: "100%", label: "paperless case management" },
+  ],
+};
+
+// Inject casedok at position 0 so it appears first on /work
+if (!workProjects.find((p) => p.id === "casedok")) {
+  workProjects.unshift(casedokProject);
+}

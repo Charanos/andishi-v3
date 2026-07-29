@@ -14,14 +14,14 @@ import {
 import { updateWorkCaseStudySchema } from "@/lib/validation/entities";
 
 /**
- * PATCH/DELETE /api/work/manage/[id]
+ * PATCH /api/work/manage/[id]
  *
- * Admin-only management of an existing public case study by project id
- * (nested under /manage so it doesn't collide with the public GET
- * /api/work/[slug] route - same split pattern as
- * /api/careers/[slug] (public) vs /api/careers/openings/[id] (admin)).
- * Scoped to case-study fields only; internal delivery fields (briefId,
- * engineerIds, milestones, etc.) go through /api/projects/[id] instead.
+ * Admin-only. Partial update of case study fields (used for autosave).
+ * Scoped to case-study fields only; internal delivery fields go through
+ * /api/projects/[id] instead.
+ *
+ * Note: this is the autosave endpoint. It always writes as draft unless
+ * caseStudyStatus is explicitly passed. Never auto-publishes.
  */
 export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   const requestId = generateRequestId();
@@ -38,11 +38,25 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ id: s
   try {
     await authorize(session, "delivery.project.write");
 
+    const updatePayload = parsed.data;
+
+    // Never let autosave silently publish — strip caseStudyStatus if it
+    // was accidentally included in an autosave call without explicit publish.
+    // The /publish endpoint handles the status flip with proper validation.
+    if (updatePayload.caseStudyStatus === "published") {
+      return jsonError("Use PATCH /api/work/manage/:id/publish to publish a case study", 400);
+    }
+
     const [updated] = await getDb()
       .update(projects)
-      .set({ ...parsed.data, updatedAt: new Date() })
+      .set({ ...updatePayload, updatedAt: new Date() })
       .where(eq(projects.id, id))
-      .returning();
+      .returning({
+        id: projects.id,
+        title: projects.title,
+        caseStudyStatus: projects.caseStudyStatus,
+        updatedAt: projects.updatedAt,
+      });
 
     return NextResponse.json({ project: updated });
   } catch (error) {
@@ -55,7 +69,14 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ id: s
   }
 }
 
-export async function DELETE(_req: NextRequest, context: { params: Promise<{ id: string }> }) {
+/**
+ * DELETE /api/work/manage/[id]
+ *
+ * Admin-only. SOFT deletes by setting caseStudyStatus to "archived".
+ * Never hard-deletes — archived rows remain recoverable.
+ * Requires a confirmation payload { confirm: true } to prevent accidental calls.
+ */
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   const requestId = generateRequestId();
   const session = await getSession();
   if (!session || session.user.role !== "admin") return jsonError("Forbidden", 403);
@@ -64,22 +85,34 @@ export async function DELETE(_req: NextRequest, context: { params: Promise<{ id:
   const [existing] = await getDb().select().from(projects).where(eq(projects.id, id)).limit(1);
   if (!existing) return jsonError("Case study not found", 404);
 
+  // Require explicit confirmation body to prevent accidental deletes
+  const body = await parseJson(req).catch(() => ({}));
+  if (!(body as { confirm?: boolean })?.confirm) {
+    return jsonError("Send { confirm: true } to archive a case study", 400);
+  }
+
   try {
     await authorize(session, "delivery.project.delete");
 
-    await getDb().delete(projects).where(eq(projects.id, id));
+    const [archived] = await getDb()
+      .update(projects)
+      .set({ caseStudyStatus: "archived", updatedAt: new Date() })
+      .where(eq(projects.id, id))
+      .returning({ id: projects.id, title: projects.title });
 
-    await getDb().insert(activityEvents).values({
-      type: "project_unpublished",
-      actorId: session.user.id,
-      actorRole: "admin",
-      entityType: "project",
-      entityId: id,
-      description: `Case study "${existing.title}" deleted from /work`,
-      visibleTo: ["admin"],
-    });
+    await getDb()
+      .insert(activityEvents)
+      .values({
+        type: "project_unpublished",
+        actorId: session.user.id,
+        actorRole: "admin",
+        entityType: "project",
+        entityId: id,
+        description: `Case study "${existing.title}" archived (soft-deleted) from /work`,
+        visibleTo: ["admin"],
+      });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ archived: true, project: archived });
   } catch (error) {
     return handleRouteError(error, {
       requestId,

@@ -12,6 +12,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { AnimatePresence, motion } from "framer-motion";
 import { gsap } from "gsap";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo, useState, useRef } from "react";
 import {
   Area,
@@ -264,7 +265,6 @@ export function WorkPageExperience() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 9;
 
-  const [selectedProject, setSelectedProject] = useState<WorkProject | null>(null);
   const [dbProjects, setDbProjects] = useState<WorkProject[]>([]);
   const [loading, setLoading] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -313,24 +313,6 @@ export function WorkPageExperience() {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return filteredProjects.slice(startIndex, startIndex + itemsPerPage);
   }, [filteredProjects, currentPage]);
-
-  useEffect(() => {
-    if (!selectedProject) return;
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setSelectedProject(null);
-      }
-    };
-
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [selectedProject]);
 
   useEffect(() => {
     if (!gridRef.current || paginatedProjects.length === 0) return;
@@ -458,7 +440,6 @@ export function WorkPageExperience() {
                       key={project.id}
                       index={(currentPage - 1) * itemsPerPage + index}
                       project={project}
-                      onOpen={() => setSelectedProject(project)}
                     />
                   ))}
                 </div>
@@ -473,21 +454,11 @@ export function WorkPageExperience() {
           </div>
         </CustomCursorRegion>
       </main>
-
-      <CaseStudyDrawer project={selectedProject} onClose={() => setSelectedProject(null)} />
     </>
   );
 }
 
-function ProjectCard({
-  index,
-  onOpen,
-  project,
-}: {
-  index: number;
-  onOpen: () => void;
-  project: WorkProject;
-}) {
+function ProjectCard({ index, project }: { index: number; project: WorkProject }) {
   const isFeatured = project.featured;
 
   return (
@@ -497,9 +468,8 @@ function ProjectCard({
         isFeatured ? "lg:col-span-2" : "",
       )}
     >
-      <button
-        type="button"
-        onClick={onOpen}
+      <Link
+        href={`/work/${project.id}`}
         data-cursor-text="VIEW"
         className={cn(
           "group/card cursor-pointer flex w-full overflow-hidden text-left transition-all duration-500 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]",
@@ -633,243 +603,7 @@ function ProjectCard({
             </span>
           </div>
         </div>
-      </button>
+      </Link>
     </article>
-  );
-}
-
-function CaseStudyDrawer({
-  onClose,
-  project,
-}: {
-  onClose: () => void;
-  project: WorkProject | null;
-}) {
-  return (
-    <AnimatePresence>
-      {project && (
-        <>
-          <motion.button
-            type="button"
-            aria-label="Close case study"
-            className="fixed inset-0 z-[80] cursor-default bg-[color-mix(in_srgb,var(--bg-deep)_74%,transparent)] backdrop-blur-xl"
-            onClick={onClose}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          />
-          <motion.aside
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="case-study-title"
-            className="fixed bottom-0 left-1/2 z-[90] max-h-[90vh] w-[min(58rem,calc(100vw-1rem))] -translate-x-1/2 overflow-y-auto rounded-t-[1.5rem] border border-[var(--glass-border)] bg-[var(--surface)] shadow-[0_-28px_90px_color-mix(in_srgb,var(--bg-deep)_70%,transparent)]"
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ duration: 0.55, ease: [0.76, 0, 0.24, 1] }}
-          >
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_92%,transparent)] px-5 py-4 backdrop-blur-2xl sm:px-7">
-              <span className="h-1 w-10 rounded-full bg-[color-mix(in_srgb,var(--on-surface-dim)_34%,transparent)]" />
-              <button
-                type="button"
-                onClick={onClose}
-                className="grid h-9 w-9 place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] transition-all duration-300 hover:border-[color-mix(in_srgb,var(--secondary)_38%,transparent)] hover:text-[var(--secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]"
-                aria-label="Close case study"
-              >
-                <IconX size={17} stroke={1.7} />
-              </button>
-            </div>
-
-            <div className="relative h-64 overflow-hidden sm:h-[26rem] flex items-end p-5 sm:p-10 group/hero">
-              <Image
-                src={project.image}
-                alt={`${project.title} project preview`}
-                fill
-                sizes="min(58rem, 100vw)"
-                className="object-cover brightness-[0.6] saturate-[0.8] transition-transform duration-1000 group-hover/hero:scale-[1.03]"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(to_top,var(--surface),transparent_80%)]" />
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,color-mix(in_srgb,var(--surface)_90%,transparent),transparent_60%)]" />
-
-              <div className="relative z-10 w-full max-w-2xl">
-                <p className="label-caps mb-3 text-[var(--secondary)]">
-                  {project.sectorLabel} / {project.location}
-                </p>
-                <h2
-                  id="case-study-title"
-                  className="title-serif text-[clamp(2.12rem,4.2vw,3.5rem)] font-normal leading-[1.02] tracking-tight text-[var(--on-surface)]"
-                >
-                  {project.title}
-                </h2>
-              </div>
-            </div>
-
-            <div className="px-5 pb-10 pt-6 sm:px-10 sm:pb-12">
-              <p className="body-md mb-12 max-w-3xl font-medium text-[var(--on-surface-dim)] leading-[1.8]">
-                {project.description}
-              </p>
-
-              <div className="mb-12 grid gap-6 md:grid-cols-2">
-                {[
-                  ["The Challenge", project.challenge],
-                  ["The Solution", project.solution],
-                ].map(([label, text]) => (
-                  <div
-                    key={label}
-                    className="group/box relative overflow-hidden rounded-[1.5rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-6 sm:p-8 backdrop-blur-xl transition-all duration-300 hover:border-[color-mix(in_srgb,var(--secondary)_30%,transparent)] hover:shadow-[0_22px_44px_color-mix(in_srgb,var(--bg-deep)_12%,transparent)]"
-                  >
-                    <div className="absolute -inset-px rounded-[1.5rem] bg-gradient-to-b from-[var(--secondary)] to-transparent opacity-0 transition-opacity duration-300 group-hover/box:opacity-[0.04]" />
-                    <p className="label-caps mb-4 text-[color-mix(in_srgb,var(--on-surface-dim)_70%,transparent)]">
-                      {label}
-                    </p>
-                    <p className="text-[0.95rem] font-medium leading-[1.75] text-[var(--on-surface-dim)]">
-                      {text}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              {/* Data Visualization Section */}
-              <div className="mb-12 rounded-[1.5rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-6 sm:p-8 backdrop-blur-xl">
-                <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-                  <div>
-                    <h3 className="text-xl font-medium tracking-tight text-[var(--on-surface)] mb-1">
-                      Project Impact & Growth
-                    </h3>
-                    <p className="text-sm font-medium text-[var(--on-surface-dim)]">
-                      Measured key performance indicators over 6 months
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_50%,transparent)] px-3 py-1.5 text-xs font-mono">
-                    <span className="h-2 w-2 rounded-full bg-[var(--primary)] animate-pulse" />
-                    Live Data Simulation
-                  </div>
-                </div>
-
-                <div className="h-[220px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart
-                      data={[
-                        { month: "Jan", impact: 10 },
-                        { month: "Feb", impact: 25 },
-                        { month: "Mar", impact: 45 },
-                        { month: "Apr", impact: 60 },
-                        { month: "May", impact: 85 },
-                        { month: "Jun", impact: 110 },
-                      ]}
-                      margin={{ top: 0, right: 0, left: -20, bottom: 0 }}
-                    >
-                      <defs>
-                        <linearGradient id="colorImpact" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                        vertical={false}
-                        stroke="color-mix(in srgb, var(--on-surface) 6%, transparent)"
-                      />
-                      <XAxis
-                        dataKey="month"
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fill: "var(--on-surface-dim)", fontSize: 12, fontWeight: 500 }}
-                        dy={10}
-                      />
-                      <YAxis
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fill: "var(--on-surface-dim)", fontSize: 12, fontWeight: 500 }}
-                      />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "var(--surface)",
-                          borderRadius: "12px",
-                          border: "1px solid var(--glass-border)",
-                          boxShadow:
-                            "0 10px 24px color-mix(in srgb, var(--bg-deep) 40%, transparent)",
-                          color: "var(--on-surface)",
-                          fontWeight: 500,
-                        }}
-                        itemStyle={{ color: "var(--primary)" }}
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="impact"
-                        stroke="var(--primary)"
-                        strokeWidth={3}
-                        fillOpacity={1}
-                        fill="url(#colorImpact)"
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <div className="mt-8 grid grid-cols-2 gap-px bg-[var(--glass-border)] sm:grid-cols-4 rounded-xl overflow-hidden border border-[var(--glass-border)]">
-                  {project.metrics.map((metric) => (
-                    <div
-                      key={metric.label}
-                      className="bg-[var(--glass-bg)] px-5 py-4 transition-colors hover:bg-[color-mix(in_srgb,var(--surface)_60%,transparent)]"
-                    >
-                      <p
-                        className="font-mono text-[1.35rem] tracking-tight mb-1"
-                        style={{ color: getMetricColor(metric.tone) }}
-                      >
-                        {metric.value}
-                      </p>
-                      <p className="text-[0.62rem] font-medium uppercase tracking-[0.09em] text-[color-mix(in_srgb,var(--on-surface-dim)_70%,transparent)]">
-                        {metric.label}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-8 flex flex-wrap gap-2">
-                {project.tags.map((tag, index) => (
-                  <span
-                    key={tag}
-                    className="rounded-full border px-3 py-1.5 text-[0.74rem] font-medium"
-                    style={{
-                      backgroundColor:
-                        index === 0
-                          ? "color-mix(in srgb, var(--secondary) 10%, transparent)"
-                          : "var(--glass-bg)",
-                      borderColor:
-                        index === 0
-                          ? "color-mix(in srgb, var(--secondary) 24%, transparent)"
-                          : "var(--glass-border)",
-                      color: index === 0 ? "var(--secondary)" : "var(--on-surface-dim)",
-                    }}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              <div className="mt-10 flex flex-wrap gap-3">
-                <a
-                  href={buildWhatsAppUrl(undefined, { context: `Work: ${project.title}` })}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-[3.35rem] items-center justify-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-7 py-3.5 text-[0.98rem] font-medium text-[var(--bg)] shadow-[0_16px_36px_color-mix(in_srgb,var(--bg-deep)_36%,transparent)] transition-all duration-300 hover:-translate-y-px hover:shadow-[0_20px_48px_color-mix(in_srgb,var(--bg-deep)_46%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
-                >
-                  Start a Project like this
-                  <IconBrandWhatsapp size={15} stroke={1.8} />
-                </a>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="inline-flex min-h-[3.35rem] items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--glass-bg)] px-7 py-3.5 text-[0.98rem] font-medium text-[var(--on-surface)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--surface)_50%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--on-surface)_35%,transparent)]"
-                >
-                  Back to work
-                </button>
-              </div>
-            </div>
-          </motion.aside>
-        </>
-      )}
-    </AnimatePresence>
   );
 }

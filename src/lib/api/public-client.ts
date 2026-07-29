@@ -15,7 +15,7 @@ import type { JobOpening } from "@/db/schema/careers";
 import type { BlogPost } from "@/data/blog";
 import { mapBlogPostRow } from "@/lib/blog-mapper";
 
-// ── Public project type (only the case-study fields exposed via /api/work) ──
+// ── Public project type (exposed via /api/work and /api/work/[slug]) ─────────
 
 export interface PublicProject {
   id: string;
@@ -24,6 +24,7 @@ export interface PublicProject {
   serviceType: string | null;
   vertical: string | null;
   coverImageUrl: string | null;
+  // Basic case study content (original fields)
   challenge: string | null;
   solution: string | null;
   outcome: string | null;
@@ -36,6 +37,72 @@ export interface PublicProject {
   status: string;
   startDate: string | null;
   targetDate: string | null;
+
+  // ── Rich case study fields (Phase 2 - July 2026) ────────────────
+  tagline: string | null;
+  summary: string | null;
+  role: string | null;
+  teamSize: string | null;
+  liveUrl: string | null;
+  repoUrl: string | null;
+  featured: boolean;
+
+  approachSteps: Array<{
+    id: string;
+    title: string;
+    description: string;
+    imageUrl?: string | null;
+    order: number;
+  }>;
+
+  solutionHighlights: Array<{
+    id: string;
+    title: string;
+    description: string;
+    imageUrl?: string | null;
+    order: number;
+  }>;
+
+  gallery: Array<{
+    id: string;
+    url: string;
+    alt: string;
+    width?: number | null;
+    height?: number | null;
+    order: number;
+  }>;
+
+  results: Array<{
+    id: string;
+    metric: string;
+    label: string;
+    context?: string | null;
+  }>;
+
+  testimonial: {
+    quote: string;
+    authorName: string;
+    authorTitle: string;
+    authorAvatarUrl?: string | null;
+  } | null;
+
+  techStackDetails: Array<{
+    name: string;
+    reason?: string | null;
+  }>;
+
+  // SEO overrides
+  seoMetaTitle: string | null;
+  seoMetaDescription: string | null;
+  seoOgImageUrl: string | null;
+
+  // Ad campaign
+  adExcerpt: string | null;
+
+  // Lifecycle
+  caseStudyStatus: "draft" | "published" | "archived";
+  publishedAt: string | null;
+  updatedAt: string | null;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -141,6 +208,31 @@ export async function fetchPublicProjectBySlug(
   try {
     const res = await fetch(`${base}/api/work/${slug}`, {
       next: { revalidate: 300 },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.project ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Full detail fetch for the case study page — returns all rich fields.
+ * Passes ?preview=true so admins can see draft projects server-side.
+ * Always use this in /work/[slug]/page.tsx, not fetchPublicProjectBySlug.
+ */
+export async function fetchPublicProjectBySlugFull(
+  slug: string,
+  options: { preview?: boolean; baseUrl?: string } = {},
+): Promise<PublicProject | null> {
+  const base = options.baseUrl ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const url = new URL(`/api/work/${slug}`, base);
+  if (options.preview) url.searchParams.set("preview", "true");
+
+  try {
+    const res = await fetch(url.toString(), {
+      next: { revalidate: 60 }, // 1 min — case study content updates more frequently
     });
     if (!res.ok) return null;
     const data = await res.json();

@@ -17,7 +17,7 @@ import { createWorkCaseStudySchema } from "@/lib/validation/entities";
  * GET /api/work
  *
  * Public endpoint - no authentication required.
- * Returns all projects where isPublic = true, ordered by featuredOrder.
+ * Returns all projects where caseStudyStatus = 'published', ordered by featuredOrder.
  * Supports optional ?service= and ?vertical= query filters.
  *
  * Powers the /work page case study grid.
@@ -27,8 +27,8 @@ export async function GET(req: NextRequest) {
   const service = searchParams.get("service");
   const vertical = searchParams.get("vertical");
 
-  // Build conditions - always filter to public projects only
-  const conditions = [eq(projects.isPublic, true)];
+  // Build conditions - always filter to published case studies only
+  const conditions = [eq(projects.caseStudyStatus, "published")];
 
   if (service && service !== "all") {
     conditions.push(eq(projects.serviceType, service));
@@ -46,6 +46,7 @@ export async function GET(req: NextRequest) {
       serviceType: projects.serviceType,
       vertical: projects.vertical,
       coverImageUrl: projects.coverImageUrl,
+      // Original basic fields
       challenge: projects.challenge,
       solution: projects.solution,
       outcome: projects.outcome,
@@ -58,6 +59,27 @@ export async function GET(req: NextRequest) {
       status: projects.status,
       startDate: projects.startDate,
       targetDate: projects.targetDate,
+      // Rich case study fields
+      tagline: projects.tagline,
+      summary: projects.summary,
+      role: projects.role,
+      teamSize: projects.teamSize,
+      liveUrl: projects.liveUrl,
+      repoUrl: projects.repoUrl,
+      featured: projects.featured,
+      approachSteps: projects.approachSteps,
+      solutionHighlights: projects.solutionHighlights,
+      gallery: projects.gallery,
+      results: projects.results,
+      testimonial: projects.testimonial,
+      techStackDetails: projects.techStackDetails,
+      seoMetaTitle: projects.seoMetaTitle,
+      seoMetaDescription: projects.seoMetaDescription,
+      seoOgImageUrl: projects.seoOgImageUrl,
+      adExcerpt: projects.adExcerpt,
+      caseStudyStatus: projects.caseStudyStatus,
+      publishedAt: projects.publishedAt,
+      updatedAt: projects.updatedAt,
     })
     .from(projects)
     .where(and(...conditions))
@@ -72,7 +94,7 @@ export async function GET(req: NextRequest) {
  * Admin-only. Marketing-site convenience: creates a project and publishes it
  * as a public case study in one call (the internal dashboard instead creates
  * a project via POST /api/projects, then PATCHes /api/projects/[id] with
- * isPublic:true separately). Auto-provisions the client organization by name
+ * caseStudyStatus: 'published' separately). Auto-provisions the client organization by name
  * since the public /work admin UI doesn't expose the internal CRM's
  * organization picker.
  */
@@ -100,7 +122,10 @@ export async function POST(req: NextRequest) {
       const orgId =
         existingOrg?.id ??
         (
-          await tx.insert(organizations).values({ name: clientName }).returning({ id: organizations.id })
+          await tx
+            .insert(organizations)
+            .values({ name: clientName })
+            .returning({ id: organizations.id })
         )[0]?.id;
       if (!orgId) throw new Error("Failed to resolve client organization");
 
@@ -109,11 +134,14 @@ export async function POST(req: NextRequest) {
         .values({
           organizationId: orgId,
           title,
-          description: caseStudyFields.challenge,
+          description: caseStudyFields.challenge || "Case Study",
           status: "completed",
           isPublic: true,
+          caseStudyStatus: "published",
+          publishedAt: new Date(),
           clientName,
-          ...caseStudyFields,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ...(caseStudyFields as any),
         })
         .returning();
 
