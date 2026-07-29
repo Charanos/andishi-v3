@@ -7,17 +7,12 @@
  * - Single Flagship Spotlight Hero Card at top of page (index 0)
  * - Perfectly uniform 3-column grid for all subsequent projects
  * - Pill-based filter tabs (Service & Industry) with live counts
- * - Decarding mobile responsive layout (clean borders, no heavy shadows)
- * - Ultra-clean monochrome editorial styling (no neon color splashes)
- * - GSAP entrance animations & Framer Motion transitions
+ * - Exact Decarding technique on Mobile (list style border-b), Full Glass Cards on Desktop
+ * - Ultra-clean monochrome editorial styling (no sparkles, no neon color splashes)
+ * - Power3 GSAP entrance animations & custom cursor hover cues
  */
 
-import {
-  IconArrowRight,
-  IconChevronLeft,
-  IconChevronRight,
-  IconSparkles,
-} from "@tabler/icons-react";
+import { IconArrowRight, IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { gsap } from "gsap";
 import Image from "next/image";
@@ -219,14 +214,22 @@ export function WorkPageExperience() {
     return filteredProjects.slice(start, start + itemsPerPage);
   }, [filteredProjects, currentPage]);
 
-  // GSAP stagger entrance for cards
+  // Refined Power3 GSAP entrance animations
   useEffect(() => {
     if (!gridRef.current || paginatedProjects.length === 0) return;
     const ctx = gsap.context(() => {
       gsap.fromTo(
         ".work-card",
-        { opacity: 0, y: 28 },
-        { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: "power2.out", delay: 0.05 },
+        { opacity: 0, y: 32, scale: 0.98 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.6,
+          stagger: 0.07,
+          ease: "power3.out",
+          delay: 0.04,
+        },
       );
     }, gridRef);
     return () => ctx.revert();
@@ -250,7 +253,7 @@ export function WorkPageExperience() {
       <CustomCursorRegion className="relative isolate">
         <PatternTexture opacity={0.04} />
 
-        {/* Subtle top glow */}
+        {/* Subtle top background glow */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,color-mix(in_srgb,var(--surface-high)_12%,transparent),transparent)]"
@@ -420,7 +423,7 @@ export function WorkPageExperience() {
                   ref={gridRef}
                   key={`${activeService}-${activeVertical}-${currentPage}`}
                   className={cn(
-                    "flex flex-col gap-8",
+                    "flex flex-col gap-8 md:gap-8",
                     loading && "opacity-30 pointer-events-none transition-opacity duration-200",
                   )}
                 >
@@ -430,7 +433,7 @@ export function WorkPageExperience() {
                   )}
 
                   {/* 2. PERFECTLY UNIFORM 3-COLUMN GRID (All other projects) */}
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-0 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-6">
                     {(currentPage === 1 ? paginatedProjects.slice(1) : paginatedProjects).map(
                       (project, index) => (
                         <UniformProjectCard
@@ -469,13 +472,15 @@ function FlagshipHeroCard({ project, index }: { project: WorkProject; index: num
     <article className="work-card w-full">
       <Link
         href={`/work/${project.id}`}
-        data-cursor-text="EXPLORE"
+        data-cursor-text="CASE STUDY"
         className={cn(
           "group/flagship block w-full overflow-hidden text-left transition-all duration-500 ease-out",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--on-surface)]",
-          "rounded-[2rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-6 sm:p-8 backdrop-blur-xl",
-          "hover:border-[color-mix(in_srgb,var(--on-surface)_30%,transparent)] hover:shadow-[0_24px_64px_rgba(0,0,0,0.12)]",
-          "max-md:!rounded-none max-md:!border-x-0 max-md:!border-t-0 max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] max-md:!bg-transparent max-md:!shadow-none max-md:!px-0 max-md:!py-8",
+          // Desktop: Rich Glass Card Container
+          "md:rounded-[2rem] md:border md:border-[var(--glass-border)] md:bg-[var(--glass-bg)] md:p-7 lg:p-9 md:backdrop-blur-xl md:shadow-[var(--glass-inner-shadow)]",
+          "md:hover:border-[color-mix(in_srgb,var(--on-surface)_30%,transparent)] md:hover:shadow-[0_24px_64px_rgba(0,0,0,0.12)]",
+          // Mobile: Decarding (border bottom list divider, no glass)
+          "max-md:!rounded-none max-md:!border-x-0 max-md:!border-t-0 max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!px-0 max-md:!py-8 max-md:!translate-y-0",
         )}
       >
         <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
@@ -491,10 +496,10 @@ function FlagshipHeroCard({ project, index }: { project: WorkProject; index: num
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-            {/* Badges */}
+            {/* Pulsing Dot Badge */}
             <div className="absolute left-4 top-4 flex items-center gap-2">
-              <span className="flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 px-3 py-1 font-mono text-[0.68rem] text-white backdrop-blur-md">
-                <IconSparkles size={13} />
+              <span className="flex items-center gap-2 rounded-full border border-white/20 bg-black/60 px-3 py-1 font-mono text-[0.68rem] text-white backdrop-blur-md">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span>FLAGSHIP CASE STUDY</span>
               </span>
             </div>
@@ -530,9 +535,9 @@ function FlagshipHeroCard({ project, index }: { project: WorkProject; index: num
                 {project.metrics.slice(0, 4).map((m) => (
                   <div
                     key={m.label}
-                    className="rounded-xl border border-[var(--glass-border)] bg-[var(--surface-high)] p-3.5"
+                    className="rounded-xl border border-[var(--glass-border)] bg-[var(--surface-high)] p-3.5 max-md:bg-transparent"
                   >
-                    <p className="font-mono text-[1.25rem] font-medium text-[var(--on-surface)]">
+                    <p className="font-mono text-[1.2rem] font-medium text-[var(--on-surface)]">
                       {m.value}
                     </p>
                     <p className="font-mono text-[0.65rem] uppercase tracking-wider text-[var(--on-surface-dim)] opacity-80 mt-1">
@@ -547,7 +552,7 @@ function FlagshipHeroCard({ project, index }: { project: WorkProject; index: num
                 {project.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-lg border border-[var(--outline)] bg-[var(--surface-high)] px-2.5 py-1 font-mono text-[0.72rem] text-[var(--on-surface-dim)]"
+                    className="rounded-lg border border-[var(--outline)] bg-[var(--surface-high)] px-2.5 py-1 font-mono text-[0.72rem] text-[var(--on-surface-dim)] max-md:bg-transparent"
                   >
                     {tag}
                   </span>
@@ -556,7 +561,7 @@ function FlagshipHeroCard({ project, index }: { project: WorkProject; index: num
             </div>
 
             {/* Read CTA */}
-            <div className="flex items-center gap-2 pt-4 border-t border-[var(--glass-border)] text-[0.88rem] font-medium text-[var(--on-surface)] group-hover/flagship:translate-x-1 transition-transform">
+            <div className="flex items-center gap-2 pt-4 border-t border-[var(--glass-border)] text-[0.88rem] font-medium text-[var(--on-surface)] group-hover/flagship:translate-x-1 transition-transform max-md:border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)]">
               <span>Read Full Case Study</span>
               <IconArrowRight size={16} />
             </div>
@@ -576,17 +581,19 @@ function UniformProjectCard({ index, project }: { index: number; project: WorkPr
     <article className="work-card flex h-full">
       <Link
         href={`/work/${project.id}`}
-        data-cursor-text="VIEW"
+        data-cursor-text="EXPLORE"
         className={cn(
           "group/card flex w-full flex-col overflow-hidden text-left transition-all duration-500 ease-out",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--on-surface)]",
-          "rounded-[1.5rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-md",
-          "hover:border-[color-mix(in_srgb,var(--on-surface)_30%,transparent)] hover:-translate-y-1 hover:shadow-[0_18px_48px_rgba(0,0,0,0.08)]",
-          "max-md:!rounded-none max-md:!border-x-0 max-md:!border-t-0 max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:!bg-transparent max-md:!shadow-none max-md:!py-8 max-md:!translate-y-0",
+          // Desktop: Full Rich Glass Card
+          "md:rounded-[1.75rem] md:border md:border-[var(--glass-border)] md:bg-[var(--glass-bg)] md:p-6 md:backdrop-blur-md md:shadow-[var(--glass-inner-shadow)]",
+          "md:hover:border-[color-mix(in_srgb,var(--on-surface)_30%,transparent)] md:hover:-translate-y-1 md:hover:shadow-[0_18px_48px_rgba(0,0,0,0.08)]",
+          // Mobile: Decarding (border-bottom list item, no glass)
+          "max-md:!rounded-none max-md:!border-x-0 max-md:!border-t-0 max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!px-0 max-md:!py-8 max-md:last:!border-b-0 max-md:!translate-y-0",
         )}
       >
         {/* Artwork */}
-        <div className="relative aspect-[16/10] w-full overflow-hidden max-md:rounded-xl">
+        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl md:rounded-[1.25rem]">
           <Image
             src={project.image}
             alt={`${project.title} preview`}
@@ -615,8 +622,8 @@ function UniformProjectCard({ index, project }: { index: number; project: WorkPr
         </div>
 
         {/* Content Body */}
-        <div className="flex flex-col flex-1 p-5 max-md:px-0 max-md:pt-4">
-          <p className="line-clamp-3 text-[0.88rem] text-[var(--on-surface-dim)] leading-[1.65] mb-4">
+        <div className="flex flex-col flex-1 max-md:pt-4">
+          <p className="line-clamp-3 text-[0.88rem] text-[var(--on-surface-dim)] leading-[1.65] mb-4 font-normal">
             {project.description}
           </p>
 
@@ -625,7 +632,7 @@ function UniformProjectCard({ index, project }: { index: number; project: WorkPr
             {project.tags.slice(0, 4).map((tag) => (
               <span
                 key={tag}
-                className="rounded-md border border-[var(--outline)] bg-[var(--surface-high)] px-2 py-0.5 font-mono text-[0.68rem] text-[var(--on-surface-dim)]"
+                className="rounded-md border border-[var(--outline)] bg-[var(--surface-high)] px-2 py-0.5 font-mono text-[0.68rem] text-[var(--on-surface-dim)] max-md:bg-transparent"
               >
                 {tag}
               </span>
@@ -633,7 +640,7 @@ function UniformProjectCard({ index, project }: { index: number; project: WorkPr
           </div>
 
           {/* Footer Metric Row */}
-          <div className="flex items-center justify-between pt-4 border-t border-[var(--glass-border)]">
+          <div className="flex items-center justify-between pt-4 border-t border-[var(--glass-border)] max-md:border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)]">
             <div>
               <p className="font-mono text-[0.95rem] font-medium text-[var(--on-surface)]">
                 {project.metric}
