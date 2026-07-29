@@ -5,14 +5,20 @@
  *
  * Flagship production-grade /work listing page experience:
  * - Single Flagship Spotlight Hero Card at top of page (index 0)
- * - Perfectly uniform 3-column grid for all subsequent projects
- * - Pill-based filter tabs (Service & Industry) with live counts
- * - Exact Decarding technique on Mobile (list style border-b), Full Glass Cards on Desktop
- * - Ultra-clean monochrome editorial styling (no sparkles, no neon color splashes)
+ * - Perfectly uniform 3-column grid with clean editorial typography (Title below image)
+ * - Ultra-sleek Dropdown Popover package for Service & Industry filtering
+ * - Exact Decarding technique on Mobile, Full Glass Cards on Desktop
  * - Power3 GSAP entrance animations & custom cursor hover cues
  */
 
-import { IconArrowRight, IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import {
+  IconArrowRight,
+  IconChevronDown,
+  IconChevronLeft,
+  IconChevronRight,
+  IconCheck,
+  IconX,
+} from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { gsap } from "gsap";
 import Image from "next/image";
@@ -38,7 +44,7 @@ function formatIndex(n: number) {
 
 const serviceFilters = [
   { label: "All Services", value: "all" },
-  { label: "Web Apps", value: "custom-software" },
+  { label: "Web Applications", value: "custom-software" },
   { label: "SaaS Platforms", value: "saas-development" },
   { label: "Mobile Apps", value: "mobile-apps" },
   { label: "AI Systems", value: "ai-systems" },
@@ -53,7 +59,7 @@ const verticalFilters = [
   { label: "EdTech", value: "edtech" },
   { label: "Logistics", value: "logistics" },
   { label: "SaaS", value: "saas" },
-  { label: "Retail", value: "retail" },
+  { label: "Retail / Commerce", value: "retail" },
 ] as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -72,6 +78,113 @@ function PatternTexture({ opacity = 0.04 }: { opacity?: number }) {
         backgroundSize: "34px 34px",
       }}
     />
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Custom High-Craft Filter Dropdown Popover Component
+// ─────────────────────────────────────────────────────────────────────────────
+
+function FilterDropdown({
+  label,
+  options,
+  value,
+  onChange,
+  counts,
+}: {
+  label: string;
+  options: readonly { label: string; value: string }[];
+  value: string;
+  onChange: (val: string) => void;
+  counts: (val: string) => number;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const selectedOption = options.find((o) => o.value === value) || options[0];
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          "flex w-full sm:w-auto items-center justify-between gap-3 rounded-full border px-4 py-2 text-[0.8rem] font-medium transition-all duration-200",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--on-surface)]",
+          value !== "all"
+            ? "border-[var(--on-surface)] bg-[var(--on-surface)] text-[var(--bg)] shadow-md"
+            : "border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)]",
+        )}
+      >
+        <span className="flex items-center gap-1.5 truncate">
+          <span className="opacity-70 font-mono text-[0.72rem] uppercase">{label}:</span>
+          <strong className="font-medium truncate">{selectedOption.label}</strong>
+        </span>
+        <IconChevronDown
+          size={15}
+          stroke={2}
+          className={cn("shrink-0 transition-transform duration-300", isOpen && "rotate-180")}
+        />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 6, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 6, scale: 0.97 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="absolute left-0 top-[calc(100%+0.5rem)] z-50 w-[270px] max-w-[90vw] overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[var(--surface-high)] p-1.5 shadow-[0_20px_50px_rgba(0,0,0,0.18)] backdrop-blur-2xl"
+          >
+            <div className="max-h-[320px] overflow-y-auto no-scrollbar">
+              {options.map((option) => {
+                const isActive = option.value === value;
+                const count = counts(option.value);
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => {
+                      onChange(option.value);
+                      setIsOpen(false);
+                    }}
+                    className={cn(
+                      "flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-left text-[0.82rem] font-medium transition-all duration-150",
+                      isActive
+                        ? "bg-[var(--on-surface)] text-[var(--bg)]"
+                        : "text-[var(--on-surface-dim)] hover:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] hover:text-[var(--on-surface)]",
+                    )}
+                  >
+                    <span className="flex items-center gap-2 truncate">
+                      {isActive && <IconCheck size={14} className="shrink-0" />}
+                      <span className="truncate">{option.label}</span>
+                    </span>
+                    <span
+                      className={cn(
+                        "font-mono text-[0.68rem] ml-2 shrink-0",
+                        isActive ? "opacity-90" : "opacity-50",
+                      )}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -248,6 +361,8 @@ export function WorkPageExperience() {
     return pool.filter((p) => p.sector === val).length;
   };
 
+  const hasActiveFilters = activeService !== "all" || activeVertical !== "all";
+
   return (
     <main className="relative isolate overflow-visible bg-[var(--bg)]">
       <CustomCursorRegion className="relative isolate">
@@ -261,7 +376,7 @@ export function WorkPageExperience() {
 
         <div className="relative z-[1] flex w-full flex-col pb-24 pt-28 lg:pt-32">
           {/* ── Hero Section ─────────────────────────────────────────── */}
-          <section ref={heroRef} className="w-full px-5 sm:px-8 lg:px-10 mb-10">
+          <section ref={heroRef} className="w-full px-5 sm:px-8 lg:px-10 mb-8">
             <div className="mx-auto w-full max-w-[92rem]">
               {/* Eyebrow */}
               <motion.p
@@ -327,63 +442,54 @@ export function WorkPageExperience() {
             </div>
           </section>
 
-          {/* ── Filter Bar ─────────────────────────────────────────────── */}
-          <div className="sticky top-[4.5rem] z-[40] w-full border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_88%,transparent)] px-5 py-3.5 backdrop-blur-xl sm:px-8 lg:px-10 mb-10">
-            <div className="mx-auto flex w-full max-w-[92rem] flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-              {/* Service filter pills */}
-              <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto no-scrollbar">
-                {serviceFilters.map((filter) => {
-                  const count = countForService(filter.value);
-                  const isActive = activeService === filter.value;
-                  return (
-                    <button
-                      key={filter.value}
-                      type="button"
-                      onClick={() => {
-                        setActiveService(filter.value);
-                        setCurrentPage(1);
-                      }}
-                      className={cn(
-                        "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 font-mono text-[0.75rem] transition-all duration-200 whitespace-nowrap shrink-0",
-                        isActive
-                          ? "border-[var(--on-surface)] bg-[var(--on-surface)] text-[var(--bg)] font-medium"
-                          : "border-[var(--glass-border)] bg-transparent text-[var(--on-surface-dim)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)]",
-                      )}
-                    >
-                      {filter.label}
-                      <span className={cn("text-[0.65rem] opacity-60", isActive && "opacity-80")}>
-                        {count}
-                      </span>
-                    </button>
-                  );
-                })}
+          {/* ── High-Craft Compact Filter Trigger Bar ─────────────────── */}
+          <div className="sticky top-[4rem] sm:top-[4.5rem] z-[40] w-full border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_92%,transparent)] px-5 py-3 backdrop-blur-xl sm:px-8 lg:px-10 mb-10">
+            <div className="mx-auto flex w-full max-w-[92rem] items-center justify-between gap-4">
+              {/* Trigger Bar: 2 compact dropdown popovers */}
+              <div className="grid grid-cols-2 sm:flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                <FilterDropdown
+                  label="Service"
+                  options={serviceFilters}
+                  value={activeService}
+                  onChange={(val) => {
+                    setActiveService(val);
+                    setCurrentPage(1);
+                  }}
+                  counts={countForService}
+                />
+
+                <FilterDropdown
+                  label="Industry"
+                  options={verticalFilters}
+                  value={activeVertical}
+                  onChange={(val) => {
+                    setActiveVertical(val);
+                    setCurrentPage(1);
+                  }}
+                  counts={countForVertical}
+                />
               </div>
 
-              {/* Vertical filter pills */}
-              <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto no-scrollbar lg:justify-end">
-                {verticalFilters.map((filter) => {
-                  const count = countForVertical(filter.value);
-                  const isActive = activeVertical === filter.value;
-                  return (
-                    <button
-                      key={filter.value}
-                      type="button"
-                      onClick={() => {
-                        setActiveVertical(filter.value);
-                        setCurrentPage(1);
-                      }}
-                      className={cn(
-                        "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 font-mono text-[0.75rem] transition-all duration-200 whitespace-nowrap shrink-0",
-                        isActive
-                          ? "border-[var(--on-surface)] bg-[var(--on-surface)] text-[var(--bg)] font-medium"
-                          : "border-[var(--glass-border)] bg-transparent text-[var(--on-surface-dim)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)]",
-                      )}
-                    >
-                      {filter.label}
-                      <span className="text-[0.65rem] opacity-60">{count}</span>
-                    </button>
-                  );
-                })}
+              {/* Counter & Reset Filter Trigger */}
+              <div className="hidden sm:flex items-center gap-3 shrink-0">
+                <span className="font-mono text-[0.75rem] text-[var(--on-surface-dim)]">
+                  Showing <strong>{filteredProjects.length}</strong> project
+                  {filteredProjects.length !== 1 ? "s" : ""}
+                </span>
+
+                {hasActiveFilters && (
+                  <button
+                    onClick={() => {
+                      setActiveService("all");
+                      setActiveVertical("all");
+                      setCurrentPage(1);
+                    }}
+                    className="inline-flex items-center gap-1 rounded-full border border-[var(--glass-border)] bg-[var(--surface-high)] px-3 py-1 font-mono text-[0.7rem] text-[var(--on-surface-dim)] hover:text-[var(--on-surface)] transition-colors"
+                  >
+                    <IconX size={12} />
+                    <span>Reset</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -408,6 +514,7 @@ export function WorkPageExperience() {
                       onClick={() => {
                         setActiveService("all");
                         setActiveVertical("all");
+                        setCurrentPage(1);
                       }}
                       className="mt-4 font-mono text-[0.82rem] text-[var(--on-surface)] underline underline-offset-4"
                     >
@@ -423,7 +530,7 @@ export function WorkPageExperience() {
                   ref={gridRef}
                   key={`${activeService}-${activeVertical}-${currentPage}`}
                   className={cn(
-                    "flex flex-col gap-8 md:gap-8",
+                    "flex flex-col gap-8 md:gap-10",
                     loading && "opacity-30 pointer-events-none transition-opacity duration-200",
                   )}
                 >
@@ -573,7 +680,7 @@ function FlagshipHeroCard({ project, index }: { project: WorkProject; index: num
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Uniform 3-Column Project Card (For all other items)
+// Uniform 3-Column Editorial Project Card
 // ─────────────────────────────────────────────────────────────────────────────
 
 function UniformProjectCard({ index, project }: { index: number; project: WorkProject }) {
@@ -585,54 +692,57 @@ function UniformProjectCard({ index, project }: { index: number; project: WorkPr
         className={cn(
           "group/card flex w-full flex-col overflow-hidden text-left transition-all duration-500 ease-out",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--on-surface)]",
-          // Desktop: Full Rich Glass Card
-          "md:rounded-[1.75rem] md:border md:border-[var(--glass-border)] md:bg-[var(--glass-bg)] md:p-6 md:backdrop-blur-md md:shadow-[var(--glass-inner-shadow)]",
-          "md:hover:border-[color-mix(in_srgb,var(--on-surface)_30%,transparent)] md:hover:-translate-y-1 md:hover:shadow-[0_18px_48px_rgba(0,0,0,0.08)]",
+          // Desktop: High-Craft Glass Card Container
+          "md:rounded-[1.75rem] md:border md:border-[var(--glass-border)] md:bg-[var(--glass-bg)] md:p-5 md:backdrop-blur-xl md:shadow-[var(--glass-inner-shadow)]",
+          "md:hover:border-[color-mix(in_srgb,var(--on-surface)_35%,transparent)] md:hover:-translate-y-1.5 md:hover:shadow-[0_22px_56px_rgba(0,0,0,0.12)]",
           // Mobile: Decarding (border-bottom list item, no glass)
           "max-md:!rounded-none max-md:!border-x-0 max-md:!border-t-0 max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!px-0 max-md:!py-8 max-md:last:!border-b-0 max-md:!translate-y-0",
         )}
       >
-        {/* Artwork */}
-        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl md:rounded-[1.25rem]">
+        {/* Crisp Artwork Container */}
+        <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl border border-[var(--glass-border)] bg-[var(--bg-deep)]">
           <Image
             src={project.image}
             alt={`${project.title} preview`}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-700 group-hover/card:scale-[1.04]"
+            className="object-cover object-top transition-transform duration-700 group-hover/card:scale-[1.04]"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover/card:opacity-100" />
 
-          {/* Index & Status */}
-          <span className="absolute left-3.5 top-3.5 rounded-lg border border-white/10 bg-black/50 px-2.5 py-0.5 font-mono text-[0.65rem] text-white/90 backdrop-blur-md">
+          {/* Badges */}
+          <span className="absolute left-3 top-3 rounded-lg border border-white/15 bg-black/60 px-2.5 py-0.5 font-mono text-[0.65rem] text-white backdrop-blur-md">
             {formatIndex(index)}
           </span>
 
-          <span className="absolute right-3.5 top-3.5 rounded-full border border-white/10 bg-black/50 px-2.5 py-0.5 font-mono text-[0.65rem] text-white/90 backdrop-blur-md">
+          <span className="absolute right-3 top-3 rounded-full border border-white/15 bg-black/60 px-2.5 py-0.5 font-mono text-[0.65rem] text-white backdrop-blur-md">
             {project.status}
           </span>
-
-          {/* Title overlayed on image */}
-          <div className="absolute bottom-0 left-0 w-full p-4">
-            <p className="font-mono text-[0.65rem] uppercase tracking-widest text-white/70 mb-1">
-              {project.sectorLabel}
-            </p>
-            <h3 className="text-[1.15rem] font-medium text-white leading-tight">{project.title}</h3>
-          </div>
         </div>
 
-        {/* Content Body */}
-        <div className="flex flex-col flex-1 max-md:pt-4">
-          <p className="line-clamp-3 text-[0.88rem] text-[var(--on-surface-dim)] leading-[1.65] mb-4 font-normal">
+        {/* Content Body Below Image */}
+        <div className="flex flex-col flex-1 pt-5 max-md:pt-4">
+          {/* Eyebrow & Title */}
+          <div className="mb-2">
+            <span className="font-mono text-[0.68rem] uppercase tracking-widest text-[var(--on-surface-dim)] block mb-1">
+              {project.sectorLabel}
+            </span>
+            <h3 className="title-serif text-[1.35rem] font-normal text-[var(--on-surface)] leading-snug group-hover/card:text-[var(--on-surface)] transition-colors">
+              {project.title}
+            </h3>
+          </div>
+
+          {/* Description */}
+          <p className="line-clamp-2 text-[0.88rem] text-[var(--on-surface-dim)] leading-relaxed mb-5 font-normal">
             {project.description}
           </p>
 
           {/* Stack Tags */}
-          <div className="flex flex-wrap gap-1.5 mt-auto mb-4">
+          <div className="flex flex-wrap gap-1.5 mt-auto mb-5">
             {project.tags.slice(0, 4).map((tag) => (
               <span
                 key={tag}
-                className="rounded-md border border-[var(--outline)] bg-[var(--surface-high)] px-2 py-0.5 font-mono text-[0.68rem] text-[var(--on-surface-dim)] max-md:bg-transparent"
+                className="rounded-lg border border-[var(--outline)] bg-[var(--surface-high)] px-2.5 py-0.5 font-mono text-[0.7rem] text-[var(--on-surface-dim)] max-md:bg-transparent"
               >
                 {tag}
               </span>
@@ -642,16 +752,19 @@ function UniformProjectCard({ index, project }: { index: number; project: WorkPr
           {/* Footer Metric Row */}
           <div className="flex items-center justify-between pt-4 border-t border-[var(--glass-border)] max-md:border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)]">
             <div>
-              <p className="font-mono text-[0.95rem] font-medium text-[var(--on-surface)]">
+              <p className="font-mono text-[1.05rem] font-medium text-[var(--on-surface)]">
                 {project.metric}
               </p>
-              <p className="font-mono text-[0.62rem] uppercase tracking-wider text-[var(--on-surface-dim)] opacity-70 mt-0.5">
+              <p className="font-mono text-[0.64rem] uppercase tracking-wider text-[var(--on-surface-dim)] opacity-70 mt-0.5">
                 {project.metricLabel}
               </p>
             </div>
 
-            <span className="grid h-8 w-8 place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] transition-all group-hover/card:border-[var(--on-surface)] group-hover/card:text-[var(--on-surface)]">
-              <IconArrowRight size={14} className="-rotate-45" />
+            <span className="grid h-9 w-9 place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--surface-high)] text-[var(--on-surface-dim)] transition-all duration-300 group-hover/card:border-[var(--on-surface)] group-hover/card:bg-[var(--on-surface)] group-hover/card:text-[var(--bg)]">
+              <IconArrowRight
+                size={15}
+                className="-rotate-45 transition-transform group-hover/card:rotate-0"
+              />
             </span>
           </div>
         </div>
