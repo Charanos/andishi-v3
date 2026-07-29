@@ -206,7 +206,7 @@ function RoleDropdown({
 // Production-Grade Engineer Card Component
 // ─────────────────────────────────────────────────────────────────────────────
 
-function EngineerCard({ engineer, index }: { engineer: Engineer; index: number }) {
+function EngineerCard({ engineer }: { engineer: Engineer }) {
   const availableNow = engineer.availability === "now";
 
   return (
@@ -579,8 +579,8 @@ export function EngineersPageExperience({ engineers }: { engineers: Engineer[] }
                   key={`${activeRole}-${availableOnly}-${search}`}
                   className="grid grid-cols-1 gap-0 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-6"
                 >
-                  {filteredEngineers.map((engineer, index) => (
-                    <EngineerCard key={engineer.slug} engineer={engineer} index={index} />
+                  {filteredEngineers.map((engineer) => (
+                    <EngineerCard key={engineer.slug} engineer={engineer} />
                   ))}
                 </div>
               )}

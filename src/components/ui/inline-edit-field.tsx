@@ -13,7 +13,7 @@
  * - Screen readers: aria-label describes the edit action
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { IconPencil, IconCheck, IconX } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 

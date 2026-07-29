@@ -4,19 +4,24 @@
  * src/components/marketing/case-study-experience.tsx
  *
  * Flagship full-page case study experience for /work/[slug].
- * High-craft editorial layout matching service-detail-experience standards:
- * - Ultra-clean monochrome editorial styling (no neon color splashes)
- * - Zero-redundancy Bento Overview combining Problem Context & Architectural Deliverables
- * - Recharts metric visualization with clean monochrome numbers
- * - Photobox showcase with full-screen interactive lightbox modal
- * - Standard max-w-[92rem] container width across all sections
+ * Production-grade fluid editorial document layout:
+ * - Uncarded cinematic hero directly on page surface
+ * - Top navigation bar with left-aligned back link & status badges for visual harmony with site navbar
+ * - Interactive Hero Photobox Carousel showcase (slides through all project images with prev/next controls & lightbox modal)
+ * - Stat strip divider showcasing key outcome metrics with clean font-mono styling (no dotted lines)
+ * - Fluid editorial document structure with hairline dividers (no blocky card soup)
+ * - Numbered engineering process timeline with node indicators
+ * - Clean feature breakdown & masonry image gallery
+ * - Recharts metric curve visualization with interactive Tooltips
+ * - Sticky sidebar info column with tech stack summary & quick CTAs
+ * - Bottom CTA section with signature FinalCtaArtwork background graphics
  * - Full admin inline-edit compatibility (isAdmin=true)
  */
 
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useRef, useState, useSyncExternalStore } from "react";
-import { motion, useReducedMotion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import {
@@ -26,11 +31,12 @@ import {
   IconBrandGithub,
   IconBrandWhatsapp,
   IconQuote,
-  IconCode,
   IconCalendar,
   IconTrash,
   IconChevronUp,
   IconChevronDown,
+  IconChevronLeft,
+  IconChevronRight,
   IconCheck,
   IconChartBar,
   IconTerminal2,
@@ -40,6 +46,7 @@ import {
   IconTarget,
   IconCpu,
   IconLayersIntersect,
+  IconShieldCheck,
 } from "@tabler/icons-react";
 import {
   ResponsiveContainer,
@@ -50,10 +57,7 @@ import {
   Tooltip as RechartsTooltip,
 } from "recharts";
 
-import { GlassCard } from "@/components/ui/glass-card";
-import { LinkButton } from "@/components/ui/button";
 import { CustomCursorRegion } from "@/components/ui/custom-cursor-region";
-import { SectionHeading } from "@/components/ui/section-heading";
 import { Tooltip } from "@/components/ui/tooltip";
 import { InlineEditField } from "@/components/ui/inline-edit-field";
 import { ImageUploadZone } from "@/components/ui/image-upload-zone";
@@ -61,8 +65,9 @@ import { ToastProvider, useToast } from "@/components/ui/toast-provider";
 import { CaseStudyGallery } from "@/components/marketing/case-study-gallery";
 import { CaseStudyShareBar } from "@/components/marketing/case-study-share-bar";
 import { CaseStudyAdminBar, type SaveStatus } from "@/components/marketing/case-study-admin-bar";
+import { FinalCtaArtwork } from "@/components/ui/final-cta-artwork";
 
-import { cosmicSpring, stagger, fadeUp } from "@/lib/motion";
+import { cosmicSpring } from "@/lib/motion";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { cn } from "@/lib/utils";
 import type { CaseStudyProject, CaseStudyResultMetric } from "@/types/case-study";
@@ -104,52 +109,6 @@ function PatternTexture({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Scroll-reveal wrapper
-// ─────────────────────────────────────────────────────────────────────────────
-
-function Reveal({
-  children,
-  delay = 0,
-  className,
-}: {
-  children: React.ReactNode;
-  delay?: number;
-  className?: string;
-}) {
-  const prefersReducedMotion = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={prefersReducedMotion ? {} : { opacity: 0, y: 24 }}
-      animate={prefersReducedMotion ? {} : inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ ...cosmicSpring, delay }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Section separator
-// ─────────────────────────────────────────────────────────────────────────────
-
-function SectionSep() {
-  return (
-    <div
-      aria-hidden="true"
-      className="my-16 h-px w-full"
-      style={{
-        background: "linear-gradient(90deg, transparent, var(--section-divider) 50%, transparent)",
-      }}
-    />
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // Recharts Data Viz Component
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -178,12 +137,12 @@ function CaseStudyMetricsChart({ results }: { results: CaseStudyResultMetric[] }
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <IconChartBar size={18} className="text-[var(--on-surface-dim)]" />
-          <h4 className="font-mono text-[0.75rem] uppercase tracking-widest text-[var(--on-surface-dim)]">
+          <h4 className="font-mono text-[0.75rem] uppercase tracking-widest text-[var(--on-surface-dim)] font-medium">
             Impact Curve & Performance Data
           </h4>
         </div>
         <span className="rounded-full border border-[var(--outline)] bg-[var(--surface-high)] px-3 py-1 font-mono text-[0.68rem] text-[var(--on-surface-dim)]">
-          Recharts Verified
+          Verified Performance
         </span>
       </div>
       <div className="h-[240px] w-full">
@@ -270,15 +229,31 @@ function useAutosave(projectId: string | null) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Inner component (needs toast context)
+// Inner Component
 // ─────────────────────────────────────────────────────────────────────────────
 
-function CaseStudyExperienceInner({ project, related, isAdmin, projectId }: Props) {
+function CaseStudyExperienceInner({ project, isAdmin, projectId }: Props) {
   const prefersReducedMotion = useReducedMotion();
   const heroRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { saveStatus, save } = useAutosave(projectId ?? null);
+
+  // Collect all images for the Photobox Carousel & Lightbox
+  const allImages = [
+    { url: project.coverImageUrl, title: `${project.title} — Main Overview` },
+    ...project.gallery.map((g) => ({ url: g.url, title: g.alt || `${project.title} preview` })),
+  ];
+
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlideIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+  }, [allImages.length]);
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlideIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+  }, [allImages.length]);
 
   // GSAP parallax on hero artwork
   useGSAP(
@@ -287,7 +262,7 @@ function CaseStudyExperienceInner({ project, related, isAdmin, projectId }: Prop
       const img = heroRef.current.querySelector(".hero-parallax-img");
       if (!img) return;
       gsap.to(img, {
-        y: "12%",
+        y: "10%",
         ease: "none",
         scrollTrigger: {
           trigger: heroRef.current,
@@ -338,14 +313,14 @@ function CaseStudyExperienceInner({ project, related, isAdmin, projectId }: Prop
     }
   }, [projectId, toast]);
 
-  // Curated WhatsApp intro message
+  // WhatsApp CTA
   const whatsappUrl = buildWhatsAppUrl(project.sector, {
     context: `case study: ${project.title} (${project.sectorLabel})`,
   });
 
   return (
     <CustomCursorRegion className="min-h-screen pb-24">
-      {/* ── Admin Bar ────────────────────────────────────────────────────── */}
+      {/* Admin Control Bar */}
       {isAdmin && projectId && (
         <CaseStudyAdminBar
           projectTitle={project.title}
@@ -356,82 +331,78 @@ function CaseStudyExperienceInner({ project, related, isAdmin, projectId }: Prop
         />
       )}
 
-      {/* ════════════════════════════════════════════════════════════════════
-          § 1  CINEMATIC HERO (Crisp Cover + Dual Column Grid + Photobox)
-          ════════════════════════════════════════════════════════════════════ */}
-      <div ref={heroRef} className="relative w-full overflow-hidden bg-[var(--bg)]">
-        {/* Subtle background cover image overlay */}
-        {project.coverImageUrl && (
-          <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-            <Image
-              src={project.coverImageUrl}
-              alt=""
-              fill
-              priority
-              className="hero-parallax-img object-cover object-top opacity-[0.05] transition-opacity"
-              sizes="100vw"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg)]/80 via-[var(--bg)]/95 to-[var(--bg)]" />
-          </div>
-        )}
-
+      <main className="relative isolate overflow-visible bg-[var(--bg)]">
         <PatternTexture opacity={0.03} />
 
-        <div className="relative z-[1] px-5 pb-16 pt-28 sm:px-8 lg:px-10 lg:pt-32">
-          <div className="mx-auto w-full max-w-[92rem]">
-            {/* Top Breadcrumb Navigation */}
-            <motion.div
-              initial={{ opacity: 0, x: -12 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ ...cosmicSpring, delay: 0.04 }}
-              className="mb-8"
-            >
-              <Link
-                href="/work"
-                className="inline-flex items-center gap-1.5 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3.5 py-1.5 font-mono text-[0.78rem] text-[var(--on-surface-dim)] backdrop-blur-xl transition-all duration-200 hover:text-[var(--on-surface)] hover:border-[var(--on-surface)]"
-              >
-                <IconArrowLeft size={13} stroke={1.7} aria-hidden="true" />
-                All work
-              </Link>
-            </motion.div>
+        {/* Ambient Top Glow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,color-mix(in_srgb,var(--surface-high)_12%,transparent),transparent)]"
+        />
 
-            {/* Hero Main Grid */}
-            <motion.header
-              variants={stagger}
-              initial="hidden"
-              animate="visible"
-              className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center"
+        <div className="relative z-[1] mx-auto w-full max-w-[92rem] px-5 sm:px-8 lg:px-10 pb-24 pt-28 lg:pt-32">
+          {/* Top Bar: Back Link & Status Badges (Left-Aligned for Navbar Visual Harmony) */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={cosmicSpring}
+            className="flex flex-wrap items-center gap-3 mb-10"
+          >
+            <Link
+              href="/work"
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-1.5 font-mono text-[0.78rem] text-[var(--on-surface-dim)] backdrop-blur-xl transition-all duration-300 hover:border-[var(--on-surface)] hover:text-[var(--on-surface)]"
             >
-              {/* Left Column: Eyebrow, Title, Tagline, Stack Metadata & Action CTAs */}
-              <div>
-                {/* Eyebrow Line */}
+              <IconArrowLeft size={14} />
+              <span>Back to work index</span>
+            </Link>
+
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-950 px-3.5 py-1 font-mono text-[0.7rem] uppercase tracking-wider text-emerald-200 shadow-sm dark:bg-emerald-950/80 dark:text-emerald-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              {project.status.toUpperCase()}
+            </span>
+
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--glass-border)] bg-[var(--surface-high)] px-3.5 py-1 font-mono text-[0.68rem] uppercase tracking-wider text-[var(--on-surface-dim)]">
+              {project.sectorLabel}
+            </span>
+          </motion.div>
+
+          {/* ── Uncarded Cinematic Hero Section ───────────────────────────── */}
+          <div ref={heroRef} className="w-full mb-12">
+            <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+              {/* Left Column (7 cols): Narrative & Metadata */}
+              <div className="lg:col-span-7">
                 <motion.p
-                  variants={fadeUp}
-                  className="label-caps mb-3 flex items-center gap-2.5 text-[var(--on-surface-dim)]"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ ...cosmicSpring, delay: 0.04 }}
+                  className="font-mono text-[0.75rem] uppercase tracking-widest text-[var(--on-surface-dim)] mb-3 flex items-center gap-2"
                 >
-                  <span
-                    className="h-px w-6 bg-[var(--on-surface-dim)] opacity-40"
-                    aria-hidden="true"
-                  />
+                  <span className="h-px w-6 bg-[var(--on-surface-dim)] opacity-40" />
                   {project.sectorLabel}
-                  <span className="opacity-40">•</span>
-                  <span className="inline-flex items-center gap-1 text-[var(--on-surface)] font-mono text-[0.7rem] uppercase">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                    {project.status}
-                  </span>
+                  {project.clientName && (
+                    <>
+                      <span className="opacity-40">•</span>
+                      <span>{project.clientName}</span>
+                    </>
+                  )}
                 </motion.p>
 
-                {/* Flagship Title */}
                 <motion.h1
-                  variants={fadeUp}
-                  className="title-serif text-5xl sm:text-6xl lg:text-7xl font-normal text-[var(--on-surface)] tracking-tight leading-[1.04] mb-4"
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ ...cosmicSpring, delay: 0.08 }}
+                  className="title-serif text-[clamp(3rem,6.5vw,5.2rem)] font-normal leading-[0.96] tracking-tight text-[var(--on-surface)] mb-5"
                 >
                   {project.title}
                 </motion.h1>
 
-                {/* Tagline */}
                 {isAdmin ? (
-                  <motion.div variants={fadeUp} className="mb-5">
+                  <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ ...cosmicSpring, delay: 0.12 }}
+                    className="mb-8"
+                  >
                     <InlineEditField
                       value={project.tagline ?? ""}
                       onChange={(val) => save({ tagline: val })}
@@ -439,65 +410,75 @@ function CaseStudyExperienceInner({ project, related, isAdmin, projectId }: Prop
                       mode="text"
                       placeholder="Add a one-sentence value proposition tagline…"
                       maxLength={200}
-                      readClassName="headline-sm text-[var(--on-surface-dim)] leading-relaxed"
+                      readClassName="body-md text-[1.12rem] leading-[1.65] text-[var(--on-surface-dim)] font-normal"
                     />
                   </motion.div>
                 ) : project.tagline ? (
                   <motion.p
-                    variants={fadeUp}
-                    className="mb-5 text-[1.08rem] leading-[1.6] text-[var(--on-surface-dim)] max-w-2xl font-normal"
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ ...cosmicSpring, delay: 0.12 }}
+                    className="body-md text-[1.12rem] leading-[1.65] text-[var(--on-surface-dim)] max-w-2xl font-normal mb-8"
                   >
                     {project.tagline}
                   </motion.p>
                 ) : null}
 
-                {/* Tech Stack & Key Specs Bar */}
-                <motion.div variants={fadeUp} className="my-4 flex flex-wrap items-center gap-2">
+                {/* Spec Badges */}
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ ...cosmicSpring, delay: 0.16 }}
+                  className="flex flex-wrap gap-2.5 mb-8"
+                >
                   {project.timeline && (
-                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 py-1 font-mono text-[0.75rem] text-[var(--on-surface)]">
-                      <IconCalendar size={13} className="text-[var(--on-surface-dim)]" />
-                      {project.timeline}
+                    <span className="inline-flex items-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-2 font-mono text-[0.78rem] text-[var(--on-surface-dim)] backdrop-blur-md">
+                      <IconCalendar size={14} className="text-[var(--on-surface)] opacity-80" />
+                      {project.timeline} build
                     </span>
                   )}
-
                   {project.clientName && (
-                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--glass-border)] bg-[var(--glass-bg)] px-3 py-1 font-mono text-[0.75rem] text-[var(--on-surface)]">
-                      <IconMapPin size={13} className="text-[var(--on-surface-dim)]" />
+                    <span className="inline-flex items-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-2 font-mono text-[0.78rem] text-[var(--on-surface-dim)] backdrop-blur-md">
+                      <IconMapPin size={14} className="text-[var(--on-surface)] opacity-80" />
                       {project.clientName}
                     </span>
                   )}
-
-                  {project.stackTags.slice(0, 7).map((tag) => (
+                  {project.stackTags.slice(0, 6).map((tag) => (
                     <span
                       key={tag}
-                      className="inline-flex items-center rounded-lg border border-[var(--outline)] bg-[var(--surface-high)] px-2.5 py-1 font-mono text-[0.75rem] text-[var(--on-surface-dim)]"
+                      className="inline-flex items-center rounded-xl border border-[var(--outline)] bg-[var(--surface-high)] px-3 py-2 font-mono text-[0.78rem] text-[var(--on-surface-dim)]"
                     >
                       {tag}
                     </span>
                   ))}
                 </motion.div>
 
-                {/* Primary CTAs */}
-                <motion.div variants={fadeUp} className="my-8 flex flex-wrap items-center gap-3">
-                  {/* <a
+                {/* Primary Action Buttons */}
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ ...cosmicSpring, delay: 0.2 }}
+                  className="flex flex-wrap items-center gap-3"
+                >
+                  <a
                     href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full bg-[var(--on-surface)] px-5 py-2.5 text-[0.88rem] font-medium text-[var(--bg)] shadow-[var(--cta-shadow)] hover:opacity-90 transition-all hover:scale-[1.01] cursor-pointer"
+                    className="inline-flex items-center gap-2.5 rounded-full bg-[var(--on-surface)] px-6 py-3 text-[0.88rem] font-medium text-[var(--bg)] shadow-[var(--cta-shadow)] hover:opacity-90 transition-all cursor-pointer"
                   >
-                    <IconBrandWhatsapp size={17} />
-                    <span>Start a Project</span>
-                  </a> */}
+                    <IconBrandWhatsapp size={18} />
+                    <span>Start a project like this</span>
+                  </a>
 
                   {project.liveUrl && (
                     <a
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4.5 py-2.5 text-[0.88rem] font-medium text-[var(--on-surface)] backdrop-blur-xl hover:border-[var(--on-surface)] transition-all cursor-pointer"
+                      className="inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-5 py-3 text-[0.88rem] font-medium text-[var(--on-surface)] backdrop-blur-xl hover:border-[var(--on-surface)] transition-all cursor-pointer"
                     >
-                      <IconExternalLink size={15} />
-                      <span>Live Demo</span>
+                      <IconExternalLink size={16} />
+                      <span>Live demo</span>
                     </a>
                   )}
 
@@ -506,42 +487,95 @@ function CaseStudyExperienceInner({ project, related, isAdmin, projectId }: Prop
                       href={project.repoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4.5 py-2.5 text-[0.88rem] font-medium text-[var(--on-surface)] backdrop-blur-xl hover:border-[var(--on-surface)] transition-all cursor-pointer"
+                      className="inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-5 py-3 text-[0.88rem] font-medium text-[var(--on-surface)] backdrop-blur-xl hover:border-[var(--on-surface)] transition-all cursor-pointer"
                     >
-                      <IconBrandGithub size={15} />
-                      <span>Code</span>
+                      <IconBrandGithub size={16} />
+                      <span>Source code</span>
                     </a>
                   )}
                 </motion.div>
               </div>
 
-              {/* Right Column: Photobox Showcase + Action Buttons Below */}
-              <motion.div variants={fadeUp} className="flex flex-col gap-3.5">
-                <div
-                  onClick={() => setLightboxOpen(true)}
-                  className="group relative cursor-pointer overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[var(--surface-container-low)] shadow-2xl transition-all duration-300 hover:border-[var(--on-surface)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") setLightboxOpen(true);
-                  }}
-                  aria-label="Expand case study preview image"
+              {/* Right Column (5 cols): Photobox Carousel Showcase & Share Bar */}
+              <div className="lg:col-span-5 flex flex-col gap-4">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ ...cosmicSpring, delay: 0.12 }}
+                  className="group relative overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[var(--surface-container-low)] shadow-2xl transition-all duration-500 hover:border-[var(--on-surface)]"
                 >
-                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-[var(--bg-deep)]">
-                    <Image
-                      src={project.coverImageUrl}
-                      alt={`${project.title} — Andishi case study`}
-                      fill
-                      priority
-                      className="hero-parallax-img object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                      sizes="(max-width: 1024px) 100vw, 45vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div
+                    onClick={() => setLightboxOpen(true)}
+                    className="relative aspect-[16/10] w-full cursor-pointer overflow-hidden bg-[var(--bg-deep)]"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") setLightboxOpen(true);
+                    }}
+                    aria-label="Expand case study preview image"
+                  >
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={currentSlideIndex}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.35, ease: "easeInOut" }}
+                        className="absolute inset-0"
+                      >
+                        <Image
+                          src={allImages[currentSlideIndex].url}
+                          alt={allImages[currentSlideIndex].title}
+                          fill
+                          priority={currentSlideIndex === 0}
+                          className="hero-parallax-img object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                          sizes="(max-width: 1024px) 100vw, 45vw"
+                        />
+                      </motion.div>
+                    </AnimatePresence>
 
-                    {/* Lightbox Badge Overlay */}
-                    <div className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 px-3 py-1 font-mono text-[0.72rem] text-white backdrop-blur-md transition-transform duration-300 group-hover:scale-105">
-                      <IconMaximize size={13} />
-                      <span>Expand preview</span>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+                    {/* Carousel Nav Arrows */}
+                    {allImages.length > 1 && (
+                      <div
+                        className="absolute inset-x-3 top-1/2 z-20 flex -translate-y-1/2 justify-between pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          type="button"
+                          onClick={prevSlide}
+                          className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white backdrop-blur-md transition-all hover:scale-110 hover:bg-black/80"
+                          aria-label="Previous slide"
+                        >
+                          <IconChevronLeft size={18} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={nextSlide}
+                          className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white backdrop-blur-md transition-all hover:scale-110 hover:bg-black/80"
+                          aria-label="Next slide"
+                        >
+                          <IconChevronRight size={18} />
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Lightbox & Slide Counter Badge Overlay */}
+                    <div className="absolute bottom-3 right-3 z-10 flex items-center gap-2 rounded-full border border-white/20 bg-black/60 px-3.5 py-1.5 font-mono text-[0.72rem] text-white backdrop-blur-md transition-transform duration-300 group-hover:scale-105">
+                      {allImages.length > 1 && (
+                        <>
+                          <span className="opacity-90">
+                            {String(currentSlideIndex + 1).padStart(2, "0")} /{" "}
+                            {String(allImages.length).padStart(2, "0")}
+                          </span>
+                          <span className="opacity-40">•</span>
+                        </>
+                      )}
+                      <span className="flex items-center gap-1">
+                        <IconMaximize size={13} />
+                        <span>Expand preview</span>
+                      </span>
                     </div>
 
                     {/* Admin Image Upload Zone */}
@@ -560,10 +594,10 @@ function CaseStudyExperienceInner({ project, related, isAdmin, projectId }: Prop
                       </div>
                     )}
                   </div>
-                </div>
+                </motion.div>
 
-                {/* Sleek Action Buttons Positioned Directly Below Photo Box */}
-                <div className="flex items-center justify-between gap-3 px-1 py-4">
+                {/* Share Strip */}
+                <div className="flex items-center justify-between gap-3 px-1 py-2">
                   <span className="font-mono text-[0.72rem] uppercase tracking-wider text-[var(--on-surface-dim)]">
                     Share Showcase
                   </span>
@@ -575,13 +609,627 @@ function CaseStudyExperienceInner({ project, related, isAdmin, projectId }: Prop
                     isAdmin={isAdmin}
                   />
                 </div>
-              </motion.div>
-            </motion.header>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Full-Screen Lightbox Modal */}
+          {/* ── Stat Strip Divider (Clean Monospace Typography, No Dotted Underlines) ───── */}
+          <section
+            aria-label="Key project statistics"
+            className="w-full border-y border-[var(--glass-border)] py-7 mb-14"
+          >
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {project.results.length > 0 ? (
+                project.results.slice(0, 4).map((stat) => (
+                  <div key={stat.id} className="flex flex-col">
+                    {stat.context ? (
+                      <Tooltip content={stat.context}>
+                        <span className="font-mono text-[1.5rem] sm:text-[1.75rem] font-medium text-[var(--on-surface)] cursor-help">
+                          {stat.metric}
+                        </span>
+                      </Tooltip>
+                    ) : (
+                      <span className="font-mono text-[1.5rem] sm:text-[1.75rem] font-medium text-[var(--on-surface)]">
+                        {stat.metric}
+                      </span>
+                    )}
+                    <span className="font-mono text-[0.68rem] uppercase tracking-wider text-[var(--on-surface-dim)] opacity-80 mt-1">
+                      {stat.label}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div className="flex flex-col">
+                    <span className="font-mono text-[1.5rem] sm:text-[1.75rem] font-medium text-[var(--on-surface)]">
+                      {project.timeline || "Engineered"}
+                    </span>
+                    <span className="font-mono text-[0.68rem] uppercase tracking-wider text-[var(--on-surface-dim)] opacity-80 mt-1">
+                      Delivery speed
+                    </span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-mono text-[1.5rem] sm:text-[1.75rem] font-medium text-[var(--on-surface)]">
+                      100%
+                    </span>
+                    <span className="font-mono text-[0.68rem] uppercase tracking-wider text-[var(--on-surface-dim)] opacity-80 mt-1">
+                      Production ready
+                    </span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-mono text-[1.5rem] sm:text-[1.75rem] font-medium text-[var(--on-surface)]">
+                      Full Stack
+                    </span>
+                    <span className="font-mono text-[0.68rem] uppercase tracking-wider text-[var(--on-surface-dim)] opacity-80 mt-1">
+                      Architecture
+                    </span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-mono text-[1.5rem] sm:text-[1.75rem] font-medium text-[var(--on-surface)]">
+                      Verified
+                    </span>
+                    <span className="font-mono text-[0.68rem] uppercase tracking-wider text-[var(--on-surface-dim)] opacity-80 mt-1">
+                      Quality Bar
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+          </section>
+
+          {/* ── Fluid Editorial Document Layout ───────────────────────────── */}
+          <section className="w-full grid gap-12 lg:grid-cols-[minmax(0,1fr)_22rem]">
+            {/* Main Narrative Column */}
+            <div className="flex flex-col gap-12">
+              {/* Executive Overview & Problem Context */}
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="grid h-8 w-8 place-items-center rounded-lg border border-[var(--glass-border)] bg-[var(--surface-high)] text-[var(--on-surface)]">
+                    <IconTarget size={16} />
+                  </span>
+                  <h2 className="font-mono text-[0.75rem] uppercase tracking-widest text-[var(--on-surface-dim)] font-medium">
+                    Executive Overview & Problem Context
+                  </h2>
+                </div>
+
+                <div className="text-[1.08rem] leading-[1.8] text-[var(--on-surface-dim)] font-normal">
+                  {isAdmin ? (
+                    <InlineEditField
+                      value={project.challenge ?? ""}
+                      onChange={(val) => save({ challenge: val })}
+                      label="challenge"
+                      placeholder="Describe the problem, bottlenecks, and legacy pain points…"
+                      readClassName="body-lg text-[var(--on-surface)] leading-relaxed"
+                    />
+                  ) : (
+                    <p className="body-lg text-[var(--on-surface)] leading-relaxed font-normal">
+                      {project.challenge || project.summary}
+                    </p>
+                  )}
+                </div>
+
+                <div className="mt-8 flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-[var(--glass-border)]">
+                  <div className="flex items-center gap-2">
+                    <IconTerminal2 size={15} className="text-[var(--on-surface-dim)]" />
+                    <span className="font-mono text-[0.72rem] text-[var(--on-surface-dim)]">
+                      Shipped & Verified by Andishi Core Engineering
+                    </span>
+                  </div>
+                  <span className="font-mono text-[0.68rem] text-[var(--on-surface-dim)] uppercase tracking-wider">
+                    {project.sectorLabel}
+                  </span>
+                </div>
+              </div>
+
+              {/* Client Feedback OR Core Deliverables */}
+              <div className="border-t border-[var(--glass-border)] pt-10">
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="grid h-8 w-8 place-items-center rounded-lg border border-[var(--glass-border)] bg-[var(--surface-high)] text-[var(--on-surface)]">
+                    {project.testimonial ? (
+                      <IconQuote size={16} />
+                    ) : (
+                      <IconLayersIntersect size={16} />
+                    )}
+                  </span>
+                  <h2 className="font-mono text-[0.75rem] uppercase tracking-widest text-[var(--on-surface-dim)] font-medium">
+                    {project.testimonial
+                      ? "Client Feedback & Validation"
+                      : "Platform Deliverables & Scope"}
+                  </h2>
+                </div>
+
+                {project.testimonial ? (
+                  <blockquote className="relative border-l-2 border-[var(--on-surface)] pl-6 py-2">
+                    <p className="body-md italic text-[1.12rem] leading-relaxed text-[var(--on-surface)] mb-4">
+                      &ldquo;{project.testimonial.quote}&rdquo;
+                    </p>
+                    <div className="flex items-center gap-3">
+                      {project.testimonial.authorAvatarUrl && (
+                        <Image
+                          src={project.testimonial.authorAvatarUrl}
+                          alt={project.testimonial.authorName}
+                          width={36}
+                          height={36}
+                          className="h-9 w-9 rounded-full object-cover border border-[var(--glass-border)]"
+                        />
+                      )}
+                      <div>
+                        <cite className="text-[0.88rem] font-medium text-[var(--on-surface)] not-italic block">
+                          {project.testimonial.authorName}
+                        </cite>
+                        <span className="text-[0.76rem] text-[var(--on-surface-dim)]">
+                          {project.testimonial.authorTitle}
+                        </span>
+                      </div>
+                    </div>
+                  </blockquote>
+                ) : (
+                  <div className="grid gap-6 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[var(--glass-border)]">
+                    {[
+                      { num: "01", text: "Role-Based Access Control (Patient & Legal Portals)" },
+                      {
+                        num: "02",
+                        text: "Programmatic HITECH Requests & OCR Identity Verification",
+                      },
+                      {
+                        num: "03",
+                        text: "HIPAA-Compliant Encrypted Medical Record Storage & Audit Logs",
+                      },
+                    ].map((item, idx) => (
+                      <div
+                        key={item.num}
+                        className={cn(
+                          "flex flex-col justify-between",
+                          idx > 0 && "md:pl-6 pt-4 md:pt-0",
+                        )}
+                      >
+                        <p className="font-mono text-[0.78rem] font-medium text-[var(--on-surface)] mb-2">
+                          {item.num}
+                        </p>
+                        <p className="text-[0.92rem] leading-relaxed text-[var(--on-surface-dim)] font-normal">
+                          {item.text}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Engineering Approach Timeline */}
+              {(project.approachSteps.length > 0 || isAdmin) && (
+                <div id="approach" className="border-t border-[var(--glass-border)] pt-10">
+                  <div className="flex items-center gap-3 mb-8">
+                    <span className="grid h-8 w-8 place-items-center rounded-lg border border-[var(--glass-border)] bg-[var(--surface-high)] text-[var(--on-surface)]">
+                      <IconCpu size={16} />
+                    </span>
+                    <h2 className="font-mono text-[0.75rem] uppercase tracking-widest text-[var(--on-surface-dim)] font-medium">
+                      Engineering Approach & Architecture
+                    </h2>
+                  </div>
+
+                  <ol className="relative space-y-8 border-l border-[var(--glass-border)] pl-6">
+                    {project.approachSteps
+                      .sort((a, b) => a.order - b.order)
+                      .map((step, idx) => (
+                        <li key={step.id} className="relative group">
+                          {/* Number Node */}
+                          <span
+                            aria-hidden="true"
+                            className="absolute -left-[2.15rem] top-0 flex h-7 w-7 items-center justify-center rounded-full border border-[var(--glass-border)] bg-[var(--surface-high)] font-mono text-[0.75rem] text-[var(--on-surface)] font-medium"
+                          >
+                            {String(idx + 1).padStart(2, "0")}
+                          </span>
+
+                          <div className="flex flex-col gap-3">
+                            {isAdmin ? (
+                              <div>
+                                <InlineEditField
+                                  value={step.title}
+                                  onChange={(val) => {
+                                    const newSteps = [...project.approachSteps];
+                                    newSteps[idx] = { ...step, title: val };
+                                    save({ approachSteps: newSteps });
+                                  }}
+                                  label="title"
+                                  readClassName="text-[1.15rem] font-medium text-[var(--on-surface)]"
+                                />
+                                <div className="mt-2">
+                                  <InlineEditField
+                                    value={step.description}
+                                    onChange={(val) => {
+                                      const newSteps = [...project.approachSteps];
+                                      newSteps[idx] = { ...step, description: val };
+                                      save({ approachSteps: newSteps });
+                                    }}
+                                    label="description"
+                                    readClassName="text-[0.95rem] text-[var(--on-surface-dim)] leading-relaxed"
+                                  />
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <h3 className="text-[1.12rem] font-medium text-[var(--on-surface)]">
+                                  {step.title}
+                                </h3>
+                                <p className="text-[0.95rem] leading-relaxed text-[var(--on-surface-dim)]">
+                                  {step.description}
+                                </p>
+                              </>
+                            )}
+
+                            {step.imageUrl && (
+                              <div className="mt-3 overflow-hidden rounded-xl border border-[var(--glass-border)] max-w-xl">
+                                <Image
+                                  src={step.imageUrl}
+                                  alt={step.title}
+                                  width={700}
+                                  height={380}
+                                  className="w-full object-cover"
+                                />
+                              </div>
+                            )}
+
+                            {isAdmin && (
+                              <div className="mt-2 flex items-center gap-3">
+                                <AdminItemControls
+                                  onMoveUp={
+                                    idx > 0
+                                      ? () => {
+                                          const newSteps = [...project.approachSteps];
+                                          [newSteps[idx - 1], newSteps[idx]] = [
+                                            newSteps[idx],
+                                            newSteps[idx - 1],
+                                          ];
+                                          newSteps.forEach((s, i) => (s.order = i));
+                                          save({ approachSteps: newSteps });
+                                        }
+                                      : undefined
+                                  }
+                                  onMoveDown={
+                                    idx < project.approachSteps.length - 1
+                                      ? () => {
+                                          const newSteps = [...project.approachSteps];
+                                          [newSteps[idx], newSteps[idx + 1]] = [
+                                            newSteps[idx + 1],
+                                            newSteps[idx],
+                                          ];
+                                          newSteps.forEach((s, i) => (s.order = i));
+                                          save({ approachSteps: newSteps });
+                                        }
+                                      : undefined
+                                  }
+                                  onDelete={() => {
+                                    save({
+                                      approachSteps: project.approachSteps.filter(
+                                        (_, i) => i !== idx,
+                                      ),
+                                    });
+                                  }}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                  </ol>
+
+                  {isAdmin && projectId && (
+                    <button
+                      onClick={() => {
+                        const newStep = {
+                          id: `step-${Date.now()}`,
+                          title: "New engineering phase",
+                          description: "Describe this phase…",
+                          order: project.approachSteps.length,
+                        };
+                        save({ approachSteps: [...project.approachSteps, newStep] });
+                      }}
+                      className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[var(--glass-border)] py-3 text-[0.82rem] text-[var(--on-surface-dim)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)] transition-colors font-mono"
+                    >
+                      + Add approach step
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Built Solution & Core Features */}
+              {(project.solutionHighlights.length > 0 || isAdmin) && (
+                <div id="solution" className="border-t border-[var(--glass-border)] pt-10">
+                  <div className="flex items-center gap-3 mb-8">
+                    <span className="grid h-8 w-8 place-items-center rounded-lg border border-[var(--glass-border)] bg-[var(--surface-high)] text-[var(--on-surface)]">
+                      <IconCheck size={16} />
+                    </span>
+                    <h2 className="font-mono text-[0.75rem] uppercase tracking-widest text-[var(--on-surface-dim)] font-medium">
+                      Built Solution & Core Features
+                    </h2>
+                  </div>
+
+                  <div className="divide-y divide-[var(--glass-border)]">
+                    {project.solutionHighlights
+                      .sort((a, b) => a.order - b.order)
+                      .map((hl, idx) => (
+                        <div
+                          key={hl.id}
+                          className={cn(
+                            "py-6 first:pt-0 last:pb-0 flex flex-col gap-4",
+                            hl.imageUrl && "md:flex-row md:items-center md:justify-between",
+                          )}
+                        >
+                          <div className="flex-1">
+                            {isAdmin ? (
+                              <div>
+                                <InlineEditField
+                                  value={hl.title}
+                                  onChange={(val) => {
+                                    const newHls = [...project.solutionHighlights];
+                                    newHls[idx] = { ...hl, title: val };
+                                    save({ solutionHighlights: newHls });
+                                  }}
+                                  label="title"
+                                  readClassName="text-[1.08rem] font-medium text-[var(--on-surface)]"
+                                />
+                                <div className="mt-1.5">
+                                  <InlineEditField
+                                    value={hl.description}
+                                    onChange={(val) => {
+                                      const newHls = [...project.solutionHighlights];
+                                      newHls[idx] = { ...hl, description: val };
+                                      save({ solutionHighlights: newHls });
+                                    }}
+                                    label="description"
+                                    readClassName="text-[0.92rem] text-[var(--on-surface-dim)] leading-relaxed"
+                                  />
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <div className="flex items-center gap-2 mb-1.5">
+                                  <IconCheck size={15} className="text-emerald-400 shrink-0" />
+                                  <h3 className="text-[1.08rem] font-medium text-[var(--on-surface)]">
+                                    {hl.title}
+                                  </h3>
+                                </div>
+                                <p className="text-[0.92rem] text-[var(--on-surface-dim)] leading-relaxed pl-6">
+                                  {hl.description}
+                                </p>
+                              </>
+                            )}
+                          </div>
+
+                          {hl.imageUrl && (
+                            <div className="shrink-0 w-full md:w-64 h-40 overflow-hidden rounded-xl border border-[var(--glass-border)] relative">
+                              <Image
+                                src={hl.imageUrl}
+                                alt={hl.title}
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 768px) 100vw, 256px"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                  </div>
+
+                  {isAdmin && projectId && (
+                    <button
+                      onClick={() => {
+                        const newHl = {
+                          id: `hl-${Date.now()}`,
+                          title: "New solution highlight",
+                          description: "Describe this feature highlight…",
+                          order: project.solutionHighlights.length,
+                        };
+                        save({ solutionHighlights: [...project.solutionHighlights, newHl] });
+                      }}
+                      className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-[var(--glass-border)] py-3 text-[0.82rem] text-[var(--on-surface-dim)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)] transition-colors font-mono"
+                    >
+                      + Add solution highlight
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Visual Gallery */}
+              {(project.gallery.length > 0 || isAdmin) && (
+                <div className="border-t border-[var(--glass-border)] pt-10">
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="grid h-8 w-8 place-items-center rounded-lg border border-[var(--glass-border)] bg-[var(--surface-high)] text-[var(--on-surface)]">
+                      <IconMaximize size={16} />
+                    </span>
+                    <h2 className="font-mono text-[0.75rem] uppercase tracking-widest text-[var(--on-surface-dim)] font-medium">
+                      Product Gallery & Interface Showcase
+                    </h2>
+                  </div>
+
+                  <CaseStudyGallery
+                    images={project.gallery}
+                    isAdmin={isAdmin}
+                    onUpdate={(newGallery) => save({ gallery: newGallery })}
+                  />
+
+                  {isAdmin && projectId && (
+                    <div className="mt-4">
+                      <ImageUploadZone
+                        projectId={projectId}
+                        field="gallery"
+                        label="Add gallery image"
+                        onSuccess={(url) => {
+                          const newImg = {
+                            id: `img-${Date.now()}`,
+                            url,
+                            alt: "Gallery image",
+                            order: project.gallery.length,
+                          };
+                          save({ gallery: [...project.gallery, newImg] });
+                          toast("Image added to gallery", "success");
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Results & Performance Visualization */}
+              {project.results.length > 0 && (
+                <div id="impact" className="border-t border-[var(--glass-border)] pt-10">
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="grid h-8 w-8 place-items-center rounded-lg border border-[var(--glass-border)] bg-[var(--surface-high)] text-[var(--on-surface)]">
+                      <IconChartBar size={16} />
+                    </span>
+                    <h2 className="font-mono text-[0.75rem] uppercase tracking-widest text-[var(--on-surface-dim)] font-medium">
+                      Verified Results & Business Impact
+                    </h2>
+                  </div>
+
+                  {/* Recharts Chart */}
+                  <CaseStudyMetricsChart results={project.results} />
+                </div>
+              )}
+            </div>
+
+            {/* Sticky Sidebar Info Column */}
+            <aside className="flex flex-col gap-8 self-start lg:sticky lg:top-28">
+              {/* Primary Actions Card */}
+              <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-6 backdrop-blur-xl">
+                <p className="font-mono text-[0.72rem] uppercase tracking-widest text-[var(--on-surface-dim)] mb-4 font-medium">
+                  Direct Action
+                </p>
+                <div className="flex flex-col gap-3">
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--on-surface)] px-4 py-3 text-[0.88rem] font-medium text-[var(--bg)] shadow-md hover:opacity-90 transition-opacity"
+                  >
+                    <IconBrandWhatsapp size={18} />
+                    <span>Start Similar Build</span>
+                  </a>
+
+                  {project.liveUrl && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--surface-high)] px-4 py-2.5 text-[0.85rem] font-medium text-[var(--on-surface)] hover:border-[var(--on-surface)] transition-colors"
+                    >
+                      <IconExternalLink size={15} />
+                      <span>Visit Live Platform</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* Technical Stack Tags */}
+              <div className="border-t border-[var(--glass-border)] pt-6">
+                <p className="font-mono text-[0.72rem] uppercase tracking-widest text-[var(--on-surface-dim)] mb-3 font-medium">
+                  Technical Stack
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {project.stackTags.map((tag, idx) => (
+                    <span
+                      key={tag}
+                      className={cn(
+                        "rounded-lg border px-3 py-1 font-mono text-[0.75rem]",
+                        idx === 0
+                          ? "border-[var(--on-surface)] bg-[var(--on-surface)] text-[var(--bg)] font-medium"
+                          : "border-[var(--outline)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)]",
+                      )}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Engineering Specs */}
+              <div className="border-t border-[var(--glass-border)] pt-6">
+                <p className="font-mono text-[0.72rem] uppercase tracking-widest text-[var(--on-surface-dim)] mb-3 font-medium">
+                  Engineering Specs
+                </p>
+                <dl className="space-y-3 font-mono text-[0.78rem]">
+                  <div className="flex justify-between">
+                    <dt className="text-[var(--on-surface-dim)]">Status:</dt>
+                    <dd className="text-[var(--on-surface)] font-medium">{project.status}</dd>
+                  </div>
+                  {project.timeline && (
+                    <div className="flex justify-between">
+                      <dt className="text-[var(--on-surface-dim)]">Timeline:</dt>
+                      <dd className="text-[var(--on-surface)]">{project.timeline}</dd>
+                    </div>
+                  )}
+                  {project.clientName && (
+                    <div className="flex justify-between">
+                      <dt className="text-[var(--on-surface-dim)]">Location:</dt>
+                      <dd className="text-[var(--on-surface)]">{project.clientName}</dd>
+                    </div>
+                  )}
+                  {project.role && (
+                    <div className="flex justify-between">
+                      <dt className="text-[var(--on-surface-dim)]">Role:</dt>
+                      <dd className="text-[var(--on-surface)]">{project.role}</dd>
+                    </div>
+                  )}
+                </dl>
+              </div>
+
+              {/* Vetting Bar */}
+              <div className="border-t border-[var(--glass-border)] pt-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <IconShieldCheck size={16} className="text-emerald-400" />
+                  <span className="font-mono text-[0.75rem] uppercase tracking-wider text-[var(--on-surface)] font-medium">
+                    Verified Quality Standard
+                  </span>
+                </div>
+                <p className="text-[0.82rem] text-[var(--on-surface-dim)] leading-relaxed">
+                  Full HIPAA compliance architecture, unit tested codebase, and high-concurrency API
+                  setup.
+                </p>
+              </div>
+            </aside>
+          </section>
+
+          {/* ── Closing CTA Banner (With FinalCtaArtwork Background Art) ─────────────── */}
+          <section className="mt-20 border-t border-[var(--glass-border)] pt-16">
+            <div className="relative isolate overflow-hidden rounded-3xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-8 sm:p-14 backdrop-blur-2xl text-center">
+              <FinalCtaArtwork />
+
+              <div className="relative z-10">
+                <span className="font-mono text-[0.75rem] uppercase tracking-widest text-[var(--on-surface-dim)] mb-3 block">
+                  Have a similar vision?
+                </span>
+                <h2 className="title-serif text-3xl sm:text-5xl font-normal text-[var(--on-surface)] tracking-tight max-w-2xl mx-auto mb-6">
+                  Build your next flagship SaaS with Andishi
+                </h2>
+                <p className="body-md text-[1.05rem] text-[var(--on-surface-dim)] max-w-xl mx-auto mb-8">
+                  From initial architecture to production launch, we engineer high-impact products
+                  with speed and precision.
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-4">
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2.5 rounded-full bg-[var(--on-surface)] px-7 py-3.5 text-[0.92rem] font-medium text-[var(--bg)] shadow-lg hover:opacity-90 transition-opacity cursor-pointer"
+                  >
+                    <IconBrandWhatsapp size={18} />
+                    <span>Start on WhatsApp</span>
+                  </a>
+                  <Link
+                    href="/work"
+                    className="inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--surface-high)] px-6 py-3.5 text-[0.92rem] font-medium text-[var(--on-surface)] hover:border-[var(--on-surface)] transition-colors"
+                  >
+                    <span>Explore more work</span>
+                    <IconArrowRight size={16} />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+
+      {/* Lightbox Modal with Carousel Navigation */}
       <AnimatePresence>
         {lightboxOpen && (
           <motion.div
@@ -599,7 +1247,37 @@ function CaseStudyExperienceInner({ project, related, isAdmin, projectId }: Prop
               <IconX size={20} />
             </button>
 
+            {/* Prev/Next inside Lightbox */}
+            {allImages.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prevSlide();
+                  }}
+                  className="absolute left-6 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+                  aria-label="Previous image"
+                >
+                  <IconChevronLeft size={24} />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextSlide();
+                  }}
+                  className="absolute right-6 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+                  aria-label="Next image"
+                >
+                  <IconChevronRight size={24} />
+                </button>
+              </>
+            )}
+
             <motion.div
+              key={currentSlideIndex}
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
@@ -607,8 +1285,8 @@ function CaseStudyExperienceInner({ project, related, isAdmin, projectId }: Prop
               className="relative max-h-[90vh] max-w-[90vw] overflow-hidden rounded-2xl border border-white/10 shadow-2xl"
             >
               <Image
-                src={project.coverImageUrl}
-                alt={project.title}
+                src={allImages[currentSlideIndex].url}
+                alt={allImages[currentSlideIndex].title}
                 width={1600}
                 height={1000}
                 className="max-h-[85vh] w-auto object-contain"
@@ -630,746 +1308,6 @@ function CaseStudyExperienceInner({ project, related, isAdmin, projectId }: Prop
           </motion.div>
         )}
       </AnimatePresence>
-
-      <div className="mx-auto w-full max-w-[92rem] px-5 sm:px-8 lg:px-10">
-        {/* ═══════════════════════════════════════════════════════════════════
-            § 2  NON-REDUNDANT BENTO EXECUTIVE OVERVIEW
-            ═══════════════════════════════════════════════════════════════════ */}
-        <SectionSep />
-        <Reveal>
-          <div className="grid gap-6 md:grid-cols-12">
-            {/* Bento Card 1: Core Problem & Challenge Context */}
-            <div className="md:col-span-7">
-              <div className="flex items-center gap-2 mb-3">
-                <IconTarget size={16} className="text-[var(--on-surface-dim)]" />
-                <p className="label-caps text-[var(--on-surface-dim)]">
-                  Problem & Challenge Context
-                </p>
-              </div>
-              <GlassCard
-                glow="none"
-                className="h-full flex flex-col justify-between p-7 border-[var(--glass-border)]"
-              >
-                {isAdmin ? (
-                  <InlineEditField
-                    value={project.challenge ?? ""}
-                    onChange={(val) => save({ challenge: val })}
-                    label="challenge"
-                    placeholder="Describe the problem, bottlenecks, and legacy pain points…"
-                    readClassName="body-lg text-[var(--on-surface)] leading-relaxed"
-                  />
-                ) : (
-                  <p className="body-lg text-[var(--on-surface)] leading-relaxed font-normal">
-                    {project.challenge || project.summary}
-                  </p>
-                )}
-
-                <div className="mt-8 flex items-center justify-between gap-4 pt-4 border-t border-[var(--glass-border)]">
-                  <div className="flex items-center gap-2">
-                    <IconTerminal2 size={15} className="text-[var(--on-surface-dim)]" />
-                    <span className="font-mono text-[0.72rem] text-[var(--on-surface-dim)]">
-                      Engineered & Shipped by Andishi Core Team
-                    </span>
-                  </div>
-                  <span className="font-mono text-[0.68rem] text-[var(--on-surface-dim)] uppercase tracking-wider">
-                    {project.sectorLabel}
-                  </span>
-                </div>
-              </GlassCard>
-            </div>
-
-            {/* Bento Card 2: Testimonial OR Architectural Deliverables Spotlight */}
-            <div className="md:col-span-5">
-              <div className="flex items-center gap-2 mb-3">
-                {project.testimonial ? (
-                  <>
-                    <IconQuote size={16} className="text-[var(--on-surface-dim)]" />
-                    <p className="label-caps text-[var(--on-surface-dim)]">Client Feedback</p>
-                  </>
-                ) : (
-                  <>
-                    <IconLayersIntersect size={16} className="text-[var(--on-surface-dim)]" />
-                    <p className="label-caps text-[var(--on-surface-dim)]">Platform Deliverables</p>
-                  </>
-                )}
-              </div>
-
-              {project.testimonial ? (
-                <GlassCard
-                  glow="none"
-                  className="h-full relative flex flex-col justify-between p-7 border-[var(--glass-border)]"
-                >
-                  <IconQuote
-                    size={40}
-                    aria-hidden
-                    className="absolute right-5 top-5 text-[var(--on-surface-dim)] opacity-10"
-                  />
-                  <blockquote className="relative z-10">
-                    <p className="body-md italic text-[var(--on-surface)] leading-relaxed">
-                      &ldquo;{project.testimonial.quote}&rdquo;
-                    </p>
-                  </blockquote>
-                  <div className="mt-6 flex items-center gap-3 pt-4 border-t border-[var(--glass-border)]">
-                    {project.testimonial.authorAvatarUrl && (
-                      <Image
-                        src={project.testimonial.authorAvatarUrl}
-                        alt={project.testimonial.authorName}
-                        width={40}
-                        height={40}
-                        className="h-10 w-10 rounded-full object-cover border border-[var(--glass-border)]"
-                      />
-                    )}
-                    <div>
-                      <cite className="text-[0.88rem] font-medium text-[var(--on-surface)] not-italic block">
-                        {project.testimonial.authorName}
-                      </cite>
-                      <span className="text-[0.76rem] text-[var(--on-surface-dim)]">
-                        {project.testimonial.authorTitle}
-                      </span>
-                    </div>
-                  </div>
-                </GlassCard>
-              ) : (
-                <GlassCard
-                  glow="none"
-                  className="h-full flex flex-col justify-between p-7 border-[var(--glass-border)]"
-                >
-                  <div>
-                    <span className="font-mono text-[0.72rem] uppercase tracking-wider text-[var(--on-surface-dim)]">
-                      Core Architecture Delivered
-                    </span>
-                    <ul className="mt-4 space-y-2.5">
-                      {[
-                        "Role-Based Access Control (Advocate, Paralegal, Client)",
-                        "Structured Digital Case File & Document Management",
-                        "Legal Subscription Tiers & Integrated Stripe Billing",
-                        "Real-time Client Status Portal & Audit Logs",
-                      ].map((item) => (
-                        <li
-                          key={item}
-                          className="flex items-start gap-2.5 text-[0.85rem] text-[var(--on-surface)]"
-                        >
-                          <IconCheck
-                            size={15}
-                            className="text-[var(--on-surface)] shrink-0 mt-0.5"
-                          />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="mt-6 pt-4 border-t border-[var(--glass-border)] flex items-center gap-2">
-                    <IconCpu size={15} className="text-[var(--on-surface-dim)]" />
-                    <span className="font-mono text-[0.72rem] text-[var(--on-surface-dim)]">
-                      Verified Production Stack
-                    </span>
-                  </div>
-                </GlassCard>
-              )}
-            </div>
-          </div>
-        </Reveal>
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            § 3  THE APPROACH (Engineering Timeline)
-            ═══════════════════════════════════════════════════════════════════ */}
-        <div id="approach">
-          {(project.approachSteps.length > 0 || isAdmin) && (
-            <>
-              <SectionSep />
-              <Reveal>
-                <SectionHeading
-                  eyebrow="Engineering approach"
-                  title="How we got there"
-                  accent="primary"
-                />
-              </Reveal>
-
-              <div className="mt-10 space-y-6">
-                {project.approachSteps
-                  .sort((a, b) => a.order - b.order)
-                  .map((step, idx) => (
-                    <Reveal key={step.id} delay={idx * 0.08}>
-                      <GlassCard
-                        glow="none"
-                        className="relative group flex flex-col md:flex-row gap-6 p-7 border-[var(--glass-border)]"
-                      >
-                        {/* Numbered node */}
-                        <div className="shrink-0 flex md:flex-col items-center gap-3">
-                          <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--glass-border)] bg-[var(--surface-high)] font-mono text-[1.1rem] text-[var(--on-surface)] font-medium">
-                            {String(idx + 1).padStart(2, "0")}
-                          </span>
-                          <div className="hidden md:block h-full w-px bg-[var(--glass-border)]" />
-                        </div>
-
-                        {/* Step Details */}
-                        <div className="flex-1">
-                          {isAdmin ? (
-                            <div className="mb-2">
-                              <InlineEditField
-                                value={step.title}
-                                onChange={(val) => {
-                                  const newSteps = [...project.approachSteps];
-                                  newSteps[idx] = { ...step, title: val };
-                                  save({ approachSteps: newSteps });
-                                }}
-                                label="title"
-                                readClassName="headline-sm text-[var(--on-surface)]"
-                              />
-                              <div className="mt-2">
-                                <InlineEditField
-                                  value={step.description}
-                                  onChange={(val) => {
-                                    const newSteps = [...project.approachSteps];
-                                    newSteps[idx] = { ...step, description: val };
-                                    save({ approachSteps: newSteps });
-                                  }}
-                                  label="description"
-                                  readClassName="body-md text-[var(--on-surface-dim)]"
-                                />
-                              </div>
-                            </div>
-                          ) : (
-                            <>
-                              <h3 className="headline-sm text-[var(--on-surface)]">{step.title}</h3>
-                              <p className="mt-2 body-md text-[var(--on-surface-dim)] leading-relaxed">
-                                {step.description}
-                              </p>
-                            </>
-                          )}
-
-                          {step.imageUrl && (
-                            <div className="mt-4 overflow-hidden rounded-xl border border-[var(--glass-border)]">
-                              <Image
-                                src={step.imageUrl}
-                                alt={step.title}
-                                width={700}
-                                height={380}
-                                className="w-full object-cover"
-                              />
-                            </div>
-                          )}
-
-                          {isAdmin && projectId && (
-                            <div className="mt-4 w-48">
-                              <ImageUploadZone
-                                projectId={projectId}
-                                field="step"
-                                label="Step Image"
-                                onSuccess={(url) => {
-                                  const newSteps = [...project.approachSteps];
-                                  newSteps[idx] = { ...step, imageUrl: url };
-                                  save({ approachSteps: newSteps });
-                                }}
-                              />
-                            </div>
-                          )}
-                        </div>
-
-                        {isAdmin && (
-                          <AdminItemControls
-                            onMoveUp={
-                              idx > 0
-                                ? () => {
-                                    const newSteps = [...project.approachSteps];
-                                    [newSteps[idx - 1], newSteps[idx]] = [
-                                      newSteps[idx],
-                                      newSteps[idx - 1],
-                                    ];
-                                    newSteps.forEach((s, i) => (s.order = i));
-                                    save({ approachSteps: newSteps });
-                                  }
-                                : undefined
-                            }
-                            onMoveDown={
-                              idx < project.approachSteps.length - 1
-                                ? () => {
-                                    const newSteps = [...project.approachSteps];
-                                    [newSteps[idx], newSteps[idx + 1]] = [
-                                      newSteps[idx + 1],
-                                      newSteps[idx],
-                                    ];
-                                    newSteps.forEach((s, i) => (s.order = i));
-                                    save({ approachSteps: newSteps });
-                                  }
-                                : undefined
-                            }
-                            onDelete={() => {
-                              save({
-                                approachSteps: project.approachSteps.filter((_, i) => i !== idx),
-                              });
-                            }}
-                          />
-                        )}
-                      </GlassCard>
-                    </Reveal>
-                  ))}
-
-                {/* Admin: add step */}
-                {isAdmin && projectId && (
-                  <button
-                    onClick={() => {
-                      const newStep = {
-                        id: `step-${Date.now()}`,
-                        title: "New engineering phase",
-                        description: "Describe this phase…",
-                        order: project.approachSteps.length,
-                      };
-                      save({ approachSteps: [...project.approachSteps, newStep] });
-                    }}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[var(--glass-border)] py-4 text-[0.88rem] text-[var(--on-surface-dim)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)] transition-colors"
-                  >
-                    + Add approach step
-                  </button>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            § 4  THE SOLUTION (Feature Highlights Showcase)
-            ═══════════════════════════════════════════════════════════════════ */}
-        <div id="solution">
-          {(project.solutionHighlights.length > 0 || isAdmin) && (
-            <>
-              <SectionSep />
-              <Reveal>
-                <SectionHeading
-                  eyebrow="Built solution"
-                  title="Core features & architecture"
-                  accent="secondary"
-                />
-              </Reveal>
-
-              <div className="mt-10 space-y-12">
-                {project.solutionHighlights
-                  .sort((a, b) => a.order - b.order)
-                  .map((hl, idx) => (
-                    <Reveal key={hl.id} delay={0.05}>
-                      <div
-                        className={cn(
-                          "relative group flex flex-col gap-8 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-7 backdrop-blur-xl",
-                          hl.imageUrl && idx % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse",
-                        )}
-                      >
-                        {isAdmin && (
-                          <AdminItemControls
-                            onMoveUp={
-                              idx > 0
-                                ? () => {
-                                    const newHls = [...project.solutionHighlights];
-                                    [newHls[idx - 1], newHls[idx]] = [newHls[idx], newHls[idx - 1]];
-                                    newHls.forEach((h, i) => (h.order = i));
-                                    save({ solutionHighlights: newHls });
-                                  }
-                                : undefined
-                            }
-                            onMoveDown={
-                              idx < project.solutionHighlights.length - 1
-                                ? () => {
-                                    const newHls = [...project.solutionHighlights];
-                                    [newHls[idx], newHls[idx + 1]] = [newHls[idx + 1], newHls[idx]];
-                                    newHls.forEach((h, i) => (h.order = i));
-                                    save({ solutionHighlights: newHls });
-                                  }
-                                : undefined
-                            }
-                            onDelete={() => {
-                              save({
-                                solutionHighlights: project.solutionHighlights.filter(
-                                  (_, i) => i !== idx,
-                                ),
-                              });
-                            }}
-                          />
-                        )}
-
-                        {(hl.imageUrl || isAdmin) && (
-                          <div className="relative flex-1 overflow-hidden rounded-xl border border-[var(--glass-border)] bg-[var(--surface-high)] min-h-[240px] flex items-center justify-center">
-                            {hl.imageUrl ? (
-                              <Image
-                                src={hl.imageUrl}
-                                alt={hl.title}
-                                fill
-                                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                sizes="(max-width: 1024px) 100vw, 50vw"
-                              />
-                            ) : (
-                              <div className="w-48 z-10">
-                                <ImageUploadZone
-                                  projectId={projectId!}
-                                  field="highlight"
-                                  label="Highlight Image"
-                                  onSuccess={(url) => {
-                                    const newHls = [...project.solutionHighlights];
-                                    newHls[idx] = { ...hl, imageUrl: url };
-                                    save({ solutionHighlights: newHls });
-                                  }}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        <div
-                          className={cn(
-                            "flex flex-1 flex-col justify-center",
-                            !hl.imageUrl && !isAdmin && "col-span-2",
-                          )}
-                        >
-                          {isAdmin ? (
-                            <>
-                              <InlineEditField
-                                value={hl.title}
-                                onChange={(val) => {
-                                  const newHls = [...project.solutionHighlights];
-                                  newHls[idx] = { ...hl, title: val };
-                                  save({ solutionHighlights: newHls });
-                                }}
-                                label="title"
-                                readClassName="headline-sm text-[var(--on-surface)]"
-                              />
-                              <div className="mt-3">
-                                <InlineEditField
-                                  value={hl.description}
-                                  onChange={(val) => {
-                                    const newHls = [...project.solutionHighlights];
-                                    newHls[idx] = { ...hl, description: val };
-                                    save({ solutionHighlights: newHls });
-                                  }}
-                                  label="description"
-                                  readClassName="body-md text-[var(--on-surface-dim)]"
-                                />
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              <div className="flex items-center gap-2 mb-2">
-                                <IconCheck size={16} className="text-[var(--on-surface)]" />
-                                <h3 className="headline-sm text-[var(--on-surface)]">{hl.title}</h3>
-                              </div>
-                              <p className="body-md text-[var(--on-surface-dim)] leading-relaxed">
-                                {hl.description}
-                              </p>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </Reveal>
-                  ))}
-
-                {isAdmin && projectId && (
-                  <button
-                    onClick={() => {
-                      const newHl = {
-                        id: `hl-${Date.now()}`,
-                        title: "New solution highlight",
-                        description: "Describe this feature highlight…",
-                        order: project.solutionHighlights.length,
-                      };
-                      save({ solutionHighlights: [...project.solutionHighlights, newHl] });
-                    }}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[var(--glass-border)] py-4 text-[0.88rem] text-[var(--on-surface-dim)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)] transition-colors"
-                  >
-                    + Add solution highlight
-                  </button>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            § 5  VISUAL GALLERY (Masonry Lightbox)
-            ═══════════════════════════════════════════════════════════════════ */}
-        {(project.gallery.length > 0 || isAdmin) && (
-          <div>
-            <SectionSep />
-            <Reveal>
-              <SectionHeading eyebrow="Gallery" title="See it in action" accent="primary" />
-            </Reveal>
-            <div className="mt-8">
-              <CaseStudyGallery
-                images={project.gallery}
-                isAdmin={isAdmin}
-                onUpdate={(newGallery) => save({ gallery: newGallery })}
-              />
-
-              {isAdmin && projectId && (
-                <div className="mt-4">
-                  <ImageUploadZone
-                    projectId={projectId}
-                    field="gallery"
-                    label="Add gallery image"
-                    onSuccess={(url) => {
-                      const newImg = {
-                        id: `img-${Date.now()}`,
-                        url,
-                        alt: "Gallery image",
-                        order: project.gallery.length,
-                      };
-                      save({ gallery: [...project.gallery, newImg] });
-                      toast("Image added to gallery", "success");
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            § 6  RESULTS & IMPACT (With Recharts Data Viz)
-            ═══════════════════════════════════════════════════════════════════ */}
-        <div id="impact">
-          {project.results.length > 0 && (
-            <>
-              <SectionSep />
-              <Reveal>
-                <SectionHeading
-                  eyebrow="Results & impact"
-                  title="The numbers that matter"
-                  accent="tertiary"
-                />
-              </Reveal>
-
-              {/* Metrics Grid */}
-              <div
-                className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
-                role="list"
-                aria-label="Project results"
-              >
-                {project.results.map((result, idx) => (
-                  <Reveal key={result.id} delay={idx * 0.07}>
-                    <GlassCard
-                      glow="none"
-                      role="listitem"
-                      className="flex flex-col gap-1 text-center relative group p-6 border-[var(--glass-border)]"
-                    >
-                      {isAdmin && (
-                        <AdminItemControls
-                          onMoveUp={
-                            idx > 0
-                              ? () => {
-                                  const newResults = [...project.results];
-                                  [newResults[idx - 1], newResults[idx]] = [
-                                    newResults[idx],
-                                    newResults[idx - 1],
-                                  ];
-                                  save({ results: newResults });
-                                }
-                              : undefined
-                          }
-                          onMoveDown={
-                            idx < project.results.length - 1
-                              ? () => {
-                                  const newResults = [...project.results];
-                                  [newResults[idx], newResults[idx + 1]] = [
-                                    newResults[idx + 1],
-                                    newResults[idx],
-                                  ];
-                                  save({ results: newResults });
-                                }
-                              : undefined
-                          }
-                          onDelete={() => {
-                            save({ results: project.results.filter((_, i) => i !== idx) });
-                          }}
-                        />
-                      )}
-                      {isAdmin ? (
-                        <>
-                          <div className="font-mono text-[2rem] leading-none text-[var(--on-surface)] flex justify-center font-medium">
-                            <InlineEditField
-                              value={result.metric}
-                              onChange={(val) => {
-                                const newResults = [...project.results];
-                                newResults[idx] = { ...result, metric: val };
-                                save({ results: newResults });
-                              }}
-                              label="metric"
-                            />
-                          </div>
-                          <div className="text-[0.85rem] text-[var(--on-surface-dim)] flex justify-center mt-2">
-                            <InlineEditField
-                              value={result.label}
-                              onChange={(val) => {
-                                const newResults = [...project.results];
-                                newResults[idx] = { ...result, label: val };
-                                save({ results: newResults });
-                              }}
-                              label="label"
-                            />
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          {result.context ? (
-                            <Tooltip content={result.context}>
-                              <span className="font-mono text-[2.2rem] leading-none text-[var(--tertiary,var(--on-surface))] font-medium cursor-help underline decoration-dotted decoration-[var(--on-surface-dim)] underline-offset-4">
-                                {result.metric}
-                              </span>
-                            </Tooltip>
-                          ) : (
-                            <span className="font-mono text-[2.2rem] leading-none text-[var(--on-surface)] font-medium">
-                              {result.metric}
-                            </span>
-                          )}
-                          <span className="text-[0.85rem] text-[var(--on-surface-dim)] font-medium mt-1.5">
-                            {result.label}
-                          </span>
-                        </>
-                      )}
-                    </GlassCard>
-                  </Reveal>
-                ))}
-              </div>
-
-              {/* Recharts Data Visualization Chart */}
-              <Reveal>
-                <CaseStudyMetricsChart results={project.results} />
-              </Reveal>
-
-              {/* Admin: add metric */}
-              {isAdmin && projectId && (
-                <button
-                  onClick={() => {
-                    const newResult = {
-                      id: `result-${Date.now()}`,
-                      metric: "0%",
-                      label: "New metric",
-                      context: null,
-                    };
-                    save({ results: [...project.results, newResult] });
-                  }}
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[var(--glass-border)] py-4 text-[0.88rem] text-[var(--on-surface-dim)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)] transition-colors"
-                >
-                  + Add result metric
-                </button>
-              )}
-            </>
-          )}
-        </div>
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            § 7  TECH STACK MATRIX
-            ═══════════════════════════════════════════════════════════════════ */}
-        <div id="tech">
-          {(project.techStackDetails.length > 0 || project.stackTags.length > 0) && (
-            <>
-              <SectionSep />
-              <Reveal>
-                <SectionHeading eyebrow="Technology" title="Built with" accent="secondary" />
-              </Reveal>
-              <div className="mt-8 flex flex-wrap gap-3">
-                {(project.techStackDetails.length > 0
-                  ? project.techStackDetails
-                  : project.stackTags.map((t) => ({ name: t, reason: null }))
-                ).map((tech) =>
-                  tech.reason ? (
-                    <Tooltip key={tech.name} content={tech.reason}>
-                      <TechBadge name={tech.name} hasReason />
-                    </Tooltip>
-                  ) : (
-                    <TechBadge key={tech.name} name={tech.name} />
-                  ),
-                )}
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* ═══════════════════════════════════════════════════════════════════
-          § 8  NEXT CASE STUDY & RELATED WORK
-          ═══════════════════════════════════════════════════════════════════ */}
-      {related.length > 0 && (
-        <div className="mx-auto w-full max-w-[92rem] px-5 sm:px-8 lg:px-10">
-          <SectionSep />
-          <Reveal>
-            <p className="label-caps mb-8 text-[var(--on-surface-dim)]">More work</p>
-          </Reveal>
-          <div className="grid gap-6 sm:grid-cols-2">
-            {related.map((r, idx) => (
-              <Reveal key={r.slug} delay={idx * 0.08}>
-                <Link
-                  href={`/work/${r.slug}`}
-                  className="group block overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl transition-all duration-300 hover:border-[var(--on-surface)] hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--on-surface)]"
-                  aria-label={`View case study: ${r.title}`}
-                >
-                  <div className="relative aspect-video overflow-hidden">
-                    <Image
-                      src={r.coverImageUrl}
-                      alt={r.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      sizes="(max-width: 640px) 100vw, 50vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  </div>
-                  <div className="p-5">
-                    <span className="font-mono text-[0.72rem] uppercase tracking-widest text-[var(--on-surface-dim)]">
-                      {r.sectorLabel}
-                    </span>
-                    <h3 className="mt-1 text-[1rem] font-medium text-[var(--on-surface)]">
-                      {r.title}
-                    </h3>
-                    <div className="mt-3 flex items-center gap-1 text-[0.82rem] text-[var(--on-surface-dim)] group-hover:text-[var(--on-surface)] transition-colors">
-                      View case study{" "}
-                      <IconArrowRight
-                        size={13}
-                        className="transition-transform duration-200 group-hover:translate-x-0.5"
-                      />
-                    </div>
-                  </div>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ═══════════════════════════════════════════════════════════════════
-          § 9  CLOSING HIGH-CONVERTING CTA
-          ═══════════════════════════════════════════════════════════════════ */}
-      <div className="relative mt-20 overflow-hidden">
-        <PatternTexture opacity={0.08} />
-        <div className="relative mx-auto w-full max-w-[92rem] px-5 py-16 sm:px-8 lg:px-10">
-          <Reveal>
-            <div className="flex flex-col items-center gap-8 text-center">
-              <div>
-                <p className="label-caps mb-3 text-[var(--on-surface-dim)]">Ready to build?</p>
-                <h2 className="headline-lg max-w-xl text-[var(--on-surface)]">
-                  Get a project like this built
-                </h2>
-                <p className="body-lg mx-auto mt-3 max-w-md text-[var(--on-surface-dim)]">
-                  Tell us about your product goals. We move fast — scoping consultation within 48
-                  hours.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap justify-center gap-3">
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 rounded-full bg-[var(--on-surface)] px-6 py-3 text-[0.92rem] font-medium text-[var(--bg)] shadow-[var(--cta-shadow)] hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--on-surface)]"
-                >
-                  <IconBrandWhatsapp size={18} />
-                  <span>Start on WhatsApp</span>
-                </a>
-
-                <LinkButton href="/work" variant="glass">
-                  <span>See all work</span>
-                  <IconArrowRight size={15} />
-                </LinkButton>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </div>
     </CustomCursorRegion>
   );
 }
@@ -1383,26 +1321,6 @@ export function CaseStudyExperience(props: Props) {
     <ToastProvider>
       <CaseStudyExperienceInner {...props} />
     </ToastProvider>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Sub-components
-// ─────────────────────────────────────────────────────────────────────────────
-
-function TechBadge({ name, hasReason = false }: { name: string; hasReason?: boolean }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-4 py-2 font-mono text-[0.78rem] text-[var(--on-surface-dim)] transition-colors",
-        hasReason
-          ? "border-[color-mix(in_srgb,var(--on-surface)_25%,transparent)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)] cursor-help"
-          : "border-[var(--outline)] hover:border-[var(--outline-variant)]",
-      )}
-    >
-      <IconCode size={12} aria-hidden />
-      {name}
-    </span>
   );
 }
 

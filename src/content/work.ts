@@ -960,7 +960,7 @@ export const casedokCaseStudy: CaseStudyProject = {
   sectorLabel: "HealthTech / Legal SaaS",
   clientName: "Casedok",
   coverImageUrl: "/casedok/hero-section.png",
-  liveUrl: null,
+  liveUrl: "https://casedok.com",
   repoUrl: null,
   status: "Live",
 
