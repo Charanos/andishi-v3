@@ -1,77 +1,51 @@
 "use client";
 
-import {
-  IconArrowRight,
-  IconBrandWhatsapp,
-  IconChevronDown,
-  IconChevronLeft,
-  IconChevronRight,
-  IconX,
-} from "@tabler/icons-react";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
-import { AnimatePresence, motion } from "framer-motion";
+/**
+ * src/components/sections/work-page-experience.tsx
+ *
+ * Production-grade /work listing page.
+ * - Cinematic full-bleed hero with editorial typography
+ * - Pill-based inline filter chips (no hover-over dropdowns)
+ * - Masonry-style bento grid with featured-first spanning layout
+ * - Proper decarding on mobile (matching services-page pattern)
+ * - Monochrome editorial card design — no neon metric colors
+ * - Clean stat strip below hero
+ * - GSAP stagger entrance animations
+ */
+
+import { IconArrowRight, IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { gsap } from "gsap";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState, useRef } from "react";
-import {
-  Area,
-  AreaChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-} from "recharts";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { workProjects, type WorkProject } from "@/content/work";
 import { CustomCursorRegion } from "@/components/ui/custom-cursor-region";
 import { cosmicSpring } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 import { mapApiProjectToWorkProject } from "@/lib/work-mapper";
 
-function getMetricColor(tone: WorkProject["metrics"][number]["tone"]) {
-  if (tone === "cyan") return "var(--secondary)";
-  if (tone === "success") return "var(--tertiary)";
-  if (tone === "primary") return "var(--primary)";
-  return "var(--on-surface)";
+// ─────────────────────────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+function formatIndex(n: number) {
+  return String(n).padStart(2, "0");
 }
 
-function formatIndex(index: number) {
-  return String(index + 1).padStart(2, "0");
-}
-
-function PatternTexture({
-  className = "",
-  opacity = 0.16,
-}: {
-  className?: string;
-  opacity?: number;
-}) {
-  return (
-    <div
-      aria-hidden="true"
-      className={`pointer-events-none absolute inset-0 ${className}`}
-      style={{
-        opacity,
-        backgroundImage:
-          "url(\"data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M14 10.5v7M10.5 14h7' stroke='%23c5b8e8' stroke-width='0.7' stroke-linecap='round' opacity='0.24'/%3E%3C/svg%3E\"), radial-gradient(circle, color-mix(in srgb, var(--secondary) 18%, transparent) 0 1px, transparent 1.7px)",
-        backgroundPosition: "0 0, 14px 14px",
-        backgroundSize: "28px 28px, 28px 28px",
-      }}
-    />
-  );
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// Filter configuration
+// ─────────────────────────────────────────────────────────────────────────────
 
 const serviceFilters = [
-  { label: "All Services", value: "all" },
-  { label: "Web Applications", value: "custom-software" },
-  { label: "SaaS Platforms", value: "saas-development" },
+  { label: "All", value: "all" },
+  { label: "Web Apps", value: "custom-software" },
+  { label: "SaaS", value: "saas-development" },
+  { label: "Mobile", value: "mobile-apps" },
   { label: "AI Systems", value: "ai-systems" },
-  { label: "Mobile Apps", value: "mobile-apps" },
-  { label: "Enterprise Software", value: "enterprise-software" },
-  { label: "Blockchain / Web3", value: "blockchain" },
-  { label: "APIs & Integrations", value: "apis-integrations" },
-  { label: "Product Strategy", value: "product-strategy" },
+  { label: "Enterprise", value: "enterprise-software" },
+  { label: "APIs", value: "apis-integrations" },
+  { label: "Web3", value: "blockchain" },
 ] as const;
 
 const verticalFilters = [
@@ -80,107 +54,31 @@ const verticalFilters = [
   { label: "EdTech", value: "edtech" },
   { label: "Logistics", value: "logistics" },
   { label: "SaaS", value: "saas" },
-  { label: "Retail / Commerce", value: "retail" },
+  { label: "Retail", value: "retail" },
 ] as const;
 
-// Custom Dropdown Component
-function FilterDropdown({
-  label,
-  options,
-  value,
-  onChange,
-  counts,
-}: {
-  label: string;
-  options: readonly { label: string; value: string }[];
-  value: string;
-  onChange: (val: string) => void;
-  counts: (val: string) => number;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+// ─────────────────────────────────────────────────────────────────────────────
+// Pattern texture
+// ─────────────────────────────────────────────────────────────────────────────
 
-  const selectedOption = options.find((o) => o.value === value) || options[0];
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
+function PatternTexture({ opacity = 0.04 }: { opacity?: number }) {
   return (
-    <div className="relative" ref={dropdownRef}>
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between gap-3 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-5 py-2.5 text-[0.82rem] font-medium transition-all hover:border-[color-mix(in_srgb,var(--primary)_30%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] min-w-[200px]"
-      >
-        <span className="text-[var(--on-surface-dim)]">
-          {label}:{" "}
-          <strong className="text-[var(--on-surface)] font-medium ml-1">
-            {selectedOption.label}
-          </strong>
-        </span>
-        <IconChevronDown
-          size={16}
-          stroke={1.8}
-          className={cn(
-            "text-[var(--on-surface-dim)] transition-transform duration-300",
-            isOpen && "rotate-180",
-          )}
-        />
-      </button>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 8, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.98 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute left-0 top-[calc(100%+0.5rem)] z-50 w-[260px] overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[var(--surface-high)] p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.08)] backdrop-blur-2xl"
-          >
-            <div className="max-h-[300px] overflow-y-auto no-scrollbar">
-              {options.map((option) => {
-                const isActive = option.value === value;
-                return (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => {
-                      onChange(option.value);
-                      setIsOpen(false);
-                    }}
-                    className={cn(
-                      "flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-left text-[0.82rem] font-medium transition-all duration-200",
-                      isActive
-                        ? "bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] text-[var(--primary)]"
-                        : "text-[var(--on-surface-dim)] hover:bg-[color-mix(in_srgb,var(--primary)_6%,transparent)] hover:text-[var(--on-surface)]",
-                    )}
-                  >
-                    {option.label}
-                    <span
-                      className={cn(
-                        "font-mono text-[0.68rem] tracking-tight",
-                        isActive ? "opacity-100" : "opacity-50",
-                      )}
-                    >
-                      {counts(option.value)}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0"
+      style={{
+        opacity,
+        backgroundImage:
+          "url(\"data:image/svg+xml,%3Csvg width='34' height='34' viewBox='0 0 34 34' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M17 11v12M11 17h12' stroke='%23c5b8e8' stroke-width='0.65' stroke-linecap='round' opacity='0.22'/%3E%3C/svg%3E\")",
+        backgroundSize: "34px 34px",
+      }}
+    />
   );
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Pagination
+// ─────────────────────────────────────────────────────────────────────────────
 
 function Pagination({
   currentPage,
@@ -193,21 +91,21 @@ function Pagination({
 }) {
   if (totalPages <= 1) return null;
 
-  const handleScrollToTop = (page: number) => {
+  const go = (page: number) => {
     onPageChange(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
-    <div className="mt-8 flex items-center justify-center gap-2">
+    <div className="mt-12 flex items-center justify-center gap-2">
       <button
         type="button"
-        onClick={() => handleScrollToTop(currentPage - 1)}
+        onClick={() => go(currentPage - 1)}
         disabled={currentPage === 1}
-        className="grid h-10 w-10 place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] transition-all hover:border-[color-mix(in_srgb,var(--primary)_30%,transparent)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] disabled:opacity-30 disabled:hover:border-[var(--glass-border)] disabled:hover:text-[var(--on-surface-dim)]"
+        className="grid h-10 w-10 place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] transition-all hover:border-[var(--on-surface)] hover:text-[var(--on-surface)] disabled:opacity-30"
         aria-label="Previous page"
       >
-        <IconChevronLeft size={18} stroke={2} />
+        <IconChevronLeft size={17} stroke={2} />
       </button>
 
       {Array.from({ length: totalPages }).map((_, i) => {
@@ -222,42 +120,44 @@ function Pagination({
           return (
             <button
               key={page}
-              onClick={() => handleScrollToTop(page)}
+              onClick={() => go(page)}
               className={cn(
-                "grid h-10 min-w-10 px-2 place-items-center rounded-full border text-[0.85rem] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]",
+                "grid h-10 min-w-[2.5rem] place-items-center rounded-full border px-3 font-mono text-[0.82rem] transition-all",
                 isActive
-                  ? "border-[color-mix(in_srgb,var(--primary)_30%,transparent)] bg-[color-mix(in_srgb,var(--primary)_10%,transparent)] text-[var(--primary)]"
-                  : "border-[var(--glass-border)] bg-[var(--glass-bg)] hover:border-[color-mix(in_srgb,var(--primary)_30%,transparent)] text-[var(--on-surface-dim)] hover:text-[var(--primary)]",
+                  ? "border-[var(--on-surface)] bg-[var(--on-surface)] text-[var(--bg)]"
+                  : "border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)]",
               )}
             >
               {page}
             </button>
           );
         }
-
         if (page === currentPage - 2 || page === currentPage + 2) {
           return (
-            <span key={page} className="text-[var(--on-surface-dim)] px-1">
-              ...
+            <span key={page} className="text-[var(--on-surface-dim)] opacity-40">
+              …
             </span>
           );
         }
-
         return null;
       })}
 
       <button
         type="button"
-        onClick={() => handleScrollToTop(currentPage + 1)}
+        onClick={() => go(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="grid h-10 w-10 place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] transition-all hover:border-[color-mix(in_srgb,var(--primary)_30%,transparent)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] disabled:opacity-30 disabled:hover:border-[var(--glass-border)] disabled:hover:text-[var(--on-surface-dim)]"
+        className="grid h-10 w-10 place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] transition-all hover:border-[var(--on-surface)] hover:text-[var(--on-surface)] disabled:opacity-30"
         aria-label="Next page"
       >
-        <IconChevronRight size={18} stroke={2} />
+        <IconChevronRight size={17} stroke={2} />
       </button>
     </div>
   );
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Main WorkPageExperience
+// ─────────────────────────────────────────────────────────────────────────────
 
 export function WorkPageExperience() {
   const [activeService, setActiveService] = useState<string>("all");
@@ -268,7 +168,9 @@ export function WorkPageExperience() {
   const [dbProjects, setDbProjects] = useState<WorkProject[]>([]);
   const [loading, setLoading] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
 
+  // Fetch from API (DB-backed projects)
   useEffect(() => {
     async function fetchWork() {
       try {
@@ -287,7 +189,7 @@ export function WorkPageExperience() {
           }
         }
       } catch (err) {
-        console.error("Error fetching work projects from API:", err);
+        console.error("Error fetching work projects:", err);
       } finally {
         setLoading(false);
       }
@@ -297,7 +199,6 @@ export function WorkPageExperience() {
 
   const filteredProjects = useMemo(() => {
     if (dbProjects.length > 0) return dbProjects;
-
     return workProjects.filter((project) => {
       const matchService =
         activeService === "all" ||
@@ -310,213 +211,306 @@ export function WorkPageExperience() {
 
   const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
   const paginatedProjects = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return filteredProjects.slice(startIndex, startIndex + itemsPerPage);
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredProjects.slice(start, start + itemsPerPage);
   }, [filteredProjects, currentPage]);
 
+  // GSAP stagger entrance for cards
   useEffect(() => {
     if (!gridRef.current || paginatedProjects.length === 0) return;
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        ".project-card",
+        ".work-card",
         { opacity: 0, y: 28 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.55,
-          stagger: 0.065,
-          ease: "power2.out",
-          delay: 0.05,
-        },
+        { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: "power2.out", delay: 0.05 },
       );
     }, gridRef);
     return () => ctx.revert();
   }, [paginatedProjects, loading]);
 
   const countForService = (val: string) => {
-    if (dbProjects.length > 0) {
-      if (val === "all") return dbProjects.length;
-      return dbProjects.filter(
-        (p) => p.tags.some((t) => t.toLowerCase().includes(val)) || p.sector === val,
-      ).length;
-    }
-    if (val === "all") return workProjects.length;
-    return workProjects.filter(
-      (project) =>
-        project.tags.some((t) => t.toLowerCase().includes(val)) || project.sector === val,
-    ).length;
+    const pool = dbProjects.length > 0 ? dbProjects : workProjects;
+    if (val === "all") return pool.length;
+    return pool.filter((p) => p.tags.some((t) => t.toLowerCase().includes(val)) || p.sector === val)
+      .length;
   };
 
   const countForVertical = (val: string) => {
-    if (dbProjects.length > 0) {
-      if (val === "all") return dbProjects.length;
-      return dbProjects.filter((p) => p.sector === val).length;
-    }
-    if (val === "all") return workProjects.length;
-    return workProjects.filter((project) => project.sector === val).length;
+    const pool = dbProjects.length > 0 ? dbProjects : workProjects;
+    if (val === "all") return pool.length;
+    return pool.filter((p) => p.sector === val).length;
   };
 
   return (
-    <>
-      <main className="relative isolate overflow-visible bg-[var(--bg)]">
-        <CustomCursorRegion className="relative isolate">
-          <PatternTexture className="z-0" opacity={0.1} />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--surface-high)_8%,transparent),transparent_22rem),linear-gradient(90deg,color-mix(in_srgb,var(--bg)_88%,transparent),transparent_38%,color-mix(in_srgb,var(--bg)_72%,transparent))]"
-          />
+    <main className="relative isolate overflow-visible bg-[var(--bg)]">
+      <CustomCursorRegion className="relative isolate">
+        <PatternTexture opacity={0.05} />
 
-          <div className="relative z-[1] flex w-full flex-col pb-24 pt-32 lg:pt-36">
-            <section className="w-full px-5 sm:px-8 lg:px-10">
-              <header className="mx-auto w-full max-w-[92rem] mb-8 md:mb-12 md:grid md:grid-cols-[1fr_auto] md:items-end md:gap-10">
-                <motion.div
-                  initial={{ opacity: 0, y: 18 }}
+        {/* Radial glow background */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,color-mix(in_srgb,var(--surface-high)_12%,transparent),transparent)]"
+        />
+
+        <div className="relative z-[1] flex w-full flex-col pb-24 pt-28 lg:pt-32">
+          {/* ── Hero Section ─────────────────────────────────────────── */}
+          <section ref={heroRef} className="w-full px-5 sm:px-8 lg:px-10 mb-12">
+            <div className="mx-auto w-full max-w-[92rem]">
+              {/* Eyebrow */}
+              <motion.p
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...cosmicSpring, delay: 0 }}
+                className="label-caps mb-5 flex items-center gap-2.5 text-[var(--on-surface-dim)]"
+              >
+                <span className="h-px w-6 bg-[var(--on-surface-dim)] opacity-40" />
+                Selected work · 2024–2026
+              </motion.p>
+
+              {/* Two-column hero layout */}
+              <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={cosmicSpring}
+                  transition={{ ...cosmicSpring, delay: 0.06 }}
+                  className="title-serif text-[clamp(3.2rem,7.5vw,5.5rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]"
                 >
-                  <p className="label-caps mb-5 flex items-center gap-3 text-[var(--secondary)]">
-                    <span className="h-px w-7 bg-[var(--secondary)]" />
-                    Selected work / 2024-2026
-                  </p>
-                  <h1 className="title-serif m-0 text-[clamp(3.15rem,7.4vw,5.25rem)] font-normal leading-[0.94] tracking-tight text-[var(--on-surface)]">
-                    Our Work.
-                  </h1>
-                </motion.div>
+                  Our Work.
+                </motion.h1>
 
                 <motion.div
-                  initial={{ opacity: 0, y: 18 }}
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ ...cosmicSpring, delay: 0.08 }}
-                  className="mt-6 max-w-md md:mt-0 md:text-right"
+                  transition={{ ...cosmicSpring, delay: 0.12 }}
+                  className="lg:text-right"
                 >
-                  <p className="font-mono text-[clamp(3rem,7vw,5rem)] font-medium leading-none tracking-tight text-[color-mix(in_srgb,var(--on-surface)_28%,transparent)] dark:text-[color-mix(in_srgb,var(--on-surface)_14%,transparent)]">
+                  <p className="font-mono text-[clamp(2.8rem,6vw,4.5rem)] font-medium leading-none tracking-tight text-[color-mix(in_srgb,var(--on-surface)_15%,transparent)]">
                     {formatIndex(filteredProjects.length)}
                   </p>
-                  <p className="body-md mt-3 font-medium text-[var(--on-surface-dim)]">
-                    Proof of our software delivery work across fintech, SaaS platforms, logistics,
-                    AI integrations, and mobile systems.
+                  <p className="mt-3 max-w-xs text-[0.88rem] leading-[1.6] text-[var(--on-surface-dim)] lg:ml-auto">
+                    Software shipped across fintech, SaaS, logistics, AI integrations, and mobile.
                   </p>
                 </motion.div>
-              </header>
-            </section>
+              </div>
 
-            <div className="sticky top-[4.5rem] z-[40] w-full border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_85%,transparent)] px-5 py-4 backdrop-blur-xl transition-all duration-300 sm:px-8 lg:px-10 mb-6">
-              <div className="mx-auto flex w-full max-w-[92rem] flex-col gap-4 sm:flex-row sm:items-center">
-                <FilterDropdown
-                  label="Service"
-                  options={serviceFilters}
-                  value={activeService}
-                  onChange={(val) => {
-                    setActiveService(val);
-                    setCurrentPage(1);
-                  }}
-                  counts={countForService}
-                />
-                <FilterDropdown
-                  label="Industry"
-                  options={verticalFilters}
-                  value={activeVertical}
-                  onChange={(val) => {
-                    setActiveVertical(val);
-                    setCurrentPage(1);
-                  }}
-                  counts={countForVertical}
-                />
+              {/* Stat strip */}
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ ...cosmicSpring, delay: 0.18 }}
+                className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-[var(--glass-border)] pt-8"
+              >
+                {[
+                  { value: "6+", label: "Industries" },
+                  { value: "34", label: "Projects shipped" },
+                  { value: "100%", label: "Client retention" },
+                  { value: "2024–", label: "Active since" },
+                ].map((stat) => (
+                  <div key={stat.label} className="flex items-baseline gap-2">
+                    <span className="font-mono text-[1.2rem] font-medium text-[var(--on-surface)]">
+                      {stat.value}
+                    </span>
+                    <span className="text-[0.75rem] text-[var(--on-surface-dim)]">
+                      {stat.label}
+                    </span>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+          </section>
+
+          {/* ── Sticky Filter Bar ─────────────────────────────────────── */}
+          <div className="sticky top-[4.5rem] z-[40] w-full border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_88%,transparent)] px-5 py-3.5 backdrop-blur-xl sm:px-8 lg:px-10 mb-8">
+            <div className="mx-auto flex w-full max-w-[92rem] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              {/* Service filter pills */}
+              <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto no-scrollbar">
+                {serviceFilters.map((filter) => {
+                  const count = countForService(filter.value);
+                  const isActive = activeService === filter.value;
+                  return (
+                    <button
+                      key={filter.value}
+                      type="button"
+                      onClick={() => {
+                        setActiveService(filter.value);
+                        setCurrentPage(1);
+                      }}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 font-mono text-[0.75rem] transition-all duration-200 whitespace-nowrap shrink-0",
+                        isActive
+                          ? "border-[var(--on-surface)] bg-[var(--on-surface)] text-[var(--bg)]"
+                          : "border-[var(--glass-border)] bg-transparent text-[var(--on-surface-dim)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)]",
+                      )}
+                    >
+                      {filter.label}
+                      <span className={cn("text-[0.65rem] opacity-60", isActive && "opacity-70")}>
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Vertical filter pills */}
+              <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto no-scrollbar sm:justify-end">
+                {verticalFilters.map((filter) => {
+                  const count = countForVertical(filter.value);
+                  const isActive = activeVertical === filter.value;
+                  return (
+                    <button
+                      key={filter.value}
+                      type="button"
+                      onClick={() => {
+                        setActiveVertical(filter.value);
+                        setCurrentPage(1);
+                      }}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 font-mono text-[0.75rem] transition-all duration-200 whitespace-nowrap shrink-0",
+                        isActive
+                          ? "border-[var(--on-surface)] bg-[var(--on-surface)] text-[var(--bg)]"
+                          : "border-[var(--glass-border)] bg-transparent text-[var(--on-surface-dim)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)]",
+                      )}
+                    >
+                      {filter.label}
+                      <span className="text-[0.65rem] opacity-60">{count}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
-
-            <section className="w-full px-5 sm:px-8 lg:px-10">
-              <div className="mx-auto w-full max-w-[92rem]">
-                <div
-                  ref={gridRef}
-                  key={`${activeService}-${activeVertical}-${currentPage}`}
-                  className={cn(
-                    "grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 grid-flow-dense",
-                    loading && "opacity-35 transition-opacity duration-300",
-                  )}
-                >
-                  {paginatedProjects.map((project, index) => (
-                    <ProjectCard
-                      key={project.id}
-                      index={(currentPage - 1) * itemsPerPage + index}
-                      project={project}
-                    />
-                  ))}
-                </div>
-
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
-            </section>
           </div>
-        </CustomCursorRegion>
-      </main>
-    </>
+
+          {/* ── Project Grid ────────────────────────────────────────────── */}
+          <section className="w-full px-5 sm:px-8 lg:px-10">
+            <div className="mx-auto w-full max-w-[92rem]">
+              {/* Empty state */}
+              <AnimatePresence mode="wait">
+                {filteredProjects.length === 0 && !loading && (
+                  <motion.div
+                    key="empty"
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="py-24 text-center"
+                  >
+                    <p className="text-[0.9rem] text-[var(--on-surface-dim)]">
+                      No projects match this filter combination.
+                    </p>
+                    <button
+                      onClick={() => {
+                        setActiveService("all");
+                        setActiveVertical("all");
+                      }}
+                      className="mt-4 font-mono text-[0.82rem] text-[var(--on-surface)] underline underline-offset-4"
+                    >
+                      Clear filters
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Grid */}
+              <div
+                ref={gridRef}
+                key={`${activeService}-${activeVertical}-${currentPage}`}
+                className={cn(
+                  "grid grid-cols-1 gap-0 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-6 grid-flow-dense",
+                  loading && "opacity-30 pointer-events-none transition-opacity duration-200",
+                )}
+              >
+                {paginatedProjects.map((project, index) => (
+                  <ProjectCard
+                    key={project.id}
+                    index={(currentPage - 1) * itemsPerPage + index}
+                    project={project}
+                  />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          </section>
+        </div>
+      </CustomCursorRegion>
+    </main>
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Project Card
+// ─────────────────────────────────────────────────────────────────────────────
+
 function ProjectCard({ index, project }: { index: number; project: WorkProject }) {
   const isFeatured = project.featured;
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-40px" });
 
   return (
-    <article
-      className={cn(
-        "project-card break-inside-avoid flex h-full",
-        isFeatured ? "lg:col-span-2" : "",
-      )}
-    >
+    <article ref={ref} className={cn("work-card", isFeatured ? "md:col-span-2 lg:col-span-2" : "")}>
       <Link
         href={`/work/${project.id}`}
         data-cursor-text="VIEW"
         className={cn(
-          "group/card cursor-pointer flex w-full overflow-hidden text-left transition-all duration-500 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--primary)_50%,transparent)]",
-          "rounded-[1.75rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] shadow-[var(--glass-inner-shadow)] backdrop-blur-md hover:border-[color-mix(in_srgb,var(--on-surface)_30%,transparent)] hover:shadow-[0_22px_56px_color-mix(in_srgb,var(--bg-deep)_16%,transparent)] hover:-translate-y-[3px]",
-          "max-md:!rounded-none max-md:!border-x-0 max-md:!border-t-0 max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:!bg-transparent max-md:!shadow-none max-md:!backdrop-blur-none max-md:!px-0 max-md:!py-10 max-md:last:!border-b-0 max-md:!translate-y-0",
+          // Desktop: glass card
+          "group/card flex w-full overflow-hidden text-left transition-all duration-500 ease-out",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--on-surface)] focus-visible:ring-offset-2",
+          "md:rounded-[1.75rem] md:border md:border-[var(--glass-border)] md:bg-[var(--glass-bg)] md:shadow-[var(--glass-inner-shadow)] md:backdrop-blur-md",
+          "md:hover:border-[color-mix(in_srgb,var(--on-surface)_30%,transparent)] md:hover:-translate-y-[3px] md:hover:shadow-[0_22px_56px_color-mix(in_srgb,var(--bg-deep)_16%,transparent)]",
+          // Mobile: decarding (list-style separator, no glass)
+          "border-b border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] py-8 last:border-b-0",
+          "md:border-0 md:py-0",
           isFeatured ? "flex-col lg:flex-row" : "flex-col",
         )}
       >
+        {/* Image */}
         <div
           className={cn(
             "relative shrink-0 overflow-hidden",
-            "max-md:rounded-[1.25rem] max-md:mb-4",
+            "rounded-[1.25rem] md:rounded-none",
             isFeatured
-              ? "w-full lg:w-[55%] aspect-[4/3] lg:h-full lg:min-h-[22rem]"
-              : "w-full aspect-[4/3]",
+              ? "aspect-[16/10] w-full lg:aspect-auto lg:h-full lg:w-[55%] lg:min-h-[22rem]"
+              : "aspect-[4/3] w-full",
           )}
         >
           <Image
             src={project.image}
-            alt={`${project.title} project preview`}
+            alt={`${project.title} — Andishi case study`}
             fill
             sizes={
               isFeatured
                 ? "(min-width: 1024px) 50vw, 100vw"
                 : "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
             }
-            className="object-cover transition duration-700 group-hover/card:scale-[1.04]"
+            className="object-cover transition-transform duration-700 group-hover/card:scale-[1.04]"
           />
-          {/* Dark gradient mask for professional contrast on light and dark mode */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />
 
-          <span className="absolute left-4 top-4 rounded-lg bg-[rgba(255,255,255,0.15)] px-2.5 py-1 font-mono text-[0.68rem] font-medium tracking-tight text-white backdrop-blur-xl border border-[rgba(255,255,255,0.1)]">
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+
+          {/* Index badge */}
+          <span className="absolute left-4 top-4 rounded-lg border border-white/10 bg-black/50 px-2.5 py-1 font-mono text-[0.66rem] font-medium tracking-tight text-white/90 backdrop-blur-xl">
             {formatIndex(index)}
           </span>
-          <span
-            className={`absolute right-4 top-4 rounded-full border border-[rgba(255,255,255,0.2)] px-3 py-1 text-[0.64rem] font-medium text-white backdrop-blur-xl`}
-          >
-            {project.status === "Live" ? "Live" : project.status}
+
+          {/* Status badge */}
+          <span className="absolute right-4 top-4 rounded-full border border-white/15 bg-black/50 px-2.5 py-1 font-mono text-[0.64rem] font-medium text-white/90 backdrop-blur-xl">
+            {project.status}
           </span>
 
-          {/* Sector and Title overlayed on image for punchy look */}
-          <div className="absolute bottom-0 left-0 p-5 w-full">
-            <p className="label-caps mb-2 text-white/70">{project.sectorLabel}</p>
+          {/* Title overlay */}
+          <div className="absolute bottom-0 left-0 w-full p-5">
+            <p className="mb-1.5 font-mono text-[0.68rem] uppercase tracking-widest text-white/60">
+              {project.sectorLabel}
+            </p>
             <h2
               className={cn(
                 "font-medium leading-tight tracking-tight text-white",
-                isFeatured ? "text-[clamp(1.5rem,3vw,2rem)]" : "text-[1.25rem]",
+                isFeatured ? "text-[clamp(1.5rem,3vw,2rem)]" : "text-[1.2rem]",
               )}
             >
               {project.title}
@@ -524,37 +518,41 @@ function ProjectCard({ index, project }: { index: number; project: WorkProject }
           </div>
         </div>
 
+        {/* Content area */}
         <div
           className={cn(
-            "flex flex-col flex-1 max-md:px-2",
+            "flex flex-col flex-1",
             isFeatured ? "p-5 sm:p-6 lg:w-[45%] lg:p-8 lg:justify-center" : "p-5 sm:p-6",
+            // On mobile no padding on sides (decarding style)
+            "max-md:px-0 max-md:pt-4",
           )}
         >
+          {/* Description */}
           <p
             className={cn(
-              "font-medium text-[var(--on-surface-dim)]",
-              isFeatured
-                ? "text-[0.95rem] leading-[1.7]"
-                : "line-clamp-3 text-[0.9rem] leading-[1.65]",
+              "text-[var(--on-surface-dim)] leading-[1.65]",
+              isFeatured ? "text-[0.95rem]" : "line-clamp-3 text-[0.88rem]",
             )}
           >
             {project.description}
           </p>
 
+          {/* Featured: Metrics grid */}
           {isFeatured && (
-            <div className="mt-8 grid grid-cols-2 gap-4 overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--surface)_34%,transparent)]">
-              {project.metrics.slice(0, 4).map((metric) => (
+            <div className="mt-7 grid grid-cols-2 gap-0 overflow-hidden rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)]">
+              {project.metrics.slice(0, 4).map((metric, mi) => (
                 <div
                   key={metric.label}
-                  className="px-4 py-3 border-[var(--glass-border)] odd:border-r [&:nth-child(-n+2)]:border-b"
+                  className={cn(
+                    "px-5 py-4 border-[var(--glass-border)]",
+                    mi % 2 === 0 ? "border-r" : "",
+                    mi < 2 ? "border-b" : "",
+                  )}
                 >
-                  <p
-                    className="font-mono text-[1.05rem] tracking-tight"
-                    style={{ color: getMetricColor(metric.tone) }}
-                  >
+                  <p className="font-mono text-[1.1rem] font-medium tracking-tight text-[var(--on-surface)]">
                     {metric.value}
                   </p>
-                  <p className="mt-1 text-[0.58rem] font-medium uppercase tracking-[0.08em] text-[color-mix(in_srgb,var(--on-surface-dim)_56%,transparent)]">
+                  <p className="mt-1 font-mono text-[0.62rem] uppercase tracking-[0.08em] text-[var(--on-surface-dim)] opacity-70">
                     {metric.label}
                   </p>
                 </div>
@@ -562,44 +560,37 @@ function ProjectCard({ index, project }: { index: number; project: WorkProject }
             </div>
           )}
 
-          <div className={cn("flex flex-wrap gap-1.5", isFeatured ? "mt-8" : "mt-auto pt-6")}>
-            {project.tags.slice(0, isFeatured ? 5 : 3).map((tag, tagIndex) => (
+          {/* Stack tags */}
+          <div className={cn("flex flex-wrap gap-1.5", isFeatured ? "mt-7" : "mt-auto pt-5")}>
+            {project.tags.slice(0, isFeatured ? 5 : 3).map((tag) => (
               <span
                 key={tag}
-                className="rounded-full border px-2.5 py-1 text-[0.7rem] font-medium"
-                style={{
-                  backgroundColor:
-                    tagIndex === 0
-                      ? "color-mix(in srgb, var(--secondary) 10%, transparent)"
-                      : "var(--glass-bg)",
-                  borderColor:
-                    tagIndex === 0
-                      ? "color-mix(in srgb, var(--secondary) 24%, transparent)"
-                      : "var(--glass-border)",
-                  color: tagIndex === 0 ? "var(--secondary)" : "var(--on-surface-dim)",
-                }}
+                className="rounded-full border border-[var(--outline)] bg-[var(--glass-bg)] px-2.5 py-1 font-mono text-[0.7rem] text-[var(--on-surface-dim)]"
               >
                 {tag}
               </span>
             ))}
           </div>
 
+          {/* Footer: key metric + arrow */}
           <div
             className={cn(
-              "flex items-center justify-between border-[var(--glass-border)] max-md:border-transparent",
-              isFeatured ? "mt-8 border-t pt-6" : "mt-6 border-t pt-5",
+              "flex items-center justify-between border-t border-[var(--glass-border)]",
+              isFeatured ? "mt-7 pt-6" : "mt-5 pt-5",
+              "max-md:border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)]",
             )}
           >
             <div>
-              <p className="font-mono text-[1rem] tracking-tight text-[var(--on-surface)]">
+              <p className="font-mono text-[1rem] font-medium tracking-tight text-[var(--on-surface)]">
                 {project.metric}
               </p>
-              <p className="mt-1 text-[0.64rem] font-medium uppercase tracking-[0.08em] text-[color-mix(in_srgb,var(--on-surface-dim)_56%,transparent)]">
+              <p className="mt-0.5 font-mono text-[0.62rem] uppercase tracking-[0.08em] text-[var(--on-surface-dim)] opacity-70">
                 {project.metricLabel}
               </p>
             </div>
-            <span className="grid h-9 w-9 place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] transition-all duration-300 group-hover/card:-translate-y-0.5 group-hover/card:translate-x-0.5 group-hover/card:border-[color-mix(in_srgb,var(--secondary)_38%,transparent)] group-hover/card:text-[var(--secondary)]">
-              <IconArrowRight size={15} stroke={1.7} className="-rotate-45" />
+
+            <span className="grid h-9 w-9 place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] transition-all duration-300 group-hover/card:-translate-y-0.5 group-hover/card:translate-x-0.5 group-hover/card:border-[var(--on-surface)] group-hover/card:text-[var(--on-surface)]">
+              <IconArrowRight size={14} stroke={1.8} className="-rotate-45" />
             </span>
           </div>
         </div>
