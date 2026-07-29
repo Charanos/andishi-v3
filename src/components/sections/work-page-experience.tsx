@@ -3,18 +3,22 @@
 /**
  * src/components/sections/work-page-experience.tsx
  *
- * Production-grade /work listing page.
- * - Cinematic full-bleed hero with editorial typography
- * - Pill-based inline filter chips (no hover-over dropdowns)
- * - Masonry-style bento grid with featured-first spanning layout
- * - Proper decarding on mobile (matching services-page pattern)
- * - Monochrome editorial card design — no neon metric colors
- * - Clean stat strip below hero
- * - GSAP stagger entrance animations
+ * Flagship production-grade /work listing page experience:
+ * - Single Flagship Spotlight Hero Card at top of page (index 0)
+ * - Perfectly uniform 3-column grid for all subsequent projects
+ * - Pill-based filter tabs (Service & Industry) with live counts
+ * - Decarding mobile responsive layout (clean borders, no heavy shadows)
+ * - Ultra-clean monochrome editorial styling (no neon color splashes)
+ * - GSAP entrance animations & Framer Motion transitions
  */
 
-import { IconArrowRight, IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
-import { AnimatePresence, motion, useInView } from "framer-motion";
+import {
+  IconArrowRight,
+  IconChevronLeft,
+  IconChevronRight,
+  IconSparkles,
+} from "@tabler/icons-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { gsap } from "gsap";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,14 +42,14 @@ function formatIndex(n: number) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const serviceFilters = [
-  { label: "All", value: "all" },
+  { label: "All Services", value: "all" },
   { label: "Web Apps", value: "custom-software" },
-  { label: "SaaS", value: "saas-development" },
-  { label: "Mobile", value: "mobile-apps" },
+  { label: "SaaS Platforms", value: "saas-development" },
+  { label: "Mobile Apps", value: "mobile-apps" },
   { label: "AI Systems", value: "ai-systems" },
-  { label: "Enterprise", value: "enterprise-software" },
-  { label: "APIs", value: "apis-integrations" },
-  { label: "Web3", value: "blockchain" },
+  { label: "Enterprise Software", value: "enterprise-software" },
+  { label: "APIs & Integrations", value: "apis-integrations" },
+  { label: "Web3 / Blockchain", value: "blockchain" },
 ] as const;
 
 const verticalFilters = [
@@ -97,7 +101,7 @@ function Pagination({
   };
 
   return (
-    <div className="mt-12 flex items-center justify-center gap-2">
+    <div className="mt-14 flex items-center justify-center gap-2">
       <button
         type="button"
         onClick={() => go(currentPage - 1)}
@@ -244,9 +248,9 @@ export function WorkPageExperience() {
   return (
     <main className="relative isolate overflow-visible bg-[var(--bg)]">
       <CustomCursorRegion className="relative isolate">
-        <PatternTexture opacity={0.05} />
+        <PatternTexture opacity={0.04} />
 
-        {/* Radial glow background */}
+        {/* Subtle top glow */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,color-mix(in_srgb,var(--surface-high)_12%,transparent),transparent)]"
@@ -254,20 +258,20 @@ export function WorkPageExperience() {
 
         <div className="relative z-[1] flex w-full flex-col pb-24 pt-28 lg:pt-32">
           {/* ── Hero Section ─────────────────────────────────────────── */}
-          <section ref={heroRef} className="w-full px-5 sm:px-8 lg:px-10 mb-12">
+          <section ref={heroRef} className="w-full px-5 sm:px-8 lg:px-10 mb-10">
             <div className="mx-auto w-full max-w-[92rem]">
               {/* Eyebrow */}
               <motion.p
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...cosmicSpring, delay: 0 }}
-                className="label-caps mb-5 flex items-center gap-2.5 text-[var(--on-surface-dim)]"
+                className="label-caps mb-4 flex items-center gap-2.5 text-[var(--on-surface-dim)]"
               >
                 <span className="h-px w-6 bg-[var(--on-surface-dim)] opacity-40" />
-                Selected work · 2024–2026
+                Portfolio Showcase · 2024–2026
               </motion.p>
 
-              {/* Two-column hero layout */}
+              {/* Header Title & Counter Grid */}
               <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
                 <motion.h1
                   initial={{ opacity: 0, y: 20 }}
@@ -284,11 +288,12 @@ export function WorkPageExperience() {
                   transition={{ ...cosmicSpring, delay: 0.12 }}
                   className="lg:text-right"
                 >
-                  <p className="font-mono text-[clamp(2.8rem,6vw,4.5rem)] font-medium leading-none tracking-tight text-[color-mix(in_srgb,var(--on-surface)_15%,transparent)]">
+                  <p className="font-mono text-[clamp(2.8rem,6vw,4.5rem)] font-medium leading-none tracking-tight text-[color-mix(in_srgb,var(--on-surface)_18%,transparent)]">
                     {formatIndex(filteredProjects.length)}
                   </p>
                   <p className="mt-3 max-w-xs text-[0.88rem] leading-[1.6] text-[var(--on-surface-dim)] lg:ml-auto">
-                    Software shipped across fintech, SaaS, logistics, AI integrations, and mobile.
+                    Verified production software shipped across fintech, legal tech, SaaS,
+                    logistics, and mobile.
                   </p>
                 </motion.div>
               </div>
@@ -298,19 +303,19 @@ export function WorkPageExperience() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...cosmicSpring, delay: 0.18 }}
-                className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-[var(--glass-border)] pt-8"
+                className="mt-10 flex flex-wrap items-center gap-x-10 gap-y-4 border-t border-[var(--glass-border)] pt-7"
               >
                 {[
-                  { value: "6+", label: "Industries" },
-                  { value: "34", label: "Projects shipped" },
-                  { value: "100%", label: "Client retention" },
-                  { value: "2024–", label: "Active since" },
+                  { value: "6+", label: "Key Verticals" },
+                  { value: "34", label: "Shipped Products" },
+                  { value: "100%", label: "Client Satisfaction" },
+                  { value: "2024–", label: "Active Operations" },
                 ].map((stat) => (
-                  <div key={stat.label} className="flex items-baseline gap-2">
+                  <div key={stat.label} className="flex items-baseline gap-2.5">
                     <span className="font-mono text-[1.2rem] font-medium text-[var(--on-surface)]">
                       {stat.value}
                     </span>
-                    <span className="text-[0.75rem] text-[var(--on-surface-dim)]">
+                    <span className="text-[0.75rem] font-mono text-[var(--on-surface-dim)] uppercase tracking-wider">
                       {stat.label}
                     </span>
                   </div>
@@ -319,9 +324,9 @@ export function WorkPageExperience() {
             </div>
           </section>
 
-          {/* ── Sticky Filter Bar ─────────────────────────────────────── */}
-          <div className="sticky top-[4.5rem] z-[40] w-full border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_88%,transparent)] px-5 py-3.5 backdrop-blur-xl sm:px-8 lg:px-10 mb-8">
-            <div className="mx-auto flex w-full max-w-[92rem] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          {/* ── Filter Bar ─────────────────────────────────────────────── */}
+          <div className="sticky top-[4.5rem] z-[40] w-full border-b border-[var(--glass-border)] bg-[color-mix(in_srgb,var(--bg)_88%,transparent)] px-5 py-3.5 backdrop-blur-xl sm:px-8 lg:px-10 mb-10">
+            <div className="mx-auto flex w-full max-w-[92rem] flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               {/* Service filter pills */}
               <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto no-scrollbar">
                 {serviceFilters.map((filter) => {
@@ -338,12 +343,12 @@ export function WorkPageExperience() {
                       className={cn(
                         "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 font-mono text-[0.75rem] transition-all duration-200 whitespace-nowrap shrink-0",
                         isActive
-                          ? "border-[var(--on-surface)] bg-[var(--on-surface)] text-[var(--bg)]"
+                          ? "border-[var(--on-surface)] bg-[var(--on-surface)] text-[var(--bg)] font-medium"
                           : "border-[var(--glass-border)] bg-transparent text-[var(--on-surface-dim)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)]",
                       )}
                     >
                       {filter.label}
-                      <span className={cn("text-[0.65rem] opacity-60", isActive && "opacity-70")}>
+                      <span className={cn("text-[0.65rem] opacity-60", isActive && "opacity-80")}>
                         {count}
                       </span>
                     </button>
@@ -352,7 +357,7 @@ export function WorkPageExperience() {
               </div>
 
               {/* Vertical filter pills */}
-              <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto no-scrollbar sm:justify-end">
+              <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto no-scrollbar lg:justify-end">
                 {verticalFilters.map((filter) => {
                   const count = countForVertical(filter.value);
                   const isActive = activeVertical === filter.value;
@@ -367,7 +372,7 @@ export function WorkPageExperience() {
                       className={cn(
                         "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 font-mono text-[0.75rem] transition-all duration-200 whitespace-nowrap shrink-0",
                         isActive
-                          ? "border-[var(--on-surface)] bg-[var(--on-surface)] text-[var(--bg)]"
+                          ? "border-[var(--on-surface)] bg-[var(--on-surface)] text-[var(--bg)] font-medium"
                           : "border-[var(--glass-border)] bg-transparent text-[var(--on-surface-dim)] hover:border-[var(--on-surface)] hover:text-[var(--on-surface)]",
                       )}
                     >
@@ -380,7 +385,7 @@ export function WorkPageExperience() {
             </div>
           </div>
 
-          {/* ── Project Grid ────────────────────────────────────────────── */}
+          {/* ── Showcase Section ────────────────────────────────────────── */}
           <section className="w-full px-5 sm:px-8 lg:px-10">
             <div className="mx-auto w-full max-w-[92rem]">
               {/* Empty state */}
@@ -403,29 +408,43 @@ export function WorkPageExperience() {
                       }}
                       className="mt-4 font-mono text-[0.82rem] text-[var(--on-surface)] underline underline-offset-4"
                     >
-                      Clear filters
+                      Reset filters
                     </button>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {/* Grid */}
-              <div
-                ref={gridRef}
-                key={`${activeService}-${activeVertical}-${currentPage}`}
-                className={cn(
-                  "grid grid-cols-1 gap-0 md:grid-cols-2 md:gap-6 lg:grid-cols-3 lg:gap-6 grid-flow-dense",
-                  loading && "opacity-30 pointer-events-none transition-opacity duration-200",
-                )}
-              >
-                {paginatedProjects.map((project, index) => (
-                  <ProjectCard
-                    key={project.id}
-                    index={(currentPage - 1) * itemsPerPage + index}
-                    project={project}
-                  />
-                ))}
-              </div>
+              {/* Showcase Container */}
+              {paginatedProjects.length > 0 && (
+                <div
+                  ref={gridRef}
+                  key={`${activeService}-${activeVertical}-${currentPage}`}
+                  className={cn(
+                    "flex flex-col gap-8",
+                    loading && "opacity-30 pointer-events-none transition-opacity duration-200",
+                  )}
+                >
+                  {/* 1. SINGLE FLAGSHIP SPOTLIGHT HERO CARD (Top of Page 1) */}
+                  {currentPage === 1 && (
+                    <FlagshipHeroCard project={paginatedProjects[0]} index={0} />
+                  )}
+
+                  {/* 2. PERFECTLY UNIFORM 3-COLUMN GRID (All other projects) */}
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {(currentPage === 1 ? paginatedProjects.slice(1) : paginatedProjects).map(
+                      (project, index) => (
+                        <UniformProjectCard
+                          key={project.id}
+                          index={
+                            currentPage === 1 ? index + 1 : (currentPage - 1) * itemsPerPage + index
+                          }
+                          project={project}
+                        />
+                      ),
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Pagination */}
               <Pagination
@@ -442,155 +461,190 @@ export function WorkPageExperience() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Project Card
+// Single Top Flagship Hero Showcase Card
 // ─────────────────────────────────────────────────────────────────────────────
 
-function ProjectCard({ index, project }: { index: number; project: WorkProject }) {
-  const isFeatured = project.featured;
-  const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
-
+function FlagshipHeroCard({ project, index }: { project: WorkProject; index: number }) {
   return (
-    <article ref={ref} className={cn("work-card", isFeatured ? "md:col-span-2 lg:col-span-2" : "")}>
+    <article className="work-card w-full">
+      <Link
+        href={`/work/${project.id}`}
+        data-cursor-text="EXPLORE"
+        className={cn(
+          "group/flagship block w-full overflow-hidden text-left transition-all duration-500 ease-out",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--on-surface)]",
+          "rounded-[2rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] p-6 sm:p-8 backdrop-blur-xl",
+          "hover:border-[color-mix(in_srgb,var(--on-surface)_30%,transparent)] hover:shadow-[0_24px_64px_rgba(0,0,0,0.12)]",
+          "max-md:!rounded-none max-md:!border-x-0 max-md:!border-t-0 max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] max-md:!bg-transparent max-md:!shadow-none max-md:!px-0 max-md:!py-8",
+        )}
+      >
+        <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
+          {/* Left Column (7 cols): Artwork */}
+          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-[var(--glass-border)] bg-[var(--bg-deep)] lg:col-span-7">
+            <Image
+              src={project.image}
+              alt={`${project.title} — Flagship case study`}
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 60vw"
+              className="object-cover object-top transition-transform duration-700 group-hover/flagship:scale-[1.03]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+            {/* Badges */}
+            <div className="absolute left-4 top-4 flex items-center gap-2">
+              <span className="flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 px-3 py-1 font-mono text-[0.68rem] text-white backdrop-blur-md">
+                <IconSparkles size={13} />
+                <span>FLAGSHIP CASE STUDY</span>
+              </span>
+            </div>
+
+            <span className="absolute right-4 top-4 rounded-full border border-white/20 bg-black/60 px-3 py-1 font-mono text-[0.68rem] text-white backdrop-blur-md">
+              {project.status}
+            </span>
+          </div>
+
+          {/* Right Column (5 cols): Metadata & Narrative */}
+          <div className="flex flex-col justify-between lg:col-span-5">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="font-mono text-[0.72rem] uppercase tracking-widest text-[var(--on-surface-dim)]">
+                  {project.sectorLabel}
+                </span>
+                <span className="text-[var(--on-surface-dim)] opacity-40">•</span>
+                <span className="font-mono text-[0.72rem] text-[var(--on-surface-dim)]">
+                  {formatIndex(index)}
+                </span>
+              </div>
+
+              <h2 className="title-serif text-3xl sm:text-4xl font-normal text-[var(--on-surface)] leading-tight mb-4">
+                {project.title}
+              </h2>
+
+              <p className="body-md text-[var(--on-surface-dim)] leading-relaxed mb-6 font-normal">
+                {project.description}
+              </p>
+
+              {/* Key Metrics Grid */}
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                {project.metrics.slice(0, 4).map((m) => (
+                  <div
+                    key={m.label}
+                    className="rounded-xl border border-[var(--glass-border)] bg-[var(--surface-high)] p-3.5"
+                  >
+                    <p className="font-mono text-[1.25rem] font-medium text-[var(--on-surface)]">
+                      {m.value}
+                    </p>
+                    <p className="font-mono text-[0.65rem] uppercase tracking-wider text-[var(--on-surface-dim)] opacity-80 mt-1">
+                      {m.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Stack Tags */}
+              <div className="flex flex-wrap gap-1.5 mb-8">
+                {project.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-lg border border-[var(--outline)] bg-[var(--surface-high)] px-2.5 py-1 font-mono text-[0.72rem] text-[var(--on-surface-dim)]"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Read CTA */}
+            <div className="flex items-center gap-2 pt-4 border-t border-[var(--glass-border)] text-[0.88rem] font-medium text-[var(--on-surface)] group-hover/flagship:translate-x-1 transition-transform">
+              <span>Read Full Case Study</span>
+              <IconArrowRight size={16} />
+            </div>
+          </div>
+        </div>
+      </Link>
+    </article>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Uniform 3-Column Project Card (For all other items)
+// ─────────────────────────────────────────────────────────────────────────────
+
+function UniformProjectCard({ index, project }: { index: number; project: WorkProject }) {
+  return (
+    <article className="work-card flex h-full">
       <Link
         href={`/work/${project.id}`}
         data-cursor-text="VIEW"
         className={cn(
-          // Desktop: glass card
-          "group/card flex w-full overflow-hidden text-left transition-all duration-500 ease-out",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--on-surface)] focus-visible:ring-offset-2",
-          "md:rounded-[1.75rem] md:border md:border-[var(--glass-border)] md:bg-[var(--glass-bg)] md:shadow-[var(--glass-inner-shadow)] md:backdrop-blur-md",
-          "md:hover:border-[color-mix(in_srgb,var(--on-surface)_30%,transparent)] md:hover:-translate-y-[3px] md:hover:shadow-[0_22px_56px_color-mix(in_srgb,var(--bg-deep)_16%,transparent)]",
-          // Mobile: decarding (list-style separator, no glass)
-          "border-b border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] py-8 last:border-b-0",
-          "md:border-0 md:py-0",
-          isFeatured ? "flex-col lg:flex-row" : "flex-col",
+          "group/card flex w-full flex-col overflow-hidden text-left transition-all duration-500 ease-out",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--on-surface)]",
+          "rounded-[1.5rem] border border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-md",
+          "hover:border-[color-mix(in_srgb,var(--on-surface)_30%,transparent)] hover:-translate-y-1 hover:shadow-[0_18px_48px_rgba(0,0,0,0.08)]",
+          "max-md:!rounded-none max-md:!border-x-0 max-md:!border-t-0 max-md:!border-b max-md:!border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:!bg-transparent max-md:!shadow-none max-md:!py-8 max-md:!translate-y-0",
         )}
       >
-        {/* Image */}
-        <div
-          className={cn(
-            "relative shrink-0 overflow-hidden",
-            "rounded-[1.25rem] md:rounded-none",
-            isFeatured
-              ? "aspect-[16/10] w-full lg:aspect-auto lg:h-full lg:w-[55%] lg:min-h-[22rem]"
-              : "aspect-[4/3] w-full",
-          )}
-        >
+        {/* Artwork */}
+        <div className="relative aspect-[16/10] w-full overflow-hidden max-md:rounded-xl">
           <Image
             src={project.image}
-            alt={`${project.title} — Andishi case study`}
+            alt={`${project.title} preview`}
             fill
-            sizes={
-              isFeatured
-                ? "(min-width: 1024px) 50vw, 100vw"
-                : "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-            }
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition-transform duration-700 group-hover/card:scale-[1.04]"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
 
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-
-          {/* Index badge */}
-          <span className="absolute left-4 top-4 rounded-lg border border-white/10 bg-black/50 px-2.5 py-1 font-mono text-[0.66rem] font-medium tracking-tight text-white/90 backdrop-blur-xl">
+          {/* Index & Status */}
+          <span className="absolute left-3.5 top-3.5 rounded-lg border border-white/10 bg-black/50 px-2.5 py-0.5 font-mono text-[0.65rem] text-white/90 backdrop-blur-md">
             {formatIndex(index)}
           </span>
 
-          {/* Status badge */}
-          <span className="absolute right-4 top-4 rounded-full border border-white/15 bg-black/50 px-2.5 py-1 font-mono text-[0.64rem] font-medium text-white/90 backdrop-blur-xl">
+          <span className="absolute right-3.5 top-3.5 rounded-full border border-white/10 bg-black/50 px-2.5 py-0.5 font-mono text-[0.65rem] text-white/90 backdrop-blur-md">
             {project.status}
           </span>
 
-          {/* Title overlay */}
-          <div className="absolute bottom-0 left-0 w-full p-5">
-            <p className="mb-1.5 font-mono text-[0.68rem] uppercase tracking-widest text-white/60">
+          {/* Title overlayed on image */}
+          <div className="absolute bottom-0 left-0 w-full p-4">
+            <p className="font-mono text-[0.65rem] uppercase tracking-widest text-white/70 mb-1">
               {project.sectorLabel}
             </p>
-            <h2
-              className={cn(
-                "font-medium leading-tight tracking-tight text-white",
-                isFeatured ? "text-[clamp(1.5rem,3vw,2rem)]" : "text-[1.2rem]",
-              )}
-            >
-              {project.title}
-            </h2>
+            <h3 className="text-[1.15rem] font-medium text-white leading-tight">{project.title}</h3>
           </div>
         </div>
 
-        {/* Content area */}
-        <div
-          className={cn(
-            "flex flex-col flex-1",
-            isFeatured ? "p-5 sm:p-6 lg:w-[45%] lg:p-8 lg:justify-center" : "p-5 sm:p-6",
-            // On mobile no padding on sides (decarding style)
-            "max-md:px-0 max-md:pt-4",
-          )}
-        >
-          {/* Description */}
-          <p
-            className={cn(
-              "text-[var(--on-surface-dim)] leading-[1.65]",
-              isFeatured ? "text-[0.95rem]" : "line-clamp-3 text-[0.88rem]",
-            )}
-          >
+        {/* Content Body */}
+        <div className="flex flex-col flex-1 p-5 max-md:px-0 max-md:pt-4">
+          <p className="line-clamp-3 text-[0.88rem] text-[var(--on-surface-dim)] leading-[1.65] mb-4">
             {project.description}
           </p>
 
-          {/* Featured: Metrics grid */}
-          {isFeatured && (
-            <div className="mt-7 grid grid-cols-2 gap-0 overflow-hidden rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)]">
-              {project.metrics.slice(0, 4).map((metric, mi) => (
-                <div
-                  key={metric.label}
-                  className={cn(
-                    "px-5 py-4 border-[var(--glass-border)]",
-                    mi % 2 === 0 ? "border-r" : "",
-                    mi < 2 ? "border-b" : "",
-                  )}
-                >
-                  <p className="font-mono text-[1.1rem] font-medium tracking-tight text-[var(--on-surface)]">
-                    {metric.value}
-                  </p>
-                  <p className="mt-1 font-mono text-[0.62rem] uppercase tracking-[0.08em] text-[var(--on-surface-dim)] opacity-70">
-                    {metric.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Stack tags */}
-          <div className={cn("flex flex-wrap gap-1.5", isFeatured ? "mt-7" : "mt-auto pt-5")}>
-            {project.tags.slice(0, isFeatured ? 5 : 3).map((tag) => (
+          {/* Stack Tags */}
+          <div className="flex flex-wrap gap-1.5 mt-auto mb-4">
+            {project.tags.slice(0, 4).map((tag) => (
               <span
                 key={tag}
-                className="rounded-full border border-[var(--outline)] bg-[var(--glass-bg)] px-2.5 py-1 font-mono text-[0.7rem] text-[var(--on-surface-dim)]"
+                className="rounded-md border border-[var(--outline)] bg-[var(--surface-high)] px-2 py-0.5 font-mono text-[0.68rem] text-[var(--on-surface-dim)]"
               >
                 {tag}
               </span>
             ))}
           </div>
 
-          {/* Footer: key metric + arrow */}
-          <div
-            className={cn(
-              "flex items-center justify-between border-t border-[var(--glass-border)]",
-              isFeatured ? "mt-7 pt-6" : "mt-5 pt-5",
-              "max-md:border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)]",
-            )}
-          >
+          {/* Footer Metric Row */}
+          <div className="flex items-center justify-between pt-4 border-t border-[var(--glass-border)]">
             <div>
-              <p className="font-mono text-[1rem] font-medium tracking-tight text-[var(--on-surface)]">
+              <p className="font-mono text-[0.95rem] font-medium text-[var(--on-surface)]">
                 {project.metric}
               </p>
-              <p className="mt-0.5 font-mono text-[0.62rem] uppercase tracking-[0.08em] text-[var(--on-surface-dim)] opacity-70">
+              <p className="font-mono text-[0.62rem] uppercase tracking-wider text-[var(--on-surface-dim)] opacity-70 mt-0.5">
                 {project.metricLabel}
               </p>
             </div>
 
-            <span className="grid h-9 w-9 place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] transition-all duration-300 group-hover/card:-translate-y-0.5 group-hover/card:translate-x-0.5 group-hover/card:border-[var(--on-surface)] group-hover/card:text-[var(--on-surface)]">
-              <IconArrowRight size={14} stroke={1.8} className="-rotate-45" />
+            <span className="grid h-8 w-8 place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] transition-all group-hover/card:border-[var(--on-surface)] group-hover/card:text-[var(--on-surface)]">
+              <IconArrowRight size={14} className="-rotate-45" />
             </span>
           </div>
         </div>
