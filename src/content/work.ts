@@ -927,7 +927,7 @@ export const casedokProject: WorkProject = {
   status: "Live",
   metric: "1 Click",
   metricLabel: "replaces 30-day manual discovery",
-  timeline: "16 weeks",
+  timeline: "8 weeks",
   location: "USA",
   featured: true,
   imageHeight: "mid",
