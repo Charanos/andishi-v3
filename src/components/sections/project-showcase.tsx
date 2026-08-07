@@ -94,6 +94,27 @@ function slugify(value: string) {
     .replace(/(^-|-$)/g, "");
 }
 
+function isDuration(str?: string | null): boolean {
+  if (!str) return false;
+  return /week|month|day|w|m|d|sprint/i.test(str);
+}
+
+function formatDelivery(targetDate?: string | null, startDate?: string | null): string {
+  if (!targetDate && !startDate) return "Shipped";
+  const val = targetDate || startDate;
+  if (!val) return "Shipped";
+
+  if (isDuration(val)) return val;
+  if (/^\d{4}$/.test(val.trim())) return val.trim();
+
+  const parsed = new Date(val);
+  if (!isNaN(parsed.getTime())) {
+    return String(parsed.getFullYear());
+  }
+
+  return val;
+}
+
 import { STATIC_PUBLIC_PROJECTS, mapApiProjectToWorkProject } from "@/lib/work-mapper";
 
 interface ProjectShowcaseProps {
@@ -303,81 +324,148 @@ export function ProjectShowcase({ initialProjects = [] }: ProjectShowcaseProps) 
         {/* Featured Flagship Project */}
         {featuredProject && (
           <div
-            className="project-block relative flex flex-col gap-10 lg:gap-16 lg:flex-row items-center mb-28 md:rounded-[2.5rem] md:border md:border-[var(--glass-border)] md:bg-[var(--glass-bg)] md:shadow-[var(--glass-inner-shadow)] md:p-8 lg:p-12 hover:border-[color-mix(in_srgb,var(--tertiary)_30%,transparent)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] transition-all duration-500 max-md:border-b max-md:border-b-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] max-md:pb-12 max-md:mb-16 group"
+            className="project-block relative mb-28 overflow-hidden rounded-[2rem] sm:rounded-[2.4rem] lg:rounded-[2.8rem] border border-[color-mix(in_srgb,var(--on-surface)_12%,transparent)] bg-[linear-gradient(145deg,color-mix(in_srgb,var(--surface)_84%,transparent),color-mix(in_srgb,var(--surface-high)_45%,transparent))] p-6 sm:p-8 lg:p-12 shadow-[0_32px_80px_-20px_color-mix(in_srgb,var(--bg-deep)_60%,transparent)] backdrop-blur-2xl transition-all duration-700 hover:border-[color-mix(in_srgb,var(--tertiary)_40%,transparent)] hover:shadow-[0_40px_90px_-15px_color-mix(in_srgb,var(--tertiary)_15%,transparent)] group"
             style={{ willChange: "transform, opacity" }}
           >
-            {/* Image Side */}
-            <div className="w-full lg:w-7/12 relative">
-              <div className="relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden border border-[var(--glass-border)] bg-[var(--surface-low)] shadow-[var(--glass-inner-shadow)] transition-all duration-700 ease-out hover:border-[color-mix(in_srgb,var(--on-surface)_15%,transparent)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] max-md:!rounded-[1.25rem]">
-                <div className="absolute inset-0 bg-gradient-to-tr from-[var(--bg)]/10 to-transparent z-10 pointer-events-none" />
-                {featuredProject.coverImageUrl && (
-                  <Image
-                    src={featuredProject.coverImageUrl}
-                    alt={featuredProject.title}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 60vw"
-                    className="object-cover object-top transition-transform duration-[3s] ease-out group-hover:scale-[1.03]"
-                  />
-                )}
-              </div>
-            </div>
+            {/* Ambient Glow background behind featured card */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-20 -top-20 z-0 h-96 w-96 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--tertiary)_18%,transparent)_0%,transparent_70%)] opacity-70 blur-3xl transition-opacity duration-700 group-hover:opacity-100"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -left-20 -bottom-20 z-0 h-96 w-96 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--primary)_16%,transparent)_0%,transparent_70%)] opacity-50 blur-3xl"
+            />
 
-            {/* Text Content Side */}
-            <div className="w-full lg:w-5/12 flex flex-col justify-center">
-              <p className="font-mono text-[0.68rem] tracking-[0.1em] text-[var(--tertiary)] uppercase font-medium mb-4 flex items-center gap-2">
-                <span className="h-px w-5 bg-[var(--tertiary)] opacity-50" />
-                {eyebrowFor(featuredProject)}
-              </p>
+            <div className="relative z-10 flex flex-col lg:flex-row gap-10 lg:gap-14 items-center">
+              {/* Image Side */}
+              <div className="w-full lg:w-7/12 relative group/img">
+                <div className="relative w-full aspect-[16/10] sm:aspect-[4/3] rounded-[1.6rem] lg:rounded-[2.2rem] overflow-hidden border border-[color-mix(in_srgb,var(--on-surface)_14%,transparent)] bg-[var(--surface-low)] shadow-[0_20px_50px_rgba(0,0,0,0.25)] transition-all duration-700 group-hover/img:border-[color-mix(in_srgb,var(--tertiary)_45%,transparent)]">
+                  {/* Browser Chrome Control Bar */}
+                  <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-4 py-2.5 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--bg)_90%,transparent),color-mix(in_srgb,var(--bg)_40%,transparent))] backdrop-blur-md border-b border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)]">
+                    <div className="flex items-center gap-1.5">
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#FF5F56]/80" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#FFBD2E]/80" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#27C93F]/80" />
+                    </div>
+                    <span className="font-mono text-[0.62rem] tracking-wider text-[color-mix(in_srgb,var(--on-surface-dim)_80%,transparent)] uppercase font-medium truncate max-w-[14rem]">
+                      {featuredProject.clientName
+                        ? `${featuredProject.clientName} Platform`
+                        : "Case Study"}
+                    </span>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[color-mix(in_srgb,var(--tertiary)_18%,transparent)] px-2 py-0.5 font-mono text-[0.58rem] font-medium text-[var(--tertiary)] border border-[color-mix(in_srgb,var(--tertiary)_30%,transparent)]">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--tertiary)] animate-pulse" />
+                      LIVE
+                    </span>
+                  </div>
 
-              <h3 className="text-[clamp(1.75rem,3vw,2.4rem)] font-normal leading-[1.05] tracking-tight text-[var(--on-surface)] mb-2">
-                {featuredProject.title}
-              </h3>
-              {featuredProject.challenge && (
-                <p className="text-[0.92rem] leading-relaxed text-[var(--on-surface-dim)] font-normal mb-8 max-w-lg">
-                  {featuredProject.challenge}
-                </p>
-              )}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-[var(--bg)]/30 via-transparent to-transparent z-10 pointer-events-none" />
 
-              {/* Micro-grid of stats */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 mb-8 py-5 border-y border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)]">
-                <div>
-                  <p className="font-mono text-[0.62rem] uppercase tracking-[0.08em] text-[color-mix(in_srgb,var(--on-surface-dim)_70%,transparent)] mb-1">
-                    {featuredProject.outcomeLabel || "Outcome"}
-                  </p>
-                  <p className="text-2xl font-normal text-[var(--on-surface)]">
-                    {featuredProject.outcome || "-"}
-                  </p>
-                </div>
-                <div>
-                  <p className="font-mono text-[0.62rem] uppercase tracking-[0.08em] text-[color-mix(in_srgb,var(--on-surface-dim)_70%,transparent)] mb-1">
-                    Delivered
-                  </p>
-                  <p className="text-2xl font-normal text-[var(--on-surface)]">
-                    {featuredProject.targetDate
-                      ? new Date(featuredProject.targetDate).getFullYear()
-                      : "Ongoing"}
-                  </p>
-                </div>
-                <div className="max-sm:col-span-2">
-                  <p className="font-mono text-[0.62rem] uppercase tracking-[0.08em] text-[color-mix(in_srgb,var(--on-surface-dim)_70%,transparent)] mb-1">
-                    Key Stack
-                  </p>
-                  <p className="text-[0.88rem] leading-tight text-[var(--on-surface-dim)] pt-1">
-                    {featuredProject.stackTags.join(", ") || "-"}
-                  </p>
+                  {featuredProject.coverImageUrl && (
+                    <Image
+                      src={featuredProject.coverImageUrl}
+                      alt={featuredProject.title}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 55vw"
+                      className="object-cover object-top pt-9 transition-transform duration-[2.5s] ease-out group-hover/img:scale-[1.03]"
+                      priority
+                    />
+                  )}
                 </div>
               </div>
 
-              {/* Link CTA */}
-              <Link
-                href={`/work/${featuredProject.publicSlug}`}
-                className="group/btn flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-wider text-[var(--on-surface)] hover:text-[var(--primary)] transition-all duration-300 w-fit focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--primary)]"
-              >
-                Explore case study
-                <span className="grid h-7 w-7 place-items-center rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--on-surface-dim)] group-hover/btn:translate-x-1 group-hover/btn:bg-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] group-hover/btn:text-[var(--on-surface)] transition-all duration-300">
-                  <IconArrowRight size={13} stroke={2} />
-                </span>
-              </Link>
+              {/* Text Content Side */}
+              <div className="w-full lg:w-5/12 flex flex-col justify-between">
+                <div>
+                  {/* Eyebrow Badge */}
+                  <div className="mb-4 flex flex-wrap items-center gap-2">
+                    <span className="font-mono text-[0.66rem] tracking-wider text-[var(--on-surface-dim)] uppercase font-medium">
+                      •{" "}
+                      {verticalLabels[featuredProject.vertical ?? ""] ||
+                        featuredProject.vertical ||
+                        "SaaS"}
+                    </span>
+                  </div>
+
+                  <h3 className="title-serif text-[clamp(2.1rem,3.4vw,2.85rem)] font-normal leading-[1.02] tracking-tight text-[var(--on-surface)] mb-3">
+                    {featuredProject.title}
+                  </h3>
+
+                  {featuredProject.challenge && (
+                    <p className="text-[0.94rem] leading-relaxed text-[color-mix(in_srgb,var(--on-surface-dim)_92%,var(--on-surface))] font-normal mb-7 max-w-xl">
+                      {featuredProject.challenge}
+                    </p>
+                  )}
+
+                  {/* Micro-Grid Stats */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-7">
+                    {/* Stat 1: Outcome */}
+                    <div className="flex flex-col justify-center rounded-2xl border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[color-mix(in_srgb,var(--surface-low)_70%,transparent)] p-3.5 shadow-[inset_0_1px_0_color-mix(in_srgb,white_10%,transparent)] transition-all duration-300 hover:border-[color-mix(in_srgb,var(--tertiary)_30%,transparent)]">
+                      <span className="font-mono text-[0.58rem] uppercase tracking-[0.08em] text-[var(--on-surface-dim)] mb-1 truncate">
+                        {featuredProject.outcomeLabel || "Primary Outcome"}
+                      </span>
+                      <span className="font-mono text-[1.35rem] font-medium tracking-tight text-[var(--on-surface)] truncate">
+                        {featuredProject.outcome || "1 Click"}
+                      </span>
+                    </div>
+
+                    {/* Stat 2: Delivery / Timeline */}
+                    <div className="flex flex-col justify-center rounded-2xl border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[color-mix(in_srgb,var(--surface-low)_70%,transparent)] p-3.5 shadow-[inset_0_1px_0_color-mix(in_srgb,white_10%,transparent)] transition-all duration-300 hover:border-[color-mix(in_srgb,var(--tertiary)_30%,transparent)]">
+                      <span className="font-mono text-[0.58rem] uppercase tracking-[0.08em] text-[var(--on-surface-dim)] mb-1 truncate">
+                        {isDuration(featuredProject.targetDate) ? "Build Duration" : "Delivered"}
+                      </span>
+                      <span className="font-mono text-[1.35rem] font-medium tracking-tight text-[var(--on-surface)] truncate">
+                        {formatDelivery(featuredProject.targetDate, featuredProject.startDate)}
+                      </span>
+                    </div>
+
+                    {/* Stat 3: Scope / Standard */}
+                    <div className="flex flex-col justify-center rounded-2xl border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[color-mix(in_srgb,var(--surface-low)_70%,transparent)] p-3.5 shadow-[inset_0_1px_0_color-mix(in_srgb,white_10%,transparent)] transition-all duration-300 hover:border-[color-mix(in_srgb,var(--tertiary)_30%,transparent)] col-span-2 sm:col-span-1">
+                      <span className="font-mono text-[0.58rem] uppercase tracking-[0.08em] text-[var(--on-surface-dim)] mb-1 truncate">
+                        {featuredProject.stackTags.includes("HIPAA") ? "Compliance" : "Status"}
+                      </span>
+                      <span className="font-mono text-[1.35rem] font-medium tracking-tight text-[var(--on-surface)] truncate">
+                        {featuredProject.stackTags.includes("HIPAA")
+                          ? "HIPAA Ready"
+                          : featuredProject.status === "completed"
+                            ? "Live"
+                            : "Shipped"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Key Tech Stack Pills */}
+                  <div className="mb-8">
+                    <span className="block font-mono text-[0.6rem] uppercase tracking-[0.12em] text-[var(--on-surface-dim)] mb-2.5">
+                      Technologies & Architecture
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {featuredProject.stackTags.slice(0, 7).map((tag) => (
+                        <span
+                          key={tag}
+                          className="inline-flex items-center rounded-lg border border-[color-mix(in_srgb,var(--on-surface)_10%,transparent)] bg-[color-mix(in_srgb,var(--surface-high)_45%,transparent)] px-2.5 py-1 font-mono text-[0.68rem] font-medium text-[var(--on-surface)] shadow-xs transition-colors hover:border-[color-mix(in_srgb,var(--tertiary)_35%,transparent)]"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                      {featuredProject.stackTags.length > 7 && (
+                        <span className="inline-flex items-center rounded-lg border border-[color-mix(in_srgb,var(--on-surface)_8%,transparent)] bg-[color-mix(in_srgb,var(--surface)_40%,transparent)] px-2.5 py-1 font-mono text-[0.68rem] text-[var(--on-surface-dim)]">
+                          +{featuredProject.stackTags.length - 7}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* CTA Link Button */}
+                <Link
+                  href={`/work/${featuredProject.publicSlug}`}
+                  className="inline-flex items-center justify-between gap-4 rounded-2xl border border-[color-mix(in_srgb,var(--on-surface)_16%,transparent)] bg-[var(--on-surface)] px-6 py-2.5 font-mono text-[0.76rem] uppercase tracking-wider text-[var(--bg)] shadow-[0_14px_30px_color-mix(in_srgb,var(--bg-deep)_40%,transparent)] transition-all duration-300 hover:translate-y-[-2px] hover:shadow-[0_20px_40px_color-mix(in_srgb,var(--bg-deep)_60%,transparent)] hover:bg-[color-mix(in_srgb,var(--on-surface)_90%,white)] w-full sm:w-fit"
+                >
+                  <span>Explore Case Study</span>
+                  <IconArrowRight size={16} stroke={2.2} />
+                </Link>
+              </div>
             </div>
 
             {/* Admin Actions Overlay */}
