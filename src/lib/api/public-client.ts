@@ -179,6 +179,8 @@ export async function fetchPublicBlogPost(
 // Public Projects (Work / Case Studies)
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { STATIC_PUBLIC_PROJECTS } from "@/lib/work-mapper";
+
 export async function fetchPublicProjects(
   options: { service?: string; vertical?: string; baseUrl?: string } = {},
 ): Promise<PublicProject[]> {
@@ -191,11 +193,14 @@ export async function fetchPublicProjects(
     const res = await fetch(url.toString(), {
       next: { revalidate: 300 },
     });
-    if (!res.ok) return [];
+    if (!res.ok) return STATIC_PUBLIC_PROJECTS;
     const data = await res.json();
-    return data.work ?? [];
+    if (data.work && data.work.length > 0) {
+      return data.work;
+    }
+    return STATIC_PUBLIC_PROJECTS;
   } catch {
-    return [];
+    return STATIC_PUBLIC_PROJECTS;
   }
 }
 

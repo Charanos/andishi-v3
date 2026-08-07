@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { IconBrandWhatsapp, IconX, IconMenu2, IconLocationPin } from "@tabler/icons-react";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { Logo } from "@/components/brand/logo";
@@ -42,12 +44,26 @@ const itemVariants = {
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [bannerOpen, setBannerOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [hasModalOpen, setHasModalOpen] = useState(false);
   const pathname = usePathname();
+  const lastScrollY = useRef(0);
+  const headerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (!headerRef.current) return;
+    const shouldShow = visible || mobileOpen;
+    gsap.to(headerRef.current, {
+      yPercent: shouldShow ? 0 : -100,
+      duration: 0.4,
+      ease: "power2.out",
+      overwrite: "auto",
+    });
+  }, [visible, mobileOpen]);
 
   useEffect(() => {
     const checkModal = () => {
@@ -95,8 +111,25 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 48);
-    onScroll(); // set initial state
+    const onScroll = () => {
+      const currentScrollY = window.scrollY;
+      const prevScrollY = lastScrollY.current;
+
+      if (currentScrollY <= 48) {
+        setScrolled(false);
+        setVisible(true);
+      } else {
+        setScrolled(true);
+        if (currentScrollY > prevScrollY + 8) {
+          setVisible(false);
+        } else if (currentScrollY < prevScrollY - 8) {
+          setVisible(true);
+        }
+      }
+      lastScrollY.current = currentScrollY;
+    };
+
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -121,7 +154,10 @@ export function Navbar() {
 
   return (
     <>
-      <div className="fixed left-0 right-0 top-0 z-[60] flex flex-col pointer-events-none">
+      <div
+        ref={headerRef}
+        className="fixed left-0 right-0 top-0 z-[60] flex flex-col pointer-events-none"
+      >
         {/* Collapsible Location Banner */}
         <AnimatePresence>
           {bannerOpen && (

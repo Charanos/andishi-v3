@@ -94,6 +94,8 @@ function slugify(value: string) {
     .replace(/(^-|-$)/g, "");
 }
 
+import { STATIC_PUBLIC_PROJECTS, mapApiProjectToWorkProject } from "@/lib/work-mapper";
+
 interface ProjectShowcaseProps {
   /** Pre-fetched server-side data to prevent empty flash on initial render. */
   initialProjects?: PublicProject[];
@@ -101,7 +103,9 @@ interface ProjectShowcaseProps {
 
 export function ProjectShowcase({ initialProjects = [] }: ProjectShowcaseProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [projectsList, setProjectsList] = useState<PublicProject[]>(initialProjects);
+  const [projectsList, setProjectsList] = useState<PublicProject[]>(
+    initialProjects.length > 0 ? initialProjects : STATIC_PUBLIC_PROJECTS,
+  );
   const [isAdmin, setIsAdmin] = useState(false);
   const [draft, setDraft] = useState<CaseStudyDraft | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -116,10 +120,14 @@ export function ProjectShowcase({ initialProjects = [] }: ProjectShowcaseProps) 
         const res = await fetch("/api/work");
         if (res.ok) {
           const data = await res.json();
-          setProjectsList(data.work ?? []);
+          if (data.work && data.work.length > 0) {
+            setProjectsList(data.work);
+          } else {
+            setProjectsList(STATIC_PUBLIC_PROJECTS);
+          }
         }
       } catch {
-        // Keep initialProjects if fetch fails
+        // Keep initialProjects or fallback if fetch fails
       }
     };
     const checkAdmin = () => {

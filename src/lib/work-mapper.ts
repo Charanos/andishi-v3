@@ -1,6 +1,62 @@
 import type { WorkProject } from "@/content/work";
+import { workProjects } from "@/content/work";
 import type { PublicProject } from "@/lib/api/public-client";
 import type { CaseStudyProject } from "@/types/case-study";
+
+/**
+ * mapWorkProjectToPublicProject
+ *
+ * Maps a static WorkProject (from src/content/work.ts) onto the PublicProject shape.
+ * Used for server-side fallback rendering on the landing page when no DB case studies exist.
+ */
+export function mapWorkProjectToPublicProject(wp: WorkProject, index = 0): PublicProject {
+  return {
+    id: wp.id,
+    title: wp.title,
+    publicSlug: wp.id,
+    serviceType: wp.sector === "fintech" ? "custom-software" : wp.sector,
+    vertical: wp.sector,
+    coverImageUrl: wp.image,
+    challenge: wp.challenge,
+    solution: wp.solution,
+    outcome: wp.metric,
+    outcomeLabel: wp.metricLabel,
+    clientQuote: null,
+    clientQuoteAttribution: null,
+    clientName: wp.location || "Client",
+    stackTags: wp.tags || [],
+    featuredOrder: index + 1,
+    status: wp.status === "Live" ? "completed" : "active",
+    startDate: null,
+    targetDate: wp.timeline,
+    tagline: wp.shortTitle,
+    summary: wp.description,
+    role: "Engineering & Product Studio",
+    teamSize: "4-6 Engineers",
+    liveUrl: null,
+    repoUrl: null,
+    featured: wp.featured || index === 0,
+    approachSteps: [],
+    solutionHighlights: [],
+    gallery: [],
+    results: wp.metrics
+      ? wp.metrics.map((m, i) => ({ id: `res-${i}`, metric: m.value, label: m.label }))
+      : [],
+    testimonial: null,
+    techStackDetails: wp.tags ? wp.tags.map((t) => ({ name: t })) : [],
+    seoMetaTitle: wp.title,
+    seoMetaDescription: wp.description,
+    seoOgImageUrl: wp.image,
+    adExcerpt: null,
+    caseStudyStatus: "published",
+    publishedAt: null,
+    updatedAt: null,
+  };
+}
+
+export const STATIC_PUBLIC_PROJECTS: PublicProject[] = workProjects.map((wp, i) =>
+  mapWorkProjectToPublicProject(wp, i),
+);
 
 /**
  * mapApiProjectToWorkProject
