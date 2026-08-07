@@ -68,7 +68,7 @@ export function HeroSection() {
               variants={fadeUp}
               className="m-0 max-w-[52ch] min-[900px]:max-w-[42ch] xl:max-w-[52ch] text-[clamp(1.04rem,3.6vw,1.06rem)] min-[900px]:text-[0.87rem] lg:text-[0.93rem] xl:text-[clamp(1.04rem,1.8vw,1.06rem)] leading-[1.65] text-[color-mix(in_srgb,var(--on-surface-dim)_92%,var(--on-surface))] max-[560px]:text-base"
             >
-              We engineer scalable applications, SaaS platforms, AI systems, mobile apps, and
+              We build scalable applications, SaaS platforms, AI systems, mobile apps, and
               enterprise tools for founders and teams who demand shipped products and tangible
               impact.
             </motion.p>
